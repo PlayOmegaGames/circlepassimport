@@ -8,6 +8,8 @@ defmodule QuestApiV21Web.HostController do
 
   def index(conn, _params) do
     hosts = Hosts.list_hosts()
+    |> QuestApiV21.Repo.preload(:businesses)
+
     render(conn, :index, hosts: hosts)
   end
 
@@ -22,6 +24,7 @@ defmodule QuestApiV21Web.HostController do
 
   def show(conn, %{"id" => id}) do
     host = Hosts.get_host!(id)
+    |> QuestApiV21.Repo.preload(:businesses)
     render(conn, :show, host: host)
   end
 

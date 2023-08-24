@@ -7,6 +7,7 @@ defmodule QuestApiV21.Businesses do
   alias QuestApiV21.Repo
 
   alias QuestApiV21.Businesses.Business
+  alias QuestApiV21.Hosts.Host
 
   @doc """
   Returns the list of businesses.
@@ -52,6 +53,7 @@ defmodule QuestApiV21.Businesses do
   def create_business(attrs \\ %{}) do
     %Business{}
     |> Business.changeset(attrs)
+    |> maybe_add_hosts(attrs)
     |> Repo.insert()
   end
 
@@ -70,6 +72,7 @@ defmodule QuestApiV21.Businesses do
   def update_business(%Business{} = business, attrs) do
     business
     |> Business.changeset(attrs)
+    |> maybe_add_hosts(attrs)
     |> Repo.update()
   end
 
@@ -100,5 +103,14 @@ defmodule QuestApiV21.Businesses do
   """
   def change_business(%Business{} = business, attrs \\ %{}) do
     Business.changeset(business, attrs)
+  end
+
+  defp maybe_add_hosts(changeset, attrs) do
+    case Map.get(attrs, "host_ids") do
+      nil -> changeset
+      host_ids ->
+        hosts = Repo.all(from h in Host, where: h.id in ^host_ids)
+        Ecto.Changeset.put_assoc(changeset, :hosts, hosts)
+    end
   end
 end

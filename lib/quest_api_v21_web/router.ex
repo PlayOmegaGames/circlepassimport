@@ -25,6 +25,7 @@ defmodule QuestApiV21Web.Router do
 
     resources "/hosts", HostController
     resources "/businesses", BusinessController
+    resources "/quests", QuestController
 
   end
 
