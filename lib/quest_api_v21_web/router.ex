@@ -26,7 +26,7 @@ defmodule QuestApiV21Web.Router do
     resources "/hosts", HostController
     resources "/businesses", BusinessController
     resources "/quests", QuestController
-
+    resources "/collection_point", Collection_PointController
   end
 
   # Other scopes may use custom stacks.

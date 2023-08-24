@@ -1,6 +1,8 @@
 defmodule QuestApiV21Web.QuestJSON do
   alias QuestApiV21.Quests.Quest
-  alias QuestApiV21.Businesses.Business
+  alias QuestApiV21.Collection_Points.Collection_Point
+
+  #alias QuestApiV21.Businesses.Business
 
   @doc """
   Renders a list of quests.
@@ -16,7 +18,7 @@ defmodule QuestApiV21Web.QuestJSON do
     %{data: data(quest)}
   end
 
-  defp data(%Quest{} = quest) do
+  defp data(%Quest{collection_points: collection_points} = quest) do
     %{
       id: quest.id,
       name: quest.name,
@@ -27,8 +29,19 @@ defmodule QuestApiV21Web.QuestJSON do
       start_date: quest.start_date,
       end_date: quest.end_date,
       address: quest.address,
-      business_id: quest.business_id
+      business_id: quest.business_id,
+      collection_points: collection_points_data(collection_points)
+
     }
+  end
+
+  defp collection_points_data(collection_points) do
+    Enum.map(collection_points, fn %Collection_Point{id: id, name: name} ->
+      %{
+        id: id,
+        name: name
+      }
+    end)
   end
 
   """

@@ -14,6 +14,7 @@ defmodule QuestApiV21.Quests.Quest do
     field :scans, :integer, default: 0
     field :start_date, :date
     belongs_to :business, QuestApiV21.Businesses.Business
+    has_many :collection_points, QuestApiV21.Collection_Points.Collection_Point
 
     timestamps()
   end
@@ -23,6 +24,7 @@ defmodule QuestApiV21.Quests.Quest do
     quest
     |> cast(attrs, [:name, :scans, :quest_type, :reward, :redemption, :start_date, :end_date, :address, :business_id])
     |> validate_required([:name, :reward, :address])
+    |> cast_assoc(:collection_points, with: &QuestApiV21.Collection_Points.Collection_Point.changeset/2)
     |> assoc_constraint(:business)
   end
 end

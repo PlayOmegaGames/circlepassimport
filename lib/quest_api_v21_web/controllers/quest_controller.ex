@@ -9,6 +9,7 @@ defmodule QuestApiV21Web.QuestController do
   def index(conn, _params) do
     quests = Quests.list_quests()
     |> QuestApiV21.Repo.preload(:business)
+    |> QuestApiV21.Repo.preload(:collection_points)
 
     render(conn, :index, quests: quests)
   end
@@ -26,6 +27,7 @@ defmodule QuestApiV21Web.QuestController do
   def show(conn, %{"id" => id}) do
     quest = Quests.get_quest!(id)
     |> QuestApiV21.Repo.preload(:business)
+    |> QuestApiV21.Repo.preload(:collection_points)
 
     render(conn, :show, quest: quest)
   end
