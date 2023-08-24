@@ -1,5 +1,6 @@
 defmodule QuestApiV21Web.QuestJSON do
   alias QuestApiV21.Quests.Quest
+  alias QuestApiV21.Businesses.Business
 
   @doc """
   Renders a list of quests.
@@ -25,7 +26,20 @@ defmodule QuestApiV21Web.QuestJSON do
       redemption: quest.redemption,
       start_date: quest.start_date,
       end_date: quest.end_date,
-      address: quest.address
+      address: quest.address,
+      business_id: quest.business_id
     }
   end
+
+  """
+  Useful for displaying more business information
+
+  defp business_data(%Business{} = business) do
+    %{
+      id: business.id,
+      name: business.name
+    }
+  end
+  """
+
 end

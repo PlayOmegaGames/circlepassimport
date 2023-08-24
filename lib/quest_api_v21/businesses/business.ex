@@ -7,6 +7,8 @@ defmodule QuestApiV21.Businesses.Business do
   schema "businesses" do
     field :name, :string
     many_to_many :hosts, QuestApiV21.Hosts.Host, join_through: "hosts_businesses"
+    has_many :quests, QuestApiV21.Quests.Quest
+
 
     timestamps()
   end

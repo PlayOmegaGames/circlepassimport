@@ -9,6 +9,7 @@ defmodule QuestApiV21Web.BusinessController do
   def index(conn, _params) do
     businesses = Businesses.list_businesses()
     |> QuestApiV21.Repo.preload(:hosts)
+    |> QuestApiV21.Repo.preload(:quests)
 
     render(conn, :index, businesses: businesses)
   end
@@ -25,6 +26,8 @@ defmodule QuestApiV21Web.BusinessController do
   def show(conn, %{"id" => id}) do
     business = Businesses.get_business!(id)
     |> QuestApiV21.Repo.preload(:hosts)
+    |> QuestApiV21.Repo.preload(:quests)
+
     render(conn, :show, business: business)
   end
 

@@ -11,8 +11,9 @@ defmodule QuestApiV21.Quests.Quest do
     field :quest_type, :string, default: "Treasure Hunt"
     field :redemption, :string
     field :reward, :string
-    field :scans, :integer
+    field :scans, :integer, default: 0
     field :start_date, :date
+    belongs_to :business, QuestApiV21.Businesses.Business
 
     timestamps()
   end
@@ -20,7 +21,8 @@ defmodule QuestApiV21.Quests.Quest do
   @doc false
   def changeset(quest, attrs) do
     quest
-    |> cast(attrs, [:name, :scans, :quest_type, :reward, :redemption, :start_date, :end_date, :address])
+    |> cast(attrs, [:name, :scans, :quest_type, :reward, :redemption, :start_date, :end_date, :address, :business_id])
     |> validate_required([:name, :reward, :address])
+    |> assoc_constraint(:business)
   end
 end

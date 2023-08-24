@@ -6,11 +6,11 @@ defmodule QuestApiV21.Repo.Migrations.CreateQuests do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :scans, :integer
-      add :"quest-type", :string
+      add :quest_type, :string
       add :reward, :string
       add :redemption, :text
-      add :"start-date", :date
-      add :"end-date", :date
+      add :start_date, :date
+      add :end_date, :date
       add :address, :string
 
       timestamps()
