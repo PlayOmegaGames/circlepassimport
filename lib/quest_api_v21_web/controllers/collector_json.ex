@@ -1,6 +1,7 @@
 defmodule QuestApiV21Web.CollectorJSON do
   alias QuestApiV21.Collectors.Collector
   alias QuestApiV21.Collection_Points.Collection_Point
+  alias QuestApiV21.Quests.Quest
 
   @doc """
   Renders a list of collectors.
@@ -16,14 +17,23 @@ defmodule QuestApiV21Web.CollectorJSON do
     %{data: data(collector)}
   end
 
-  defp data(%Collector{collection_points: collection_points} = collector) do
+  defp data(%Collector{collection_points: collection_points, quests: quests} = collector) do
     %{
       id: collector.id,
       name: collector.name,
       coordinates: collector.coordinates,
       height: collector.height,
-      collection_points: collection_points_data(collection_points)
+      collection_points: collection_points_data(collection_points),
+      quest_ids: quests_data(quests)
     }
+  end
+
+  defp quests_data(quests) do
+    Enum.map(quests, fn %Quest{id: id} ->
+      %{
+        id: id
+      }
+    end)
   end
 
   defp collection_points_data(collection_points) do

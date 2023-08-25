@@ -5,7 +5,7 @@ defmodule QuestApiV21.MixProject do
     [
       app: :quest_api_v21,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),

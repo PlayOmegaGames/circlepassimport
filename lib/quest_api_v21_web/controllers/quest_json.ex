@@ -1,6 +1,7 @@
 defmodule QuestApiV21Web.QuestJSON do
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Collection_Points.Collection_Point
+  alias QuestApiV21.Collectors.Collector
 
   #alias QuestApiV21.Businesses.Business
 
@@ -18,7 +19,7 @@ defmodule QuestApiV21Web.QuestJSON do
     %{data: data(quest)}
   end
 
-  defp data(%Quest{collection_points: collection_points} = quest) do
+  defp data(%Quest{collection_points: collection_points, collectors: collectors} = quest) do
     %{
       id: quest.id,
       name: quest.name,
@@ -30,9 +31,18 @@ defmodule QuestApiV21Web.QuestJSON do
       end_date: quest.end_date,
       address: quest.address,
       business_id: quest.business_id,
-      collection_points: collection_points_data(collection_points)
+      collection_points: collection_points_data(collection_points),
+      collectors: collectors_data(collectors)
 
     }
+  end
+
+  defp collectors_data(collectors) do
+    Enum.map(collectors, fn %Collector{id: id} ->
+      %{
+        id: id
+      }
+    end)
   end
 
   defp collection_points_data(collection_points) do

@@ -17,7 +17,10 @@ defmodule QuestApiV21Web.ScanJSON do
 
   defp data(%Scan{} = scan) do
     %{
-      id: scan.id
+      id: scan.id,
+      business_id: scan.business_id,
+      account_id: scan.account_id,
+      collection_point_id: scan.collection_point_id
     }
   end
 end

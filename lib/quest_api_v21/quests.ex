@@ -5,8 +5,8 @@ defmodule QuestApiV21.Quests do
 
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
-
   alias QuestApiV21.Quests.Quest
+  alias QuestApiV21.Collectors.Collector
 
   @doc """
   Returns the list of quests.
@@ -52,6 +52,7 @@ defmodule QuestApiV21.Quests do
   def create_quest(attrs \\ %{}) do
     %Quest{}
     |> Quest.changeset(attrs)
+    |> maybe_add_collectors(attrs)
     |> Repo.insert()
   end
 
@@ -70,6 +71,7 @@ defmodule QuestApiV21.Quests do
   def update_quest(%Quest{} = quest, attrs) do
     quest
     |> Quest.changeset(attrs)
+    |> maybe_add_collectors(attrs)
     |> Repo.update()
   end
 
@@ -101,4 +103,14 @@ defmodule QuestApiV21.Quests do
   def change_quest(%Quest{} = quest, attrs \\ %{}) do
     Quest.changeset(quest, attrs)
   end
+
+  defp maybe_add_collectors(changeset, attrs) do
+    case Map.get(attrs, "collector_ids") do
+      nil -> changeset
+      collector_ids ->
+        collectors = Repo.all(from c in Collector, where: c.id in ^collector_ids)
+        Ecto.Changeset.put_assoc(changeset, :collectors, collectors)
+    end
+  end
+
 end
