@@ -11,6 +11,7 @@ defmodule QuestApiV21Web.BusinessController do
     |> QuestApiV21.Repo.preload(:hosts)
     |> QuestApiV21.Repo.preload(:quests)
     |> QuestApiV21.Repo.preload(:collection_points)
+    |> QuestApiV21.Repo.preload(:collectors)
 
     render(conn, :index, businesses: businesses)
   end
@@ -29,6 +30,7 @@ defmodule QuestApiV21Web.BusinessController do
     |> QuestApiV21.Repo.preload(:hosts)
     |> QuestApiV21.Repo.preload(:quests)
     |> QuestApiV21.Repo.preload(:collection_points)
+    |> QuestApiV21.Repo.preload(:collectors)
 
     render(conn, :show, business: business)
   end

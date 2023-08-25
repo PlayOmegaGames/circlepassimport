@@ -24,7 +24,8 @@ defmodule QuestApiV21Web.Collection_PointJSON do
       redirect_url: collection__point.redirect_url,
       badge_description: collection__point.badge_description,
       business_id: collection__point.business_id,
-      quest_id: collection__point.quest_id
+      quest_id: collection__point.quest_id,
+      collector_id: collection__point.collector_id
     }
   end
 end
