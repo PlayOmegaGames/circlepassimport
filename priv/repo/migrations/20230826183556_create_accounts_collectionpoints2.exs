@@ -1,12 +1,12 @@
-defmodule QuestApiV21.Repo.Migrations.CreateAccountsCollectionpoints do
+defmodule QuestApiV21.Repo.Migrations.CreateAccountsCollectionpoints2 do
   use Ecto.Migration
 
   def change do
-    create table(:accounts_collectionpoints) do
+    create table(:collectionpoints_accounts) do
       add :account_id, references(:accounts, type: :binary_id)
       add :collectionpoint_id, references(:collection_point, type: :binary_id)  # Change this line
     end
 
-    create unique_index(:accounts_collectionpoints, [:account_id])
+    create unique_index(:collectionpoints_accounts, [:account_id])
   end
 end

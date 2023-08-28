@@ -8,11 +8,14 @@ defmodule QuestApiV21Web.AccountController do
 
   def index(conn, _params) do
     accounts = Accounts.list_accounts()
+    |> QuestApiV21.Repo.preload(:collection_points)
+
     render(conn, :index, accounts: accounts)
   end
 
   def create(conn, %{"account" => account_params}) do
     with {:ok, %Account{} = account} <- Accounts.create_account(account_params) do
+      account = QuestApiV21.Repo.preload(account, [:collection_points])
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/accounts/#{account}")
@@ -22,6 +25,8 @@ defmodule QuestApiV21Web.AccountController do
 
   def show(conn, %{"id" => id}) do
     account = Accounts.get_account!(id)
+    |> QuestApiV21.Repo.preload(:collection_points)
+
     render(conn, :show, account: account)
   end
 

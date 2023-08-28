@@ -15,6 +15,7 @@ defmodule QuestApiV21Web.HostController do
 
   def create(conn, %{"host" => host_params}) do
     with {:ok, %Host{} = host} <- Hosts.create_host(host_params) do
+      host = QuestApiV21.Repo.preload(host, [:businesses])
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/hosts/#{host}")

@@ -8,13 +8,14 @@ defmodule QuestApiV21Web.Collection_PointController do
 
   def index(conn, _params) do
     collection_point = Collection_Points.list_collection_point()
-    |> QuestApiV21.Repo.preload(:business)
+    |> QuestApiV21.Repo.preload([:business, :accounts])
 
     render(conn, :index, collection_point: collection_point)
   end
 
   def create(conn, %{"collection__point" => collection__point_params}) do
     with {:ok, %Collection_Point{} = collection__point} <- Collection_Points.create_collection__point(collection__point_params) do
+      collection__point = QuestApiV21.Repo.preload(collection__point, [:accounts])
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/collection_point/#{collection__point}")
@@ -24,7 +25,7 @@ defmodule QuestApiV21Web.Collection_PointController do
 
   def show(conn, %{"id" => id}) do
     collection__point = Collection_Points.get_collection__point!(id)
-    |> QuestApiV21.Repo.preload(:business)
+    |> QuestApiV21.Repo.preload([:business, :accounts])
 
 
     render(conn, :show, collection__point: collection__point)

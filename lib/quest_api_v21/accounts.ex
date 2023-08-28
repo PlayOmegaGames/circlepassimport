@@ -5,8 +5,10 @@ defmodule QuestApiV21.Accounts do
 
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
+  alias QuestApiV21.Collection_Points.Collection_Point
 
   alias QuestApiV21.Accounts.Account
+
 
   @doc """
   Returns the list of accounts.
@@ -52,6 +54,7 @@ defmodule QuestApiV21.Accounts do
   def create_account(attrs \\ %{}) do
     %Account{}
     |> Account.changeset(attrs)
+    |> maybe_add_collection_points(attrs)
     |> Repo.insert()
   end
 
@@ -70,6 +73,7 @@ defmodule QuestApiV21.Accounts do
   def update_account(%Account{} = account, attrs) do
     account
     |> Account.changeset(attrs)
+    |> maybe_add_collection_points(attrs)
     |> Repo.update()
   end
 
@@ -101,4 +105,14 @@ defmodule QuestApiV21.Accounts do
   def change_account(%Account{} = account, attrs \\ %{}) do
     Account.changeset(account, attrs)
   end
+
+  defp maybe_add_collection_points(changeset, attrs) do
+    case Map.get(attrs, "collectionpoint_ids") do
+      nil -> changeset
+      collectionpoint_ids ->
+        collection_points = Repo.all(from c in Collection_Point, where: c.id in ^collectionpoint_ids)
+        Ecto.Changeset.put_assoc(changeset, :collection_points, collection_points)
+    end
+  end
+
 end

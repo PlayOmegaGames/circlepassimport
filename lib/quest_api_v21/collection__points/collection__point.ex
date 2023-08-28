@@ -13,6 +13,8 @@ defmodule QuestApiV21.Collection_Points.Collection_Point do
     belongs_to :business, QuestApiV21.Businesses.Business
     belongs_to :quest, QuestApiV21.Quests.Quest
     belongs_to :collector, QuestApiV21.Collectors.Collector
+    many_to_many :accounts, QuestApiV21.Accounts.Account, join_through: "collectionpoints_accounts"
+
 
     timestamps()
   end
@@ -22,5 +24,6 @@ defmodule QuestApiV21.Collection_Points.Collection_Point do
     collection__point
     |> cast(attrs, [:name, :image, :scans, :redirect_url, :badge_description, :business_id, :quest_id, :collector_id])
     |> validate_required([:name, :image, :redirect_url])
+    |> cast_assoc(:accounts, with: &QuestApiV21.Accounts.Account.changeset/2)
   end
 end

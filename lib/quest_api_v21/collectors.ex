@@ -5,9 +5,10 @@ defmodule QuestApiV21.Collectors do
 
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
+  alias QuestApiV21.Collectors.Collector
+
   alias QuestApiV21.Quests.Quest
 
-  alias QuestApiV21.Collectors.Collector
 
   @doc """
   Returns the list of collectors.
