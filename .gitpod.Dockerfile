@@ -1,4 +1,4 @@
-FROM hexpm/elixir:1.14.0-erlang-25.0-debian-buster-20210329
+FROM hexpm/elixir:1.14.5-erlang-25.3.2.5-ubuntu-focal-20230126
 
 # Set up environment variables
 ENV MIX_ENV=dev
