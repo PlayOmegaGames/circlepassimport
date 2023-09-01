@@ -27,16 +27,8 @@ RUN mix compile
 EXPOSE 4000
 
 
-# Install Node.js and npm
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs
-
 # Compile static assets
-RUN cd assets && \
-    npm install && \
-    npm run deploy && \
-    cd - && \
-    mix phx.digest
+RUN mix phx.digest
 
 # Run the Phoenix server
 CMD ["mix", "phx.server"]
