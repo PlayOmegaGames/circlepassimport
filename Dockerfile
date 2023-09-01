@@ -26,5 +26,12 @@ RUN mix compile
 # Expose port 4000
 EXPOSE 4000
 
+# Compile static assets
+RUN cd assets && \
+    npm install && \
+    npm run deploy && \
+    cd - && \
+    mix phx.digest
+
 # Run the Phoenix server
 CMD ["mix", "phx.server"]
