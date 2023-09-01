@@ -26,6 +26,11 @@ RUN mix compile
 # Expose port 4000
 EXPOSE 4000
 
+
+# Install Node.js and npm
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
 # Compile static assets
 RUN cd assets && \
     npm install && \
