@@ -2,7 +2,7 @@
 FROM elixir:1.14
 
 # Set environment variables for Phoenix
-ENV MIX_ENV=prod
+ENV MIX_ENV=dev
 ENV PORT=4000
 ENV DATABASE_URL=ecto://QuestPostUser:sIicd8dCd3ZrFjfcijd1EokuV97BUR@questdb.cj9dqvip3fe8.us-east-1.rds.amazonaws.com/quest_api_v21_dev
 ENV SECRET_KEY_BASE=xJg+HnmI809UdF0Il2Imb8dQ8m3w8UI5PMkIT8ZNSc01weSDNhABBLFJm02PguKp
