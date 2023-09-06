@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# Check if the container is running
-if [ "$(docker ps -q -f name=quest-api-v2)" ]; then
-    # Stop the container
-    docker stop quest-api-v2
-    # Optionally, remove the container
-    docker rm quest-api-v2
-fi
+echo "Stopping and removing all running containers..."
+
+# Stop all running containers
+docker stop $(docker ps -q)
+
+# Remove all containers
+docker rm $(docker ps -a -q)
+
+echo "All containers have been stopped and removed."
