@@ -1,0 +1,6 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - init: mix local.hex --force && mix local.rebar --force
+  - command: mix deps.get && mix phx.server
