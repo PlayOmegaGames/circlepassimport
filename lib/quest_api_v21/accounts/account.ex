@@ -7,7 +7,7 @@ defmodule QuestApiV21.Accounts.Account do
   @foreign_key_type :binary_id
   schema "accounts" do
     field :email, :string
-    field :hashed_passowrd, :string
+    field :hashed_password, :string
     field :name, :string
     many_to_many :collection_points, QuestApiV21.Collection_Points.Collection_Point, join_through: "collectionpoints_accounts", join_keys: [account_id: :id, collectionpoint_id: :id]
 
@@ -19,8 +19,8 @@ defmodule QuestApiV21.Accounts.Account do
     collection_points = prepare_collection_points(attrs)  # Fetch and validate collection_points based on IDs
 
     account
-    |> cast(attrs, [:name, :email, :hashed_passowrd])
-    |> validate_required([:name, :email, :hashed_passowrd])
+    |> cast(attrs, [:name, :email, :hashed_password])
+    |> validate_required([:name, :email, :hashed_password])
     |> put_assoc(:collection_points, collection_points)  # Use put_assoc for existing collection_points
   end
 

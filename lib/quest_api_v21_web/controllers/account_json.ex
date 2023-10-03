@@ -21,7 +21,7 @@ defmodule QuestApiV21Web.AccountJSON do
       id: account.id,
       name: account.name,
       email: account.email,
-      hashed_passowrd: account.hashed_passowrd,
+      hashed_password: account.hashed_password,
       collection_points: collection_points_data(collection_points)
     }
   end
