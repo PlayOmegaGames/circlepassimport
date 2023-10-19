@@ -9,7 +9,7 @@ config :quest_api_v21, QuestApiV21.Repo,
   username: "QuestPostUser",
   password: "sIicd8dCd3ZrFjfcijd1EokuV97BUR",
   hostname: "questdb.cj9dqvip3fe8.us-east-1.rds.amazonaws.com",
-  database: "quest_api_v21_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "quest_api_v21_test",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 

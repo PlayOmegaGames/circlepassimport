@@ -25,13 +25,13 @@ defmodule QuestApiV21.QuestsTest do
 
       assert {:ok, %Quest{} = quest} = Quests.create_quest(valid_attrs)
       assert quest.address == "some address"
-      assert quest.end-date == ~D[2023-08-23]
+      assert quest.end_date == ~D[2023-08-23]
       assert quest.name == "some name"
-      assert quest.quest-type == "some quest-type"
+      assert quest.quest_type == "some quest-type"
       assert quest.redemption == "some redemption"
       assert quest.reward == "some reward"
       assert quest.scans == 42
-      assert quest.start-date == ~D[2023-08-23]
+      assert quest.start_date == ~D[2023-08-23]
     end
 
     test "create_quest/1 with invalid data returns error changeset" do
@@ -44,13 +44,13 @@ defmodule QuestApiV21.QuestsTest do
 
       assert {:ok, %Quest{} = quest} = Quests.update_quest(quest, update_attrs)
       assert quest.address == "some updated address"
-      assert quest.end-date == ~D[2023-08-24]
+      assert quest.end_date == ~D[2023-08-24]
       assert quest.name == "some updated name"
-      assert quest.quest-type == "some updated quest-type"
+      assert quest.quest_type == "some updated quest-type"
       assert quest.redemption == "some updated redemption"
       assert quest.reward == "some updated reward"
       assert quest.scans == 43
-      assert quest.start-date == ~D[2023-08-24]
+      assert quest.start_date == ~D[2023-08-24]
     end
 
     test "update_quest/2 with invalid data returns error changeset" do

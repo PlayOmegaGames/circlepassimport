@@ -8,7 +8,7 @@ defmodule QuestApiV21.Accounts do
   alias QuestApiV21.Collection_Points.Collection_Point
 
   alias QuestApiV21.Accounts.Account
-
+  alias Bcrypt
 
   @doc """
   Returns the list of accounts.
@@ -52,11 +52,27 @@ defmodule QuestApiV21.Accounts do
 
   """
   def create_account(attrs \\ %{}) do
-    %Account{}
-    |> Account.changeset(attrs)
-    |> maybe_add_collection_points(attrs)
-    |> Repo.insert()
+    email = Map.get(attrs, "email")
+
+    case find_account_by_email(email) do
+      nil ->
+        updated_attrs = attrs |> put_password_hash()
+        %Account{}
+        |> Account.changeset(updated_attrs)
+        |> maybe_add_collection_points(attrs)
+        |> Repo.insert()
+
+      existing_account ->
+        {:error, "An account with this email already exists", existing_account}
+    end
   end
+
+
+  defp put_password_hash(%{"password" => password} = attrs) do
+    Map.put(attrs, "hashed_password", Bcrypt.hash_pwd_salt(password))
+  end
+  defp put_password_hash(attrs), do: attrs  # for cases where password is not provided
+
 
   @doc """
   Updates a account.
@@ -71,8 +87,8 @@ defmodule QuestApiV21.Accounts do
 
   """
   def update_account(%Account{} = account, attrs) do
-    account
-    |> Account.changeset(attrs)
+    account  # Use the existing Account struct
+    |> Account.changeset(attrs)  # Pass the struct and attrs to changeset/2
     |> maybe_add_collection_points(attrs)
     |> Repo.update()
   end
@@ -91,6 +107,21 @@ defmodule QuestApiV21.Accounts do
   """
   def delete_account(%Account{} = account) do
     Repo.delete(account)
+  end
+
+  @doc """
+  Finds an account by email.
+
+  ## Examples
+
+      iex> find_account_by_email("test@example.com")
+      %Account{}
+
+      iex> find_account_by_email("nonexistent@example.com")
+      nil
+  """
+  def find_account_by_email(email) do
+    Repo.get_by(Account, email: email)
   end
 
   @doc """

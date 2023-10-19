@@ -11,6 +11,12 @@ config :quest_api_v21,
   ecto_repos: [QuestApiV21.Repo],
   generators: [binary_id: true]
 
+#guardian setup
+config :quest_api_v21, QuestApiV21.Guardian,
+  issuer: "quest_api_v21",
+  secret_key: "Lx0gpm2fd8tsJkAkSkTMeTYc26IPuooCtbRhCM6+/Z+JThmul0pidj+lxvx7/uJI"
+
+
 # Configures the endpoint
 config :quest_api_v21, QuestApiV21Web.Endpoint,
   url: [host: "localhost"],

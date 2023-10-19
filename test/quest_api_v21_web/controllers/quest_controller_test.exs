@@ -7,23 +7,23 @@ defmodule QuestApiV21Web.QuestControllerTest do
 
   @create_attrs %{
     address: "some address",
-    end-date: ~D[2023-08-23],
+    end_date: ~D[2023-08-23],
     name: "some name",
-    quest-type: "some quest-type",
+    quest_type: "some quest-type",
     redemption: "some redemption",
     reward: "some reward",
     scans: 42,
-    start-date: ~D[2023-08-23]
+    start_date: ~D[2023-08-23]
   }
   @update_attrs %{
     address: "some updated address",
-    end-date: ~D[2023-08-24],
+    end_date: ~D[2023-08-24],
     name: "some updated name",
-    quest-type: "some updated quest-type",
+    quest_type: "some updated quest-type",
     redemption: "some updated redemption",
     reward: "some updated reward",
     scans: 43,
-    start-date: ~D[2023-08-24]
+    start_date: ~D[2023-08-24]
   }
   @invalid_attrs %{address: nil, "end-date": nil, name: nil, "quest-type": nil, redemption: nil, reward: nil, scans: nil, "start-date": nil}
 

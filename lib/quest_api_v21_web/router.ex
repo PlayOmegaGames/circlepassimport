@@ -31,6 +31,10 @@ defmodule QuestApiV21Web.Router do
     resources "/scans", ScanController
     resources "/accounts", AccountController
 
+    get "/sign_up", AuthController, :new
+    post "/sign_up", AuthController, :sign_up
+    post "/sign_in", AuthController, :sign_in
+
   end
 
   # Other scopes may use custom stacks.
