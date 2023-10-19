@@ -3,9 +3,6 @@ defmodule QuestApiV21Web.AccountController do
   # Inherits functionality from QuestApiV21Web's controller module.
   use QuestApiV21Web, :controller
 
-  # Aliases the QuestApiV21Web.Router.Helpers module as Routes for easier access.
-  alias QuestApiV21Web.Router.Helpers, as: Routes
-
   # Aliases the QuestApiV21.Accounts and QuestApiV21.Accounts.Account modules for easier access.
   alias QuestApiV21.Accounts
   alias QuestApiV21.Accounts.Account
@@ -35,7 +32,7 @@ defmodule QuestApiV21Web.AccountController do
         # and renders the show view for the new account.
         conn
         |> put_status(:created)
-        |> put_resp_header("location", Routes.account_path(conn, :show, account))
+        |> put_resp_header("location", ~p"/api/accounts/#{account.id}")
         |> render(:show, account: account)
 
       # Handles a conflict error when an account with the same email already exists.

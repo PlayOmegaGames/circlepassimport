@@ -20,10 +20,11 @@ defmodule QuestApiV21.Accounts.Account do
     collection_points = prepare_collection_points(attrs)  # Fetch and validate collection_points based on IDs
 
     account
-    |> cast(attrs, [:name, :email, :password])  # Cast the plaintext password field
-    |> validate_required([:name, :email, :password])  # Validate the plaintext password field
-    |> put_assoc(:collection_points, collection_points)  # Use put_assoc for existing collection_points
+    |> cast(attrs, [:name, :email, :hashed_password, :password])
+    |> validate_required([:name, :email])
+    |> put_assoc(:collection_points, collection_points)
   end
+
 
   defp prepare_collection_points(attrs) do
     collection_point_ids = Map.get(attrs, "collection_points", [])

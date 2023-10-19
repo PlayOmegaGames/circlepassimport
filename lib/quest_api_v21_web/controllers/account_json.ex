@@ -16,12 +16,11 @@ defmodule QuestApiV21Web.AccountJSON do
     %{data: data(account)}
   end
 
-  defp data(%Account{collection_points: collection_points} = account) do
+  def data(%Account{collection_points: collection_points} = account) do
     %{
       id: account.id,
       name: account.name,
       email: account.email,
-      hashed_password: account.hashed_password,
       collection_points: collection_points_data(collection_points)
     }
   end

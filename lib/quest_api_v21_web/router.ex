@@ -14,6 +14,11 @@ defmodule QuestApiV21Web.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authenticated_api do
+    plug :accepts, ["json"]
+    plug QuestApiV21.GuardianPipeline
+  end
+
   scope "/", QuestApiV21Web do
     pipe_through :browser
 
@@ -23,6 +28,14 @@ defmodule QuestApiV21Web.Router do
   scope "/api", QuestApiV21Web do
     pipe_through :api
 
+    get "/sign_up", AuthController, :new
+    post "/sign_up", AuthController, :sign_up
+    post "/sign_in", AuthController, :sign_in
+  end
+
+  scope "/api", QuestApiV21Web do
+    pipe_through :authenticated_api
+
     resources "/hosts", HostController
     resources "/businesses", BusinessController
     resources "/quests", QuestController
@@ -30,12 +43,8 @@ defmodule QuestApiV21Web.Router do
     resources "/collectors", CollectorController
     resources "/scans", ScanController
     resources "/accounts", AccountController
-
-    get "/sign_up", AuthController, :new
-    post "/sign_up", AuthController, :sign_up
-    post "/sign_in", AuthController, :sign_in
-
   end
+
 
   # Other scopes may use custom stacks.
   # scope "/api", QuestApiV21Web do
