@@ -1,11 +1,14 @@
 #!/bin/bash
 
-echo "Stopping and removing all running containers..."
+# Check if a container named 'quest-api-v2' is already running, and if so, stop and remove it.
+existing_container=$(docker ps -a --filter "name=quest-api-v2" -q)
+if [ ! -z "$existing_container" ]; then
+  echo "Stopping and removing existing container named 'quest-api-v2'..."
+  docker stop quest-api-v2
+  docker rm quest-api-v2
+fi
 
-# Stop all running containers
-docker stop $(docker ps -q)
+# Now run your new container
+docker run -d --name quest-api-v2 jaybecker/quest-api-v2:latest
 
-# Remove all containers
-docker rm $(docker ps -a -q)
-
-echo "All containers have been stopped and removed."
+echo "New container 'quest-api-v2' has been started."
