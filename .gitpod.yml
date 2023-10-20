@@ -2,8 +2,8 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  - init: |
-      mix local.hex --force
-      mix local.rebar --force
-      mix deps.get
-  - command: mix phx.server
+  - command: |
+      mix local.hex --force && \
+      mix local.rebar --force && \
+      mix deps.get && \
+      mix phx.server
