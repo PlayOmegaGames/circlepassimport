@@ -10,3 +10,7 @@ RUN apt-get update && \
     ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt-get clean
+
+# Install Hex and Rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
