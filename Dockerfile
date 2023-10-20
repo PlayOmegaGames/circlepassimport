@@ -16,11 +16,16 @@ RUN apt-get update && apt-get install -y build-essential && apt-get clean
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Remove any existing compiled files and the _build directory
-RUN rm -rf _build
+# Install Hex and Rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
 
-# Fetch project dependencies again
-RUN mix deps.get --force
+# Fetch and compile the project dependencies
+RUN mix deps.get && \
+    mix deps.compile
+
+# Remove any existing compiled files and the _build directory (Optional)
+RUN rm -rf _build
 
 # Compile the project again
 RUN mix compile
@@ -31,5 +36,5 @@ EXPOSE 4000
 # Compile static assets
 RUN mix phx.digest
 
-# Install Hex, Rebar, and run the Phoenix server
-CMD mix local.hex --force && mix local.rebar --force && mix phx.server
+# Run the Phoenix server
+CMD ["mix", "phx.server"]
