@@ -19,10 +19,13 @@ RUN apt-get update && apt-get install -y build-essential
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Install project dependencies
-RUN mix deps.get
+# Remove any existing compiled files and the _build directory
+RUN rm -rf _build
 
-# Compile the project
+# Fetch project dependencies again
+RUN mix deps.get --force
+
+# Compile the project again
 RUN mix compile
 
 # Expose port 4000
@@ -34,3 +37,4 @@ RUN mix phx.digest
 
 # Run the Phoenix server
 CMD ["mix", "phx.server"]
+
