@@ -36,5 +36,8 @@ EXPOSE 4000
 # Compile static assets
 RUN mix phx.digest
 
+# Fetch the dependencies just before starting the server
+RUN mix deps.get
+
 # Run the Phoenix server
-CMD ["mix", "phx.server"]
+CMD ["sh", "-c", "mix deps.get && mix phx.server"]
