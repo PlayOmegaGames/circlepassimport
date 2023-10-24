@@ -11,7 +11,7 @@ ENV MIX_ENV=dev \
 WORKDIR /app
 
 # Update the system and install essential build tools
-RUN apt-get update && apt-get install -y build-essential && apt-get clean && inotify-tools
+RUN apt-get update && apt-get install -y build-essential inotify-tools && apt-get clean 
 
 # Copy the current directory contents into the container at /app
 COPY . .
