@@ -11,7 +11,7 @@ ENV MIX_ENV=dev \
 WORKDIR /app
 
 # Update the system and install essential build tools
-RUN apt-get update && apt-get install -y build-essential && apt-get clean
+RUN apt-get update && apt-get install -y build-essential && apt-get clean && inotify-tools
 
 # Copy the current directory contents into the container at /app
 COPY . .
@@ -36,8 +36,5 @@ EXPOSE 4000
 # Compile static assets
 RUN mix phx.digest
 
-# Fetch the dependencies just before starting the server
-RUN mix deps.get
-
 # Run the Phoenix server
-CMD ["sh", "-c", "mix deps.get && mix phx.server"]
+CMD ["sh", "-c", "mix phx.server"]
