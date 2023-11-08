@@ -52,6 +52,7 @@ defmodule QuestApiV21.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:guardian, "~> 2.0"},
       {:comeonin, "~> 5.3"},
+      {:aws_sdk, "~> 2.1"},
       {:bcrypt_elixir, "~> 2.0"}
     ]
   end
