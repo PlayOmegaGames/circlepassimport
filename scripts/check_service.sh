@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Define a delay in seconds
+DELAY=10
+
+# Sleep for the specified delay
+echo "Waiting for $DELAY seconds before checking service..."
+sleep $DELAY
+
 # Define the container name and health check URLs
 CONTAINER_NAME=quest-api-container
 INTERNAL_HEALTH_CHECK_URL=http://localhost:4000/
