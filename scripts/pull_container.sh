@@ -1,5 +1,5 @@
 #!/bin/bash
-ECR_REPOSITORY=692454124440.dkr.ecr.us-east-1.amazonaws.com/my-app
+ECR_REPOSITORY=692454124440.dkr.ecr.us-east-1.amazonaws.com/quest-api
 IMAGE_TAG=latest
 
 # Authenticate Docker to the ECR Repository
