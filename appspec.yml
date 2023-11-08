@@ -6,7 +6,7 @@ hooks:
       timeout: 30
   AfterInstall:
     - location: scripts/pull_container.sh
-      timeout: 30
+      timeout: 120
   ApplicationStart:
     - location: scripts/start_container.sh
       timeout: 30
