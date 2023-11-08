@@ -10,24 +10,27 @@ ENV MIX_ENV=dev \
 # Create and set the working directory
 WORKDIR /app
 
-# Update the system and install essential build tools
-RUN apt-get update && apt-get install -y build-essential inotify-tools && apt-get clean 
-
-# Copy the current directory contents into the container at /app
-COPY . .
-
 # Install Hex and Rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
 
+# Install system dependencies and clean up
+RUN apt-get update && \
+    apt-get install -y build-essential inotify-tools && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy only the necessary project files
+COPY mix.exs mix.lock ./
+COPY config config/
+COPY lib lib/
+COPY priv priv/
+COPY test test/
+
 # Fetch and compile the project dependencies
-RUN mix deps.get && \
-    mix deps.compile
+RUN mix do deps.get, deps.compile
 
-# Remove any existing compiled files and the _build directory (Optional)
-RUN rm -rf _build
-
-# Compile the project again
+# Compile the project
 RUN mix compile
 
 # Expose port 4000
@@ -37,4 +40,4 @@ EXPOSE 4000
 RUN mix phx.digest
 
 # Run the Phoenix server
-CMD ["sh", "-c", "mix phx.server"]
+CMD ["mix", "phx.server"]
