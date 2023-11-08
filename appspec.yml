@@ -1,22 +1,15 @@
 version: 0.0
 os: linux
-files:
-  - source: /
-    destination: /var/www/html/quest
 hooks:
   ApplicationStop:
-    - location: scripts/docker-stop.sh
-      timeout: 300
-      runas: root
-  BeforeInstall:
-    - location: scripts/docker-prune.sh
-      timeout: 300
-      runas: root
+    - location: scripts/stop_container.sh
+      timeout: 30
   AfterInstall:
-    - location: scripts/docker-pull.sh
-      timeout: 300
-      runas: root
+    - location: scripts/pull_container.sh
+      timeout: 30
   ApplicationStart:
-    - location: scripts/docker-run.sh
-      timeout: 300
-      runas: root
+    - location: scripts/start_container.sh
+      timeout: 30
+  ValidateService:
+    - location: scripts/check_service.sh
+      timeout: 30
