@@ -8,7 +8,7 @@ defmodule QuestApiV21Web.BusinessController do
 
   def index(conn, _params) do
     businesses = Businesses.list_businesses()
-    |> QuestApiV21.Repo.preload([:hosts, :quests, :collection_points, :collectors])
+    |> QuestApiV21.Repo.preload([:hosts, :quests, :badges, :collectors])
 
 
     render(conn, :index, businesses: businesses)
@@ -16,7 +16,7 @@ defmodule QuestApiV21Web.BusinessController do
 
   def create(conn, %{"business" => business_params}) do
     with {:ok, %Business{} = business} <- Businesses.create_business(business_params) do
-      business = QuestApiV21.Repo.preload(business, [:hosts, :quests, :collection_points, :collectors])
+      business = QuestApiV21.Repo.preload(business, [:hosts, :quests, :badges, :collectors])
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/businesses/#{business}")
@@ -26,7 +26,7 @@ defmodule QuestApiV21Web.BusinessController do
 
   def show(conn, %{"id" => id}) do
     business = Businesses.get_business!(id)
-    |> QuestApiV21.Repo.preload([:hosts, :quests, :collection_points, :collectors])
+    |> QuestApiV21.Repo.preload([:hosts, :quests, :badges, :collectors])
 
     render(conn, :show, business: business)
   end

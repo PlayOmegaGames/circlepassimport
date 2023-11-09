@@ -1,9 +1,9 @@
-defmodule QuestApiV21Web.Collection_PointControllerTest do
+defmodule QuestApiV21Web.BadgeControllerTest do
   use QuestApiV21Web.ConnCase
 
-  import QuestApiV21.Collection_PointsFixtures
+  import QuestApiV21.BadgesFixtures
 
-  alias QuestApiV21.Collection_Points.Collection_Point
+  alias QuestApiV21.Badges.Badge
 
   @create_attrs %{
     badge_description: "some badge_description",
@@ -26,18 +26,18 @@ defmodule QuestApiV21Web.Collection_PointControllerTest do
   end
 
   describe "index" do
-    test "lists all collection_point", %{conn: conn} do
-      conn = get(conn, ~p"/api/collection_point")
+    test "lists all badge", %{conn: conn} do
+      conn = get(conn, ~p"/api/badge")
       assert json_response(conn, 200)["data"] == []
     end
   end
 
-  describe "create collection__point" do
-    test "renders collection__point when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/collection_point", collection__point: @create_attrs)
+  describe "create badge" do
+    test "renders badge when data is valid", %{conn: conn} do
+      conn = post(conn, ~p"/api/badge", badge: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get(conn, ~p"/api/collection_point/#{id}")
+      conn = get(conn, ~p"/api/badge/#{id}")
 
       assert %{
                "id" => ^id,
@@ -50,19 +50,19 @@ defmodule QuestApiV21Web.Collection_PointControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/collection_point", collection__point: @invalid_attrs)
+      conn = post(conn, ~p"/api/badge", badge: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
-  describe "update collection__point" do
-    setup [:create_collection__point]
+  describe "update badge" do
+    setup [:create_badge]
 
-    test "renders collection__point when data is valid", %{conn: conn, collection__point: %Collection_Point{id: id} = collection__point} do
-      conn = put(conn, ~p"/api/collection_point/#{collection__point}", collection__point: @update_attrs)
+    test "renders badge when data is valid", %{conn: conn, badge: %Badge{id: id} = badge} do
+      conn = put(conn, ~p"/api/badge/#{badge}", badge: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-      conn = get(conn, ~p"/api/collection_point/#{id}")
+      conn = get(conn, ~p"/api/badge/#{id}")
 
       assert %{
                "id" => ^id,
@@ -74,27 +74,27 @@ defmodule QuestApiV21Web.Collection_PointControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, collection__point: collection__point} do
-      conn = put(conn, ~p"/api/collection_point/#{collection__point}", collection__point: @invalid_attrs)
+    test "renders errors when data is invalid", %{conn: conn, badge: badge} do
+      conn = put(conn, ~p"/api/badge/#{badge}", badge: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
-  describe "delete collection__point" do
-    setup [:create_collection__point]
+  describe "delete badge" do
+    setup [:create_badge]
 
-    test "deletes chosen collection__point", %{conn: conn, collection__point: collection__point} do
-      conn = delete(conn, ~p"/api/collection_point/#{collection__point}")
+    test "deletes chosen badge", %{conn: conn, badge: badge} do
+      conn = delete(conn, ~p"/api/badge/#{badge}")
       assert response(conn, 204)
 
       assert_error_sent 404, fn ->
-        get(conn, ~p"/api/collection_point/#{collection__point}")
+        get(conn, ~p"/api/badge/#{badge}")
       end
     end
   end
 
-  defp create_collection__point(_) do
-    collection__point = collection__point_fixture()
-    %{collection__point: collection__point}
+  defp create_badge(_) do
+    badge = badge_fixture()
+    %{badge: badge}
   end
 end

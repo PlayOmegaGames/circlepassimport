@@ -1,6 +1,6 @@
 defmodule QuestApiV21Web.CollectorJSON do
   alias QuestApiV21.Collectors.Collector
-  alias QuestApiV21.Collection_Points.Collection_Point
+  alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Quests.Quest
 
   @doc """
@@ -17,13 +17,13 @@ defmodule QuestApiV21Web.CollectorJSON do
     %{data: data(collector)}
   end
 
-  defp data(%Collector{collection_points: collection_points, quests: quests} = collector) do
+  defp data(%Collector{badges: badges, quests: quests} = collector) do
     %{
       id: collector.id,
       name: collector.name,
       coordinates: collector.coordinates,
       height: collector.height,
-      collection_points: collection_points_data(collection_points),
+      badges: badges_data(badges),
       quest_ids: quests_data(quests)
     }
   end
@@ -36,8 +36,8 @@ defmodule QuestApiV21Web.CollectorJSON do
     end)
   end
 
-  defp collection_points_data(collection_points) do
-    Enum.map(collection_points, fn %Collection_Point{id: id, name: name} ->
+  defp badges_data(badges) do
+    Enum.map(badges, fn %Badge{id: id, name: name} ->
       %{
         id: id,
         name: name

@@ -7,7 +7,7 @@ defmodule QuestApiV21.Scans.Scan do
   schema "scans" do
     belongs_to :business, QuestApiV21.Businesses.Business
     belongs_to :account, QuestApiV21.Accounts.Account
-    belongs_to :collection_point, QuestApiV21.Collection_Points.Collection_Point
+    belongs_to :badge, QuestApiV21.Badges.Badge
 
 
 
@@ -17,7 +17,7 @@ defmodule QuestApiV21.Scans.Scan do
   @doc false
   def changeset(scan, attrs) do
     scan
-    |> cast(attrs, [:business_id, :account_id, :collection_point_id])
+    |> cast(attrs, [:business_id, :account_id, :badge_id])
     |> validate_required([])
   end
 end

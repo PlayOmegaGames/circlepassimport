@@ -20,7 +20,7 @@ defmodule QuestApiV21Web.ScanJSON do
       id: scan.id,
       business_id: scan.business_id,
       account_id: scan.account_id,
-      collection_point_id: scan.collection_point_id
+      badge_id: scan.badge_id
     }
   end
 end

@@ -2,11 +2,11 @@ defmodule QuestApiV21.Repo.Migrations.CreateAddAssocaitionFromPointsToBusiness d
   use Ecto.Migration
 
   def change do
-    alter table(:collection_point) do
+    alter table(:badge) do
       add :business_id, references(:businesses, type: :binary_id, on_delete: :nothing)
     end
 
-    create index(:collection_point, [:business_id])
+    create index(:badge, [:business_id])
 
   end
 end

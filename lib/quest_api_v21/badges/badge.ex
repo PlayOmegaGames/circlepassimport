@@ -1,11 +1,11 @@
-defmodule QuestApiV21.Collection_Points.Collection_Point do
+defmodule QuestApiV21.Badges.Badge do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "collection_point" do
+  schema "badge" do
     field :badge_description, :string
     field :image, :string
     field :name, :string
@@ -20,10 +20,10 @@ defmodule QuestApiV21.Collection_Points.Collection_Point do
   end
 
   @doc false
-  def changeset(collection__point, attrs) do
+  def changeset(badge, attrs) do
     accounts = prepare_accounts(attrs)  # Fetch and validate accounts based on IDs
 
-    collection__point
+    badge
     |> cast(attrs, [:name, :image, :scans, :redirect_url, :badge_description, :business_id, :quest_id, :collector_id])
     |> validate_required([:name, :image, :redirect_url])
     |> put_assoc(:accounts, accounts)  # Use put_assoc for existing accounts

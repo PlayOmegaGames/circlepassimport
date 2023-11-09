@@ -10,24 +10,24 @@ defmodule QuestApiV21.Accounts.Account do
     field :hashed_password, :string
     field :password, :string, virtual: true  # Virtual field for the plaintext password so that it isn't stored in the database
     field :name, :string
-    many_to_many :collection_points, QuestApiV21.Collection_Points.Collection_Point, join_through: "collectionpoints_accounts", join_keys: [account_id: :id, collectionpoint_id: :id]
+    many_to_many :badges, QuestApiV21.Badges.Badge, join_through: "collectionpoints_accounts", join_keys: [account_id: :id, collectionpoint_id: :id]
 
     timestamps()
   end
 
   @doc false
   def changeset(account, attrs) do
-    collection_points = prepare_collection_points(attrs)  # Fetch and validate collection_points based on IDs
+    badges = prepare_badges(attrs)  # Fetch and validate badges based on IDs
 
     account
     |> cast(attrs, [:name, :email, :hashed_password, :password])
     |> validate_required([:name, :email])
-    |> put_assoc(:collection_points, collection_points)
+    |> put_assoc(:badges, badges)
   end
 
 
-  defp prepare_collection_points(attrs) do
-    collection_point_ids = Map.get(attrs, "collection_points", [])
-    QuestApiV21.Repo.all(from cp in QuestApiV21.Collection_Points.Collection_Point, where: cp.id in ^collection_point_ids)
+  defp prepare_badges(attrs) do
+    badge_ids = Map.get(attrs, "badges", [])
+    QuestApiV21.Repo.all(from cp in QuestApiV21.Badges.Badge, where: cp.id in ^badge_ids)
   end
 end

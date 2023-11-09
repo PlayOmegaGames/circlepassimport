@@ -8,14 +8,14 @@ defmodule QuestApiV21Web.CollectorController do
 
   def index(conn, _params) do
     collectors = Collectors.list_collectors()
-    |> QuestApiV21.Repo.preload([:collection_points, :quests])
+    |> QuestApiV21.Repo.preload([:badges, :quests])
 
     render(conn, :index, collectors: collectors)
   end
 
   def create(conn, %{"collector" => collector_params}) do
     with {:ok, %Collector{} = collector} <- Collectors.create_collector(collector_params) do
-      collector = QuestApiV21.Repo.preload(collector, [:quests, :collection_points])
+      collector = QuestApiV21.Repo.preload(collector, [:quests, :badges])
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/collectors/#{collector}")
@@ -25,7 +25,7 @@ defmodule QuestApiV21Web.CollectorController do
 
   def show(conn, %{"id" => id}) do
     collector = Collectors.get_collector!(id)
-    |> QuestApiV21.Repo.preload([:collection_points, :quests])
+    |> QuestApiV21.Repo.preload([:badges, :quests])
 
 
     render(conn, :show, collector: collector)

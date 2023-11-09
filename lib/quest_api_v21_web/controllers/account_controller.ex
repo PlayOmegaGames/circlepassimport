@@ -14,7 +14,7 @@ defmodule QuestApiV21Web.AccountController do
   def index(conn, _params) do
     # Retrieves a list of accounts, preloading associated collection points.
     accounts = Accounts.list_accounts()
-    |> QuestApiV21.Repo.preload(:collection_points)
+    |> QuestApiV21.Repo.preload(:badges)
 
     # Renders the index view with the list of accounts.
     render(conn, :index, accounts: accounts)
@@ -27,7 +27,7 @@ defmodule QuestApiV21Web.AccountController do
       # Handles successful account creation.
       {:ok, %Account{} = account} ->
         # Preloads associated collection points for the new account.
-        account = QuestApiV21.Repo.preload(account, [:collection_points])
+        account = QuestApiV21.Repo.preload(account, [:badges])
         # Sets the response status to 201 Created, updates the location header,
         # and renders the show view for the new account.
         conn
@@ -55,7 +55,7 @@ defmodule QuestApiV21Web.AccountController do
   def show(conn, %{"id" => id}) do
     # Retrieves the account by ID, preloading associated collection points.
     account = Accounts.get_account!(id)
-    |> QuestApiV21.Repo.preload(:collection_points)
+    |> QuestApiV21.Repo.preload(:badges)
 
     # Renders the show view for the retrieved account.
     render(conn, :show, account: account)

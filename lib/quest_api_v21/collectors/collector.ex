@@ -9,7 +9,7 @@ defmodule QuestApiV21.Collectors.Collector do
     field :height, :string
     field :name, :string
     belongs_to :business, QuestApiV21.Businesses.Business
-    has_many :collection_points, QuestApiV21.Collection_Points.Collection_Point
+    has_many :badges, QuestApiV21.Badges.Badge
     many_to_many :quests, QuestApiV21.Quests.Quest, join_through: "quests_collectors"
 
     timestamps()

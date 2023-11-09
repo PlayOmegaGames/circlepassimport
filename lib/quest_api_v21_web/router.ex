@@ -39,7 +39,7 @@ defmodule QuestApiV21Web.Router do
     resources "/hosts", HostController
     resources "/businesses", BusinessController
     resources "/quests", QuestController
-    resources "/collection_point", Collection_PointController
+    resources "/badges", BadgeController
     resources "/collectors", CollectorController
     resources "/scans", ScanController
     resources "/accounts", AccountController
