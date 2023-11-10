@@ -1,11 +1,29 @@
 defmodule QuestApiV21.GuardianErrorHandler do
   import Plug.Conn
+  import Phoenix.Controller, only: [json: 2]
 
-  def unauthenticated(conn, _params) do
+  @behaviour Guardian.Plug.ErrorHandler
+
+  # This function matches the callback required by Guardian 2.3.2
+  def auth_error(conn, {type, reason}, _opts) do
+    message = case {type, reason} do
+                {:unauthenticated, :no_claims_provided} ->
+                  "No authentication token provided."
+                {:unauthenticated, :claims_invalid} ->
+                  "Invalid token: #{reason}."
+                {:unauthenticated, :unauthorized} ->
+                  "Unauthorized access: #{reason}."
+                _ ->
+                  "Unknown authentication error."
+              end
+
+    respond_with_error(conn, message)
+  end
+
+  defp respond_with_error(conn, message) do
     conn
     |> put_status(:unauthorized)
-    |> put_resp_content_type("application/json")
-    |> send_resp(200, Jason.encode!(%{error: "You must be authenticated to access this resource."}))
+    |> json(%{error: message})
     |> halt()
   end
 end
