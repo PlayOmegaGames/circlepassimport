@@ -1,108 +1,108 @@
-defmodule QuestApiV21.Businesses do
+defmodule QuestApiV21.Organizations do
   @moduledoc """
-  The Businesses context.
+  The Organizations context.
   """
 
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
 
-  alias QuestApiV21.Businesses.Business
+  alias QuestApiV21.Organizations.Organization
   alias QuestApiV21.Hosts.Host
 
   @doc """
-  Returns the list of businesses.
+  Returns the list of organizations.
 
   ## Examples
 
-      iex> list_businesses()
-      [%Business{}, ...]
+      iex> list_organizations()
+      [%Organization{}, ...]
 
   """
-  def list_businesses do
-    Repo.all(Business)
+  def list_organizations do
+    Repo.all(Organization)
   end
 
   @doc """
-  Gets a single business.
+  Gets a single orgaization.
 
-  Raises `Ecto.NoResultsError` if the Business does not exist.
+  Raises `Ecto.NoResultsError` if the Organization does not exist.
 
   ## Examples
 
-      iex> get_business!(123)
-      %Business{}
+      iex> get_orgaization!(123)
+      %Organization{}
 
-      iex> get_business!(456)
+      iex> get_orgaization!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_business!(id), do: Repo.get!(Business, id)
+  def get_orgaization!(id), do: Repo.get!(Organization, id)
 
   @doc """
-  Creates a business.
+  Creates a orgaization.
 
   ## Examples
 
-      iex> create_business(%{field: value})
-      {:ok, %Business{}}
+      iex> create_orgaization(%{field: value})
+      {:ok, %Organization{}}
 
-      iex> create_business(%{field: bad_value})
+      iex> create_orgaization(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_business(attrs \\ %{}) do
-    %Business{}
-    |> Business.changeset(attrs)
+  def create_orgaization(attrs \\ %{}) do
+    %Organization{}
+    |> Organization.changeset(attrs)
     |> maybe_add_hosts(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a business.
+  Updates a orgaization.
 
   ## Examples
 
-      iex> update_business(business, %{field: new_value})
-      {:ok, %Business{}}
+      iex> update_orgaization(orgaization, %{field: new_value})
+      {:ok, %Organization{}}
 
-      iex> update_business(business, %{field: bad_value})
+      iex> update_orgaization(orgaization, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_business(%Business{} = business, attrs) do
-    business
-    |> Business.changeset(attrs)
+  def update_orgaization(%Organization{} = orgaization, attrs) do
+    orgaization
+    |> Organization.changeset(attrs)
     |> maybe_add_hosts(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a business.
+  Deletes a orgaization.
 
   ## Examples
 
-      iex> delete_business(business)
-      {:ok, %Business{}}
+      iex> delete_orgaization(orgaization)
+      {:ok, %Organization{}}
 
-      iex> delete_business(business)
+      iex> delete_orgaization(orgaization)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_business(%Business{} = business) do
-    Repo.delete(business)
+  def delete_orgaization(%Organization{} = orgaization) do
+    Repo.delete(orgaization)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking business changes.
+  Returns an `%Ecto.Changeset{}` for tracking orgaization changes.
 
   ## Examples
 
-      iex> change_business(business)
-      %Ecto.Changeset{data: %Business{}}
+      iex> change_orgaization(orgaization)
+      %Ecto.Changeset{data: %Organization{}}
 
   """
-  def change_business(%Business{} = business, attrs \\ %{}) do
-    Business.changeset(business, attrs)
+  def change_orgaization(%Organization{} = orgaization, attrs \\ %{}) do
+    Organization.changeset(orgaization, attrs)
   end
 
   defp maybe_add_hosts(changeset, attrs) do

@@ -3,7 +3,7 @@ defmodule QuestApiV21Web.QuestJSON do
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Collectors.Collector
 
-  #alias QuestApiV21.Businesses.Business
+  #alias QuestApiV21.Organizations.Organization
 
   @doc """
   Renders a list of quests.
@@ -30,7 +30,7 @@ defmodule QuestApiV21Web.QuestJSON do
       start_date: quest.start_date,
       end_date: quest.end_date,
       address: quest.address,
-      business_id: quest.business_id,
+      orgaization_id: quest.orgaization_id,
       badges: badges_data(badges),
       collectors: collectors_data(collectors)
 
@@ -55,12 +55,12 @@ defmodule QuestApiV21Web.QuestJSON do
   end
 
   """
-  Useful for displaying more business information
+  Useful for displaying more orgaization information
 
-  defp business_data(%Business{} = business) do
+  defp orgaization_data(%Organization{} = orgaization) do
     %{
-      id: business.id,
-      name: business.name
+      id: orgaization.id,
+      name: orgaization.name
     }
   end
   """

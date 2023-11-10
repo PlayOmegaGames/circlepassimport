@@ -8,14 +8,14 @@ defmodule QuestApiV21Web.HostController do
 
   def index(conn, _params) do
     hosts = Hosts.list_hosts()
-    |> QuestApiV21.Repo.preload(:businesses)
+    |> QuestApiV21.Repo.preload(:organizations)
 
     render(conn, :index, hosts: hosts)
   end
 
   def create(conn, %{"host" => host_params}) do
     with {:ok, %Host{} = host} <- Hosts.create_host(host_params) do
-      host = QuestApiV21.Repo.preload(host, [:businesses])
+      host = QuestApiV21.Repo.preload(host, [:organizations])
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/hosts/#{host}")
@@ -25,7 +25,7 @@ defmodule QuestApiV21Web.HostController do
 
   def show(conn, %{"id" => id}) do
     host = Hosts.get_host!(id)
-    |> QuestApiV21.Repo.preload(:businesses)
+    |> QuestApiV21.Repo.preload(:organizations)
     render(conn, :show, host: host)
   end
 

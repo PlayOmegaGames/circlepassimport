@@ -8,7 +8,7 @@ defmodule QuestApiV21.Hosts.Host do
     field :email, :string
     field :hashed_password, :string
     field :name, :string
-    many_to_many :businesses, QuestApiV21.Businesses.Business, join_through: "hosts_businesses"
+    many_to_many :organizations, QuestApiV21.Organizations.Organization, join_through: "hosts_organizations"
 
     timestamps()
   end
@@ -17,7 +17,7 @@ defmodule QuestApiV21.Hosts.Host do
   def changeset(host, attrs) do
     host
     |> cast(attrs, [:name, :email, :hashed_password])
-    |> cast_assoc(:businesses, with: &QuestApiV21.Businesses.Business.changeset/2)
+    |> cast_assoc(:organizations, with: &QuestApiV21.Organizations.Organization.changeset/2)
     |> validate_required([:name, :email, :hashed_password])
   end
 end

@@ -13,7 +13,7 @@ defmodule QuestApiV21.Quests.Quest do
     field :reward, :string
     field :scans, :integer, default: 0
     field :start_date, :date
-    belongs_to :business, QuestApiV21.Businesses.Business
+    belongs_to :orgaization, QuestApiV21.Organizations.Organization
     has_many :badges, QuestApiV21.Badges.Badge
     many_to_many :collectors, QuestApiV21.Collectors.Collector, join_through: "quests_collectors"
 
@@ -24,11 +24,11 @@ defmodule QuestApiV21.Quests.Quest do
   @doc false
   def changeset(quest, attrs) do
     quest
-    |> cast(attrs, [:name, :scans, :quest_type, :reward, :redemption, :start_date, :end_date, :address, :business_id])
+    |> cast(attrs, [:name, :scans, :quest_type, :reward, :redemption, :start_date, :end_date, :address, :orgaization_id])
     |> validate_required([:name, :reward, :address])
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
     |> cast_assoc(:collectors, with: &QuestApiV21.Collectors.Collector.changeset/2)
 
-    |> assoc_constraint(:business)
+    |> assoc_constraint(:orgaization)
   end
 end

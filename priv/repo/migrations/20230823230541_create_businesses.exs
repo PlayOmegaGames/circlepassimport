@@ -1,8 +1,8 @@
-defmodule QuestApiV21.Repo.Migrations.CreateBusinesses do
+defmodule QuestApiV21.Repo.Migrations.CreateOrganizations do
   use Ecto.Migration
 
   def change do
-    create table(:businesses, primary_key: false) do
+    create table(:organizations, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string
 

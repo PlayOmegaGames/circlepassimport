@@ -7,7 +7,7 @@ defmodule QuestApiV21.Repo.Migrations.CreateCollectors do
       add :name, :string
       add :coordinates, :string
       add :height, :string
-      add :business_id, references(:businesses, type: :binary_id, on_delete: :nothing)
+      add :orgaization_id, references(:organizations, type: :binary_id, on_delete: :nothing)
 
       timestamps()
     end

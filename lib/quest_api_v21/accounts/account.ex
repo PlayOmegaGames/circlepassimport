@@ -10,6 +10,7 @@ defmodule QuestApiV21.Accounts.Account do
     field :hashed_password, :string
     field :password, :string, virtual: true  # Virtual field for the plaintext password so that it isn't stored in the database
     field :name, :string
+    field :role, :string
     many_to_many :badges, QuestApiV21.Badges.Badge, join_through: "collectionpoints_accounts", join_keys: [account_id: :id, collectionpoint_id: :id]
 
     timestamps()
@@ -20,8 +21,9 @@ defmodule QuestApiV21.Accounts.Account do
     badges = prepare_badges(attrs)  # Fetch and validate badges based on IDs
 
     account
-    |> cast(attrs, [:name, :email, :hashed_password, :password])
-    |> validate_required([:name, :email])
+    |> cast(attrs, [:name, :email, :hashed_password, :password, :role])
+    |> validate_required([:name, :email, :role])
+    |> validate_inclusion(:role, ["organization", "audience"])
     |> put_assoc(:badges, badges)
   end
 

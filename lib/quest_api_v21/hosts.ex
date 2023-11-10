@@ -7,7 +7,7 @@ defmodule QuestApiV21.Hosts do
   alias QuestApiV21.Repo
 
   alias QuestApiV21.Hosts.Host
-  alias QuestApiV21.Businesses.Business
+  alias QuestApiV21.Organizations.Organization
 
 
   @doc """
@@ -54,7 +54,7 @@ defmodule QuestApiV21.Hosts do
   def create_host(attrs \\ %{}) do
     %Host{}
     |> Host.changeset(attrs)
-    |> maybe_add_businesses(attrs)
+    |> maybe_add_organizations(attrs)
     |> Repo.insert()
   end
 
@@ -73,7 +73,7 @@ defmodule QuestApiV21.Hosts do
   def update_host(%Host{} = host, attrs) do
     host
     |> Host.changeset(attrs)
-    |> maybe_add_businesses(attrs)
+    |> maybe_add_organizations(attrs)
     |> Repo.update()
   end
 
@@ -106,12 +106,12 @@ defmodule QuestApiV21.Hosts do
     Host.changeset(host, attrs)
   end
 
-  defp maybe_add_businesses(changeset, attrs) do
-    case Map.get(attrs, "business_ids") do
+  defp maybe_add_organizations(changeset, attrs) do
+    case Map.get(attrs, "orgaization_ids") do
       nil -> changeset
-      business_ids ->
-        businesses = Repo.all(from b in Business, where: b.id in ^business_ids)
-        Ecto.Changeset.put_assoc(changeset, :businesses, businesses)
+      orgaization_ids ->
+        organizations = Repo.all(from b in Organization, where: b.id in ^orgaization_ids)
+        Ecto.Changeset.put_assoc(changeset, :organizations, organizations)
     end
   end
 end

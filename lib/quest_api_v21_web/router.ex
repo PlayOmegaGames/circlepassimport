@@ -37,7 +37,7 @@ defmodule QuestApiV21Web.Router do
     pipe_through :authenticated_api
 
     resources "/hosts", HostController
-    resources "/businesses", BusinessController
+    resources "/organizations", OrganizationController
     resources "/quests", QuestController
     resources "/badges", BadgeController
     resources "/collectors", CollectorController
