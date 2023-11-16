@@ -10,7 +10,7 @@ defmodule QuestApiV21.Accounts.Account do
     field :hashed_password, :string
     field :password, :string, virtual: true  # Virtual field for the plaintext password so that it isn't stored in the database
     field :name, :string
-    field :role, :string
+    field :role, :string, default: "default"
     many_to_many :badges, QuestApiV21.Badges.Badge, join_through: "collectionpoints_accounts", join_keys: [account_id: :id, collectionpoint_id: :id]
 
     timestamps()
@@ -22,14 +22,20 @@ defmodule QuestApiV21.Accounts.Account do
 
     account
     |> cast(attrs, [:name, :email, :hashed_password, :password, :role])
-    |> validate_required([:name, :email, :role])
-    |> validate_inclusion(:role, ["organization", "audience"])
+    |> validate_required([:name, :email])
+    |> validate_password_on_email_change(attrs)
     |> put_assoc(:badges, badges)
   end
-
 
   defp prepare_badges(attrs) do
     badge_ids = Map.get(attrs, "badges", [])
     QuestApiV21.Repo.all(from cp in QuestApiV21.Badges.Badge, where: cp.id in ^badge_ids)
   end
+
+  # requires the password when changing email
+  defp validate_password_on_email_change(changeset, %{"email" => email}) when email != changeset.data.email do
+    changeset
+    |> validate_required([:password])
+  end
+  defp validate_password_on_email_change(changeset, _attrs), do: changeset
 end

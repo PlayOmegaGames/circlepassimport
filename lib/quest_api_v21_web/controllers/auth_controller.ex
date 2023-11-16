@@ -5,7 +5,7 @@ defmodule QuestApiV21Web.AuthController do
   alias QuestApiV21.Accounts
 
   # `sign_in` function to handle account authentication
-  def sign_in(conn, %{"account" => %{"email" => email, "password" => password}}) do
+  def sign_in(conn, %{"account" => %{"email" => email, "password" => password, }}) do
     case Repo.get_by(Account, email: email) do
       nil ->
         conn

@@ -35,14 +35,15 @@ defmodule QuestApiV21Web.Router do
 
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
-
     resources "/hosts", HostController
     resources "/organizations", OrganizationController
     resources "/quests", QuestController
     resources "/badges", BadgeController
     resources "/collectors", CollectorController
     resources "/scans", ScanController
-    resources "/accounts", AccountController
+    resources "/accounts", AccountController, except: [:index]
+    get "/*path", ErrorController, :not_found
+
   end
 
 

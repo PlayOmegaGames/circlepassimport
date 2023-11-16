@@ -11,19 +11,6 @@ defmodule QuestApiV21.Accounts do
   alias Bcrypt
 
   @doc """
-  Returns the list of accounts.
-
-  ## Examples
-
-      iex> list_accounts()
-      [%Account{}, ...]
-
-  """
-  def list_accounts do
-    Repo.all(Account)
-  end
-
-  @doc """
   Gets a single account.
 
   Raises `Ecto.NoResultsError` if the Account does not exist.
@@ -86,10 +73,41 @@ defmodule QuestApiV21.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_account(%Account{} = account, attrs) do
-    account  # Use the existing Account struct
-    |> Account.changeset(attrs)  # Pass the struct and attrs to changeset/2
-    |> maybe_add_badges(attrs)
+   # Existing clauses
+   def update_account(%Account{} = account, attrs) do
+    account = Repo.preload(account, :badges)
+    if Map.has_key?(attrs, "email") do
+      verify_and_update_account_with_email(account, attrs)
+    else
+      update_account_changeset(account, attrs)
+    end
+  end
+
+  # Existing clause for when a password is provided
+  def verify_and_update_account_with_email(account, attrs) do
+    # Check if both email and password are provided
+    case {Map.get(attrs, "email"), Map.get(attrs, "password")} do
+      {nil, _} ->
+        # If no email update, proceed with normal update
+        update_account_changeset(account, attrs)
+
+      {_, nil} ->
+        # If email is being updated but no password provided
+        {:error, "Password required for email update"}
+
+      {_, password} ->
+        # If both email and password are provided
+        if Bcrypt.verify_pass(password, account.hashed_password) do
+          update_account_changeset(account, Map.delete(attrs, "password"))
+        else
+          {:error, "Invalid password"}
+        end
+    end
+  end
+
+  defp update_account_changeset(account, attrs) do
+    account
+    |> Account.changeset(attrs)
     |> Repo.update()
   end
 
