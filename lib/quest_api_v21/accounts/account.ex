@@ -23,7 +23,6 @@ defmodule QuestApiV21.Accounts.Account do
     account
     |> cast(attrs, [:name, :email, :hashed_password, :password, :role])
     |> validate_required([:name, :email])
-    |> validate_password_on_email_change(attrs)
     |> put_assoc(:badges, badges)
   end
 
@@ -31,11 +30,4 @@ defmodule QuestApiV21.Accounts.Account do
     badge_ids = Map.get(attrs, "badges", [])
     QuestApiV21.Repo.all(from cp in QuestApiV21.Badges.Badge, where: cp.id in ^badge_ids)
   end
-
-  # requires the password when changing email
-  defp validate_password_on_email_change(changeset, %{"email" => email}) when email != changeset.data.email do
-    changeset
-    |> validate_required([:password])
-  end
-  defp validate_password_on_email_change(changeset, _attrs), do: changeset
 end

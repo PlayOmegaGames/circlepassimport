@@ -14,35 +14,51 @@ defmodule QuestApiV21Web.OrganizationController do
     render(conn, :index, organizations: organizations)
   end
 
-  def create(conn, %{"orgaization" => orgaization_params}) do
-    with {:ok, %Organization{} = orgaization} <- Organizations.create_orgaization(orgaization_params) do
-      orgaization = QuestApiV21.Repo.preload(orgaization, [:hosts, :quests, :badges, :collectors])
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/organizations/#{orgaization}")
-      |> render(:show, orgaization: orgaization)
+  def create(conn, %{"organization" => organization_params}) do
+    case extract_host_id(conn) do
+      nil ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Unable to extract host ID from token"})
+
+      host_id ->
+        with {:ok, %Organization{} = organization} <- Organizations.create_organization(organization_params, host_id) do
+          organization = QuestApiV21.Repo.preload(organization, [:hosts, :quests, :badges, :collectors])
+          conn
+          |> put_status(:created)
+          |> put_resp_header("location", ~p"/api/organizations/#{organization.id}")
+          |> render(:show, organization: organization)
+        end
+    end
+  end
+
+
+  defp extract_host_id(conn) do
+    case Guardian.Plug.current_resource(conn) do
+      nil -> nil
+      host -> host.id
     end
   end
 
   def show(conn, %{"id" => id}) do
-    orgaization = Organizations.get_orgaization!(id)
+    organization = Organizations.get_organization!(id)
     |> QuestApiV21.Repo.preload([:hosts, :quests, :badges, :collectors])
 
-    render(conn, :show, orgaization: orgaization)
+    render(conn, :show, organization: organization)
   end
 
-  def update(conn, %{"id" => id, "orgaization" => orgaization_params}) do
-    orgaization = Organizations.get_orgaization!(id)
+  def update(conn, %{"id" => id, "organization" => organization_params}) do
+    organization = Organizations.get_organization!(id)
 
-    with {:ok, %Organization{} = orgaization} <- Organizations.update_orgaization(orgaization, orgaization_params) do
-      render(conn, :show, orgaization: orgaization)
+    with {:ok, %Organization{} = organization} <- Organizations.update_organization(organization, organization_params) do
+      render(conn, :show, organization: organization)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    orgaization = Organizations.get_orgaization!(id)
+    organization = Organizations.get_organization!(id)
 
-    with {:ok, %Organization{}} <- Organizations.delete_orgaization(orgaization) do
+    with {:ok, %Organization{}} <- Organizations.delete_organization(organization) do
       send_resp(conn, :no_content, "")
     end
   end

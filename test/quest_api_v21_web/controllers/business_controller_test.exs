@@ -24,9 +24,9 @@ defmodule QuestApiV21Web.OrganizationControllerTest do
     end
   end
 
-  describe "create orgaization" do
-    test "renders orgaization when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/organizations", orgaization: @create_attrs)
+  describe "create organization" do
+    test "renders organization when data is valid", %{conn: conn} do
+      conn = post(conn, ~p"/api/organizations", organization: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, ~p"/api/organizations/#{id}")
@@ -38,16 +38,16 @@ defmodule QuestApiV21Web.OrganizationControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/organizations", orgaization: @invalid_attrs)
+      conn = post(conn, ~p"/api/organizations", organization: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
-  describe "update orgaization" do
-    setup [:create_orgaization]
+  describe "update organization" do
+    setup [:create_organization]
 
-    test "renders orgaization when data is valid", %{conn: conn, orgaization: %Organization{id: id} = orgaization} do
-      conn = put(conn, ~p"/api/organizations/#{orgaization}", orgaization: @update_attrs)
+    test "renders organization when data is valid", %{conn: conn, organization: %Organization{id: id} = organization} do
+      conn = put(conn, ~p"/api/organizations/#{organization}", organization: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/organizations/#{id}")
@@ -58,27 +58,27 @@ defmodule QuestApiV21Web.OrganizationControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, orgaization: orgaization} do
-      conn = put(conn, ~p"/api/organizations/#{orgaization}", orgaization: @invalid_attrs)
+    test "renders errors when data is invalid", %{conn: conn, organization: organization} do
+      conn = put(conn, ~p"/api/organizations/#{organization}", organization: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
-  describe "delete orgaization" do
-    setup [:create_orgaization]
+  describe "delete organization" do
+    setup [:create_organization]
 
-    test "deletes chosen orgaization", %{conn: conn, orgaization: orgaization} do
-      conn = delete(conn, ~p"/api/organizations/#{orgaization}")
+    test "deletes chosen organization", %{conn: conn, organization: organization} do
+      conn = delete(conn, ~p"/api/organizations/#{organization}")
       assert response(conn, 204)
 
       assert_error_sent 404, fn ->
-        get(conn, ~p"/api/organizations/#{orgaization}")
+        get(conn, ~p"/api/organizations/#{organization}")
       end
     end
   end
 
-  defp create_orgaization(_) do
-    orgaization = orgaization_fixture()
-    %{orgaization: orgaization}
+  defp create_organization(_) do
+    organization = organization_fixture()
+    %{organization: organization}
   end
 end

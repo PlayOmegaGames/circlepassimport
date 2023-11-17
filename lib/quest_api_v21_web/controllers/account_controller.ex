@@ -10,6 +10,7 @@ defmodule QuestApiV21Web.AccountController do
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController
 
+
   # Defines the create action to create a new account.
   def create(conn, %{"account" => account_params}) do
     # Attempts to create a new account with the provided parameters.
@@ -17,7 +18,7 @@ defmodule QuestApiV21Web.AccountController do
       # Handles successful account creation.
       {:ok, %Account{} = account} ->
         # Preloads associated collection points for the new account.
-        account = QuestApiV21.Repo.preload(account, [:badges])
+        account = QuestApiV21.Repo.preload(account, [:collection_points])
         # Sets the response status to 201 Created, updates the location header,
         # and renders the show view for the new account.
         conn
@@ -45,53 +46,25 @@ defmodule QuestApiV21Web.AccountController do
   def show(conn, %{"id" => id}) do
     # Retrieves the account by ID, preloading associated collection points.
     account = Accounts.get_account!(id)
-    |> QuestApiV21.Repo.preload(:badges)
+    |> QuestApiV21.Repo.preload(:collection_points)
 
     # Renders the show view for the retrieved account.
     render(conn, :show, account: account)
   end
 
+  # Defines the update action to update an existing account.
+  def update(conn, %{"id" => id, "account" => account_params}) do
+    # Retrieves the account by ID.
+    account = Accounts.get_account!(id)
 
-  defp update_account_with_verification(account, params) do
-    # Ensure params are trimmed and correctly handled
-    params = Enum.into(params, %{}, fn {key, value} -> {String.trim(key), value} end)
-
-    case {Map.get(params, "email"), Map.get(params, "password")} do
-      {nil, _} ->
-        # If no email update, just update normally
-        Accounts.update_account(account, params)
-
-      {_, nil} ->
-        # If email is being updated but no password provided
-        {:error, "Password required for email update"}
-
-      {email, password} ->
-        # If both email and password are provided
-        if Bcrypt.verify_pass(password, account.hashed_password) do
-          Accounts.update_account(account, params)
-        else
-          {:error, :invalid_password}
-        end
+    # Attempts to update the account with the provided parameters.
+    with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, account_params) do
+      # Renders the show view for the updated account.
+      render(conn, :show, account: updated_account)
     end
   end
-
-
-
-  defp update_account_with_verification(account, %{"email" => _, "password" => password} = params) do
-    if Bcrypt.verify_pass(password, account.hashed_password) do
-      Accounts.update_account(account, params)
-    else
-      {:error, :invalid_password}
-    end
-  end
-  defp update_account_with_verification(account, params) do
-    # If no email update, just update normally
-    Accounts.update_account(account, params)
-  end
-
 
   # Defines the delete action to delete an existing account.
-  @spec delete(any(), map()) :: any()
   def delete(conn, %{"id" => id}) do
     # Retrieves the account by ID.
     account = Accounts.get_account!(id)

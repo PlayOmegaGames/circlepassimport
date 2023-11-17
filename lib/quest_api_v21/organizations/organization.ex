@@ -15,8 +15,8 @@ defmodule QuestApiV21.Organizations.Organization do
   end
 
   @doc false
-  def changeset(orgaization, attrs) do
-    orgaization
+  def changeset(organization, attrs) do
+    organization
     |> cast(attrs, [:name])
     |> cast_assoc(:hosts, with: &QuestApiV21.Hosts.Host.changeset/2)
     |> validate_required([:name])

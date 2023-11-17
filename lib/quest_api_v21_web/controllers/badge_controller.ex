@@ -8,7 +8,7 @@ defmodule QuestApiV21Web.BadgeController do
 
   def index(conn, _params) do
     badge = Badges.list_badge()
-    |> QuestApiV21.Repo.preload([:orgaization, :accounts])
+    |> QuestApiV21.Repo.preload([:organization, :accounts])
 
     render(conn, :index, badge: badge)
   end
@@ -25,7 +25,7 @@ defmodule QuestApiV21Web.BadgeController do
 
   def show(conn, %{"id" => id}) do
     badge = Badges.get_badge!(id)
-    |> QuestApiV21.Repo.preload([:orgaization, :accounts])
+    |> QuestApiV21.Repo.preload([:organization, :accounts])
 
 
     render(conn, :show, badge: badge)

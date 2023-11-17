@@ -19,8 +19,8 @@ defmodule QuestApiV21.Hosts do
       [%Host{}, ...]
 
   """
-  def list_hosts do
-    Repo.all(Host)
+  def list_hosts(id) do
+    Repo.get(Host, id)
   end
 
   @doc """
@@ -52,12 +52,27 @@ defmodule QuestApiV21.Hosts do
 
   """
   def create_host(attrs \\ %{}) do
-    %Host{}
-    |> Host.changeset(attrs)
-    |> maybe_add_organizations(attrs)
-    |> Repo.insert()
+    case get_host_by_email(attrs["email"]) do
+      nil ->
+        updated_attrs = attrs |> put_password_hash()
+        %Host{}
+        |> Host.changeset(updated_attrs)
+        |> maybe_add_organizations(attrs)
+        |> Repo.insert()
+
+      _existing_host ->
+        {:error, "A host with this email already exists"}
+    end
   end
 
+  defp get_host_by_email(email) when is_binary(email) do
+    Repo.get_by(Host, email: email)
+  end
+
+  defp put_password_hash(%{"password" => password} = attrs) do
+    Map.put(attrs, "hashed_password", Bcrypt.hash_pwd_salt(password))
+  end
+  defp put_password_hash(attrs), do: attrs
   @doc """
   Updates a host.
 
@@ -107,10 +122,10 @@ defmodule QuestApiV21.Hosts do
   end
 
   defp maybe_add_organizations(changeset, attrs) do
-    case Map.get(attrs, "orgaization_ids") do
+    case Map.get(attrs, "organization_ids") do
       nil -> changeset
-      orgaization_ids ->
-        organizations = Repo.all(from b in Organization, where: b.id in ^orgaization_ids)
+      organization_ids ->
+        organizations = Repo.all(from b in Organization, where: b.id in ^organization_ids)
         Ecto.Changeset.put_assoc(changeset, :organizations, organizations)
     end
   end

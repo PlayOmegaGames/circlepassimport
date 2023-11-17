@@ -24,7 +24,7 @@ defmodule QuestApiV21Web.BadgeJSON do
       scans: badge.scans,
       redirect_url: badge.redirect_url,
       badge_description: badge.badge_description,
-      orgaization_id: badge.orgaization_id,
+      organization_id: badge.organization_id,
       quest_id: badge.quest_id,
       collector_id: badge.collector_id,
       account_ids: accounts_data(accounts)

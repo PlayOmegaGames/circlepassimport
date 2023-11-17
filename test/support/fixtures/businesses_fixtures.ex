@@ -5,16 +5,16 @@ defmodule QuestApiV21.OrganizationsFixtures do
   """
 
   @doc """
-  Generate a orgaization.
+  Generate a organization.
   """
-  def orgaization_fixture(attrs \\ %{}) do
-    {:ok, orgaization} =
+  def organization_fixture(attrs \\ %{}) do
+    {:ok, organization} =
       attrs
       |> Enum.into(%{
         name: "some name"
       })
-      |> QuestApiV21.Organizations.create_orgaization()
+      |> QuestApiV21.Organizations.create_organization()
 
-    orgaization
+    organization
   end
 end

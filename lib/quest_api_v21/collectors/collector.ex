@@ -8,7 +8,7 @@ defmodule QuestApiV21.Collectors.Collector do
     field :coordinates, :string
     field :height, :string
     field :name, :string
-    belongs_to :orgaization, QuestApiV21.Organizations.Organization
+    belongs_to :organization, QuestApiV21.Organizations.Organization
     has_many :badges, QuestApiV21.Badges.Badge
     many_to_many :quests, QuestApiV21.Quests.Quest, join_through: "quests_collectors"
 
@@ -18,7 +18,7 @@ defmodule QuestApiV21.Collectors.Collector do
   @doc false
   def changeset(collector, attrs) do
     collector
-    |> cast(attrs, [:name, :coordinates, :height, :orgaization_id])
+    |> cast(attrs, [:name, :coordinates, :height, :organization_id])
     |> validate_required([:name])
     |> cast_assoc(:quests, with: &QuestApiV21.Quests.Quest.changeset/2)
 

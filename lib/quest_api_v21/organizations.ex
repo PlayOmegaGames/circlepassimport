@@ -23,86 +23,89 @@ defmodule QuestApiV21.Organizations do
   end
 
   @doc """
-  Gets a single orgaization.
+  Gets a single organization.
 
   Raises `Ecto.NoResultsError` if the Organization does not exist.
 
   ## Examples
 
-      iex> get_orgaization!(123)
+      iex> get_organization!(123)
       %Organization{}
 
-      iex> get_orgaization!(456)
+      iex> get_organization!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_orgaization!(id), do: Repo.get!(Organization, id)
+  def get_organization!(id), do: Repo.get!(Organization, id)
 
   @doc """
-  Creates a orgaization.
+  Creates a organization.
 
   ## Examples
 
-      iex> create_orgaization(%{field: value})
+      iex> create_organization(%{field: value})
       {:ok, %Organization{}}
 
-      iex> create_orgaization(%{field: bad_value})
+      iex> create_organization(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_orgaization(attrs \\ %{}) do
+  def create_organization(attrs \\ %{}, host_id) do
+    host = Repo.get!(Host, host_id)
+
     %Organization{}
     |> Organization.changeset(attrs)
-    |> maybe_add_hosts(attrs)
+    |> Ecto.Changeset.put_assoc(:hosts, [host])
     |> Repo.insert()
   end
 
+
   @doc """
-  Updates a orgaization.
+  Updates a organization.
 
   ## Examples
 
-      iex> update_orgaization(orgaization, %{field: new_value})
+      iex> update_organization(organization, %{field: new_value})
       {:ok, %Organization{}}
 
-      iex> update_orgaization(orgaization, %{field: bad_value})
+      iex> update_organization(organization, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_orgaization(%Organization{} = orgaization, attrs) do
-    orgaization
+  def update_organization(%Organization{} = organization, attrs) do
+    organization
     |> Organization.changeset(attrs)
     |> maybe_add_hosts(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a orgaization.
+  Deletes a organization.
 
   ## Examples
 
-      iex> delete_orgaization(orgaization)
+      iex> delete_organization(organization)
       {:ok, %Organization{}}
 
-      iex> delete_orgaization(orgaization)
+      iex> delete_organization(organization)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_orgaization(%Organization{} = orgaization) do
-    Repo.delete(orgaization)
+  def delete_organization(%Organization{} = organization) do
+    Repo.delete(organization)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking orgaization changes.
+  Returns an `%Ecto.Changeset{}` for tracking organization changes.
 
   ## Examples
 
-      iex> change_orgaization(orgaization)
+      iex> change_organization(organization)
       %Ecto.Changeset{data: %Organization{}}
 
   """
-  def change_orgaization(%Organization{} = orgaization, attrs \\ %{}) do
-    Organization.changeset(orgaization, attrs)
+  def change_organization(%Organization{} = organization, attrs \\ %{}) do
+    Organization.changeset(organization, attrs)
   end
 
   defp maybe_add_hosts(changeset, attrs) do

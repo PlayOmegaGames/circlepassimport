@@ -9,20 +9,20 @@ defmodule QuestApiV21Web.OrganizationJSON do
   Renders a list of organizations.
   """
   def index(%{organizations: organizations}) do
-    %{data: for(orgaization <- organizations, do: data(orgaization))}
+    %{data: for(organization <- organizations, do: data(organization))}
   end
 
   @doc """
-  Renders a single orgaization.
+  Renders a single organization.
   """
-  def show(%{orgaization: orgaization}) do
-    %{data: data(orgaization)}
+  def show(%{organization: organization}) do
+    %{data: data(organization)}
   end
 
-  defp data(%Organization{hosts: hosts, quests: quests, badges: badges, collectors: collectors} = orgaization) do
+  defp data(%Organization{hosts: hosts, quests: quests, badges: badges, collectors: collectors} = organization) do
     %{
-      id: orgaization.id,
-      name: orgaization.name,
+      id: organization.id,
+      name: organization.name,
       hosts: hosts_data(hosts),
       quests: quests_data(quests),
       badges: badges_data(badges),

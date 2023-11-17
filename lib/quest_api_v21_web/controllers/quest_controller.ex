@@ -8,7 +8,7 @@ defmodule QuestApiV21Web.QuestController do
 
   def index(conn, _params) do
     quests = Quests.list_quests()
-    |> QuestApiV21.Repo.preload([:orgaization, :badges, :collectors])
+    |> QuestApiV21.Repo.preload([:organization, :badges, :collectors])
 
 
     render(conn, :index, quests: quests)
@@ -16,7 +16,7 @@ defmodule QuestApiV21Web.QuestController do
 
   def create(conn, %{"quest" => quest_params}) do
     with {:ok, %Quest{} = quest} <- Quests.create_quest(quest_params) do
-      quest = QuestApiV21.Repo.preload(quest, [:orgaization, :badges, :collectors])
+      quest = QuestApiV21.Repo.preload(quest, [:organization, :badges, :collectors])
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/quests/#{quest}")
@@ -26,7 +26,7 @@ defmodule QuestApiV21Web.QuestController do
 
   def show(conn, %{"id" => id}) do
     quest = Quests.get_quest!(id)
-    |> QuestApiV21.Repo.preload([:orgaization, :badges, :collectors])
+    |> QuestApiV21.Repo.preload([:organization, :badges, :collectors])
 
 
     render(conn, :show, quest: quest)

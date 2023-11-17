@@ -30,7 +30,7 @@ defmodule QuestApiV21Web.QuestJSON do
       start_date: quest.start_date,
       end_date: quest.end_date,
       address: quest.address,
-      orgaization_id: quest.orgaization_id,
+      organization_id: quest.organization_id,
       badges: badges_data(badges),
       collectors: collectors_data(collectors)
 
@@ -55,12 +55,12 @@ defmodule QuestApiV21Web.QuestJSON do
   end
 
   """
-  Useful for displaying more orgaization information
+  Useful for displaying more organization information
 
-  defp orgaization_data(%Organization{} = orgaization) do
+  defp organization_data(%Organization{} = organization) do
     %{
-      id: orgaization.id,
-      name: orgaization.name
+      id: organization.id,
+      name: organization.name
     }
   end
   """

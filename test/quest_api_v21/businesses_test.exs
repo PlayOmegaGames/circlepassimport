@@ -14,78 +14,78 @@ defmodule QuestApiV21.OrganizationsTest do
     @invalid_attrs %{name: nil}
 
     test "list_organizations/0 returns all organizations" do
-      orgaization = orgaization_fixture()
-      assert Organizations.list_organizations() == [orgaization]
+      organization = organization_fixture()
+      assert Organizations.list_organizations() == [organization]
     end
 
-    test "get_orgaization!/1 returns the orgaization with given id" do
-      orgaization = orgaization_fixture()
-      assert Organizations.get_orgaization!(orgaization.id) == orgaization
+    test "get_organization!/1 returns the organization with given id" do
+      organization = organization_fixture()
+      assert Organizations.get_organization!(organization.id) == organization
     end
 
-    test "create_orgaization/1 with valid data creates a orgaization" do
+    test "create_organization/1 with valid data creates a organization" do
       valid_attrs = %{name: "some name"}
 
-      assert {:ok, %Organization{} = orgaization} = Organizations.create_orgaization(valid_attrs)
-      assert orgaization.name == "some name"
+      assert {:ok, %Organization{} = organization} = Organizations.create_organization(valid_attrs)
+      assert organization.name == "some name"
     end
 
-    test "create_orgaization/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Organizations.create_orgaization(@invalid_attrs)
+    test "create_organization/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Organizations.create_organization(@invalid_attrs)
     end
 
-    test "update_orgaization/2 with valid data updates the orgaization" do
-      orgaization = orgaization_fixture()
+    test "update_organization/2 with valid data updates the organization" do
+      organization = organization_fixture()
       update_attrs = %{name: "some updated name"}
 
-      assert {:ok, %Organization{} = orgaization} = Organizations.update_orgaization(orgaization, update_attrs)
-      assert orgaization.name == "some updated name"
+      assert {:ok, %Organization{} = organization} = Organizations.update_organization(organization, update_attrs)
+      assert organization.name == "some updated name"
     end
 
-    test "update_orgaization/2 with invalid data returns error changeset" do
-      orgaization = orgaization_fixture()
-      assert {:error, %Ecto.Changeset{}} = Organizations.update_orgaization(orgaization, @invalid_attrs)
-      assert orgaization == Organizations.get_orgaization!(orgaization.id)
+    test "update_organization/2 with invalid data returns error changeset" do
+      organization = organization_fixture()
+      assert {:error, %Ecto.Changeset{}} = Organizations.update_organization(organization, @invalid_attrs)
+      assert organization == Organizations.get_organization!(organization.id)
     end
 
-    test "delete_orgaization/1 deletes the orgaization" do
-      orgaization = orgaization_fixture()
-      assert {:ok, %Organization{}} = Organizations.delete_orgaization(orgaization)
-      assert_raise Ecto.NoResultsError, fn -> Organizations.get_orgaization!(orgaization.id) end
+    test "delete_organization/1 deletes the organization" do
+      organization = organization_fixture()
+      assert {:ok, %Organization{}} = Organizations.delete_organization(organization)
+      assert_raise Ecto.NoResultsError, fn -> Organizations.get_organization!(organization.id) end
     end
 
-    test "change_orgaization/1 returns a orgaization changeset" do
-      orgaization = orgaization_fixture()
-      assert %Ecto.Changeset{} = Organizations.change_orgaization(orgaization)
+    test "change_organization/1 returns a organization changeset" do
+      organization = organization_fixture()
+      assert %Ecto.Changeset{} = Organizations.change_organization(organization)
     end
   end
 
   describe "many-to-many association between hosts and organizations" do
-    test "associates a host with a orgaization" do
+    test "associates a host with a organization" do
       # Create a host
       host_changeset = Host.changeset(%Host{}, %{name: "Host Name", email: "host@example.com", hashed_password: "password"})
       {:ok, host} = Repo.insert(host_changeset)
 
-      # Create a orgaization
-      orgaization_changeset = Organization.changeset(%Organization{}, %{name: "Organization Name"})
-      {:ok, orgaization} = Repo.insert(orgaization_changeset)
+      # Create a organization
+      organization_changeset = Organization.changeset(%Organization{}, %{name: "Organization Name"})
+      {:ok, organization} = Repo.insert(organization_changeset)
 
-      # Preload the hosts association for the orgaization
-      orgaization = Repo.preload(orgaization, :hosts)
+      # Preload the hosts association for the organization
+      organization = Repo.preload(organization, :hosts)
 
-      # Associate the host with the orgaization
-      intermediate_changeset = Ecto.Changeset.change(orgaization)
-      updated_orgaization_changeset = Ecto.Changeset.put_assoc(intermediate_changeset, :hosts, [host])
-      {:ok, updated_orgaization} = Repo.update(updated_orgaization_changeset)
+      # Associate the host with the organization
+      intermediate_changeset = Ecto.Changeset.change(organization)
+      updated_organization_changeset = Ecto.Changeset.put_assoc(intermediate_changeset, :hosts, [host])
+      {:ok, updated_organization} = Repo.update(updated_organization_changeset)
 
-      # Retrieve the orgaization with the associated hosts
-      orgaization_with_hosts = Repo.get!(Organization, updated_orgaization.id) |> Repo.preload(:hosts)
+      # Retrieve the organization with the associated hosts
+      organization_with_hosts = Repo.get!(Organization, updated_organization.id) |> Repo.preload(:hosts)
 
-      # Assert that the host was associated with the orgaization
-      assert [^host] = orgaization_with_hosts.hosts
+      # Assert that the host was associated with the organization
+      assert [^host] = organization_with_hosts.hosts
 
-      # Print the orgaization record with the associated hosts to the console
-      IO.inspect(orgaization_with_hosts, label: "Organization with Hosts")
+      # Print the organization record with the associated hosts to the console
+      IO.inspect(organization_with_hosts, label: "Organization with Hosts")
     end
   end
 end
