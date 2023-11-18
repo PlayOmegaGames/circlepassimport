@@ -15,6 +15,7 @@ config :quest_api_v21,
 config :quest_api_v21, QuestApiV21.Guardian,
   issuer: "quest_api_v21",
   secret_key: "Lx0gpm2fd8tsJkAkSkTMeTYc26IPuooCtbRhCM6+/Z+JThmul0pidj+lxvx7/uJI"
+  
 config :quest_api_v21, QuestApiV21.HostGuardian,
   issuer: "quest_api_v21",
   secret_key: "Lx0gpm2fd8tsJkAkSkTMeTYc26IPuooCtbRhCM6+/Z+JThmul0pidj+lxvx7/uJI"

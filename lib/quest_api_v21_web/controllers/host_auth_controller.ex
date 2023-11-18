@@ -4,9 +4,8 @@ defmodule QuestApiV21Web.HostAuthController do
   alias QuestApiV21.{HostGuardian, Repo, Hosts.Host}
   alias QuestApiV21.Hosts
 
-  # Function to handle host sign in
   def sign_in_host(conn, %{"host" => %{"email" => email, "password" => password}}) do
-    case Repo.get_by(Host, email: email) do
+    case Repo.get_by(Host, email: email) |> Repo.preload(:organizations) do
       nil ->
         conn
         |> put_status(:not_found)
@@ -23,10 +22,10 @@ defmodule QuestApiV21Web.HostAuthController do
     end
   end
 
-  # Function to handle host sign up
+
   def sign_up_host(conn, %{"host" => host_params}) do
     case Hosts.create_host(host_params) do
-      {:ok, %Host{} = host} ->
+      {:ok, host} ->
         render_jwt_and_host(conn, host)
 
       {:error, error_message} when is_binary(error_message) ->
@@ -35,17 +34,22 @@ defmodule QuestApiV21Web.HostAuthController do
         |> json(%{error: error_message})
     end
   end
-  # Helper function to render JWT token and host information
-  defp render_jwt_and_host(conn, host) do
-    {:ok, jwt, _full_claims} = HostGuardian.encode_and_sign(host)
-    conn
-    |> put_status(:ok)
-    |> put_resp_header("authorization", "Bearer #{jwt}")
-    |> json(%{
-      jwt: jwt,
-      host: %{email: host.email, name: host.name, id: host.id}
-    })
-  end
 
-  
+  defp render_jwt_and_host(conn, host) do
+    case HostGuardian.encode_and_sign(host) do
+      {:ok, jwt, _full_claims} ->
+        conn
+        |> put_status(:ok)
+        |> put_resp_header("authorization", "Bearer #{jwt}")
+        |> json(%{
+          jwt: jwt,
+          host: %{email: host.email, name: host.name, id: host.id}
+        })
+      {:error, reason} ->
+        IO.inspect(reason, label: "Error in JWT encoding")
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Internal server error"})
+    end
+  end
 end

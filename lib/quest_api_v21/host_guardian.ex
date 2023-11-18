@@ -1,32 +1,44 @@
 defmodule QuestApiV21.HostGuardian do
   use Guardian, otp_app: :quest_api_v21
+  import Ecto.Query  # Import Ecto Query macros
   alias QuestApiV21.Repo
   alias QuestApiV21.Organizations.Organization
 
-  def subject_for_token(host, _claims) do
-    # Fetch organization IDs associated with the host
-    organization_ids = fetch_organization_ids_for_host(host)
+  def subject_for_token(resource, _claims) do
+    #IO.inspect(resource, label: "Resource in subject_for_token")
+    {:ok, to_string(resource.id)}
+  end
 
-    # Add organization IDs to the claims
-    claims = Map.put(_claims, "organization_ids", organization_ids)
-    {:ok, to_string(host.id), claims}
+  def build_claims(claims, resource, _opts) do
+    #IO.inspect(resource, label: "Resource in build_claims")
+    #IO.inspect(claims, label: "Initial claims")
+
+    organization_ids = fetch_organization_ids_for_host(resource)
+    #IO.inspect(organization_ids, label: "Organization IDs in build_claims")
+
+    claims = Map.put(claims, "organization_ids", organization_ids)
+    #IO.inspect(claims, label: "Claims after adding organization IDs")
+
+    {:ok, claims}
   end
 
   defp fetch_organization_ids_for_host(host) do
-    Repo.all(
+    organization_ids = Repo.all(
       from o in Organization,
       join: ho in assoc(o, :hosts),
       where: ho.id == ^host.id,
       select: o.id
     )
+
+    # Logging the fetched organization IDs
+    #IO.inspect(organization_ids, label: "Fetched Organization IDs for Host")
+
+    organization_ids
   end
 
   def resource_from_claims(claims) do
-    # Log the claims
-    IO.inspect(claims, label: "Decoded JWT Claims")
+    #IO.inspect(claims, label: "Decoded JWT Claims")
 
-    # Assuming the claim has a subject ("sub") that corresponds to a Host id
-    # Fetch the Host from the database or cache
     case QuestApiV21.Hosts.list_hosts(claims["sub"]) do
       nil -> {:error, :host_not_found}
       host -> {:ok, host}
