@@ -21,6 +21,19 @@ defmodule QuestApiV21.Quests do
     Repo.all(Quest)
   end
 
+  def list_quests_by_organization_ids(organization_ids) do
+    Quest
+    |> filter_by_organization_ids(organization_ids)
+    |> Repo.preload([:organization, :badges, :collectors])
+    |> Repo.all()
+  end
+
+  defp filter_by_organization_ids(query, organization_ids) do
+    from quest in query,
+    join: org in assoc(quest, :organization),
+    where: org.id in ^organization_ids
+  end
+
   @doc """
   Gets a single quest.
 
@@ -49,10 +62,18 @@ defmodule QuestApiV21.Quests do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  #Unused
   def create_quest(attrs \\ %{}) do
     %Quest{}
     |> Quest.changeset(attrs)
     |> maybe_add_collectors(attrs)
+    |> Repo.insert()
+  end
+
+  def create_quest_with_organization(quest_params, organization_id) do
+    %Quest{}
+    |> Quest.changeset(Map.put(quest_params, "organization_id", organization_id))
     |> Repo.insert()
   end
 
