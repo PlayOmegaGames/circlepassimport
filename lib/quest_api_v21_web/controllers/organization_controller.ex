@@ -34,11 +34,13 @@ defmodule QuestApiV21Web.OrganizationController do
 
 
   defp extract_host_id(conn) do
-    case Guardian.Plug.current_resource(conn) do
-      nil -> nil
-      host -> host.id
+    claims = Guardian.Plug.current_claims(conn)
+    case claims do
+      %{"sub" => host_id} -> host_id
+      _ -> nil
     end
   end
+
 
   def show(conn, %{"id" => id}) do
     organization = Organizations.get_organization!(id)

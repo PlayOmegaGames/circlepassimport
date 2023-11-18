@@ -8,5 +8,6 @@ defmodule QuestApiV21.Guardian do
   def resource_from_claims(claims) do
     {:ok, claims["sub"]}
   end
-  
+
 end
+
