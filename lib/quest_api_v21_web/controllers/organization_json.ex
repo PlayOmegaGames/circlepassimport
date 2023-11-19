@@ -15,8 +15,8 @@ defmodule QuestApiV21Web.OrganizationJSON do
   @doc """
   Renders a single organization.
   """
-  def show(%{organization: organization}) do
-    %{data: data(organization)}
+  def show(%{organization: organization, jwt: jwt}) do
+    %{data: data(organization), jwt: jwt}
   end
 
   defp data(%Organization{hosts: hosts, quests: quests, badges: badges, collectors: collectors} = organization) do

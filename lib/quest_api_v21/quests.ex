@@ -22,10 +22,15 @@ defmodule QuestApiV21.Quests do
   end
 
   def list_quests_by_organization_ids(organization_ids) do
-    Quest
-    |> filter_by_organization_ids(organization_ids)
-    |> Repo.preload([:organization, :badges, :collectors])
-    |> Repo.all()
+    IO.inspect(organization_ids, label: "Organization IDs")
+
+    query = filter_by_organization_ids(Quest, organization_ids)
+    IO.inspect(query, label: "Filtered Query")
+
+    quests = query |> Repo.preload([:organization, :badges, :collectors]) |> Repo.all()
+    IO.inspect(quests, label: "Preloaded Quests")
+
+    quests
   end
 
   defp filter_by_organization_ids(query, organization_ids) do
@@ -33,6 +38,8 @@ defmodule QuestApiV21.Quests do
     join: org in assoc(quest, :organization),
     where: org.id in ^organization_ids
   end
+
+
 
   @doc """
   Gets a single quest.
@@ -63,19 +70,16 @@ defmodule QuestApiV21.Quests do
 
   """
 
-  #Unused
-  def create_quest(attrs \\ %{}) do
-    %Quest{}
-    |> Quest.changeset(attrs)
-    |> maybe_add_collectors(attrs)
-    |> Repo.insert()
-  end
 
   def create_quest_with_organization(quest_params, organization_id) do
+    IO.inspect(quest_params, label: "Quest Params")
+    IO.inspect(organization_id, label: "Organization ID")
+
     %Quest{}
     |> Quest.changeset(Map.put(quest_params, "organization_id", organization_id))
     |> Repo.insert()
   end
+
 
   @doc """
   Updates a quest.

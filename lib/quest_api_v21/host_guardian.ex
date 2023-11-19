@@ -36,6 +36,13 @@ defmodule QuestApiV21.HostGuardian do
     organization_ids
   end
 
+  # For regernating the token after an org is created
+  def regenerate_jwt_for_host(host) do
+    claims = %{}  # Or any base claims you require
+    {:ok, updated_claims} = build_claims(claims, host, %{})
+
+    Guardian.encode_and_sign(host, updated_claims)
+  end
   def resource_from_claims(claims) do
     #IO.inspect(claims, label: "Decoded JWT Claims")
 

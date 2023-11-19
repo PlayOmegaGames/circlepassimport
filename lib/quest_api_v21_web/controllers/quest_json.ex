@@ -19,6 +19,13 @@ defmodule QuestApiV21Web.QuestJSON do
     %{data: data(quest)}
   end
 
+  def error(%{message: message}) do
+    %{
+      error: message
+    }
+  end
+  
+
   defp data(%Quest{badges: badges, collectors: collectors} = quest) do
     %{
       id: quest.id,
