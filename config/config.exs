@@ -6,6 +6,9 @@
 
 # General application configuration
 import Config
+import Dotenv
+Dotenv.load()
+
 
 config :quest_api_v21,
   ecto_repos: [QuestApiV21.Repo],

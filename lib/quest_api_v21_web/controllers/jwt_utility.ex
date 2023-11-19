@@ -28,8 +28,14 @@ defmodule QuestApiV21Web.JWTUtility do
          {:ok, account} <- find_or_create_account(partner_claims) do
       {:ok, jwt, _full_claims} = Guardian.encode_and_sign(account, %{})
       {:ok, jwt}
+      IO.inspect(jwt, label: "Exchanged JWT")
     else
-      error -> {:error, error}
+      {:error, :invalid_token} ->
+        {:error, %{error: "Invalid token"}}
+      {:error, :invalid_issuer} ->
+        {:error, %{error: "Invalid issuer"}}
+      _ ->
+        {:error, %{error: "Unknown error occurred"}}
     end
   end
 
@@ -37,16 +43,19 @@ defmodule QuestApiV21Web.JWTUtility do
   defp verify_partner_token(partner_token) do
     # Fetch the partner JWT secret key from the application config
     partner_jwt_secret = Application.get_env(:quest_api_v21, :partner_jwt_secret)
+    #Check to see if the secret is right
+    IO.inspect(partner_jwt_secret, label: "Secret Key")
 
     with {:ok, claims} <- Guardian.decode_and_verify(partner_token, partner_jwt_secret),
          true <- valid_issuer?(claims) do
       {:ok, claims}
+      IO.inspect(claims, label: "Exchanged token claims")
     else
       {:error, _reason} -> {:error, "Invalid token"}
       false -> {:error, "Invalid issuer"}
     end
   end
-  
+
   defp valid_issuer?(claims) do
     # Check the issuer of the token
     # Replace 'expected_issuer' with the actual issuer value you expect
@@ -57,6 +66,7 @@ defmodule QuestApiV21Web.JWTUtility do
   defp find_or_create_account(claims) do
     # Replace 'user_identifier_claim' with the actual claim key that identifies the user
     user_identifier = claims["user_identifier_claim"]
+    IO.inspect(user_identifier, label: "User Identifier")
 
     case Accounts.get_user_by_identifier(user_identifier) do
       nil -> create_user(claims)

@@ -44,7 +44,7 @@ defmodule QuestApiV21Web.AuthController do
   end
 
   #token exchange
-  def token_exchange(conn, %{"token" => partner_token}) do
+  def token_exchange(conn, %{"token" => partner_token}) when not is_nil(partner_token) do
     case QuestApiV21Web.JWTUtility.exchange_partner_token(partner_token) do
       {:ok, jwt} ->
         conn
@@ -54,7 +54,13 @@ defmodule QuestApiV21Web.AuthController do
       {:error, reason} ->
         conn
         |> put_status(:unauthorized)
-        |> json(%{error: reason})
+        |> json(%{error: reason})  # Ensure 'reason' is a string or map that can be converted to JSON
     end
+  end
+
+  def token_exchange(conn, _) do
+    conn
+    |> put_status(:bad_request)
+    |> json(%{error: "Token not provided or invalid format"})
   end
 end
