@@ -43,7 +43,14 @@ defmodule QuestApiV21.Accounts do
 
     case find_account_by_email(email) do
       nil ->
-        updated_attrs = attrs |> put_password_hash()
+        updated_attrs =
+          if Map.get(attrs, "is_passwordless", false) do
+            # Skip password hashing for passwordless accounts
+            attrs
+          else
+            put_password_hash(attrs)
+          end
+
         %Account{}
         |> Account.changeset(updated_attrs)
         |> maybe_add_badges(attrs)
@@ -53,7 +60,6 @@ defmodule QuestApiV21.Accounts do
         {:error, "An account with this email already exists", existing_account}
     end
   end
-
 
   defp put_password_hash(%{"password" => password} = attrs) do
     Map.put(attrs, "hashed_password", Bcrypt.hash_pwd_salt(password))
@@ -112,6 +118,22 @@ defmodule QuestApiV21.Accounts do
   """
   def find_account_by_email(email) do
     Repo.get_by(Account, email: email)
+  end
+
+    @doc """
+  Finds an account by a unique identifier.
+
+  ## Examples
+
+      iex> get_user_by_identifier("user@example.com")
+      %Account{}
+
+      iex> get_user_by_identifier("nonexistent@example.com")
+      nil
+  """
+  #For the token exchange how to identify the account
+  def get_user_by_identifier(identifier) do
+    Repo.get_by(Account, email: identifier)
   end
 
   @doc """

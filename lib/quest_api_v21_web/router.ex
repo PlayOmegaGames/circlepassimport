@@ -22,7 +22,7 @@ defmodule QuestApiV21Web.Router do
   pipeline :authenticated_host_api do
     plug :accepts, ["json"]
     plug QuestApiV21.HostGuardianPipeline
-    
+
   end
 
   scope "/", QuestApiV21Web do
@@ -52,6 +52,10 @@ defmodule QuestApiV21Web.Router do
     get "/host/sign_up", HostAuthController, :new_host
     post "/host/sign_up", HostAuthController, :sign_up_host
     post "/host/sign_in", HostAuthController, :sign_in_host
+
+    #token exchange for partner
+    post "/token_exchange", AuthController, :token_exchange
+
   end
 
   scope "/api", QuestApiV21Web do

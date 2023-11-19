@@ -7,7 +7,8 @@ defmodule QuestApiV21.Accounts.Account do
   @foreign_key_type :binary_id
   schema "accounts" do
     field :email, :string
-    field :hashed_password, :string
+    field :hashed_password, :string, default: nil
+    field :is_passwordless, :boolean, default: false
     field :password, :string, virtual: true  # Virtual field for the plaintext password so that it isn't stored in the database
     field :name, :string
     field :role, :string, default: "default"
@@ -21,7 +22,7 @@ defmodule QuestApiV21.Accounts.Account do
     badges = prepare_badges(attrs)  # Fetch and validate badges based on IDs
 
     account
-    |> cast(attrs, [:name, :email, :hashed_password, :password, :role])
+    |> cast(attrs, [:name, :email, :hashed_password, :password, :role, :is_passwordless])
     |> validate_required([:name, :email])
     |> put_assoc(:badges, badges)
   end

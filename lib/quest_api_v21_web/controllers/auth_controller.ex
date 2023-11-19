@@ -42,4 +42,19 @@ defmodule QuestApiV21Web.AuthController do
     |> put_resp_header("authorization", "Bearer #{jwt}")
     |> json(%{jwt: jwt, account: %{email: account.email, name: account.name, id: account.id}})
   end
+
+  #token exchange
+  def token_exchange(conn, %{"token" => partner_token}) do
+    case QuestApiV21Web.JWTUtility.exchange_partner_token(partner_token) do
+      {:ok, jwt} ->
+        conn
+        |> put_status(:ok)
+        |> json(%{jwt: jwt})
+
+      {:error, reason} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: reason})
+    end
+  end
 end
