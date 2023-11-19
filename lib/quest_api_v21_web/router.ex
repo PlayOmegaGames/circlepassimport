@@ -19,6 +19,12 @@ defmodule QuestApiV21Web.Router do
     plug QuestApiV21.GuardianPipeline
   end
 
+  pipeline :authenticated_host_api do
+    plug :accepts, ["json"]
+    plug QuestApiV21.HostGuardianPipeline
+    
+  end
+
   scope "/", QuestApiV21Web do
     pipe_through :browser
 
@@ -26,23 +32,36 @@ defmodule QuestApiV21Web.Router do
   end
 
   scope "/api", QuestApiV21Web do
+    pipe_through :authenticated_host_api
+
+    resources "/organizations", OrganizationController
+    resources "/scans", ScanController
+    resources "/hosts", HostController, except: [:index]
+  end
+
+
+  scope "/api", QuestApiV21Web do
     pipe_through :api
 
+    #account authentication
     get "/sign_up", AuthController, :new
     post "/sign_up", AuthController, :sign_up
     post "/sign_in", AuthController, :sign_in
+
+    #host authentication
+    get "/host/sign_up", HostAuthController, :new_host
+    post "/host/sign_up", HostAuthController, :sign_up_host
+    post "/host/sign_in", HostAuthController, :sign_in_host
   end
 
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
-
-    resources "/hosts", HostController
-    resources "/businesses", BusinessController
     resources "/quests", QuestController
-    resources "/collection_point", Collection_PointController
+    resources "/badges", BadgeController
     resources "/collectors", CollectorController
-    resources "/scans", ScanController
-    resources "/accounts", AccountController
+    resources "/accounts", AccountController, except: [:index]
+    get "/*path", ErrorController, :not_found
+
   end
 
 

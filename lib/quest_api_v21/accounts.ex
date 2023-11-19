@@ -5,23 +5,10 @@ defmodule QuestApiV21.Accounts do
 
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
-  alias QuestApiV21.Collection_Points.Collection_Point
+  alias QuestApiV21.Badges.Badge
 
   alias QuestApiV21.Accounts.Account
   alias Bcrypt
-
-  @doc """
-  Returns the list of accounts.
-
-  ## Examples
-
-      iex> list_accounts()
-      [%Account{}, ...]
-
-  """
-  def list_accounts do
-    Repo.all(Account)
-  end
 
   @doc """
   Gets a single account.
@@ -59,7 +46,7 @@ defmodule QuestApiV21.Accounts do
         updated_attrs = attrs |> put_password_hash()
         %Account{}
         |> Account.changeset(updated_attrs)
-        |> maybe_add_collection_points(attrs)
+        |> maybe_add_badges(attrs)
         |> Repo.insert()
 
       existing_account ->
@@ -86,12 +73,15 @@ defmodule QuestApiV21.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_account(%Account{} = account, attrs) do
-    account  # Use the existing Account struct
+   # Existing clauses
+   def update_account(%Account{} = account, attrs) do
+    account = Repo.preload(account, :badges)
+    account
     |> Account.changeset(attrs)  # Pass the struct and attrs to changeset/2
-    |> maybe_add_collection_points(attrs)
+    |> maybe_add_badges(attrs)
     |> Repo.update()
   end
+
 
   @doc """
   Deletes a account.
@@ -137,12 +127,12 @@ defmodule QuestApiV21.Accounts do
     Account.changeset(account, attrs)
   end
 
-  defp maybe_add_collection_points(changeset, attrs) do
-    case Map.get(attrs, "collectionpoint_ids") do
+  defp maybe_add_badges(changeset, attrs) do
+    case Map.get(attrs, "badge_ids") do
       nil -> changeset
-      collectionpoint_ids ->
-        collection_points = Repo.all(from c in Collection_Point, where: c.id in ^collectionpoint_ids)
-        Ecto.Changeset.put_assoc(changeset, :collection_points, collection_points)
+      badge_ids ->
+        badges = Repo.all(from c in Badge, where: c.id in ^badge_ids)
+        Ecto.Changeset.put_assoc(changeset, :badges, badges)
     end
   end
 

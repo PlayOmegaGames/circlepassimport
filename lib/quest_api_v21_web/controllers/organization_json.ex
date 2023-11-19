@@ -1,31 +1,31 @@
-defmodule QuestApiV21Web.BusinessJSON do
-  alias QuestApiV21.Businesses.Business
+defmodule QuestApiV21Web.OrganizationJSON do
+  alias QuestApiV21.Organizations.Organization
   alias QuestApiV21.Hosts.Host
   alias QuestApiV21.Quests.Quest
-  alias QuestApiV21.Collection_Points.Collection_Point
+  alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Collectors.Collector
 
   @doc """
-  Renders a list of businesses.
+  Renders a list of organizations.
   """
-  def index(%{businesses: businesses}) do
-    %{data: for(business <- businesses, do: data(business))}
+  def index(%{organizations: organizations}) do
+    %{data: for(organization <- organizations, do: data(organization))}
   end
 
   @doc """
-  Renders a single business.
+  Renders a single organization.
   """
-  def show(%{business: business}) do
-    %{data: data(business)}
+  def show(%{organization: organization, jwt: jwt}) do
+    %{data: data(organization), jwt: jwt}
   end
 
-  defp data(%Business{hosts: hosts, quests: quests, collection_points: collection_points, collectors: collectors} = business) do
+  defp data(%Organization{hosts: hosts, quests: quests, badges: badges, collectors: collectors} = organization) do
     %{
-      id: business.id,
-      name: business.name,
+      id: organization.id,
+      name: organization.name,
       hosts: hosts_data(hosts),
       quests: quests_data(quests),
-      collection_points: collection_points_data(collection_points),
+      badges: badges_data(badges),
       collectors: collectors_data(collectors)
     }
   end
@@ -49,8 +49,8 @@ defmodule QuestApiV21Web.BusinessJSON do
     end)
   end
 
-  defp collection_points_data(collection_points) do
-    Enum.map(collection_points, fn %Collection_Point{id: id, name: name} ->
+  defp badges_data(badges) do
+    Enum.map(badges, fn %Badge{id: id, name: name} ->
       %{
         id: id,
         name: name

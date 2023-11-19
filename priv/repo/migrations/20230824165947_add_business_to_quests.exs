@@ -1,12 +1,12 @@
-defmodule QuestApiV21.Repo.Migrations.AddBusinessToQuests do
+defmodule QuestApiV21.Repo.Migrations.AddOrganizationToQuests do
   use Ecto.Migration
 
   def change do
     alter table(:quests) do
-      add :business_id, references(:businesses, type: :binary_id, on_delete: :nothing)
+      add :organization_id, references(:organizations, type: :binary_id, on_delete: :nothing)
     end
 
-    create index(:quests, [:business_id])
+    create index(:quests, [:organization_id])
 
   end
 end

@@ -4,9 +4,10 @@ defmodule QuestApiV21.Quests do
   """
 
   import Ecto.Query, warn: false
-  alias QuestApiV21.Repo
+  alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Collectors.Collector
+  alias QuestApiV21.Repo
 
   @doc """
   Returns the list of quests.
@@ -20,6 +21,16 @@ defmodule QuestApiV21.Quests do
   def list_quests do
     Repo.all(Quest)
   end
+
+  #only returns the quests that are associated to that record
+
+
+  def list_quests_by_organization_ids(organization_ids) do
+    preloads = [:organization, :badges, :collectors]
+    OrganizationScopedQueries.scope_query(Quest, organization_ids, preloads)
+  end
+
+
 
   @doc """
   Gets a single quest.
@@ -35,7 +46,10 @@ defmodule QuestApiV21.Quests do
       ** (Ecto.NoResultsError)
 
   """
-  def get_quest!(id), do: Repo.get!(Quest, id)
+  def get_quest(id, organization_ids) do
+    preloads = [:organization, :badges, :collectors]
+    OrganizationScopedQueries.get_item(Quest, id, organization_ids, preloads)
+  end
 
   @doc """
   Creates a quest.
@@ -49,12 +63,15 @@ defmodule QuestApiV21.Quests do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_quest(attrs \\ %{}) do
+
+
+  def create_quest_with_organization(quest_params, organization_id) do
     %Quest{}
-    |> Quest.changeset(attrs)
-    |> maybe_add_collectors(attrs)
+    |> Quest.changeset(Map.put(quest_params, "organization_id", organization_id))
     |> Repo.insert()
   end
+
+
 
   @doc """
   Updates a quest.
@@ -68,11 +85,15 @@ defmodule QuestApiV21.Quests do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_quest(%Quest{} = quest, attrs) do
-    quest
-    |> Quest.changeset(attrs)
-    |> maybe_add_collectors(attrs)
-    |> Repo.update()
+  def update_quest(%Quest{} = quest, attrs, organization_ids) do
+    if quest.organization_id in organization_ids do
+      quest
+      |> Quest.changeset(attrs)
+      |> maybe_add_collectors(attrs)
+      |> Repo.update()
+    else
+      {:error, :unauthorized}
+    end
   end
 
   @doc """
@@ -87,8 +108,8 @@ defmodule QuestApiV21.Quests do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_quest(%Quest{} = quest) do
-    Repo.delete(quest)
+  def delete_quest(%Quest{} = quest, organization_ids) do
+    OrganizationScopedQueries.delete_item(Quest, quest.id, organization_ids)
   end
 
   @doc """

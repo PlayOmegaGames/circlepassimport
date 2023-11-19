@@ -1,6 +1,6 @@
 defmodule QuestApiV21Web.HostJSON do
   alias QuestApiV21.Hosts.Host
-  alias QuestApiV21.Businesses.Business
+  alias QuestApiV21.Organizations.Organization
 
   @doc """
   Renders a list of hosts.
@@ -16,18 +16,18 @@ defmodule QuestApiV21Web.HostJSON do
     %{data: data(host)}
   end
 
-  defp data(%Host{businesses: businesses} = host) do
+  defp data(%Host{organizations: organizations} = host) do
     %{
       id: host.id,
       name: host.name,
       email: host.email,
       hashed_password: host.hashed_password,
-      businesses: businesses_data(businesses)
+      organizations: organizations_data(organizations)
     }
   end
 
-  defp businesses_data(businesses) do
-    Enum.map(businesses, fn %Business{id: id, name: name} ->
+  defp organizations_data(organizations) do
+    Enum.map(organizations, fn %Organization{id: id, name: name} ->
       %{
         id: id,
         name: name

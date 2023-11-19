@@ -7,8 +7,10 @@ defmodule QuestApiV21.Hosts.Host do
   schema "hosts" do
     field :email, :string
     field :hashed_password, :string
+    field :password, :string, virtual: true  # Virtual field for the plaintext password
     field :name, :string
-    many_to_many :businesses, QuestApiV21.Businesses.Business, join_through: "hosts_businesses"
+    field :role, :string, default: "default"
+    many_to_many :organizations, QuestApiV21.Organizations.Organization, join_through: "hosts_organizations"
 
     timestamps()
   end
@@ -16,8 +18,8 @@ defmodule QuestApiV21.Hosts.Host do
   @doc false
   def changeset(host, attrs) do
     host
-    |> cast(attrs, [:name, :email, :hashed_password])
-    |> cast_assoc(:businesses, with: &QuestApiV21.Businesses.Business.changeset/2)
-    |> validate_required([:name, :email, :hashed_password])
+    |> cast(attrs, [:name, :email, :hashed_password, :password, :role])  # Include password and role in the cast
+    |> validate_required([:name, :email])
+    |> cast_assoc(:organizations, with: &QuestApiV21.Organizations.Organization.changeset/2)
   end
 end

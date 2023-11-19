@@ -1,14 +1,14 @@
-defmodule QuestApiV21.Collection_PointsFixtures do
+defmodule QuestApiV21.BadgesFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `QuestApiV21.Collection_Points` context.
+  entities via the `QuestApiV21.Badges` context.
   """
 
   @doc """
-  Generate a collection__point.
+  Generate a badge.
   """
-  def collection__point_fixture(attrs \\ %{}) do
-    {:ok, collection__point} =
+  def badge_fixture(attrs \\ %{}) do
+    {:ok, badge} =
       attrs
       |> Enum.into(%{
         badge_description: "some badge_description",
@@ -17,8 +17,8 @@ defmodule QuestApiV21.Collection_PointsFixtures do
         redirect_url: "some redirect_url",
         scans: 42
       })
-      |> QuestApiV21.Collection_Points.create_collection__point()
+      |> QuestApiV21.Badges.create_badge()
 
-    collection__point
+    badge
   end
 end

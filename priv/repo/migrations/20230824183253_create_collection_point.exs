@@ -2,7 +2,7 @@ defmodule QuestApiV21.Repo.Migrations.CreateCollectionPoint do
   use Ecto.Migration
 
   def change do
-    create table(:collection_point, primary_key: false) do
+    create table(:badge, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :image, :string

@@ -1,9 +1,9 @@
-defmodule QuestApiV21Web.BusinessControllerTest do
+defmodule QuestApiV21Web.OrganizationControllerTest do
   use QuestApiV21Web.ConnCase
 
-  import QuestApiV21.BusinessesFixtures
+  import QuestApiV21.OrganizationsFixtures
 
-  alias QuestApiV21.Businesses.Business
+  alias QuestApiV21.Organizations.Organization
 
   @create_attrs %{
     name: "some name"
@@ -18,18 +18,18 @@ defmodule QuestApiV21Web.BusinessControllerTest do
   end
 
   describe "index" do
-    test "lists all businesses", %{conn: conn} do
-      conn = get(conn, ~p"/api/businesses")
+    test "lists all organizations", %{conn: conn} do
+      conn = get(conn, ~p"/api/organizations")
       assert json_response(conn, 200)["data"] == []
     end
   end
 
-  describe "create business" do
-    test "renders business when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/businesses", business: @create_attrs)
+  describe "create organization" do
+    test "renders organization when data is valid", %{conn: conn} do
+      conn = post(conn, ~p"/api/organizations", organization: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get(conn, ~p"/api/businesses/#{id}")
+      conn = get(conn, ~p"/api/organizations/#{id}")
 
       assert %{
                "id" => ^id,
@@ -38,19 +38,19 @@ defmodule QuestApiV21Web.BusinessControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/businesses", business: @invalid_attrs)
+      conn = post(conn, ~p"/api/organizations", organization: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
-  describe "update business" do
-    setup [:create_business]
+  describe "update organization" do
+    setup [:create_organization]
 
-    test "renders business when data is valid", %{conn: conn, business: %Business{id: id} = business} do
-      conn = put(conn, ~p"/api/businesses/#{business}", business: @update_attrs)
+    test "renders organization when data is valid", %{conn: conn, organization: %Organization{id: id} = organization} do
+      conn = put(conn, ~p"/api/organizations/#{organization}", organization: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-      conn = get(conn, ~p"/api/businesses/#{id}")
+      conn = get(conn, ~p"/api/organizations/#{id}")
 
       assert %{
                "id" => ^id,
@@ -58,27 +58,27 @@ defmodule QuestApiV21Web.BusinessControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, business: business} do
-      conn = put(conn, ~p"/api/businesses/#{business}", business: @invalid_attrs)
+    test "renders errors when data is invalid", %{conn: conn, organization: organization} do
+      conn = put(conn, ~p"/api/organizations/#{organization}", organization: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
-  describe "delete business" do
-    setup [:create_business]
+  describe "delete organization" do
+    setup [:create_organization]
 
-    test "deletes chosen business", %{conn: conn, business: business} do
-      conn = delete(conn, ~p"/api/businesses/#{business}")
+    test "deletes chosen organization", %{conn: conn, organization: organization} do
+      conn = delete(conn, ~p"/api/organizations/#{organization}")
       assert response(conn, 204)
 
       assert_error_sent 404, fn ->
-        get(conn, ~p"/api/businesses/#{business}")
+        get(conn, ~p"/api/organizations/#{organization}")
       end
     end
   end
 
-  defp create_business(_) do
-    business = business_fixture()
-    %{business: business}
+  defp create_organization(_) do
+    organization = organization_fixture()
+    %{organization: organization}
   end
 end

@@ -10,15 +10,6 @@ defmodule QuestApiV21Web.AccountController do
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController
 
-  # Defines the index action to list all accounts.
-  def index(conn, _params) do
-    # Retrieves a list of accounts, preloading associated collection points.
-    accounts = Accounts.list_accounts()
-    |> QuestApiV21.Repo.preload(:collection_points)
-
-    # Renders the index view with the list of accounts.
-    render(conn, :index, accounts: accounts)
-  end
 
   # Defines the create action to create a new account.
   def create(conn, %{"account" => account_params}) do
