@@ -3,7 +3,7 @@
 # Define the ECR repository and image name
 ECR_REPOSITORY=692454124440.dkr.ecr.us-east-1.amazonaws.com/quest-api
 IMAGE_TAG=latest # or specific version tag if required
-CONTAINER_NAME=692454124440.dkr.ecr.us-east-1.amazonaws.com/quest-api
+CONTAINER_NAME=quest-api
 
 # Run a new Docker container from the image pulled from ECR
 echo "Starting new container..."
