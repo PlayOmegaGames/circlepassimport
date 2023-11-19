@@ -7,6 +7,8 @@ hooks:
   AfterInstall:
     - location: scripts/pull_container.sh
       timeout: 120
+    - location: scripts/migrate.sh
+      timeout: 60
   ApplicationStart:
     - location: scripts/start_container.sh
       timeout: 30
