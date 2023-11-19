@@ -128,10 +128,10 @@ defmodule QuestApiV21.Accounts do
   end
 
   defp maybe_add_badges(changeset, attrs) do
-    case Map.get(attrs, "collectionpoint_ids") do
+    case Map.get(attrs, "badge_ids") do
       nil -> changeset
-      collectionpoint_ids ->
-        badges = Repo.all(from c in Badge, where: c.id in ^collectionpoint_ids)
+      badge_ids ->
+        badges = Repo.all(from c in Badge, where: c.id in ^badge_ids)
         Ecto.Changeset.put_assoc(changeset, :badges, badges)
     end
   end

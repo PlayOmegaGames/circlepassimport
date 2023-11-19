@@ -14,7 +14,7 @@ defmodule QuestApiV21.Badges.Badge do
     belongs_to :organization, QuestApiV21.Organizations.Organization
     belongs_to :quest, QuestApiV21.Quests.Quest
     belongs_to :collector, QuestApiV21.Collectors.Collector
-    many_to_many :accounts, QuestApiV21.Accounts.Account, join_through: "collectionpoints_accounts", join_keys: [collectionpoint_id: :id, account_id: :id]
+    many_to_many :accounts, QuestApiV21.Accounts.Account, join_through: "badges_accounts", join_keys: [badge_id: :id, account_id: :id]
 
     timestamps()
   end
