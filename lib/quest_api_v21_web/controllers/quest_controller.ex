@@ -35,26 +35,47 @@ defmodule QuestApiV21Web.QuestController do
 
 
   def show(conn, %{"id" => id}) do
-    quest = Quests.get_quest!(id)
-    |> QuestApiV21.Repo.preload([:organization, :badges, :collectors])
+    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
 
-
-    render(conn, :show, quest: quest)
-  end
-
-  def update(conn, %{"id" => id, "quest" => quest_params}) do
-    quest = Quests.get_quest!(id)
-
-    with {:ok, %Quest{} = quest} <- Quests.update_quest(quest, quest_params) do
-      render(conn, :show, quest: quest)
+    case Quests.get_quest(id, organization_ids) do
+      nil ->
+        send_resp(conn, :not_found, "")
+      quest ->
+        quest = QuestApiV21.Repo.preload(quest, [:organization, :badges, :collectors])
+        render(conn, :show, quest: quest)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    quest = Quests.get_quest!(id)
+  def update(conn, %{"id" => id, "quest" => quest_params}) do
+    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
 
-    with {:ok, %Quest{}} <- Quests.delete_quest(quest) do
-      send_resp(conn, :no_content, "")
+    case Quests.get_quest(id, organization_ids) do
+      nil ->
+        send_resp(conn, :not_found, "")
+      quest ->
+        case Quests.update_quest(quest, quest_params, organization_ids) do
+          {:ok, updated_quest} ->
+            render(conn, :show, quest: updated_quest)
+          {:error, :unauthorized} ->
+            send_resp(conn, :forbidden, "")
+          {:error, _changeset} ->
+            send_resp(conn, :unprocessable_entity, "")
+        end
+    end
+  end
+  def delete(conn, %{"id" => id}) do
+    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+
+    case Quests.get_quest(id, organization_ids) do
+      nil ->
+        send_resp(conn, :not_found, "")
+      quest ->
+        case Quests.delete_quest(quest, organization_ids) do
+          {:ok, %Quest{}} ->
+            send_resp(conn, :no_content, "")
+          {:error, :unauthorized} ->
+            send_resp(conn, :forbidden, "")
+        end
     end
   end
 end
