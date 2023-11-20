@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define a delay in seconds
-DELAY=10
+DELAY=30
 
 # Sleep for the specified delay
 echo "Waiting for $DELAY seconds before checking service..."
