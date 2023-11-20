@@ -7,6 +7,7 @@
 # General application configuration
 import Config
 
+
 config :quest_api_v21,
   ecto_repos: [QuestApiV21.Repo],
   generators: [binary_id: true]
@@ -14,8 +15,10 @@ config :quest_api_v21,
 #guardian setup
 config :quest_api_v21, QuestApiV21.Guardian,
   issuer: "quest_api_v21",
-  secret_key: "Lx0gpm2fd8tsJkAkSkTMeTYc26IPuooCtbRhCM6+/Z+JThmul0pidj+lxvx7/uJI"
-  
+  secret_key: "Lx0gpm2fd8tsJkAkSkTMeTYc26IPuooCtbRhCM6+/Z+JThmul0pidj+lxvx7/uJI",
+  partner_jwt_secret: System.get_env("PARTNER_JWT_SECRET")
+
+
 config :quest_api_v21, QuestApiV21.HostGuardian,
   issuer: "quest_api_v21",
   secret_key: "Lx0gpm2fd8tsJkAkSkTMeTYc26IPuooCtbRhCM6+/Z+JThmul0pidj+lxvx7/uJI"
@@ -30,6 +33,7 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   ],
   pubsub_server: QuestApiV21.PubSub,
   live_view: [signing_salt: "mWI7Ou9T"]
+
 
 # Configures the mailer
 #

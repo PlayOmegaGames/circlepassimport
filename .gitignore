@@ -35,3 +35,5 @@ quest_api_v21-*.tar
 npm-debug.log
 /assets/node_modules/
 
+#secretes
+.env

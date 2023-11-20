@@ -11,6 +11,7 @@ defmodule QuestApiV21.Badges.Badge do
     field :name, :string
     field :redirect_url, :string
     field :scans, :integer, default: 0
+    field :unauthorized_url, :string
     belongs_to :organization, QuestApiV21.Organizations.Organization
     belongs_to :quest, QuestApiV21.Quests.Quest
     belongs_to :collector, QuestApiV21.Collectors.Collector
@@ -24,7 +25,7 @@ defmodule QuestApiV21.Badges.Badge do
     accounts = prepare_accounts(attrs)  # Fetch and validate accounts based on IDs
 
     badge
-    |> cast(attrs, [:name, :image, :scans, :redirect_url, :badge_description, :organization_id, :quest_id, :collector_id])
+    |> cast(attrs, [:name, :image, :scans, :redirect_url, :badge_description, :unauthorized_url, :organization_id, :quest_id, :collector_id])
     |> validate_required([:name, :image, :redirect_url])
     |> put_assoc(:accounts, accounts)  # Use put_assoc for existing accounts
   end

@@ -23,6 +23,8 @@ defmodule QuestApiV21Web.CollectorJSON do
       name: collector.name,
       coordinates: collector.coordinates,
       height: collector.height,
+      organization_id: collector.organization_id,
+      quest_start: collector.quest_start,
       badges: badges_data(badges),
       quest_ids: quests_data(quests)
     }

@@ -17,7 +17,7 @@ defmodule QuestApiV21Web.QuestController do
 
   def create(conn, %{"quest" => quest_params}) do
     organization_id = JWTUtility.extract_primary_organization_id_from_jwt(conn)
-    IO.inspect(organization_id, label: "Extracted Organization ID")
+    #IO.inspect(organization_id, label: "Extracted Organization ID")
 
     case Quests.create_quest_with_organization(quest_params, organization_id) do
       {:ok, quest} ->

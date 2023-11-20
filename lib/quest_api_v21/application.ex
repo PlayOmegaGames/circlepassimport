@@ -4,9 +4,14 @@ defmodule QuestApiV21.Application do
   @moduledoc false
 
   use Application
+  #require Logger
+
 
   @impl true
   def start(_type, _args) do
+    # For debugging secrets
+    #Logger.info("PARTNER_JWT_SECRET: #{inspect(System.get_env("PARTNER_JWT_SECRET"))}")
+
     children = [
       # Start the Telemetry supervisor
       QuestApiV21Web.Telemetry,
@@ -26,6 +31,7 @@ defmodule QuestApiV21.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: QuestApiV21.Supervisor]
     Supervisor.start_link(children, opts)
+
   end
 
   # Tell Phoenix to update the endpoint configuration
