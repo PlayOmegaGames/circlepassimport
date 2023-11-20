@@ -6,7 +6,7 @@ defmodule QuestApiV21.Accounts do
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
   alias QuestApiV21.Badges.Badge
-
+  alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Accounts.Account
   alias Bcrypt
 
@@ -54,6 +54,7 @@ defmodule QuestApiV21.Accounts do
         %Account{}
         |> Account.changeset(updated_attrs)
         |> maybe_add_badges(attrs)
+        |> maybe_add_quests(attrs)
         |> Repo.insert()
 
       existing_account ->
@@ -85,6 +86,7 @@ defmodule QuestApiV21.Accounts do
     account
     |> Account.changeset(attrs)  # Pass the struct and attrs to changeset/2
     |> maybe_add_badges(attrs)
+    |> maybe_add_quests(attrs)
     |> Repo.update()
   end
 
@@ -155,6 +157,15 @@ defmodule QuestApiV21.Accounts do
       badge_ids ->
         badges = Repo.all(from c in Badge, where: c.id in ^badge_ids)
         Ecto.Changeset.put_assoc(changeset, :badges, badges)
+    end
+  end
+
+  defp maybe_add_quests(changeset, attrs) do
+    case Map.get(attrs, "quest_ids") do
+      nil -> changeset
+      quest_ids ->
+        quests = Repo.all(from c in Quest, where: c.id in ^quest_ids)
+        Ecto.Changeset.put_assoc(changeset, :quests, quests)
     end
   end
 

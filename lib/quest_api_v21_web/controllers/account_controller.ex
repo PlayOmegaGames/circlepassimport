@@ -18,7 +18,7 @@ defmodule QuestApiV21Web.AccountController do
       # Handles successful account creation.
       {:ok, %Account{} = account} ->
         # Preloads associated collection points for the new account.
-        account = QuestApiV21.Repo.preload(account, [:collection_points])
+        account = QuestApiV21.Repo.preload(account, [:badges, :quests])
         # Sets the response status to 201 Created, updates the location header,
         # and renders the show view for the new account.
         conn
@@ -46,7 +46,7 @@ defmodule QuestApiV21Web.AccountController do
   def show(conn, %{"id" => id}) do
     # Retrieves the account by ID, preloading associated collection points.
     account = Accounts.get_account!(id)
-    |> QuestApiV21.Repo.preload(:collection_points)
+    |> QuestApiV21.Repo.preload([:badges, :quests])
 
     # Renders the show view for the retrieved account.
     render(conn, :show, account: account)
@@ -56,6 +56,7 @@ defmodule QuestApiV21Web.AccountController do
   def update(conn, %{"id" => id, "account" => account_params}) do
     # Retrieves the account by ID.
     account = Accounts.get_account!(id)
+      |> QuestApiV21.Repo.preload([:badges, :quests])
 
     # Attempts to update the account with the provided parameters.
     with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, account_params) do
@@ -68,6 +69,7 @@ defmodule QuestApiV21Web.AccountController do
   def delete(conn, %{"id" => id}) do
     # Retrieves the account by ID.
     account = Accounts.get_account!(id)
+    |> QuestApiV21.Repo.preload([:badges, :quests])
 
     # Attempts to delete the account.
     with {:ok, %Account{}} <- Accounts.delete_account(account) do

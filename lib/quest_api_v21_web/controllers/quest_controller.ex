@@ -4,6 +4,7 @@ defmodule QuestApiV21Web.QuestController do
   alias QuestApiV21.Quests
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21Web.JWTUtility
+  alias QuestApiV21.Repo
 
   action_fallback QuestApiV21Web.FallbackController
 
@@ -11,6 +12,8 @@ defmodule QuestApiV21Web.QuestController do
     #passes org id onto context file for filtering
     organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
     quests = Quests.list_quests_by_organization_ids(organization_ids)
+      |> Repo.preload([:organization, :badges, :collectors, :accounts])  # Preload accounts here
+
     render(conn, :index, quests: quests)
   end
 
@@ -21,7 +24,7 @@ defmodule QuestApiV21Web.QuestController do
 
     case Quests.create_quest_with_organization(quest_params, organization_id) do
       {:ok, quest} ->
-        quest = QuestApiV21.Repo.preload(quest, [:organization, :badges, :collectors])
+        quest = QuestApiV21.Repo.preload(quest, [:organization, :badges, :collectors, :accounts])
         conn
         |> put_status(:created)
         |> put_resp_header("location", ~p"/api/quests/#{quest}")
@@ -41,7 +44,7 @@ defmodule QuestApiV21Web.QuestController do
       nil ->
         send_resp(conn, :not_found, "")
       quest ->
-        quest = QuestApiV21.Repo.preload(quest, [:organization, :badges, :collectors])
+        quest = QuestApiV21.Repo.preload(quest, [:organization, :badges, :collectors, :accounts])
         render(conn, :show, quest: quest)
     end
   end
@@ -55,6 +58,7 @@ defmodule QuestApiV21Web.QuestController do
       quest ->
         case Quests.update_quest(quest, quest_params, organization_ids) do
           {:ok, updated_quest} ->
+            updated_quest = QuestApiV21.Repo.preload(updated_quest, [:organization, :badges, :collectors, :accounts])
             render(conn, :show, quest: updated_quest)
           {:error, :unauthorized} ->
             send_resp(conn, :forbidden, "")

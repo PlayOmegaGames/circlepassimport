@@ -2,6 +2,8 @@ defmodule QuestApiV21Web.QuestJSON do
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Collectors.Collector
+  #alias QuestApiV21.Accounts.Account
+
 
   #alias QuestApiV21.Organizations.Organization
 
@@ -40,8 +42,8 @@ defmodule QuestApiV21Web.QuestJSON do
       organization_id: quest.organization_id,
       description: quest.description,
       badges: badges_data(badges),
-      collectors: collectors_data(collectors)
-
+      collectors: collectors_data(collectors),
+      #accounts: accounts_data(accounts)
     }
   end
 
@@ -62,6 +64,16 @@ defmodule QuestApiV21Web.QuestJSON do
     end)
   end
 
+  """
+  defp accounts_data(accounts) do
+    Enum.map(accounts, fn %Account{id: id, name: name} ->
+      %{
+        id: id,
+        name: name
+      }
+    end)
+  end
+  """
   """
   Useful for displaying more organization information
 

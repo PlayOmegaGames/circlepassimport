@@ -7,6 +7,7 @@
     alias QuestApiV21.OrganizationScopedQueries
     alias QuestApiV21.Quests.Quest
     alias QuestApiV21.Collectors.Collector
+    alias QuestApiV21.Accounts.Account
     alias QuestApiV21.Repo
 
     @doc """
@@ -26,7 +27,7 @@
 
 
     def list_quests_by_organization_ids(organization_ids) do
-      preloads = [:organization, :badges, :collectors]
+      preloads = [:organization, :badges, :collectors, :accounts]
       OrganizationScopedQueries.scope_query(Quest, organization_ids, preloads)
     end
 
@@ -47,7 +48,7 @@
 
     """
     def get_quest(id, organization_ids) do
-      preloads = [:organization, :badges, :collectors]
+      preloads = [:organization, :badges, :collectors, :accounts]
       OrganizationScopedQueries.get_item(Quest, id, organization_ids, preloads)
     end
 
@@ -68,6 +69,7 @@
     def create_quest_with_organization(quest_params, organization_id) do
       %Quest{}
       |> Quest.changeset(Map.put(quest_params, "organization_id", organization_id))
+      |> maybe_add_accounts(quest_params)
       |> Repo.insert()
     end
 
@@ -87,14 +89,18 @@
     """
     def update_quest(%Quest{} = quest, attrs, organization_ids) do
       if quest.organization_id in organization_ids do
+        updated_attrs = normalize_account_ids(attrs)
         quest
-        |> Quest.changeset(attrs)
-        |> maybe_add_collectors(attrs)
+        |> Quest.changeset(updated_attrs)
+        |> maybe_add_collectors(updated_attrs)
+        |> maybe_add_accounts(updated_attrs)
         |> Repo.update()
       else
         {:error, :unauthorized}
       end
     end
+
+
 
     @doc """
     Deletes a quest.
@@ -131,6 +137,23 @@
         collector_ids ->
           collectors = Repo.all(from c in Collector, where: c.id in ^collector_ids)
           Ecto.Changeset.put_assoc(changeset, :collectors, collectors)
+      end
+    end
+
+    defp maybe_add_accounts(changeset, attrs) do
+      case Map.get(attrs, "account_ids") do
+        nil -> changeset
+        account_ids ->
+          accounts = Repo.all(from a in Account, where: a.id in ^account_ids)
+          Ecto.Changeset.put_assoc(changeset, :accounts, accounts)
+      end
+    end
+
+    defp normalize_account_ids(attrs) do
+      case Map.get(attrs, "account_ids") do
+        nil -> attrs
+        account_ids when is_binary(account_ids) -> Map.put(attrs, "account_ids", [account_ids])
+        _ -> attrs
       end
     end
 

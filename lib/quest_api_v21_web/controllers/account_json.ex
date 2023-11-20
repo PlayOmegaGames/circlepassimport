@@ -1,6 +1,8 @@
 defmodule QuestApiV21Web.AccountJSON do
+  alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Badges.Badge
+  alias QuestApiV21.Quests.Quest
 
   @doc """
   Renders a list of accounts.
@@ -16,17 +18,27 @@ defmodule QuestApiV21Web.AccountJSON do
     %{data: data(account)}
   end
 
-  def data(%Account{badges: badges} = account) do
+  def data(%Account{badges: badges, quests: quests} = account) do
     %{
       id: account.id,
       name: account.name,
       email: account.email,
-      badges: badges_data(badges)
+      badges: badges_data(badges),
+      quests: quests_data(quests)
     }
   end
 
   defp badges_data(badges) do
     Enum.map(badges, fn %Badge{id: id, name: name} ->
+      %{
+        id: id,
+        name: name
+      }
+    end)
+  end
+
+  defp quests_data(quests) do
+    Enum.map(quests, fn %Quest{id: id, name: name} ->
       %{
         id: id,
         name: name

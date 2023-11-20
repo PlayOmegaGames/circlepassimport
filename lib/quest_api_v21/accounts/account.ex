@@ -13,6 +13,7 @@ defmodule QuestApiV21.Accounts.Account do
     field :name, :string
     field :role, :string, default: "default"
     many_to_many :badges, QuestApiV21.Badges.Badge, join_through: "badges_accounts", join_keys: [account_id: :id, badge_id: :id]
+    many_to_many :quests, QuestApiV21.Quests.Quest, join_through: "quests_accounts"
 
     timestamps()
   end
@@ -25,6 +26,7 @@ defmodule QuestApiV21.Accounts.Account do
     |> cast(attrs, [:name, :email, :hashed_password, :password, :role, :is_passwordless])
     |> validate_required([:name, :email])
     |> put_assoc(:badges, badges)
+    |> cast_assoc(:quests, with: &QuestApiV21.Quests.Quest.changeset/2)
   end
 
   defp prepare_badges(attrs) do
