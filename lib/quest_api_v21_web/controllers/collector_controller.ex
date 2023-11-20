@@ -36,7 +36,6 @@ defmodule QuestApiV21Web.CollectorController do
     collector = Collectors.get_collector!(id)
     |> QuestApiV21.Repo.preload([:badges, :quests])
 
-
     render(conn, :show, collector: collector)
   end
 
@@ -55,4 +54,11 @@ defmodule QuestApiV21Web.CollectorController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  #badge page
+  def show_collector(conn, %{"id" => id}) do
+    # Here, you can add logic to fetch data based on the collector ID if needed.
+    render(conn, "collector.html", id: id)
+  end
+
 end

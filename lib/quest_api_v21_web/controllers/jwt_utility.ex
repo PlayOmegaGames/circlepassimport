@@ -27,17 +27,17 @@ defmodule QuestApiV21Web.JWTUtility do
     with {:ok, partner_claims} <- verify_partner_token(partner_token),
          {:ok, account} <- find_or_create_account(partner_claims) do
       {:ok, jwt, _full_claims} = Guardian.encode_and_sign(account, %{})
-      IO.inspect(jwt, label: "Exchanged JWT")
+      #IO.inspect(jwt, label: "Exchanged JWT")
       {:ok, jwt}
     else
       {:error, :invalid_token} ->
-        IO.puts("Exchange Partner Token: Invalid token")
+        #IO.puts("Exchange Partner Token: Invalid token")
         {:error, %{error: "Invalid token"}}
       {:error, :invalid_issuer} ->
-        IO.puts("Exchange Partner Token: Invalid issuer")
+        #IO.puts("Exchange Partner Token: Invalid issuer")
         {:error, %{error: "Invalid issuer"}}
       _ ->
-        IO.puts("Exchange Partner Token: Unknown error occurred")
+        #IO.puts("Exchange Partner Token: Unknown error occurred")
         {:error, %{error: "Unknown error occurred"}}
     end
   end
@@ -48,11 +48,11 @@ defmodule QuestApiV21Web.JWTUtility do
     # For testing purposes, bypassing the secret key check
     case Guardian.decode_and_verify(partner_token, key: :partner_jwt_secret) do
       {:ok, claims} ->
-        IO.inspect(claims, label: "Decoded Claims")
+        #IO.inspect(claims, label: "Decoded Claims")
         {:ok, claims} # Ignore issuer validation for testing
 
       {:error, reason} ->
-        IO.inspect(reason, label: "Decode/Verify Error")
+        #IO.inspect(reason, label: "Decode/Verify Error")
         {:ok, %{"sub" => "test_subject"}} # For testing, return a dummy claim
     end
   end

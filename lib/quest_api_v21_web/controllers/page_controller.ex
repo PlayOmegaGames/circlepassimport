@@ -6,4 +6,12 @@ defmodule QuestApiV21Web.PageController do
     # so skip the default app layout.
     render(conn, :home, layout: false)
   end
+
+  def sign_in(conn, _params) do
+    render(conn, "sign_in.html")
+  end
+
+  def sign_up(conn, _params) do
+    render(conn, "sign_up.html")
+  end
 end

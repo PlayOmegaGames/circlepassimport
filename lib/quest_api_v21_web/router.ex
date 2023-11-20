@@ -29,6 +29,16 @@ defmodule QuestApiV21Web.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    #badge page
+    get "/badge/:id", CollectorController, :show_collector
+
+    #sign up pages for testing
+    get "/sign_in", PageController, :sign_in
+    get "/sign_up", PageController, :sign_up
+    post "/sign_in", AuthController, :sign_in
+    post "/sign_up", AuthController, :sign_up
+
   end
 
   scope "/api", QuestApiV21Web do

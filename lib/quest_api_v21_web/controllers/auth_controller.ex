@@ -37,11 +37,25 @@ defmodule QuestApiV21Web.AuthController do
 
   defp render_jwt_and_account(conn, account) do
     {:ok, jwt, _full_claims} = Guardian.encode_and_sign(account)
-    conn
-    |> put_status(:ok)
-    |> put_resp_header("authorization", "Bearer #{jwt}")
-    |> json(%{jwt: jwt, account: %{email: account.email, name: account.name, id: account.id}})
+
+    # Check if the request is for the API
+    is_api_request = String.starts_with?(conn.request_path, "/api")
+
+    if is_api_request do
+      # API request, return JWT in response
+      conn
+      |> put_status(:ok)
+      |> json(%{jwt: jwt, account: %{email: account.email, name: account.name, id: account.id}})
+    else
+      # Browser request, store JWT in cookie
+      conn
+      |> put_resp_cookie("user_jwt", jwt, secure: true, http_only: true, max_age: 86_400)
+      |> put_status(:ok)
+      |> json(%{message: "Authentication successful", account: %{email: account.email, name: account.name, id: account.id}})
+    end
   end
+
+
 
   #token exchange
   def token_exchange(conn, %{"token" => partner_token}) when not is_nil(partner_token) do
