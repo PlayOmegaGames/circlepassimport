@@ -6,8 +6,6 @@
 
 # General application configuration
 import Config
-import Dotenv
-Dotenv.load()
 
 
 config :quest_api_v21,

@@ -58,6 +58,12 @@ defmodule QuestApiV21.Collectors do
     |> Repo.insert()
   end
 
+  def create_collector_with_organization(collector_params, organization_id) do
+    %Collector{}
+      |> Collector.changeset(Map.put(collector_params, "organization_id", organization_id))
+      |> maybe_add_quests(collector_params)
+      |> Repo.insert()
+  end
 
   @doc """
   Updates a collector.
@@ -108,12 +114,31 @@ defmodule QuestApiV21.Collectors do
   end
 
   defp maybe_add_quests(changeset, attrs) do
-    case Map.get(attrs, "quest_ids") do
-      nil -> changeset
-      quest_ids ->
-        quests = Repo.all(from q in Quest, where: q.id in ^quest_ids)
-        Ecto.Changeset.put_assoc(changeset, :quests, quests)
+    # Retrieve existing quest_ids, default to an empty list if not present
+    quest_ids = Map.get(attrs, "quest_ids", [])
+
+    # Check and add quest_start if it's a valid quest ID
+    with {:ok, quest_ids} <- add_quest_start_if_valid(quest_ids, attrs) do
+      # Fetch quests from the database based on quest_ids
+      quests = Repo.all(from q in Quest, where: q.id in ^quest_ids)
+      # Associate quests with the collector
+      Ecto.Changeset.put_assoc(changeset, :quests, quests)
+    else
+      # Handle invalid quest_start ID
+      {:error, _} ->
+        Ecto.Changeset.add_error(changeset, :quest_start, "Invalid quest start ID.")
     end
   end
 
+  defp add_quest_start_if_valid(quest_ids, attrs) do
+    case Map.get(attrs, "quest_start") do
+      nil -> {:ok, quest_ids}
+      quest_start_id ->
+        # Check if quest_start_id exists in the database
+        case Repo.get(Quest, quest_start_id) do
+          nil -> {:error, :not_found}
+          _quest -> {:ok, List.insert_at(quest_ids, -1, quest_start_id)}
+        end
+    end
+  end
 end

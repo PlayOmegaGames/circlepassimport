@@ -3,6 +3,7 @@ defmodule QuestApiV21Web.CollectorController do
 
   alias QuestApiV21.Collectors
   alias QuestApiV21.Collectors.Collector
+  alias QuestApiV21Web.JWTUtility
 
   action_fallback QuestApiV21Web.FallbackController
 
@@ -14,12 +15,20 @@ defmodule QuestApiV21Web.CollectorController do
   end
 
   def create(conn, %{"collector" => collector_params}) do
-    with {:ok, %Collector{} = collector} <- Collectors.create_collector(collector_params) do
-      collector = QuestApiV21.Repo.preload(collector, [:quests, :badges])
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/collectors/#{collector}")
-      |> render(:show, collector: collector)
+    organization_id = JWTUtility.extract_primary_organization_id_from_jwt(conn)
+
+    case Collectors.create_collector_with_organization(collector_params, organization_id) do
+      {:ok, collector} ->
+        collector = QuestApiV21.Repo.preload(collector, [:badges, :quests])
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/collector/#{collector}")
+        |> render(:show, collector: collector)
+
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "Collector creation failed", errors: changeset})
     end
   end
 

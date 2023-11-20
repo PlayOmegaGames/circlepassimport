@@ -57,6 +57,12 @@ defmodule QuestApiV21.Badges do
     |> Repo.insert()
   end
 
+  def create_badge_with_organization(badge_params, organization_id) do
+    %Badge{}
+    |> Badge.changeset(Map.put(badge_params, "organization_id", organization_id))
+    |> maybe_add_accounts(badge_params)
+    |> Repo.insert()
+  end
   @doc """
   Updates a badge.
 

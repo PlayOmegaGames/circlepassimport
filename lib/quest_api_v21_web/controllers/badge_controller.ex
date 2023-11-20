@@ -3,6 +3,7 @@ defmodule QuestApiV21Web.BadgeController do
 
   alias QuestApiV21.Badges
   alias QuestApiV21.Badges.Badge
+  alias QuestApiV21Web.JWTUtility
 
   action_fallback QuestApiV21Web.FallbackController
 
@@ -14,12 +15,20 @@ defmodule QuestApiV21Web.BadgeController do
   end
 
   def create(conn, %{"badge" => badge_params}) do
-    with {:ok, %Badge{} = badge} <- Badges.create_badge(badge_params) do
-      badge = QuestApiV21.Repo.preload(badge, [:accounts])
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/badge/#{badge}")
-      |> render(:show, badge: badge)
+    organization_id = JWTUtility.extract_primary_organization_id_from_jwt(conn)
+
+    case Badges.create_badge_with_organization(badge_params, organization_id) do
+      {:ok, badge} ->
+        badge = QuestApiV21.Repo.preload(badge, [:accounts])
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/badge/#{badge}")
+        |> render(:show, badge: badge)
+
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "Badge creation failed", errors: changeset})
     end
   end
 

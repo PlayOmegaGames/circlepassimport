@@ -24,7 +24,7 @@ defmodule QuestApiV21Web.QuestJSON do
       error: message
     }
   end
-  
+
 
   defp data(%Quest{badges: badges, collectors: collectors} = quest) do
     %{
@@ -38,6 +38,7 @@ defmodule QuestApiV21Web.QuestJSON do
       end_date: quest.end_date,
       address: quest.address,
       organization_id: quest.organization_id,
+      description: quest.description,
       badges: badges_data(badges),
       collectors: collectors_data(collectors)
 

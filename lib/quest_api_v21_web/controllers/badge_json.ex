@@ -27,8 +27,8 @@ defmodule QuestApiV21Web.BadgeJSON do
       organization_id: badge.organization_id,
       quest_id: badge.quest_id,
       collector_id: badge.collector_id,
+      unauthorized_url: badge.unauthorized_url,
       account_ids: accounts_data(accounts)
-
     }
   end
 
