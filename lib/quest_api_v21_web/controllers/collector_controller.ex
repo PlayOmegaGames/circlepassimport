@@ -43,9 +43,11 @@ defmodule QuestApiV21Web.CollectorController do
     collector = Collectors.get_collector!(id)
 
     with {:ok, %Collector{} = collector} <- Collectors.update_collector(collector, collector_params) do
+      collector = QuestApiV21.Repo.preload(collector, [:badges, :quests])
       render(conn, :show, collector: collector)
     end
   end
+
 
   def delete(conn, %{"id" => id}) do
     collector = Collectors.get_collector!(id)

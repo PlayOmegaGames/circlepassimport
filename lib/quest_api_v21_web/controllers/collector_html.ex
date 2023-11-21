@@ -3,6 +3,7 @@ defmodule QuestApiV21Web.CollectorHTML do
   import Phoenix.HTML.Tag
 
 
+
   embed_templates "page_html/*"
 
 end

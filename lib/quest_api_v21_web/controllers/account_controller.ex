@@ -6,6 +6,7 @@ defmodule QuestApiV21Web.AccountController do
   # Aliases the QuestApiV21.Accounts and QuestApiV21.Accounts.Account modules for easier access.
   alias QuestApiV21.Accounts
   alias QuestApiV21.Accounts.Account
+  alias QuestApiV21.Guardian
 
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController
@@ -54,14 +55,32 @@ defmodule QuestApiV21Web.AccountController do
 
   # Defines the update action to update an existing account.
   def update(conn, %{"id" => id, "account" => account_params}) do
-    # Retrieves the account by ID.
     account = Accounts.get_account!(id)
-      |> QuestApiV21.Repo.preload([:badges, :quests])
+            |> QuestApiV21.Repo.preload([:badges, :quests])
 
-    # Attempts to update the account with the provided parameters.
-    with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, account_params) do
-      # Renders the show view for the updated account.
-      render(conn, :show, account: updated_account)
+    with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, account_params),
+         {:ok, new_jwt, _full_claims} <- Guardian.encode_and_sign(updated_account) do
+      updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
+      conn
+      |> put_status(:ok)
+      |> json(%{
+        jwt: new_jwt,
+        account: %{email: updated_account.email, name: updated_account.name, id: updated_account.id}
+      })
+    else
+      # Handle update failure
+      {:error, changeset} ->
+        # Add your code here to handle changeset error
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", changeset: changeset)
+
+      # Handle JWT encoding error
+      {:error, reason} ->
+        IO.inspect(reason, label: "Error in JWT encoding")
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Internal server error"})
     end
   end
 

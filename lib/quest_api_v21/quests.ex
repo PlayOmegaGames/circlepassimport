@@ -143,9 +143,11 @@
     defp maybe_add_accounts(changeset, attrs) do
       case Map.get(attrs, "account_ids") do
         nil -> changeset
-        account_ids ->
-          accounts = Repo.all(from a in Account, where: a.id in ^account_ids)
-          Ecto.Changeset.put_assoc(changeset, :accounts, accounts)
+        account_ids when is_list(account_ids) ->
+          current_accounts = Ecto.assoc(changeset.data, :accounts) |> Repo.all()
+          new_accounts = Repo.all(from a in Account, where: a.id in ^account_ids)
+          merged_accounts = Enum.uniq(current_accounts ++ new_accounts)
+          Ecto.Changeset.put_assoc(changeset, :accounts, merged_accounts)
       end
     end
 

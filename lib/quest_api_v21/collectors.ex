@@ -37,7 +37,7 @@ defmodule QuestApiV21.Collectors do
       ** (Ecto.NoResultsError)
 
   """
-  def get_collector!(id), do: Repo.get!(Collector, id)
+  def get_collector!(id), do: Repo.get!(Collector, id) |> Repo.preload(:quests)
 
   @doc """
   Creates a collector.

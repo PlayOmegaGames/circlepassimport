@@ -30,6 +30,48 @@ topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
+document.addEventListener("DOMContentLoaded", function() {
+    // Handle Sign-In
+    const signInForm = document.querySelector('form[action="/sign_in"]');
+    if (signInForm) {
+      signInForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        submitForm(signInForm, '/sign_in');
+      });
+    }
+  
+    // Handle Sign-Up
+    const signUpForm = document.querySelector('form[action="/sign_up"]');
+    if (signUpForm) {
+      signUpForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        submitForm(signUpForm, '/sign_up');
+      });
+    }
+});
+
+function submitForm(form, url) {
+    fetch(url, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: {
+        'X-CSRF-Token': csrfToken
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // Redirect to homepage or appropriate page on success
+      window.location.href = '/';
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      displayErrorMessage('An error occurred. Please try again later.');
+    });
+}
+
+
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 

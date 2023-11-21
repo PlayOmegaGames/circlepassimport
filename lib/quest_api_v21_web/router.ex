@@ -14,6 +14,11 @@ defmodule QuestApiV21Web.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authenticated do
+    plug :accepts, ["html"]
+    plug QuestApiV21Web.AuthPlug
+  end
+
   pipeline :authenticated_api do
     plug :accepts, ["json"]
     plug QuestApiV21.GuardianPipeline
@@ -30,14 +35,21 @@ defmodule QuestApiV21Web.Router do
 
     get "/", PageController, :home
 
-    #badge page
-    get "/badge/:id", CollectorController, :show_collector
 
     #sign up pages for testing
     get "/sign_in", PageController, :sign_in
     get "/sign_up", PageController, :sign_up
-    post "/sign_in", AuthController, :sign_in
-    post "/sign_up", AuthController, :sign_up
+    post "/sign_in", AuthController, :html_sign_in
+    post "/sign_up", AuthController, :html_sign_up
+
+  end
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser, :authenticated]  # Use both browser and authenticated pipelines
+
+    #badge page
+    get "/badge/:id", CollectorController, :show_collector
+
 
   end
 
