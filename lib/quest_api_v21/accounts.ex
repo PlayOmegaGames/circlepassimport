@@ -189,5 +189,35 @@ defmodule QuestApiV21.Accounts do
     end
   end
 
+  #for the show collector function
+  def add_quest_to_user(user_id, quest_id) do
+    account = Repo.get!(Account, user_id)
+    |> Repo.preload(:quests)
+
+    quest = Repo.get!(QuestApiV21.Quests.Quest, quest_id)
+
+    account = Ecto.Changeset.change(account)
+    |> Ecto.Changeset.put_assoc(:quests, List.insert_at(account.quests, -1, quest))
+
+    Repo.update(account)
+  end
+
+  def add_badge_to_user(user_id, badge) do
+    account = Repo.get!(Account, user_id)
+
+    # Check if the badge is already associated with the account
+    if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
+      {:ok, account}
+    else
+      # Add the badge to the account's list of badges
+      updated_badges = [badge | account.badges]
+
+      account
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:badges, updated_badges)
+      |> Repo.update()
+    end
+  end
+
 
 end

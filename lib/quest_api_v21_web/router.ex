@@ -50,7 +50,6 @@ defmodule QuestApiV21Web.Router do
     #badge page
     get "/badge/:id", CollectorController, :show_collector
 
-
   end
 
   scope "/api", QuestApiV21Web do

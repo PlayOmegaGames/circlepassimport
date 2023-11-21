@@ -75,12 +75,14 @@ defmodule QuestApiV21.Badges do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_badge(%Badge{} = badge, attrs) do
-    badge
-    |> Badge.changeset(attrs)
-    |> maybe_add_accounts(attrs)
-    |> Repo.update()
-  end
+def update_badge(%Badge{} = badge, attrs) do
+  badge = Repo.preload(badge, :accounts)  # Preload accounts before updating
+  badge
+  |> Badge.changeset(attrs)
+  |> maybe_add_accounts(attrs)
+  |> Repo.update()
+end
+
 
   @doc """
   Deletes a badge.

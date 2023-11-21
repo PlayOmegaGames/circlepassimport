@@ -1,1 +1,40 @@
 <h1>Hello World</h1>
+
+<%= if @quest_name do %>
+  <p>Quest Name: <%= @quest_name %></p>
+<% end %>
+
+<%= if @current_user do %>
+  <h3>Session Information:</h3>
+  <p>User ID: <%= @current_user.id %></p>
+  <p>Email: <%= @current_user.email %></p>
+  <p>Name: <%= @current_user.name %></p>
+  <!-- Add other fields as needed -->
+<% end %>
+
+
+<%= if @user_quests do %>
+  <h3>User's Quests:</h3>
+  <ul>
+    <%= for quest <- @user_quests do %>
+      <li><%= quest.name %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h3>Badges</h3>
+<%= if @badges do %>
+  <h3>Collector's Badges:</h3>
+  <ul>
+    <%= for badge <- @badges do %>
+      <li><%= badge.name %> - <%= badge.id %></li> <!-- Modify as per your badge schema -->
+    <% end %>
+  </ul>
+<% end %>
+
+<%= if @badge_added do %>
+  <h2 style="color: green;">Added Badge</h2>
+<% else %>
+  <h2 style="color: red;">No Badges added</h2>
+
+<% end %>

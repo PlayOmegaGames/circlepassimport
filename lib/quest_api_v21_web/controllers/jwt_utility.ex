@@ -69,7 +69,7 @@ defmodule QuestApiV21Web.JWTUtility do
   defp find_or_create_account(claims) do
     # Replace 'user_identifier_claim' with the actual claim key that identifies the user
     user_identifier = claims["sub"]
-    IO.inspect(user_identifier, label: "User Identifier")
+    #IO.inspect(user_identifier, label: "User Identifier")
 
     case Accounts.get_user_by_identifier(user_identifier) do
       nil -> create_user(claims)

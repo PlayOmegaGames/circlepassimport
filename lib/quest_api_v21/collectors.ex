@@ -37,7 +37,38 @@ defmodule QuestApiV21.Collectors do
       ** (Ecto.NoResultsError)
 
   """
+
+
   def get_collector!(id), do: Repo.get!(Collector, id) |> Repo.preload(:quests)
+
+  def get_quest_name(quest_id) do
+    QuestApiV21.Repo.get(QuestApiV21.Quests.Quest, quest_id)
+    |> case do
+      nil -> nil
+      quest -> quest.name
+    end
+  end
+
+
+    @doc """
+  Gets a single collector without raising an exception.
+
+  Returns nil if the Collector does not exist.
+
+  ## Examples
+
+      iex> get_collector(123)
+      %Collector{}
+
+      iex> get_collector(456)
+      nil
+  """
+  def get_collector(id) do
+    Repo.get(Collector, id) |> case do
+      nil -> nil
+      collector -> Repo.preload(collector, [:quests, :badges])
+    end
+  end
 
   @doc """
   Creates a collector.

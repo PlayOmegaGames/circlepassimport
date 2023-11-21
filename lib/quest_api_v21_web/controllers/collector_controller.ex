@@ -32,11 +32,56 @@ defmodule QuestApiV21Web.CollectorController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
+  def show_collector(conn, %{"id" => id}) do
     collector = Collectors.get_collector!(id)
-    |> QuestApiV21.Repo.preload([:badges, :quests])
+    |> QuestApiV21.Repo.preload([:quests, :badges])
 
-    render(conn, :show, collector: collector)
+    quest_name =
+      case collector.quest_start do
+        nil -> nil
+        quest_id -> Collectors.get_quest_name(quest_id)
+      end
+
+    current_user = conn.assigns[:current_user]
+
+    user_quests = if current_user do
+      QuestApiV21.Repo.preload(current_user, [:quests, :badges]).quests
+    else
+      []
+    end
+
+    # Initialize a flag to indicate if a badge is added
+    badge_added = false
+
+    # Check if `quest_start` is not nil and not already associated with the user
+    if collector.quest_start != nil and not Enum.any?(user_quests, fn quest -> quest.id == collector.quest_start end) do
+      QuestApiV21.Accounts.add_quest_to_user(current_user.id, collector.quest_start)
+
+      # Add a badge to the user's account and set the flag
+      {:ok, _} = QuestApiV21.Accounts.add_badge_to_user(current_user.id, Enum.at(collector.badges, 0))
+      badge_added = true
+    end
+
+    render(conn, "collector.html",
+      collector: collector,
+      quest_name: quest_name,
+      current_user: current_user,
+      user_quests: user_quests,
+      badges: collector.badges,
+      badge_added: badge_added  # Pass this flag to the view
+    )
+  end
+
+  def show(conn, %{"id" => id}) do
+    case Collectors.get_collector(id) do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> render("error.json", message: "Collector not found")
+
+      %Collector{} = collector ->
+        render(conn, :show, collector: collector)
+    end
   end
 
   def update(conn, %{"id" => id, "collector" => collector_params}) do
@@ -55,12 +100,6 @@ defmodule QuestApiV21Web.CollectorController do
     with {:ok, %Collector{}} <- Collectors.delete_collector(collector) do
       send_resp(conn, :no_content, "")
     end
-  end
-
-  #badge page
-  def show_collector(conn, %{"id" => id}) do
-    # Here, you can add logic to fetch data based on the collector ID if needed.
-    render(conn, "collector.html", id: id)
   end
 
 end
