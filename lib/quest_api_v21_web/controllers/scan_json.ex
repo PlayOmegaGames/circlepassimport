@@ -15,6 +15,13 @@ defmodule QuestApiV21Web.ScanJSON do
     %{data: data(scan)}
   end
 
+  @doc """
+  Renders an error response.
+  """
+  def render("error.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
+
   defp data(%Scan{} = scan) do
     %{
       id: scan.id,

@@ -16,6 +16,13 @@ defmodule QuestApiV21Web.BadgeJSON do
     %{data: data(badge)}
   end
 
+    @doc """
+  Renders an error response.
+  """
+  def render("error.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
+
   defp data(%Badge{accounts: accounts} = badge) do
     %{
       id: badge.id,

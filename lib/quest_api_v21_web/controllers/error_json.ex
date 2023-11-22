@@ -1,23 +1,26 @@
 defmodule QuestApiV21Web.ErrorJSON do
-  # If you want to customize a particular status code,
-  # you may add your own clauses, such as:
-  #
-  # def render("500.json", _assigns) do
-  #   %{errors: %{detail: "Internal Server Error"}}
-  # end
+  # Example of customizing specific error responses
+  def render("404.json", _assigns) do
+    %{errors: %{detail: "Resource not found"}}
+  end
 
-  # By default, Phoenix returns the status message from
-  # the template name. For example, "404.json" becomes
-  # "Not Found".
+  def render("500.json", _assigns) do
+    %{errors: %{detail: "Internal Server Error"}}
+  end
 
+  # Custom error for handling badge or quest association errors
+  def render("association_error.json", %{message: message}) do
+    %{errors: %{detail: "Association Error", message: message}}
+  end
+
+  # Default handler for specific error with message and additional errors
   def render("error.json", %{message: message, errors: errors}) do
     %{message: message, errors: errors}
   end
 
-  #always have this function at the bottom
+  # General handler for unspecified errors
   def render(template, _assigns) do
     %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
   end
-
-
 end
+

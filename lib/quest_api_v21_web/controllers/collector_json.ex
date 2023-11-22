@@ -17,6 +17,13 @@ defmodule QuestApiV21Web.CollectorJSON do
     %{data: data(collector)}
   end
 
+    @doc """
+  Renders an error response.
+  """
+  def render("error.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
+  
   defp data(%Collector{badges: badges, quests: quests} = collector) do
     %{
       id: collector.id,

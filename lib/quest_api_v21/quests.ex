@@ -53,6 +53,21 @@
     end
 
     @doc """
+    Fetches a single quest by its ID.
+
+    ## Examples
+
+        iex> get_quest("123")
+        %Quest{}
+
+    """
+    def get_quest(id) do
+      Quest
+      |> Repo.get(id)
+      |> Repo.preload([:organization, :badges, :collectors, :accounts])
+    end
+
+    @doc """
     Creates a quest.
 
     ## Examples

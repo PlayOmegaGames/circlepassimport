@@ -16,6 +16,13 @@ defmodule QuestApiV21Web.HostJSON do
     %{data: data(host)}
   end
 
+      @doc """
+  Renders an error response.
+  """
+  def render("error.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
+
   defp data(%Host{organizations: organizations} = host) do
     %{
       id: host.id,

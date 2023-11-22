@@ -18,6 +18,13 @@ defmodule QuestApiV21Web.AccountJSON do
     %{data: data(account)}
   end
 
+  @doc """
+  Renders an error response.
+  """
+  def render("error.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
+
   def data(%Account{badges: badges, quests: quests} = account) do
     %{
       id: account.id,

@@ -27,6 +27,12 @@ defmodule QuestApiV21Web.QuestJSON do
     }
   end
 
+    @doc """
+  Renders an error response.
+  """
+  def render("error.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
 
   defp data(%Quest{badges: badges, collectors: collectors} = quest) do
     %{
@@ -63,26 +69,5 @@ defmodule QuestApiV21Web.QuestJSON do
       }
     end)
   end
-
-  """
-  defp accounts_data(accounts) do
-    Enum.map(accounts, fn %Account{id: id, name: name} ->
-      %{
-        id: id,
-        name: name
-      }
-    end)
-  end
-  """
-  """
-  Useful for displaying more organization information
-
-  defp organization_data(%Organization{} = organization) do
-    %{
-      id: organization.id,
-      name: organization.name
-    }
-  end
-  """
 
 end
