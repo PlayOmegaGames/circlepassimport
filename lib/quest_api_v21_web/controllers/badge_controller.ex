@@ -4,6 +4,7 @@ defmodule QuestApiV21Web.BadgeController do
   alias QuestApiV21.Badges
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21Web.JWTUtility
+  alias QuestApiV21.Repo
 
   action_fallback QuestApiV21Web.FallbackController
 
@@ -39,6 +40,27 @@ defmodule QuestApiV21Web.BadgeController do
 
     render(conn, :show, badge: badge)
   end
+
+
+  def show_badge(conn, _params) do
+    current_user = conn.assigns[:current_user]
+
+    # Preload badges and quests for the current user
+    user_with_badges_and_quests = Repo.preload(current_user, [:badges, :quests])
+
+    # User's badge IDs for comparison in the template
+    user_badge_ids = Enum.map(user_with_badges_and_quests.badges, &(&1.id))
+
+    badges_by_quest = Enum.group_by(user_with_badges_and_quests.badges, fn badge -> badge.quest_id end)
+
+    render(conn, "badge.html",
+      badges_by_quest: badges_by_quest,
+      quests: user_with_badges_and_quests.quests,
+      user_badge_ids: user_badge_ids
+    )
+  end
+
+
 
   def update(conn, %{"id" => id, "badge" => badge_params}) do
     badge = Badges.get_badge!(id)

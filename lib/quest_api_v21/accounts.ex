@@ -203,7 +203,8 @@ defmodule QuestApiV21.Accounts do
   end
 
   def add_badge_to_user(user_id, badge) do
-    account = Repo.get!(Account, user_id)
+    # Fetch the account and preload its badges
+    account = Repo.get!(Account, user_id) |> Repo.preload(:badges)
 
     # Check if the badge is already associated with the account
     if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
@@ -218,6 +219,7 @@ defmodule QuestApiV21.Accounts do
       |> Repo.update()
     end
   end
+
 
 
 end

@@ -39,7 +39,7 @@ defmodule QuestApiV21.Collectors do
   """
 
 
-  def get_collector!(id), do: Repo.get!(Collector, id) |> Repo.preload(:quests)
+  def get_collector!(id), do: Repo.get!(Collector, id) |> Repo.preload([:quests, :badges])
 
   def get_quest_name(quest_id) do
     QuestApiV21.Repo.get(QuestApiV21.Quests.Quest, quest_id)
@@ -113,7 +113,16 @@ defmodule QuestApiV21.Collectors do
     |> Collector.changeset(attrs)
     |> maybe_add_quests(attrs)
     |> Repo.update()
+    |> case do
+      {:ok, updated_collector} ->
+        updated_collector = Repo.preload(updated_collector, [:quests, :badges])
+        {:ok, updated_collector}
+
+      {:error, _} = error ->
+        error
+    end
   end
+
 
   @doc """
   Deletes a collector.

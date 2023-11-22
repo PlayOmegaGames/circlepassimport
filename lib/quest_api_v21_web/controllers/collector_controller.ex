@@ -32,46 +32,6 @@ defmodule QuestApiV21Web.CollectorController do
     end
   end
 
-  def show_collector(conn, %{"id" => id}) do
-    collector = Collectors.get_collector!(id)
-    |> QuestApiV21.Repo.preload([:quests, :badges])
-
-    quest_name =
-      case collector.quest_start do
-        nil -> nil
-        quest_id -> Collectors.get_quest_name(quest_id)
-      end
-
-    current_user = conn.assigns[:current_user]
-
-    user_quests = if current_user do
-      QuestApiV21.Repo.preload(current_user, [:quests, :badges]).quests
-    else
-      []
-    end
-
-    # Initialize a flag to indicate if a badge is added
-    badge_added = false
-
-    # Check if `quest_start` is not nil and not already associated with the user
-    if collector.quest_start != nil and not Enum.any?(user_quests, fn quest -> quest.id == collector.quest_start end) do
-      QuestApiV21.Accounts.add_quest_to_user(current_user.id, collector.quest_start)
-
-      # Add a badge to the user's account and set the flag
-      {:ok, _} = QuestApiV21.Accounts.add_badge_to_user(current_user.id, Enum.at(collector.badges, 0))
-      badge_added = true
-    end
-
-    render(conn, "collector.html",
-      collector: collector,
-      quest_name: quest_name,
-      current_user: current_user,
-      user_quests: user_quests,
-      badges: collector.badges,
-      badge_added: badge_added  # Pass this flag to the view
-    )
-  end
-
   def show(conn, %{"id" => id}) do
     case Collectors.get_collector(id) do
       nil ->
@@ -83,6 +43,15 @@ defmodule QuestApiV21Web.CollectorController do
         render(conn, :show, collector: collector)
     end
   end
+
+
+  # This action displays detailed information about a specific collector.
+  # It is triggered when a GET request is made to "/badge/:id".
+  def show_collector(conn, %{"id" => id}) do
+
+  end
+
+
 
   def update(conn, %{"id" => id, "collector" => collector_params}) do
     collector = Collectors.get_collector!(id)
