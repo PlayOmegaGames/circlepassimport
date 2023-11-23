@@ -63,10 +63,7 @@ defmodule QuestApiV21Web.AccountController do
       updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
       conn
       |> put_status(:ok)
-      |> json(%{
-        jwt: new_jwt,
-        account: %{email: updated_account.email, name: updated_account.name, id: updated_account.id}
-      })
+      |> render("account.json", account: updated_account, jwt: new_jwt)
     else
       # Handle update failure
       {:error, changeset} ->
@@ -74,15 +71,9 @@ defmodule QuestApiV21Web.AccountController do
         conn
         |> put_status(:unprocessable_entity)
         |> render("error.json", changeset: changeset)
-
-      # Handle JWT encoding error
-      {:error, reason} ->
-        IO.inspect(reason, label: "Error in JWT encoding")
-        conn
-        |> put_status(:internal_server_error)
-        |> json(%{error: "Internal server error"})
     end
   end
+
 
   # Defines the delete action to delete an existing account.
   def delete(conn, %{"id" => id}) do

@@ -67,9 +67,14 @@ defmodule QuestApiV21.Collectors do
   def get_collector(id) do
     Repo.get(Collector, id) |> case do
       nil -> nil
-      collector -> Repo.preload(collector, [:quests, :badges])
+      collector ->
+        Repo.preload(collector,
+          quests: [badges: :accounts],
+          badges: :accounts
+        )
     end
   end
+
 
       @doc """
     Gets a single quest.

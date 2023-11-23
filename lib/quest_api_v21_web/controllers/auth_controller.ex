@@ -56,66 +56,44 @@ defmodule QuestApiV21Web.AuthController do
   end
 
 
-
-  #token exchange
-  def token_exchange(conn, %{"token" => partner_token}) when not is_nil(partner_token) do
-    case QuestApiV21Web.JWTUtility.exchange_partner_token(partner_token) do
-      {:ok, jwt} ->
+  # Add HTML-Based Authentication Functions
+  def html_sign_in(conn, %{"account" => %{"email" => email, "password" => password}}) do
+    case Accounts.authenticate_user(email, password) do
+      {:ok, account} ->
         conn
-        |> put_status(:ok)
-        |> json(%{jwt: jwt})
+        |> put_session(:user_id, account.id)
+        |> redirect(to: "/")
 
-      {:error, reason} ->
+      {:error, :not_found} ->
         conn
-        |> put_status(:unauthorized)
-        |> json(%{error: reason})  # Ensure 'reason' is a string or map that can be converted to JSON
+        |> put_flash(:error, "Account not found")
+        |> redirect(to: "/sign_in")
+
+      {:error, :unauthorized} ->
+        conn
+        |> put_flash(:error, "Incorrect password")
+        |> redirect(to: "/sign_in")
     end
   end
 
-  def token_exchange(conn, _) do
+
+  def html_sign_up(conn, %{"account" => account_params}) do
+    case Accounts.create_account(account_params) do
+      {:ok, account} ->
+        conn
+        |> put_session(:account_id, account.id)
+        |> redirect(to: "/")
+
+      {:error, error_message, _existing_account} ->
+        conn
+        |> put_flash(:error, "Account creation failed: #{error_message}")
+        |> redirect(to: "/sign_up")
+    end
+  end
+  def html_sign_out(conn, _params) do
     conn
-    |> put_status(:bad_request)
-    |> json(%{error: "Token not provided or invalid format"})
+    |> configure_session(drop: true)
+    |> redirect(to: "/")
   end
-
-    # Add HTML-Based Authentication Functions
-    def html_sign_in(conn, %{"account" => %{"email" => email, "password" => password}}) do
-      case Accounts.authenticate_user(email, password) do
-        {:ok, account} ->
-          conn
-          |> put_session(:user_id, account.id)
-          |> redirect(to: "/")
-
-        {:error, :not_found} ->
-          conn
-          |> put_flash(:error, "Account not found")
-          |> redirect(to: "/sign_in")
-
-        {:error, :unauthorized} ->
-          conn
-          |> put_flash(:error, "Incorrect password")
-          |> redirect(to: "/sign_in")
-      end
-    end
-
-
-    def html_sign_up(conn, %{"account" => account_params}) do
-      case Accounts.create_account(account_params) do
-        {:ok, account} ->
-          conn
-          |> put_session(:account_id, account.id)
-          |> redirect(to: "/")
-
-        {:error, error_message, _existing_account} ->
-          conn
-          |> put_flash(:error, "Account creation failed: #{error_message}")
-          |> redirect(to: "/sign_up")
-      end
-    end
-    def html_sign_out(conn, _params) do
-      conn
-      |> configure_session(drop: true)
-      |> redirect(to: "/")
-    end
 
 end

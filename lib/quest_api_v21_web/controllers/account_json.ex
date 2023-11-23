@@ -25,6 +25,13 @@ defmodule QuestApiV21Web.AccountJSON do
     %{errors: %{detail: message}}
   end
 
+  def render("account.json", %{account: account, jwt: jwt}) do
+    %{
+      jwt: jwt,
+      data: data(account)
+    }
+  end
+  
   def data(%Account{badges: badges, quests: quests} = account) do
     %{
       id: account.id,

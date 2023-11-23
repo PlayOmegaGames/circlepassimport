@@ -38,6 +38,8 @@ defmodule QuestApiV21.Guardian do
 
     Guardian.encode_and_sign(account, updated_claims)
   end
+
+  
   def resource_from_claims(claims) do
     IO.inspect(claims, label: "Decoded JWT Claims")
 

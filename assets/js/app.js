@@ -31,6 +31,7 @@ window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 document.addEventListener("DOMContentLoaded", function() {
+
     // Handle Sign-In
     const signInForm = document.querySelector('form[action="/sign_in"]');
     if (signInForm) {

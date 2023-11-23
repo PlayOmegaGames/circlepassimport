@@ -1,0 +1,72 @@
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    // Function to launch a big burst of confetti
+    const launchBigBurst = () => {
+      confetti({
+        startVelocity: 45, // Increased velocity for a more dynamic effect
+        spread: 360,
+        particleCount: 500, // Increased particle count for a bigger burst
+        origin: {
+          x: 0.5, // Centralized origin for the burst
+          y: 0.5
+        }
+      });
+    };
+
+    // Launch the big burst immediately when the page loads
+    launchBigBurst();
+  });
+</script>
+
+
+<div class="confetti-overlay" id="confetti"></div>
+<div class="flex justify-center content ">
+  <div>
+    <p class="
+      text-3xl 
+      text-center 
+      mb-5        
+      font-bold
+      text-slate-700 since they fall down, start a bit higher than random
+        
+    ">
+      <%= @badge.name %>
+    </p>
+    
+
+    <img 
+      src={"#{@badge.image}"} 
+      alt= {"#{@badge.name}"}
+      class="
+        max-w-xs
+        rounded-md
+        mb-8
+        shadow-2xl"
+      style="
+        animation: growAndShrink 2s infinite;
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+
+        ">
+    <!-- Circular Collect Badge Button -->
+
+
+  <div class="flex justify-center items-center"> <!-- Full screen height and center alignment -->
+
+    <div class="text-center mt-28">
+      <a href="/badges" class="bg-brand rounded-full h-28 w-28 flex items-center justify-center relative">
+        <!-- Inner concentric circles -->
+        <div class="absolute rounded-full border-4 border-white h-20 w-20"></div>
+        <div class="absolute rounded-full border-4 border-white h-12 w-12"></div>
+
+        <!-- Icon in the center -->
+      </a>
+    </div>
+  </div>
+  
+  <h3 class="text-center mt-6 text-xl text-slate-700"> Collect Badge</h3>
+
+
+  </div>
+
+  <!-- Add more fields here as needed -->
+</div>

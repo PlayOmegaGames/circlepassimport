@@ -9,6 +9,7 @@ defmodule QuestApiV21.Accounts do
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Accounts.Account
   alias Bcrypt
+  require Logger
 
   @doc """
   Gets a single account.
@@ -196,22 +197,40 @@ defmodule QuestApiV21.Accounts do
   def add_quest_to_user(user_id, quest) do
     account = Repo.get!(Account, user_id) |> Repo.preload(:quests)
 
-    # Add quest to account and update
-    updated_quests = [quest | account.quests]
-    Ecto.Changeset.change(account)
-    |> Ecto.Changeset.put_assoc(:quests, updated_quests)
-    |> Repo.update()
+    if Enum.any?(account.quests, fn q -> q.id == quest.id end) do
+      Logger.info("Quest ID: #{quest.id} already associated with Account ID: #{account.id}")
+      {:ok, "Quest already associated with the account", account}
+    else
+      Logger.info("Adding Quest ID: #{quest.id} to Account ID: #{account.id}")
+      updated_quests = [quest | account.quests]
+      Ecto.Changeset.change(account)
+      |> Ecto.Changeset.put_assoc(:quests, updated_quests)
+      |> Repo.update()
+      |> case do
+        {:ok, updated_account} -> {:ok, "Quest added to the account", updated_account}
+        {:error, reason} -> {:error, reason}
+      end
+    end
   end
-  
+
+
   def add_badge_to_user(user_id, badge) do
     account = Repo.get!(Account, user_id) |> Repo.preload(:badges)
 
-    # Add badge to account and update
-    updated_badges = [badge | account.badges]
-    Ecto.Changeset.change(account)
-    |> Ecto.Changeset.put_assoc(:badges, updated_badges)
-    |> Repo.update()
+    if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
+      Logger.info("Badge ID: #{badge.id} already associated with Account ID: #{account.id}")
+      {:ok, "Badge already associated with the account", account}
+    else
+      Logger.info("Adding Badge ID: #{badge.id} to Account ID: #{account.id}")
+      updated_badges = [badge | account.badges]
+      Ecto.Changeset.change(account)
+      |> Ecto.Changeset.put_assoc(:badges, updated_badges)
+      |> Repo.update()
+      |> case do
+        {:ok, updated_account} -> {:ok, "Badge added to the account", updated_account}
+        {:error, reason} -> {:error, reason}
+      end
+    end
   end
-
 
 end

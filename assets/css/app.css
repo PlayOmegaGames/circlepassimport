@@ -3,3 +3,25 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+@keyframes growAndShrink {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02); /* Grow to 110% size */
+    }
+    100% {
+      transform: scale(1); /* Back to the original size */
+    }
+  }
+  
+  .confetti-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10; /* Adjust z-index to be above or below other elements as needed */
+    pointer-events: none; /* Allows clicks to pass through */
+  }
+

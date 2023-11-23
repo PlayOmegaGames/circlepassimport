@@ -22,6 +22,18 @@ defmodule QuestApiV21.Badges do
     Repo.all(Badge)
   end
 
+    @doc """
+  Returns a list of badges filtered by the given list of IDs.
+
+  ## Examples
+
+      iex> list_badges_by_ids([123, 456])
+      [%Badge{id: 123}, %Badge{id: 456}]
+  """
+  def list_badges_by_ids(badge_ids) do
+    from(b in Badge, where: b.id in ^badge_ids) |> Repo.all()
+  end
+
   @doc """
   Gets a single badge.
 
