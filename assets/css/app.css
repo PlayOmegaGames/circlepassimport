@@ -25,3 +25,21 @@
     pointer-events: none; /* Allows clicks to pass through */
   }
 
+
+    /* Keyframes for the pulsing glow animation */
+    @keyframes pulse-glow {
+      0% {
+        box-shadow: 0 0 10px 5px rgba(106, 67, 184, 0.6); /* Starting state of the glow */
+      }
+      50% {
+        box-shadow: 0 0 20px 10px rgba(106, 67, 184, 0.3); /* Fainter and wider glow */
+      }
+      100% {
+        box-shadow: 0 0 10px 5px rgba(106, 67, 184, 0.6); /* Return to starting state */
+      }
+    }
+  
+    /* Button styling with animation */
+    .glow-button {
+      animation: pulse-glow 2s infinite; /* Apply the animation */
+    }

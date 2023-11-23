@@ -5,6 +5,7 @@ defmodule QuestApiV21Web.BadgeController do
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21Web.JWTUtility
   alias QuestApiV21.Repo
+  require Logger
 
   action_fallback QuestApiV21Web.FallbackController
 
@@ -26,11 +27,12 @@ defmodule QuestApiV21Web.BadgeController do
         |> put_resp_header("location", ~p"/api/badge/#{badge}")
         |> render(:show, badge: badge)
 
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render("error.json", %{message: "Badge creation failed", errors: changeset})
-    end
+        {:error, changeset} ->
+          Logger.error("Changeset error: #{inspect(changeset.errors)}")
+          conn
+          |> put_status(:unprocessable_entity)
+          |> render("error.json", %{message: "Badge creation failed", errors: changeset})
+      end
   end
 
   def show(conn, %{"id" => id}) do
