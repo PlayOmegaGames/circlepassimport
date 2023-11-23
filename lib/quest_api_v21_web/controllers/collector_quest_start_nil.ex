@@ -5,18 +5,35 @@ defmodule QuestApiV21Web.CollectorQuestStartNil do
 
   def handle_nil_quest_start(conn, collector) do
     current_account = conn.assigns[:current_user]
-    compare_quests(collector, current_account)
-    common_badges = compare_badges(collector)
-    add_common_badges_to_account(common_badges, current_account)
 
-    # Assuming you want to display the first common badge
-    common_badge = common_badges |> List.first()
+    # Compare quests between collector and account
+    common_quests_ids = compare_quests(collector, current_account)
 
-    # Fetch badge details
-    badge = Badges.get_badge!(common_badge)
+    # Check if there are common quests
+    if Enum.empty?(common_quests_ids) do
+      # No common quests, render no_quest.html and return
+      Logger.info("No quests in common, rendering no_quest.html")
+      render(conn, "no_quest.html", collector: collector)
+    else
+      # If there are common quests, proceed with badge logic
+      common_badges = compare_badges(collector)
 
-    # Pass badge to the template
-    render(conn, "collector.html", collector: collector, badge: badge)
+      # Check if there are common badges before proceeding
+      if Enum.empty?(common_badges) do
+        # No common badges, render a suitable template or take appropriate action
+        Logger.info("No common badges, rendering a suitable template")
+        # ... Render appropriate template or take action ...
+      else
+        add_common_badges_to_account(common_badges, current_account)
+
+        # Fetch badge details if common_badge is not nil
+        common_badge = common_badges |> List.first()
+        badge = if common_badge, do: Badges.get_badge!(common_badge), else: nil
+
+        # Pass badge to the template if it exists
+        render(conn, "collector.html", collector: collector, badge: badge)
+      end
+    end
   end
 
 

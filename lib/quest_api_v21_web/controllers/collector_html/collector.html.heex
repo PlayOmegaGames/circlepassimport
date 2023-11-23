@@ -39,23 +39,25 @@
       <%= @badge.name %>
     </p>
     
-
-    <img 
-      src={"#{@badge.image}"} 
-      alt= {"#{@badge.name}"}
-      class="
-        max-w-xs
-        rounded-md
-        mb-8
-        mx-2
-        shadow-2xl"
-        >
-    <!-- Circular Collect Badge Button -->
+    <div class="image-container rounded-md">
+      <img 
+        src={"#{@badge.image}"} 
+        alt= {"#{@badge.name}"}
+        loading="lazy"
+        class="
+          max-w-xs
+          rounded-md
+          mx-2
+          badge-image
+          shadow-2xl"
+          >
+      <!-- Circular Collect Badge Button -->
+    </div>
   </div>
 
   <div class="flex justify-center items-center"> <!-- Full screen height and center alignment -->
 
-    <div class="text-center mt-28">
+    <div class="text-center mt-20">
       <a href="/badges" class="
       bg-brand rounded-full h-28 w-28 glow-button 
       flex items-center justify-center relative">
