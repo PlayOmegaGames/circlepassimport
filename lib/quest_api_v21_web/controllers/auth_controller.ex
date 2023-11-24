@@ -68,6 +68,8 @@ defmodule QuestApiV21Web.AuthController do
         conn
         |> put_session(:user_id, account.id)
         |> put_session(:user_email, account.email)
+        # Add logging here
+        |> log_session_info()
         |> redirect(to: "/badges")
 
       {:error, :not_found} ->
@@ -100,6 +102,12 @@ defmodule QuestApiV21Web.AuthController do
     conn
     |> configure_session(drop: true)
     |> redirect(to: "/sign_in")
+  end
+
+
+  defp log_session_info(conn) do
+    Logger.info("Session set for user: #{inspect(get_session(conn, :user_email))}")
+    conn
   end
 
 end
