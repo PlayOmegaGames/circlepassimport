@@ -34,6 +34,7 @@ RUN mix deps.compile
 COPY priv priv
 COPY lib lib
 COPY assets assets
+COPY global-bundle.pem /app/bin/global-bundle.pem
 
 # Compile assets
 RUN mix assets.deploy
