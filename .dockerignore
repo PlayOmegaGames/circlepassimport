@@ -3,4 +3,5 @@ _build
 _deps
 .dockerignore
 .git
+.env
 Dockerfile

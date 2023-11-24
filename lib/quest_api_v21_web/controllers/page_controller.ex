@@ -2,9 +2,10 @@ defmodule QuestApiV21Web.PageController do
   use QuestApiV21Web, :controller
 
   def home(conn, _params) do
-    # The home page is often custom made,
-    # so skip the default app layout.
-    render(conn, :home, layout: false)
+    user_email = get_session(conn, :user_email)
+    user_id = get_session(conn, :user_id)
+
+    render(conn, "home.html", user_email: user_email, user_id: user_id)
   end
 
   def sign_in(conn, _params) do

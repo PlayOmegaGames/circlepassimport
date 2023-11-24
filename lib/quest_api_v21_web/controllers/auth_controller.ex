@@ -3,19 +3,24 @@ defmodule QuestApiV21Web.AuthController do
 
   alias QuestApiV21.{Guardian, Repo, Accounts.Account}
   alias QuestApiV21.Accounts
+  require Logger
 
   # API `sign_in` function for account authentication
   def sign_in(conn, %{"account" => %{"email" => email, "password" => password}}) do
     case Repo.get_by(Account, email: email) do
       nil ->
+        Logger.info("Sign in attempt failed: Account not found for #{email}")
         conn
         |> put_status(:not_found)
         |> json(%{error: "Account not found"})
 
       account ->
         if Bcrypt.verify_pass(password, account.hashed_password) do
+          Logger.info("User signed in: #{email}, at: #{DateTime.utc_now()}")
+          # Log additional session information if necessary
           render_jwt_and_account(conn, account)
         else
+          Logger.info("Sign in attempt failed: Incorrect password for #{email}")
           conn
           |> put_status(:unauthorized)
           |> json(%{error: "Incorrect password"})
@@ -62,7 +67,8 @@ defmodule QuestApiV21Web.AuthController do
       {:ok, account} ->
         conn
         |> put_session(:user_id, account.id)
-        |> redirect(to: "/")
+        |> put_session(:user_email, account.email)
+        |> redirect(to: "/badges")
 
       {:error, :not_found} ->
         conn
@@ -93,7 +99,7 @@ defmodule QuestApiV21Web.AuthController do
   def html_sign_out(conn, _params) do
     conn
     |> configure_session(drop: true)
-    |> redirect(to: "/")
+    |> redirect(to: "/sign_in")
   end
 
 end

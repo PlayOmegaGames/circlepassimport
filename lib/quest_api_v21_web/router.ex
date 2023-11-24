@@ -30,6 +30,7 @@ defmodule QuestApiV21Web.Router do
 
   end
 
+
   scope "/", QuestApiV21Web do
     pipe_through :browser
 
@@ -41,6 +42,8 @@ defmodule QuestApiV21Web.Router do
     get "/sign_up", PageController, :sign_up
     post "/sign_in", AuthController, :html_sign_in
     post "/sign_up", AuthController, :html_sign_up
+
+    delete "/sign_out", AuthController, :html_sign_out
 
   end
 
