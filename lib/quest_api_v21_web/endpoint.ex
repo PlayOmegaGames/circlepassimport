@@ -8,7 +8,8 @@ defmodule QuestApiV21Web.Endpoint do
     store: :cookie,
     key: "_quest_api_v21_key",
     signing_salt: "nrmdsYih",
-    same_site: "Lax"
+    same_site: "Lax",
+    secure: false
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
