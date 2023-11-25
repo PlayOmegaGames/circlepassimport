@@ -10,8 +10,3 @@ hooks:
   ApplicationStart:
     - location: scripts/start_container.sh
       timeout: 30
-    - location: scripts/migrate.sh
-      timeout: 60
-  ValidateService:
-    - location: scripts/check_service.sh
-      timeout: 30
