@@ -47,20 +47,23 @@ defmodule QuestApiV21Web.BadgeController do
   def show_badge(conn, _params) do
     current_user = conn.assigns[:current_user]
 
-    # Preload badges and quests for the current user
-    user_with_badges_and_quests = Repo.preload(current_user, [:badges, :quests])
+    if current_user do
+      user_with_badges_and_quests = Repo.preload(current_user, [:badges, :quests])
 
-    # User's badge IDs for comparison in the template
-    user_badge_ids = Enum.map(user_with_badges_and_quests.badges, &(&1.id))
+      user_badge_ids = Enum.map(user_with_badges_and_quests.badges, &(&1.id))
+      badges_by_quest = Enum.group_by(user_with_badges_and_quests.badges, fn badge -> badge.quest_id end)
 
-    badges_by_quest = Enum.group_by(user_with_badges_and_quests.badges, fn badge -> badge.quest_id end)
-
-    render(conn, "badge.html",
-      badges_by_quest: badges_by_quest,
-      quests: user_with_badges_and_quests.quests,
-      user_badge_ids: user_badge_ids
-    )
+      render(conn, "badge.html",
+        badges_by_quest: badges_by_quest,
+        quests: user_with_badges_and_quests.quests,
+        user_badge_ids: user_badge_ids
+      )
+    else
+      render(conn, "no_badge.html") # or a similar appropriate response
+    end
   end
+
+
 
 
 

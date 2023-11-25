@@ -45,14 +45,17 @@ defmodule QuestApiV21Web.Router do
 
     delete "/sign_out", AuthController, :html_sign_out
 
+
   end
 
   scope "/", QuestApiV21Web do
     pipe_through [:browser, :authenticated]  # Use both browser and authenticated pipelines
 
     #badge page
-    get "/badge/:id", CollectorController, :show_collector
     get "/badges", BadgeController, :show_badge
+
+
+    get "/badge/:id", CollectorController, :show_collector
 
   end
 
