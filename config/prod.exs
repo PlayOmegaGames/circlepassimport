@@ -2,7 +2,7 @@ import Config
 
 config :quest_api_v21, QuestApiV21.Repo,
   ssl: true,
-  ssl_opts: [cacertfile: "global-bundle.pem"],
+  ssl_opts: [cacertfile: "/app/bin/global-bundle.pem", verify: :verify_none],
   username: System.get_env("DB_USERNAME"),
   password: System.get_env("DB_PASSWORD"),
   hostname: System.get_env("DB_HOSTNAME"),
