@@ -16,16 +16,14 @@ defmodule QuestApiV21Web.AuthPlug do
     if user_id && Accounts.get_account!(user_id) do
       assign_user(conn, user_id)
     else
-      # Redirect unauthenticated users immediately for the /badge/ path
-      if Regex.match?(badge_path_regex, request_path) do
-        Logger.info("Unauthenticated access to badge path at: #{DateTime.utc_now()}")
-        conn
-        |> put_session(:redirect_path, request_path)
-        |> redirect(to: "/sign_up")
-        |> halt()
-      else
-        conn
-      end
+      # Store the redirect path if request path matches /badge/
+      conn = if Regex.match?(badge_path_regex, request_path), do: put_session(conn, :redirect_path, request_path), else: conn
+
+      # Redirect all unauthenticated users to the sign-up page
+      Logger.info("Redirecting unauthenticated user to sign-up: #{DateTime.utc_now()}")
+      conn
+      |> redirect(to: "/sign_up")
+      |> halt()
     end
   end
 
