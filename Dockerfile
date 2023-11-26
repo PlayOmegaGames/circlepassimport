@@ -1,4 +1,5 @@
 # Stage 1: Build the Elixir/Phoenix Application
+ARG RELEASE_VERSION=0.1.1`
 ARG ELIXIR_VERSION=1.14.5
 ARG OTP_VERSION=25.3.2.5
 ARG DEBIAN_VERSION=bullseye-20230612-slim

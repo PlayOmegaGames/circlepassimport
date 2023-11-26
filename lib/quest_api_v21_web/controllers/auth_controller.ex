@@ -93,9 +93,11 @@
       case Accounts.create_account(account_params) do
         {:ok, account} ->
           redirect_path = get_session(conn, :redirect_path) || "/badges"
+          Logger.debug("Sign up successful. Redirecting to: #{redirect_path}")
+
           conn
           |> put_flash(:info, "Account successfully created.")
-          |> put_session(:account_id, account.id)
+          |> put_session(:user_id, account.id) # Ensure this matches the key expected by AuthPlug
           |> put_session(:redirect_path, nil) # Clear the stored redirect path
           |> redirect(to: redirect_path)
 
