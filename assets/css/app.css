@@ -47,11 +47,12 @@
 /* prevent popping on badge image */
 
 .image-container {
-  width: 320px;   /* Width of the image */
-  height: 320px;  /* Height of the image */
+  width: 220px;   /* Width of the image */
+  height: 220px;  /* Height of the image */
   position: relative; /* Helps in positioning inner elements */
   background-color: #0C4E76;
 }
+
 
 .badge-image {
   width: 100%;
