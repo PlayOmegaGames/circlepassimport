@@ -66,14 +66,15 @@
     def html_sign_in(conn, %{"account" => %{"email" => email, "password" => password}}) do
       case Accounts.authenticate_user(email, password) do
         {:ok, account} ->
-          #redirects to badges unless it gets a redirect from auth plug
           redirect_path = get_session(conn, :redirect_path) || "/badges"
+          Logger.debug("Sign in successful. Redirecting to: #{redirect_path}")
           conn
           |> put_flash(:info, "Successfully signed in.")
           |> put_session(:user_id, account.id)
           |> put_session(:user_email, account.email)
           |> log_session_info()
           |> redirect(to: redirect_path)
+
 
         {:error, :not_found} ->
           conn
