@@ -50,18 +50,23 @@ defmodule QuestApiV21Web.BadgeController do
     if current_user do
       user_with_badges_and_quests = Repo.preload(current_user, [:badges, :quests])
 
-      user_badge_ids = Enum.map(user_with_badges_and_quests.badges, &(&1.id))
-      badges_by_quest = Enum.group_by(user_with_badges_and_quests.badges, fn badge -> badge.quest_id end)
+      # Check if the user has any badges
+      if Enum.empty?(user_with_badges_and_quests.badges) do
+        # Render the no_badge.html template if no badges are found
+        render(conn, "no_badge.html")
+      else
+        user_badge_ids = Enum.map(user_with_badges_and_quests.badges, &(&1.id))
+        badges_by_quest = Enum.group_by(user_with_badges_and_quests.badges, fn badge -> badge.quest_id end)
 
-      render(conn, "badge.html",
-        badges_by_quest: badges_by_quest,
-        quests: user_with_badges_and_quests.quests,
-        user_badge_ids: user_badge_ids
-      )
-    else
-      render(conn, "no_badge.html") # or a similar appropriate response
+        render(conn, "badge.html",
+          badges_by_quest: badges_by_quest,
+          quests: user_with_badges_and_quests.quests,
+          user_badge_ids: user_badge_ids
+        )
+      end
     end
   end
+
 
 
 

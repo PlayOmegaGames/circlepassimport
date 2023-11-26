@@ -12,9 +12,12 @@ defmodule QuestApiV21Web.CollectorQuestStartPresent do
       case Accounts.add_badge_to_user(account.id, badge) do
         {:ok, msg, _updated_account} ->
           Logger.info(msg)
+          # Call to create scan record from Scans context
+          QuestApiV21.Scans.create_scan_for_badge_account(badge.id, account.id)
         {:error, reason} ->
           Logger.error("Failed to add badge: #{reason}")
       end
+
 
       case Accounts.add_quest_to_user(account.id, quest) do
         {:ok, msg, _updated_account} ->

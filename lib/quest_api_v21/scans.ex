@@ -55,6 +55,23 @@ defmodule QuestApiV21.Scans do
     |> Repo.insert()
   end
 
+  
+    @doc """
+  Creates a scan for a given badge and account.
+  """
+  def create_scan_for_badge_account(badge_id, account_id) do
+    badge = Repo.get!(QuestApiV21.Badges.Badge, badge_id)
+    organization_id = badge.organization_id
+
+    %QuestApiV21.Scans.Scan{}
+    |> Scan.changeset(%{
+      badge_id: badge_id,
+      account_id: account_id,
+      organization_id: organization_id
+    })
+    |> Repo.insert()
+  end
+
   @doc """
   Updates a scan.
 
