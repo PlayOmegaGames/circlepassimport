@@ -24,7 +24,7 @@ defmodule QuestApiV21Web.SignUpLive do
 
 
     <!-- Form for user sign-up -->
-    <%= form_for :user, "#", [phx_submit: :submit], fn f -> %>
+    <%= form_for :user, "#", [id: "signup-form", phx_hook: "FormSubmit", data: [redirect_path: @redirect_path]], fn f -> %>
 
       <div class="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md">
 
@@ -106,27 +106,23 @@ defmodule QuestApiV21Web.SignUpLive do
     {:noreply, assign(socket, user_params: user_params, form_valid: form_valid)}
   end
 
+  @impl true
   def handle_event("submit", %{"user" => user_params}, socket) do
     case Accounts.create_account(user_params) do
-      {:ok, account} ->
-        Logger.info("Account created, emitting phx:account_created event")
-       # Emit a test event
-         push_event(socket, "phx:test_event", %{message: "Test event triggered"})
+      {:ok, _account} ->
+        Logger.info("Account created, redirecting to #{socket.assigns.redirect_path}")
 
-        # Retrieve the redirect path from the socket.assigns or set a default
-        redirect_path = socket.assigns.redirect_path || "/badges"
-        # Push an event with account_id and redirect_path
-        push_event(socket, "phx:account_created", %{account_id: account.id, redirect_path: redirect_path})
-
+        # Perform a redirect after successful account creation
+        push_redirect(socket, to: socket.assigns.redirect_path)
 
         {:noreply, socket}
 
       {:error, changeset} ->
         error_message = extract_error_message(changeset)
-        {:noreply, assign(socket, changeset: changeset, error_message: error_message)}
+        # Assign the changeset errors to the socket for display
+        {:noreply, assign(socket, user_params: user_params, errors: changeset.errors, error_message: error_message)}
     end
   end
-
 
 
   defp extract_error_message(changeset) do

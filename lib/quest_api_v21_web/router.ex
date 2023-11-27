@@ -46,7 +46,10 @@ defmodule QuestApiV21Web.Router do
     delete "/sign_out", AuthController, :html_sign_out
 
     live "/sign_up", SignUpLive
+    post "/sign_up", AuthController, :sign_up
     post "/set_session", SessionController, :set_session
+    live "/test_event", TestLive
+
 
   end
 
