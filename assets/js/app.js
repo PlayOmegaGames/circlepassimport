@@ -52,6 +52,7 @@
         });
     }
   };
+  
 
   let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
   let liveSocket = new LiveSocket("/live", Socket, {
@@ -61,8 +62,14 @@
 
   // connect if there are any LiveViews on the page
   liveSocket.connect()
+  console.log("Setting up phx:test_event listener");
 
-  window.addEventListener("phx:authenticated", function(event) {
+  window.addEventListener("phx:test_event", function(event) {
+    console.log("Test event received:", event.detail);
+  });
+  
+  window.addEventListener("phx:account_created", function(event) {
+    console.log("Account created event received:", event.detail);
     const detail = event.detail;
     if (detail && detail.account_id) {
       fetch("/set_session", {
@@ -74,8 +81,10 @@
         body: JSON.stringify({ account_id: detail.account_id })
       }).then(response => {
         if (response.ok) {
-          // Once the session is set, redirect to the desired path
+          // Redirect to the specified path or default to '/badges'
           window.location.href = detail.redirect_path || "/badges";
+        } else {
+          // Handle errors, such as displaying a message to the user
         }
       });
     }

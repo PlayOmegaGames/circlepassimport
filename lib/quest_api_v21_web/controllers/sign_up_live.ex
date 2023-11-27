@@ -4,7 +4,7 @@ defmodule QuestApiV21Web.SignUpLive do
   import Phoenix.HTML.Form
   import Phoenix.HTML
   import Phoenix.HTML.Tag
-
+  require Logger
 
   @impl true
   def mount(_params, session, socket) do
@@ -63,13 +63,6 @@ defmodule QuestApiV21Web.SignUpLive do
         <div class="mt-5">
           <!-- Submit button -->
           <%= submit "Sign Up", class: "w-full py-2 px-4 bg-brand text-white rounded #{if !@form_valid, do: "opacity-50 cursor-not-allowed bg-brand", else: ""}", disabled: !@form_valid %>
-          <%= if @account do %>
-          <div id="accountDetails" phx-hook="SaveToLocalStore" class="hidden">
-            <p data-account-email><%= @account["email"] %></p>
-            <p data-account-name><%= @account["name"] %></p>
-            <!-- Add more fields as needed -->
-          </div>
-        <% end %>
 
         </div>
         <div class="w-full mt-12 flex justify-center">
@@ -113,20 +106,28 @@ defmodule QuestApiV21Web.SignUpLive do
     {:noreply, assign(socket, user_params: user_params, form_valid: form_valid)}
   end
 
-  @impl true
   def handle_event("submit", %{"user" => user_params}, socket) do
     case Accounts.create_account(user_params) do
       {:ok, account} ->
-        push_event(socket, "phx:authenticated", %{account_id: account.id})
-        redirect_path = socket.assigns.redirect_path || "/default_path"
-        {:noreply, push_redirect(socket, to: redirect_path)}
+        Logger.info("Account created, emitting phx:account_created event")
+       # Emit a test event
+         push_event(socket, "phx:test_event", %{message: "Test event triggered"})
+
+        # Retrieve the redirect path from the socket.assigns or set a default
+        redirect_path = socket.assigns.redirect_path || "/badges"
+        # Push an event with account_id and redirect_path
+        push_event(socket, "phx:account_created", %{account_id: account.id, redirect_path: redirect_path})
+
+
+        {:noreply, socket}
 
       {:error, changeset} ->
-        # Extract error message from changeset
         error_message = extract_error_message(changeset)
         {:noreply, assign(socket, changeset: changeset, error_message: error_message)}
     end
   end
+
+
 
   defp extract_error_message(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, _opts} -> msg end)
