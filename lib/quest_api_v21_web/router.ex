@@ -1,5 +1,6 @@
 defmodule QuestApiV21Web.Router do
   use QuestApiV21Web, :router
+  import Phoenix.LiveView.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -39,12 +40,13 @@ defmodule QuestApiV21Web.Router do
 
     #sign up pages for testing
     get "/sign_in", PageController, :sign_in
-    get "/sign_up", PageController, :sign_up
     post "/sign_in", AuthController, :html_sign_in
-    post "/sign_up", AuthController, :html_sign_up
+    #post "/sign_up", AuthController, :html_sign_up
 
     delete "/sign_out", AuthController, :html_sign_out
 
+    live "/sign_up", SignUpLive
+    post "/set_session", SessionController, :set_session
 
   end
 

@@ -59,3 +59,8 @@
   height: auto;
   display: block; /* Remove default img margin */
 }
+
+input:focus {
+  outline: none !important;
+  outline: 0 !important;
+}
