@@ -132,6 +132,7 @@
     # Function to handle OAuth callback
     def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
       # Extract user info from Google response
+      Logger.info("Google OAuth Response: #{inspect(auth)}")
       user_info = auth.info
       email = user_info.email
       name = user_info.name

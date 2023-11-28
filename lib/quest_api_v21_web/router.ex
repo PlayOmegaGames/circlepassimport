@@ -52,28 +52,28 @@ defmodule QuestApiV21Web.Router do
 
     #policy of boring
     get "/privacy-policy", PageController, :privacy
+    get "/auth_splash", PageController, :auth_splash
 
 
 
   end
 
-  #for SSO
-  scope "/auth", QuestApiV21Web do
-    pipe_through :browser
 
-    get "/:provider", AuthController, :request
-    get "/:provider/callback", AuthController, :callback
-  end
 
   scope "/", QuestApiV21Web do
     pipe_through [:browser, :authenticated]  # Use both browser and authenticated pipelines
 
     #badge page
     get "/badges", BadgeController, :show_badge
-
-
     get "/badge/:id", CollectorController, :show_collector
+  end
 
+    #for SSO
+  scope "/auth", QuestApiV21Web do
+    pipe_through :browser
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
   end
 
   scope "/api", QuestApiV21Web do
