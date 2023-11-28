@@ -125,9 +125,9 @@
 
 
       # Function to initiate OAuth flow
-  def request(_conn, _params) do
-    # This will be handled by Ueberauth to redirect to Google
-  end
+    def request(_conn, _params) do
+      # This will be handled by Ueberauth to redirect to Google
+    end
 
     # Function to handle OAuth callback
     def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
