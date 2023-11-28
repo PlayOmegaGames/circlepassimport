@@ -6,7 +6,7 @@
 
 # General application configuration
 import Config
-
+require Logger
 
 config :quest_api_v21,
   ecto_repos: [QuestApiV21.Repo],
@@ -37,11 +37,14 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
 #Google ID
 config :ueberauth, Ueberauth,
   providers: [
-    google: {Ueberauth.Strategy.Google, []}
+    google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]},
   ]
 
+google_client_id = System.get_env("GOOGLE_CLIENT_ID")
+Logger.info("Google Client ID: #{google_client_id}")
+
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: System.get_env("GOOGLE_CLIENT_ID"),
+  client_id: google_client_id,
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
   redirect_uri: System.get_env("GOOGLE_REDIRECT_URI")
 

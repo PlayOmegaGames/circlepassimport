@@ -54,10 +54,15 @@ defmodule QuestApiV21Web.Router do
     get "/privacy-policy", PageController, :privacy
 
 
-    #google oath
+
+  end
+
+  #for SSO
+  scope "/auth", QuestApiV21Web do
+    pipe_through :browser
+
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
-
   end
 
   scope "/", QuestApiV21Web do
