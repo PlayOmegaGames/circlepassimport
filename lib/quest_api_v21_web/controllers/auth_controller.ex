@@ -143,7 +143,7 @@
           conn
           |> put_flash(:info, "Successfully signed in with Google.")
           |> put_session(:user_id, account.id)
-          |> redirect(to: "/some_redirect_path")
+          |> redirect(to: "/badges")
 
         {:error, reason} ->
           Logger.error("Error during Google authentication: #{reason}")
