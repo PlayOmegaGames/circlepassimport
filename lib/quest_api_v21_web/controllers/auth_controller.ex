@@ -125,9 +125,9 @@
 
 
       # Function to initiate OAuth flow
-  def request(_conn, _params) do
-    # This will be handled by Ueberauth to redirect to Google
-  end
+    def request(_conn, _params) do
+      # This will be handled by Ueberauth to redirect to Google
+    end
 
     # Function to handle OAuth callback
     def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
@@ -143,7 +143,7 @@
           conn
           |> put_flash(:info, "Successfully signed in with Google.")
           |> put_session(:user_id, account.id)
-          |> redirect(to: "/some_redirect_path")
+          |> redirect(to: "/badges")
 
         {:error, reason} ->
           Logger.error("Error during Google authentication: #{reason}")
