@@ -4,6 +4,8 @@
     alias QuestApiV21.{Guardian, Repo, Accounts.Account}
     alias QuestApiV21.Accounts
     require Logger
+    plug Ueberauth
+
 
     # API `sign_in` function for account authentication
     def sign_in(conn, %{"account" => %{"email" => email, "password" => password}}) do
@@ -121,4 +123,40 @@
       conn
     end
 
+
+      # Function to initiate OAuth flow
+  def request(_conn, _params) do
+    # This will be handled by Ueberauth to redirect to Google
+  end
+
+    # Function to handle OAuth callback
+    def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
+      # Extract user info from Google response
+      user_info = auth.info
+      email = user_info.email
+      name = user_info.name
+
+      # Check if user exists or create a new one
+      case Accounts.find_or_create_user(email, name) do
+        {:ok, account} ->
+          # Log in the user
+          conn
+          |> put_flash(:info, "Successfully signed in with Google.")
+          |> put_session(:user_id, account.id)
+          |> redirect(to: "/some_redirect_path")
+
+        {:error, reason} ->
+          Logger.error("Error during Google authentication: #{reason}")
+          conn
+          |> put_flash(:error, "Authentication failed")
+          |> redirect(to: "/sign_in")
+      end
+    end
+
+    def callback(%{assigns: %{ueberauth_failure: failure}} = conn, _params) do
+      Logger.error("Google OAuth failure: #{inspect(failure)}")
+      conn
+      |> put_flash(:error, "Authentication failed")
+      |> redirect(to: "/sign_in")
+    end
   end

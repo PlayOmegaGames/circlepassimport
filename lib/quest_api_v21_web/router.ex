@@ -53,6 +53,11 @@ defmodule QuestApiV21Web.Router do
     #policy of boring
     get "/privacy-policy", PageController, :privacy
 
+
+    #google oath
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+
   end
 
   scope "/", QuestApiV21Web do

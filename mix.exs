@@ -52,6 +52,8 @@ defmodule QuestApiV21.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:guardian, "~> 2.0"},
       {:comeonin, "~> 5.3"},
+      {:ueberauth, "~> 0.6"},
+      {:ueberauth_google, "~> 0.10"},
       {:bcrypt_elixir, "~> 2.0"}
     ]
   end

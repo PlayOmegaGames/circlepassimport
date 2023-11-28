@@ -75,7 +75,39 @@ defmodule QuestApiV21.Accounts do
   end
   defp put_password_hash(attrs), do: attrs  # for cases where password is not provided
 
+  @doc """
+  Finds or creates a user based on email. If a user doesn't exist, creates a new user with the provided email and name.
 
+  ## Examples
+
+      iex> find_or_create_user("new@example.com", "New User")
+      {:ok, %Account{}}
+
+      iex> find_or_create_user("existing@example.com", "Existing User")
+      {:ok, %Account{}}
+
+  """
+  def find_or_create_user(email, name) do
+    case find_account_by_email(email) do
+      nil ->
+        create_user_for_google_sso(email, name)
+
+      account ->
+        {:ok, account}
+    end
+  end
+
+  defp create_user_for_google_sso(email, name) do
+    # Define the user attributes for the new account
+    # You may need to adjust this based on your Account schema
+    user_attrs = %{
+      email: email,
+      name: name,
+      # Set other necessary fields, if any
+    }
+
+    create_account(user_attrs)
+  end
   @doc """
   Updates a account.
 

@@ -34,6 +34,17 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   pubsub_server: QuestApiV21.PubSub,
   live_view: [signing_salt: "mWI7Ou9T"]
 
+#Google ID
+config :ueberauth, Ueberauth,
+  providers: [
+    google: {Ueberauth.Strategy.Google, []}
+  ]
+
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: System.get_env("GOOGLE_CLIENT_ID"),
+  client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
+  redirect_uri: System.get_env("GOOGLE_REDIRECT_URI")
+
 
 # Configures the mailer
 #
