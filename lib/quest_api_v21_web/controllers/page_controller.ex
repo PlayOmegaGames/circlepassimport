@@ -21,6 +21,8 @@ defmodule QuestApiV21Web.PageController do
   end
 
   def auth_splash(conn, _params) do
-    render(conn, "auth_splash.html")
+    conn
+    |> put_layout(false)
+    |> render("auth_splash.html")
   end
 end

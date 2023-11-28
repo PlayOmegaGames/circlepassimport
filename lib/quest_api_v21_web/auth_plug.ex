@@ -23,7 +23,7 @@ defmodule QuestApiV21Web.AuthPlug do
     Logger.debug("Redirect path set in session. Path: #{redirect_path}")
     conn
     |> put_session(:redirect_path, redirect_path)
-    |> redirect(to: "/sign_up")
+    |> redirect(to: "/auth_splash")
     |> halt()
   end
 end

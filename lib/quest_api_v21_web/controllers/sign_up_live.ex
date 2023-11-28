@@ -12,7 +12,6 @@ defmodule QuestApiV21Web.SignUpLive do
     {:ok, assign(socket, account: nil, user_params: %{}, errors: [], email_valid: false, password_strength: 0, crack_time: "N/A", form_valid: false, redirect_path: redirect_path, error_message: nil)}
   end
 
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -21,7 +20,6 @@ defmodule QuestApiV21Web.SignUpLive do
     <h1 class="text-center mb-2 text-2xl font-medium text-gray-600">
     Sign Up
     </h1>
-
 
     <!-- Form for user sign-up -->
     <%= form_for :user, "#", [id: "signup-form", phx_hook: "FormSubmit", data: [redirect_path: @redirect_path]], fn f -> %>
@@ -115,24 +113,22 @@ defmodule QuestApiV21Web.SignUpLive do
         # Perform a redirect after successful account creation
         push_redirect(socket, to: socket.assigns.redirect_path)
 
-        {:noreply, socket}
+      {:noreply, socket}
 
       {:error, changeset} ->
         error_message = extract_error_message(changeset)
         # Assign the changeset errors to the socket for display
-        {:noreply, assign(socket, user_params: user_params, errors: changeset.errors, error_message: error_message)}
+      {:noreply, assign(socket, user_params: user_params, errors: changeset.errors, error_message: error_message)}
     end
   end
-
 
   defp extract_error_message(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, _opts} -> msg end)
     |> Enum.join(", ")
   end
 
-
   defp form_valid?(email_valid, password_strength, name) do
-    email_valid and password_strength == 100 and name != nil and name != ""
+    email_valid and password_strength >= 50 and name != nil and name != ""
   end
 
   defp error_tag(errors, field) do
