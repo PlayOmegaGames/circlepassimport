@@ -15,4 +15,8 @@ defmodule QuestApiV21Web.PageController do
   def sign_up(conn, _params) do
     render(conn, "sign_up.html")
   end
+
+  def privacy(conn, _params) do
+    render(conn, "privacy.html")
+  end
 end

@@ -50,6 +50,8 @@ defmodule QuestApiV21Web.Router do
     post "/set_session", SessionController, :set_session
     live "/test_event", TestLive
 
+    #policy of boring
+    get "/privacy-policy", PageController, :privacy
 
   end
 
