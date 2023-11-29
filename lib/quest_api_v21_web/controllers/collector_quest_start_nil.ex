@@ -73,16 +73,28 @@ defmodule QuestApiV21Web.CollectorQuestStartNil do
       common_badges = Badges.list_badges_by_ids(common_badge_ids)
       Logger.debug("Fetched badges: #{inspect(common_badges)}")
       Enum.each(common_badges, fn badge ->
-        Logger.debug("Attempting to add badge #{inspect(badge)} to account #{account.id}")
-        case Accounts.add_badge_to_user(account.id, badge) do
-          {:ok, msg, _updated_account} ->
-            Logger.info("Badge #{badge.id} added to account #{account.id}: #{msg}")
-          {:error, reason} ->
-            Logger.error("Failed to add badge #{badge.id} to account #{account.id}: #{reason}")
+        if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
+          Logger.info("Badge #{badge.id} already associated with account #{account.id}. No action taken.")
+        else
+          add_badge_to_account_and_log(account, badge)
         end
       end)
     else
       Logger.error("Invalid badge IDs: #{inspect(common_badge_ids)}")
     end
   end
+
+  defp add_badge_to_account_and_log(account, badge) do
+    Logger.debug("Attempting to add badge #{inspect(badge)} to account #{account.id}")
+    case Accounts.add_badge_to_user(account.id, badge) do
+      {:ok, msg, _updated_account} ->
+        Logger.info("Badge #{badge.id} added to account #{account.id}: #{msg}")
+        # Call to create scan record for the badge
+        QuestApiV21.Scans.create_scan_for_badge_account(badge.id, account.id)
+      {:error, reason} ->
+        Logger.error("Failed to add badge #{badge.id} to account #{account.id}: #{reason}")
+    end
+  end
+
+
 end
