@@ -79,3 +79,24 @@ input:focus {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.progress-bar {
+  width: 100%;
+  transition: box-shadow 0.3s;
+}
+
+.progress {
+  background-color: #4caf50; /* Replace with your brand color */
+  height: 100%;
+  transition: width 0.3s;
+}
+
+/* Normal progress bar without glow */
+.normal-progress {
+  box-shadow: none;
+}
+
+/* Glow effect for completed progress bar container */
+.completed-progress-bar-glow {
+  box-shadow: 0 0 15px 5px #74ff79; /* Strong glow for completion */
+}

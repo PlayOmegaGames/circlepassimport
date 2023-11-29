@@ -1,23 +1,23 @@
 <div class="container mx-auto p-4">
   <%= for quest <- @quests do %>
-    <div class="mb-6 bg-gray-100 rounded-md">
-      <div class="mb-6 flex justify-center items-center">
-        <h3 class="mt-4 mb-4 text-white bg-brand rounded-full px-4 py-1 inline-block"><%= quest.name %></h3>
+    <% total_badges = Map.get(@badges_by_quest, quest.id, []) |> length %>
+    <% unlocked_badges = Enum.filter(Map.get(@badges_by_quest, quest.id, []), fn badge -> badge.id in @user_badge_ids end) |> length %>
+    <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
+    <div class="mb-6 rounded-md">
+      <div class="mb-2 flex justify-center items-center">
+        <h3 class="text-xl mb-1 text-white bg-brand rounded-full px-4 py-1 inline-block"><%= quest.name %></h3>
       </div>
+      <div class={"progress-bar bg-gray-300 rounded-full overflow-hidden h-6 mb-4 " <> (if unlocked_badges == total_badges, do: "completed-progress-bar-glow", else: "")}>
+        <div class="progress bg-brand" style={"width: #{progress_percentage}%"}></div>
+      </div>
+      <p class="text-center text-gray-700 text-sm mb-4"><%= unlocked_badges %>/<%= total_badges %> Complete</p>
       <div class="flex flex-wrap -m-2">
+
         <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
           <div class="p-2 w-1/2 sm:w-1/3 md:w-1/4">
-            <div class={if badge.id in @user_badge_ids, do: "badge-container bg-white rounded-lg shadow-md p-4 flex flex-col items-center", else: "badge-container bg-gray-200 rounded-lg shadow-md p-4 flex flex-col items-center"}>
+            <div class={if badge.id in @user_badge_ids, do: "badge-container bg-white rounded-lg shadow-md p-4 flex flex-col items-center", else: "badge-container rounded-lg shadow-md p-4 flex flex-col items-center opacity-50"}>
               <img src={badge.image} alt={badge.name} class={"h-32 w-32 object-cover rounded-lg " <> (if badge.id not in @user_badge_ids, do: "grayscale", else: "")}>
-              <% if badge.id not in @user_badge_ids do %>
-                <div class="lock-overlay">
-                  <!-- SVG code for lock icon from Hero Icons -->
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-16 w-16 text-white opacity-50">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11V7a5 5 0 00-10 0v4m4 5v6m4-6v6m-4 0h4"/>
-                  </svg>
-                </div>
-              <% end %>
-              <p class={"mt-2 text-base " <> (if badge.id in @user_badge_ids, do: "text-gray-800", else: "text-gray-400")}><%= badge.name %></p>
+              <p class={"mt-2 text-base " <> (if badge.id in @user_badge_ids, do: "", else: "")}><%= badge.name %></p>
             </div>
           </div>
         <% end %>
