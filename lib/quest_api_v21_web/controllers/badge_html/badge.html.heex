@@ -15,7 +15,7 @@
 
         <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
           <div class="p-2 w-1/2 sm:w-1/3 md:w-1/4">
-            <div class={if badge.id in @user_badge_ids, do: "badge-container bg-white rounded-lg shadow-md p-4 flex flex-col items-center", else: "badge-container rounded-lg shadow-md p-4 flex flex-col items-center opacity-50"}>
+            <div class={if badge.id in @user_badge_ids, do: "badge-container bg-white rounded-lg shadow-md p-4 flex flex-col items-center border-2 border-purple-200", else: "badge-container rounded-lg shadow-md p-4 flex flex-col items-center opacity-50"}>
               <img src={badge.image} alt={badge.name} class={"h-32 w-32 object-cover rounded-lg " <> (if badge.id not in @user_badge_ids, do: "grayscale", else: "")}>
               <p class={"mt-2 text-base " <> (if badge.id in @user_badge_ids, do: "", else: "")}><%= badge.name %></p>
             </div>
