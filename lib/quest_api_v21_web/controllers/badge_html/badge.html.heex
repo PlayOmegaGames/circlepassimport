@@ -5,7 +5,7 @@
     <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
     <div class="mb-6 rounded-md">
       <div class="mb-2 flex justify-center items-center">
-        <h3 class="text-xl mb-1 text-white bg-brand rounded-full px-4 py-1 inline-block"><%= quest.name %></h3>
+        <h3 class="text-2xl mb-1 text-gray-600 font-medium rounded-xl border-b-2 border-purple-600 px-4 py-1 inline-block"><%= quest.name %></h3>
       </div>
       <div class={"progress-bar bg-gray-300 rounded-full overflow-hidden h-6 mb-4 " <> (if unlocked_badges == total_badges, do: "completed-progress-bar-glow", else: "")}>
         <div class="progress bg-brand" style={"width: #{progress_percentage}%"}></div>
