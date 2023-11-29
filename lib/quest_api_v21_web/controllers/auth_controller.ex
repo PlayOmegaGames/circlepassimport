@@ -131,28 +131,53 @@
 
     # Function to handle OAuth callback
     def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
-      # Extract user info from Google response
-      Logger.info("Google OAuth Response: #{inspect(auth)}")
       user_info = auth.info
       email = user_info.email
       name = user_info.name
+      Logger.debug("Extracted email: #{inspect(email)}")
 
-      # Check if user exists or create a new one
-      case Accounts.find_or_create_user(email, name) do
-        {:ok, account} ->
-          # Log in the user
+      case Accounts.handle_oauth_login(email, name) do
+        {:ok, account, :new} ->
+          # If a new account is created, handle accordingly.
+          Logger.info("New OAuth account created for #{email}")
+
+          # Set a flash message to indicate successful account creation.
+          conn
+          |> put_flash(:info, "Account created and signed in with Google.")
+
+          # Store user ID in the session for the newly created account.
+          |> put_session(:user_id, account.id)
+
+          # Redirect to the desired page after successful sign-up.
+          |> redirect(to: "/badges")
+
+        {:ok, account, :existing} ->
+          # If an existing account is found, handle the login.
+          Logger.info("Existing user found for #{email}, signing in")
+
+          # Set a flash message to indicate successful sign-in.
           conn
           |> put_flash(:info, "Successfully signed in with Google.")
+
+          # Store user ID in the session for the existing account.
           |> put_session(:user_id, account.id)
+
+          # Redirect to the desired page after successful sign-in.
           |> redirect(to: "/badges")
 
         {:error, reason} ->
+          # If there is an error during account retrieval or creation, handle it.
           Logger.error("Error during Google authentication: #{reason}")
+
+          # Set a flash message to indicate the authentication error.
           conn
-          |> put_flash(:error, "Authentication failed")
-          |> redirect(to: "/sign_in")
+          |> put_flash(:error, "Authentication failed: #{reason}")
+
+          # Redirect to an appropriate error page or splash page.
+          |> redirect(to: "/auth_splash")
       end
     end
+
 
     def callback(%{assigns: %{ueberauth_failure: failure}} = conn, _params) do
       Logger.error("Google OAuth failure: #{inspect(failure)}")

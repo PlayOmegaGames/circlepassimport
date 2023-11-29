@@ -46,11 +46,13 @@ defmodule QuestApiV21.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_account(attrs \\ %{}) do
-    email = Map.get(attrs, "email")
+def create_account(attrs \\ %{}) do
+  email = Map.get(attrs, :email)
+  Logger.debug("create_account called with attrs: #{inspect(attrs)}")
 
-    case find_account_by_email(email) do
-      nil ->
+  case find_account_by_email(email) do
+    nil ->
+      Logger.debug("No existing account found for email: #{email}, proceeding to create new account")
         updated_attrs =
           if Map.get(attrs, "is_passwordless", false) do
             # Skip password hashing for passwordless accounts
@@ -65,9 +67,10 @@ defmodule QuestApiV21.Accounts do
         |> maybe_add_quests(attrs)
         |> Repo.insert()
 
-      existing_account ->
-        {:error, "An account with this email already exists", existing_account}
-    end
+        existing_account ->
+          Logger.error("An account with this email already exists: #{email}")
+          {:error, "An account with this email already exists", existing_account}
+      end
   end
 
   defp put_password_hash(%{"password" => password} = attrs) do
@@ -98,16 +101,15 @@ defmodule QuestApiV21.Accounts do
   end
 
   defp create_user_for_google_sso(email, name) do
-    # Define the user attributes for the new account
-    # You may need to adjust this based on your Account schema
     user_attrs = %{
       email: email,
       name: name,
-      # Set other necessary fields, if any
+      is_passwordless: true # Indicate that this account does not use a password
     }
 
     create_account(user_attrs)
   end
+
   @doc """
   Updates a account.
 
@@ -129,6 +131,47 @@ defmodule QuestApiV21.Accounts do
     |> maybe_add_quests(attrs)
     |> Repo.update()
   end
+
+    @doc """
+  Handles the OAuth login or account creation flow.
+
+  If the email exists, it returns the existing account.
+  If not, it creates a new account with the given email and name.
+
+  ## Examples
+
+      iex> handle_oauth_login("new@example.com", "New User")
+      {:ok, %Account{}, :new}
+
+      iex> handle_oauth_login("existing@example.com", "Existing User")
+      {:ok, %Account{}, :existing}
+  """
+  def handle_oauth_login(email, name) do
+    Logger.debug("handle_oauth_login called with email: #{email} and name: #{name}")
+    case find_account_by_email(email) do
+      nil ->
+        create_oauth_account(email, name)
+        |> case do
+          {:ok, account} -> {:ok, account, :new}
+          {:error, reason} -> {:error, reason}
+        end
+
+      account ->
+        {:ok, account, :existing}
+    end
+  end
+
+  def create_oauth_account(email, name) do
+    Logger.debug("create_oauth_account called with email: #{email}")
+    user_attrs = %{
+      email: email,
+      name: name,
+      is_passwordless: true
+    }
+    Logger.debug("user_attrs for account creation: #{inspect(user_attrs)}")
+    create_account(user_attrs)
+  end
+
 
 
   @doc """

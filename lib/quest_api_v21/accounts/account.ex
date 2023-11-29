@@ -19,12 +19,27 @@ defmodule QuestApiV21.Accounts.Account do
 
   @doc false
   def changeset(account, attrs) do
-
     account
-    |> cast(attrs, [:name, :email, :hashed_password, :password, :role, :is_passwordless])
+    |> cast(attrs, [:name, :email, :password, :role, :is_passwordless])
     |> validate_required([:name, :email])
+    |> maybe_hash_password()
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
     |> cast_assoc(:quests, with: &QuestApiV21.Quests.Quest.changeset/2)
   end
+
+  defp maybe_hash_password(changeset) do
+    if get_change(changeset, :is_passwordless, false) do
+      changeset
+    else
+      put_password_hash(changeset)
+    end
+  end
+
+  defp put_password_hash(changeset) do
+    password = get_change(changeset, :password)
+    hash = Bcrypt.hash_pwd_salt(password)
+    put_change(changeset, :hashed_password, hash)
+  end
+
 
 end
