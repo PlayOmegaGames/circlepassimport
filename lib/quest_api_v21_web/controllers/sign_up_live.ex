@@ -15,16 +15,20 @@ defmodule QuestApiV21Web.SignUpLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center h-screen">
+    <div class="flex flex-col items-center justify-content-center h-screen bg-gradient-to-b from-purple-400 to-purple-800">
 
-    <h1 class="text-center mb-2 text-2xl font-medium text-gray-600">
-    Sign Up
-    </h1>
+      <div class="">
+        <img class="mx-auto mt-44 h-32 w-auto" src="/images/WhiteQuestLogo.svg" alt="Quest Logo">
+      </div>
 
     <!-- Form for user sign-up -->
     <%= form_for :user, "#", [id: "signup-form", phx_hook: "FormSubmit", data: [redirect_path: @redirect_path]], fn f -> %>
 
-      <div class="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md">
+      <div class="px-8 pt-6 mt-16 bg-white rounded-xl shadow-md pb-8 mb-6">
+
+        <h1 class="text-center mb-6 text-2xl font-medium text-gray-600">
+          Sign Up
+        </h1>
 
       <%= if @error_message do %>
         <div class="alert alert-danger">
