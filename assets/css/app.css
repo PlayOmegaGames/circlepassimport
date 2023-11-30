@@ -89,6 +89,7 @@ input:focus {
   background-color: #4caf50; /* Replace with your brand color */
   height: 100%;
   transition: width 0.3s;
+  
 }
 
 /* Normal progress bar without glow */
@@ -98,6 +99,18 @@ input:focus {
 
 /* Glow effect for completed progress bar container */
 .completed-progress-bar-glow {
-  box-shadow: 0 0 15px 5px #74ff79; /* Strong glow for completion */
+  box-shadow: 0 0 16px 3px #b3ffb5; /* Strong glow for completion */
+  border: solid 1px green;
+  transition: all 1s ease;
+}
+
+.completed-progress {
+  background-color: rgb(30, 245, 37); 
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.progress, .completed-progress {
+  transition: width 2s ease; /* Adjust the duration and timing function as needed */
 }
 

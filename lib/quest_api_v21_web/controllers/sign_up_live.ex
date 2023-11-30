@@ -24,7 +24,7 @@ defmodule QuestApiV21Web.SignUpLive do
     <!-- Form for user sign-up -->
     <%= form_for :user, "#", [id: "signup-form", phx_hook: "FormSubmit", data: [redirect_path: @redirect_path]], fn f -> %>
 
-      <div class="px-8 pt-6 mt-16 bg-white rounded-xl shadow-md pb-8 mb-6">
+      <div class="px-8 pt-6 mt-20 bg-white rounded-xl shadow-md pb-8">
 
         <h1 class="text-center mb-6 text-2xl font-medium text-gray-600">
           Sign Up
@@ -67,7 +67,7 @@ defmodule QuestApiV21Web.SignUpLive do
           <%= submit "Sign Up", class: "w-full py-2 px-4 bg-brand text-white rounded #{if !@form_valid, do: "opacity-50 cursor-not-allowed bg-brand", else: ""}", disabled: !@form_valid %>
 
         </div>
-        <div class="w-full mt-12 flex justify-center">
+        <div class="w-full mt-8 flex justify-center">
           <a href="/sign_in" class="text-blue-500">Sign In</a>
         </div>
 

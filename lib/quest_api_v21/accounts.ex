@@ -47,8 +47,13 @@ defmodule QuestApiV21.Accounts do
 
   """
 def create_account(attrs \\ %{}) do
-  email = Map.get(attrs, :email)
-  Logger.debug("create_account called with attrs: #{inspect(attrs)}")
+  email =
+    case Map.fetch(attrs, "email") do
+      {:ok, email} -> email
+      :error -> Map.get(attrs, :email)
+    end
+
+    Logger.debug("create_account called with attrs: #{inspect(attrs)}")
 
   case find_account_by_email(email) do
     nil ->
