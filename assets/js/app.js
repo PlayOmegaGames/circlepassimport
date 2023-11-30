@@ -35,7 +35,7 @@
       if (!progressBar) return;
   
       const finalWidth = progressBar.style.width; // Get the final width
-      progressBar.style.width = '60%'; // Reset width to 0
+      progressBar.style.width = '0%'; // Reset width to 0
   
       // Trigger reflow to apply the reset
       void progressBar.offsetWidth;
