@@ -114,3 +114,6 @@ input:focus {
   transition: width 2s ease; /* Adjust the duration and timing function as needed */
 }
 
+main {
+  scroll-behavior: smooth;
+}

@@ -14,7 +14,8 @@
 
   </head>
   
-  <body class="bg-white antialiased">
-    <%= @inner_content %>
-  </body>
+<body class={"antialiased " <> (assigns[:body_class] || "bg-white")}>
+  <%= @inner_content %>
+</body>
+
 </html>

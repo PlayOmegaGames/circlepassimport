@@ -9,16 +9,27 @@ defmodule QuestApiV21Web.SignUpLive do
   @impl true
   def mount(_params, session, socket) do
     redirect_path = session["redirect_path"] || "/badges"
-    {:ok, assign(socket, account: nil, user_params: %{}, errors: [], email_valid: false, password_strength: 0, crack_time: "N/A", form_valid: false, redirect_path: redirect_path, error_message: nil)}
+    {:ok, assign(socket,
+        account: nil,
+        user_params: %{},
+        errors: [],
+        email_valid: false,
+        password_strength: 0,
+        crack_time: "N/A",
+        form_valid: false,
+        redirect_path: redirect_path,
+        error_message: nil,
+        body_class: "bg-gradient-to-b from-purple-600 to-purple-800"
+        )}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col items-center justify-content-center h-screen bg-gradient-to-b from-purple-400 to-purple-800">
+    <div class="flex flex-col items-center justify-content-center">
 
       <div class="">
-        <img class="mx-auto mt-44 h-32 w-auto" src="/images/WhiteQuestLogo.svg" alt="Quest Logo">
+        <img class="mx-auto mt-8 h-32 w-auto" src="/images/WhiteQuestLogo.svg" alt="Quest Logo">
       </div>
 
     <!-- Form for user sign-up -->
@@ -62,12 +73,12 @@ defmodule QuestApiV21Web.SignUpLive do
 
         </div>
 
-        <div class="mt-5">
+        <div class="mt-3">
           <!-- Submit button -->
           <%= submit "Sign Up", class: "w-full py-2 px-4 bg-brand text-white rounded #{if !@form_valid, do: "opacity-50 cursor-not-allowed bg-brand", else: ""}", disabled: !@form_valid %>
 
         </div>
-        <div class="w-full mt-8 flex justify-center">
+        <div class="w-full mt-6 flex justify-center">
           <a href="/sign_in" class="text-blue-500">Sign In</a>
         </div>
 
