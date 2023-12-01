@@ -6,6 +6,7 @@ defmodule QuestApiV21Web.BadgeController do
   alias QuestApiV21Web.JWTUtility
   alias QuestApiV21.Repo
   require Logger
+  
 
   action_fallback QuestApiV21Web.FallbackController
 

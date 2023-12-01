@@ -29,34 +29,9 @@
   window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 
-  function animateProgressBars() {
-    document.querySelectorAll('.progress-bar').forEach(barContainer => {
-      const progressBar = barContainer.querySelector('.progress, .completed-progress');
-      if (!progressBar) return;
+
   
-      const finalWidth = progressBar.style.width; // Get the final width
-      progressBar.style.width = '0%'; // Reset width to 0
-  
-      // Trigger reflow to apply the reset
-      void progressBar.offsetWidth;
-  
-      // Apply the final width with a delay for the transition effect
-      setTimeout(() => {
-        progressBar.style.width = finalWidth;
-  
-        // If this is a completed progress bar, add the glow after reaching 100%
-        if (progressBar.classList.contains('completed-progress')) {
-          setTimeout(() => {
-            barContainer.classList.add('completed-progress-bar-glow');
-          }, 1900); // Adjust the timeout to match the width transition duration
-        }
-      }, 100); // Adjust the timeout to control the start of the animation
-    });
-  }
-  
-  document.addEventListener('DOMContentLoaded', animateProgressBars);
-  
-  
+
 
   let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
   Hooks.FormSubmit = Hooks.FormSubmit(csrfToken);
