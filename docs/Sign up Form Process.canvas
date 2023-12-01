@@ -1,0 +1,21 @@
+{
+	"nodes":[
+		{"id":"1cde5faa3ba97777","x":-420,"y":-500,"width":250,"height":60,"color":"5","type":"text","text":"from collector"},
+		{"id":"eeee83342d90f606","x":40,"y":-500,"width":250,"height":60,"color":"5","type":"text","text":"normal signup"},
+		{"id":"2758b7fbb3d21724","x":-420,"y":-361,"width":250,"height":141,"color":"5","type":"text","text":"[[auth_plug.ex]] adds url of collector to redirect_url and passes that to sign up"},
+		{"id":"02a72742ad91a1d5","x":-170,"y":-40,"width":210,"height":80,"color":"6","type":"file","file":"lib/quest_api_v21_web/controllers/sign_up_live.ex"},
+		{"id":"28fb9c3ff44f4dd9","x":-215,"y":100,"width":301,"height":95,"color":"5","type":"text","text":"When user types anything into inputs that triggers a live hook [[app.js]] -> [[hooks.js]]"},
+		{"id":"dfee0d91c6eed8d9","x":-210,"y":280,"width":290,"height":153,"color":"5","type":"text","text":"when user submits, data is passed to the form hook that then submits that data to the backend and redirects [[hooks.js]]"},
+		{"id":"c1818e4bbc9ba793","x":200,"y":460,"width":250,"height":105,"type":"text","text":"if email is invalid the form displays correct error message"},
+		{"id":"95fd3595a1e35598","x":-193,"y":551,"width":250,"height":109,"color":"5","type":"text","text":"user is redirected to either /badges or the collector"}
+	],
+	"edges":[
+		{"id":"327f95dc2debf658","fromNode":"1cde5faa3ba97777","fromSide":"bottom","toNode":"2758b7fbb3d21724","toSide":"top","color":"5"},
+		{"id":"893c616e4523c9f7","fromNode":"2758b7fbb3d21724","fromSide":"bottom","toNode":"02a72742ad91a1d5","toSide":"top","color":"5"},
+		{"id":"48fbb94a65850e8c","fromNode":"eeee83342d90f606","fromSide":"bottom","toNode":"02a72742ad91a1d5","toSide":"top","color":"5"},
+		{"id":"6eb0308e3c9fa337","fromNode":"02a72742ad91a1d5","fromSide":"bottom","toNode":"28fb9c3ff44f4dd9","toSide":"top","color":"6"},
+		{"id":"719e78f95f3bb5c8","fromNode":"28fb9c3ff44f4dd9","fromSide":"bottom","toNode":"dfee0d91c6eed8d9","toSide":"top","color":"5"},
+		{"id":"0cb0d5bef3a10664","fromNode":"dfee0d91c6eed8d9","fromSide":"right","toNode":"c1818e4bbc9ba793","toSide":"top"},
+		{"id":"e0834fb7c139cebd","fromNode":"dfee0d91c6eed8d9","fromSide":"bottom","toNode":"95fd3595a1e35598","toSide":"top","color":"5"}
+	]
+}
