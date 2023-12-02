@@ -15,7 +15,7 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F7RQVMPZHX"></script>
 
-    <%= if Mix.env() == :prod do %>
+    <%= if System.get_env("MIX_ENV") == "prod" do %>
       <!-- Google tag (gtag.js) for Production Environment -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-F7RQVMPZHX"></script>
       <script>
