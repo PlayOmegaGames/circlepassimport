@@ -23,7 +23,7 @@ defmodule QuestApiV21Web.PageController do
   def auth_splash(conn, _params) do
     conn
     |> put_layout(false)
-    |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-purple-800")
+    |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-purple-800 h-screen")
     |> render("auth_splash.html")
   end
 end
