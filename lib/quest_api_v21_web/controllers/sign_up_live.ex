@@ -19,7 +19,7 @@ defmodule QuestApiV21Web.SignUpLive do
         form_valid: false,
         redirect_path: redirect_path,
         error_message: nil,
-        body_class: "bg-gradient-to-b from-purple-600 to-purple-800"
+        body_class: "bg-gradient-to-b from-purple-400 to-purple-800 h-screen"
         )}
   end
 
@@ -33,9 +33,13 @@ defmodule QuestApiV21Web.SignUpLive do
       </div>
 
     <!-- Form for user sign-up -->
-    <%= form_for :user, "#", [id: "signup-form", phx_hook: "FormSubmit", data: [redirect_path: @redirect_path]], fn f -> %>
+    <%= form_for :user, "#", [
+      id: "signup-form",
+      class: "w-11/12 max-w-sm",
+      phx_hook: "FormSubmit",
+      data: [redirect_path: @redirect_path]], fn f -> %>
 
-      <div class="px-8 pt-6 mt-20 bg-white rounded-xl shadow-md pb-8">
+      <div class="px-8 pt-6 mt-20 bg-white w-full rounded-xl shadow-md pb-8">
 
         <h1 class="text-center mb-6 text-2xl font-medium text-gray-600">
           Sign Up
