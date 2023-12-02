@@ -4,13 +4,28 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix=" · Phoenix Framework">
-      <%= assigns[:page_title] || "QuestApiV21" %>
+    <.live_title suffix=" · Quest App">
+      <%= assigns[:page_title] || "Quest" %>
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}></script>  
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F7RQVMPZHX"></script>
+
+    <%= if Mix.env() == :prod do %>
+      <!-- Google tag (gtag.js) for Production Environment -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-F7RQVMPZHX"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-F7RQVMPZHX');
+      </script>
+    <% end %>
 
   </head>
   
