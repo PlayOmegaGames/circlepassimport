@@ -1,111 +1,146 @@
- <script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('modal');
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const closeModalButton = document.getElementById('closeModalButton');
 
+  const toggleModal = () => {
+    modal.classList.toggle('hidden');
+    modalBackdrop.classList.toggle('hidden');
+  };
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('modal');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const btn = document.getElementById('badgeDescriptionButton');
-    const closeModalButton = document.getElementById('closeModalButton');
-
-    const toggleModal = () => {
-      modal.classList.toggle('hidden');
-      modalBackdrop.classList.toggle('hidden');
-    };
-
-    btn.onclick = toggleModal;
-    closeModalButton.onclick = toggleModal;
-
-    modalBackdrop.onclick = function(event) {
-      // Check if the click was on the modalBackdrop itself and not on its children
-      if (event.target === modalBackdrop) {
-        toggleModal();
-      }
-    };
+  closeModalButton.addEventListener('click', toggleModal);
+  modalBackdrop.addEventListener('click', (event) => {
+    if (event.target === modalBackdrop) {
+      toggleModal();
+    }
   });
 
+  function openBadgeModal(badge) {
+    // Only proceed if the badge is associated with the user's account
+    if (badge.dataset.isUserBadge === "true" && badge.dataset.redirectUrl) {
+      const modalImage = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('modalTitle');
+      modalImage.src = badge.dataset.redirectUrl;
+      modalTitle.textContent = badge.dataset.badgeDescription;
+      toggleModal();
+    }
+  }
+
+
+  document.querySelectorAll('.badge-container').forEach(badge => {
+    badge.addEventListener('click', () => openBadgeModal(badge));
+  });
+});
+
+  // Function to animate progress bars.
   function animateProgressBars() {
+    // Select all progress bar elements and iterate over them.
     document.querySelectorAll('.progress-bar').forEach(barContainer => {
       const progressBar = barContainer.querySelector('.progress, .completed-progress');
       if (!progressBar) return;
 
-      const finalWidth = progressBar.style.width; // Get the final width
-      progressBar.style.width = '0%'; // Reset width to 0
+      // Initialize animation of progress bar.
+      const finalWidth = progressBar.style.width; // Target width
+      progressBar.style.width = '0%'; // Start from 0%
 
-      // Trigger reflow to apply the reset
-      void progressBar.offsetWidth;
+      void progressBar.offsetWidth; // Trigger reflow
 
+      // Animate the progress bar to the final width.
       requestAnimationFrame(() => {
         progressBar.style.width = finalWidth;
 
+        // Add a glowing effect to completed progress bars.
         if (progressBar.classList.contains('completed-progress')) {
           setTimeout(() => {
             barContainer.classList.add('completed-progress-bar-glow');
-          }, 1900); // Adjust the timeout to match the width transition duration
+          }, 1900); // Sync with CSS transition duration.
         }
       });
     });
   }
 
+  // Initiate progress bar animation when DOM content is loaded.
   document.addEventListener('DOMContentLoaded', animateProgressBars);
-
-  </script>
-  
+</script>
 
 <div class="container mx-auto p-4">
-  <%= for quest <- @quests do %>
-    <% total_badges = Map.get(@badges_by_quest, quest.id, []) |> length %>
-    <% unlocked_badges = Enum.filter(Map.get(@badges_by_quest, quest.id, []), fn badge -> badge.id in @user_badge_ids end) |> length %>
-    <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
-    <div class="mb-6 rounded-md">
-      <div class="mb-2 flex justify-center items-center">
-        <h3 class="text-2xl mb-1 text-gray-600 font-medium rounded-md px-4 py-1 inline-block"><%= quest.name %></h3>
-      </div>
+  <%= for {quest_id, badges} <- @badges_by_quest do %>
+    <% quest = Enum.find(@quests, fn q -> q.id == quest_id end) %>
 
-      <div class="text-gray-600 flex justify-center">
+    <%= if quest do %>
+      <% total_badges = length(badges) %>
+      <% unlocked_badges = Enum.count(badges, fn badge -> badge.id in @user_badge_ids end) %>
+      <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
 
-      <span class="pr-2 mt-1">
-        Reward:
-      </span>
-        <span class="inline-flex items-center mb-6 rounded-md bg-purple-50 px-2 py-1 text-base font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
-            <div><%= quest.reward %></div>
-        </span>
-      </div>
 
-      <div class="progress-bar bg-gray-300 rounded-full overflow-hidden h-6 mb-4">
-        <!--Progress Bar-->
-        <div class={if unlocked_badges == total_badges, do: "completed-progress", else: "progress"} style={"width: #{progress_percentage}%"}></div>
-      </div>
-      <p class="text-center text-gray-700 text-sm mb-4"><%= unlocked_badges %>/<%= total_badges %> Complete</p>
-      <div class="flex flex-wrap -m-2">
-
-    <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
-      <div class="p-2 w-1/2 sm:w-1/3 md:w-1/4">
-        <div
-          id="details-modal" 
-          class={
-            if badge.id in @user_badge_ids and badge.redirect_url,
-            do: "badge-container bg-white rounded-lg shadow-md p-4 flex flex-col items-center border-2 border-purple-200 cursor-pointer",
-            else: "badge-container rounded-lg shadow-md p-4 flex flex-col items-center opacity-50"
-          }
-          {if badge.id in @user_badge_ids and badge.redirect_url, 
-            do: [data_redirect_url: badge.redirect_url, onclick: "openBadgeModal(this)"],
-            else: [] 
-          }
-        >
-          <img src={badge.image} alt={badge.name} class={"h-32 w-32 object-cover rounded-lg " <> (if badge.id not in @user_badge_ids, do: "grayscale", else: "")}>
-          <p class={"mt-2 text-base " <> (if badge.id in @user_badge_ids, do: "", else: "")}><%= badge.name %></p>
+      <!-- Quest display block -->
+      <div class="mb-6 rounded-md">
+        <!-- Quest title -->
+        <div class="mb-2 flex justify-center items-center">
+          <h3 class="text-2xl mb-1 text-gray-600 font-medium rounded-md px-4 py-1 inline-block"><%= quest.name %></h3>
         </div>
-      </div>
-    <% end %>
 
+        <!-- Quest reward display -->
+        <div class="text-gray-600 flex justify-center">
+          <span class="pr-2 mt-1">Reward:</span>
+          <span class="inline-flex items-center mb-6 rounded-md bg-purple-50 px-2 py-1 text-base font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+            <div><%= quest.reward %></div>
+          </span>
+        </div>
 
+        <!-- Progress bar for quest completion -->
+        <div class="progress-bar bg-gray-300 rounded-full overflow-hidden h-6 mb-4">
+          <div class={if unlocked_badges == total_badges, do: "completed-progress", else: "progress"} style={"width: #{progress_percentage}%"}></div>
+        </div>
+        <p class="text-center text-gray-700 text-sm mb-4"><%= unlocked_badges %>/<%= total_badges %> Complete</p>
 
+          <!-- Badge display for each quest -->
+        <div class="flex flex-wrap -m-2">
+          <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
+            <div class="p-2 w-1/2 sm:w-1/3 md:w-1/4">
+              <%= content_tag :div, class: 
+                (if badge.id in @user_badge_ids, 
+                do: "badge-container bg-white rounded-lg shadow-md p-4 flex flex-col items-center border-2 border-purple-200 cursor-pointer", 
+                else: "badge-container rounded-lg shadow-md p-4 flex flex-col items-center opacity-50 grayscale"), 
+                data: [
+                  redirect_url: badge.redirect_url, 
+                  badge_description: badge.badge_description,
+                  is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
+                ] do %>
+                <!-- Badge image and name -->
+                <img src={badge.image} alt={badge.name} class="h-32 w-32 object-cover rounded-lg">
+                <p class="mt-2 text-base"><%= badge.name %></p>
+              <% end %>
+            </div>
+          <% end %>
 
+        </div>
 
-
-
-      </div>
     </div>
+    <% end %>
   <% end %>
- 
+</div>
+
+<!-- Modal Backdrop -->
+<div id="modalBackdrop" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+<!-- Modal -->
+<div id="modal" class="hidden fixed inset-0 flex items-center justify-center">
+  <div class="modal-content bg-white p-6 rounded shadow-lg max-w-xs mx-auto">
+    <!-- Close Button -->
+    <div class="flex justify-end mb-4">
+      <p id="modalTitle" class="text-normal mr-12 text-gray-700 text-lg"></p>
+      <button id="closeModalButton" class="text-gray-400 hover:text-gray-500">
+        <span class="sr-only">Close</span>
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <!-- Modal Content -->
+    <div class="mt-2">
+      <img id="modalImage" src="" alt="Badge Image" class="w-full rounded">
+    </div>
+  </div>
 </div>

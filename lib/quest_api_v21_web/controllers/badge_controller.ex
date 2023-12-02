@@ -6,7 +6,7 @@ defmodule QuestApiV21Web.BadgeController do
   alias QuestApiV21Web.JWTUtility
   alias QuestApiV21.Repo
   require Logger
-  
+
 
   action_fallback QuestApiV21Web.FallbackController
 
@@ -49,32 +49,49 @@ defmodule QuestApiV21Web.BadgeController do
     current_user = conn.assigns[:current_user]
 
     if current_user do
-      # Preload user's badges and quests
       user_with_badges_and_quests = Repo.preload(current_user, [:badges, :quests])
 
-      # Check if the user has any badges
       if Enum.empty?(user_with_badges_and_quests.badges) do
-        # Render the no_badge.html template if no badges are found
         render(conn, "no_badge.html")
       else
-
-        # Fetch all badges
         all_badges = Repo.all(Badge)
-
-        # Group all badges by quest
         badges_by_quest = Enum.group_by(all_badges, &(&1.quest_id))
-
-        # Identify user's badge IDs
         user_badge_ids = Enum.map(user_with_badges_and_quests.badges, &(&1.id))
 
+        enhanced_badges_by_quest = Enum.map(badges_by_quest, fn {quest_id, badges} ->
+          {quest_id, prepare_badge_data(badges, user_badge_ids)}
+        end)
+        |> Enum.into(%{})
+
         render(conn, "badge.html",
-          badges_by_quest: badges_by_quest,
+          badges_by_quest: enhanced_badges_by_quest,  # Note the use of enhanced_badges_by_quest here
           quests: user_with_badges_and_quests.quests,
           user_badge_ids: user_badge_ids
         )
       end
     end
   end
+
+
+  def prepare_badge_data(badges, user_badge_ids) do
+    Enum.map(badges, fn badge ->
+      badge_data = Map.from_struct(badge)
+      is_clickable = badge.id in user_badge_ids and not is_nil(badge.redirect_url) and not is_nil(badge.badge_description)
+
+      attributes = if is_clickable, do: [
+        {:data_redirect_url, badge.redirect_url},
+        {:data_badge_description, badge.badge_description}
+      ], else: []
+
+      Map.merge(badge_data, %{
+        is_clickable: is_clickable,
+        class: if(is_clickable, do: "badge-container clickable", else: "badge-container"),
+        attributes: attributes
+      })
+    end)
+  end
+
+
 
 
   def update(conn, %{"id" => id, "badge" => badge_params}) do
