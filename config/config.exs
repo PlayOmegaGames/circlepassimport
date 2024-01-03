@@ -43,9 +43,9 @@ config :ueberauth, Ueberauth,
 
 
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: "809084191257-uo7frcu7oacgjf791b4u610qtuf11h9f.apps.googleusercontent.com",
-  client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
-  redirect_uri: System.get_env("GOOGLE_REDIRECT_URI")
+  client_id: {:system, "GOOGLE_CLIENT_ID"},
+  client_secret: {:system, "GOOGLE_CLIENT_SECRET"},
+  redirect_uri: {:system, "GOOGLE_REDIRECT_URI"}
 
 
 # Configures the mailer
