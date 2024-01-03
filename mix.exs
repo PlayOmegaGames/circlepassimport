@@ -53,7 +53,7 @@ defmodule QuestApiV21.MixProject do
       {:guardian, "~> 2.0"},
       {:comeonin, "~> 5.3"},
       {:ueberauth, "~> 0.6"},
-      {:ueberauth_google, "~> 0.10"},
+      {:ueberauth_google, "0.10.1"},
       {:bcrypt_elixir, "~> 2.0"}
     ]
   end
