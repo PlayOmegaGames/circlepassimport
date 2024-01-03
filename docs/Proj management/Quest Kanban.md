@@ -15,13 +15,13 @@ kanban-plugin: basic
 
 ## To Do
 
-- [ ] Add avatar to topbar #ui
 - [ ] Create user settings page #backend
 - [ ] Make the sign in page have the same visual theme as sign up #ui
 
 
 ## Under Review
 
+- [ ] Add avatar to topbar #ui
 
 
 ## Pushed Live
