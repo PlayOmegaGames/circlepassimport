@@ -148,7 +148,7 @@
           # Store user ID in the session for the newly created account.
           |> put_session(:user_id, account.id)
 
-          # Redirect to the desired page after successful sign-up.
+          # Redirect to the badges page after successful sign-up.
           |> redirect(to: "/badges")
 
         {:ok, account, :existing} ->
@@ -162,7 +162,7 @@
           # Store user ID in the session for the existing account.
           |> put_session(:user_id, account.id)
 
-          # Redirect to the desired page after successful sign-in.
+          # Redirect to the badges page after successful sign-in.
           |> redirect(to: "/badges")
 
         {:error, reason} ->

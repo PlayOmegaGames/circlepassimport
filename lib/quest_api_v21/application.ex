@@ -4,13 +4,15 @@ defmodule QuestApiV21.Application do
   @moduledoc false
 
   use Application
-  #require Logger
+  require Logger
 
 
   @impl true
   def start(_type, _args) do
     # For debugging secrets
-    #Logger.info("PARTNER_JWT_SECRET: #{inspect(System.get_env("PARTNER_JWT_SECRET"))}")
+    google_client_id = System.get_env("GOOGLE_CLIENT_ID")
+    Logger.info("Google Client ID: #{google_client_id}")
+
 
     children = [
       # Start the Telemetry supervisor
