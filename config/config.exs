@@ -40,14 +40,6 @@ config :ueberauth, Ueberauth,
     google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]},
   ]
 
-
-
-config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: {:system, "GOOGLE_CLIENT_ID"},
-  client_secret: {:system, "GOOGLE_CLIENT_SECRET"},
-  redirect_uri: {:system, "GOOGLE_REDIRECT_URI"}
-
-
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
