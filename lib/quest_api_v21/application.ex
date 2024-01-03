@@ -4,13 +4,17 @@ defmodule QuestApiV21.Application do
   @moduledoc false
 
   use Application
-  #require Logger
+  require Logger
 
 
   @impl true
   def start(_type, _args) do
     # For debugging secrets
-    #Logger.info("PARTNER_JWT_SECRET: #{inspect(System.get_env("PARTNER_JWT_SECRET"))}")
+    google_client_id = System.get_env("GOOGLE_CLIENT_ID")
+    Logger.info("Google Client ID: #{google_client_id}")
+
+    configure_ueberauth()
+
 
     children = [
       # Start the Telemetry supervisor
@@ -34,6 +38,16 @@ defmodule QuestApiV21.Application do
 
   end
 
+  defp configure_ueberauth do
+    config = [
+      client_id: System.get_env("GOOGLE_CLIENT_ID"),
+      client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
+      redirect_uri: System.get_env("GOOGLE_REDIRECT_URI")
+    ]
+
+    Application.put_env(:ueberauth, Ueberauth.Strategy.Google.OAuth, config)
+  end
+  
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   @impl true
