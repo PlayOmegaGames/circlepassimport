@@ -1,0 +1,32 @@
+{
+	"nodes":[
+		{"id":"f776b7f9164d139d","x":-197,"y":-380,"width":280,"height":60,"color":"4","type":"text","text":"New User Scans a QR code"},
+		{"id":"4761395c7c96a789","x":-218,"y":-200,"width":322,"height":60,"color":"4","type":"text","text":"Redirected to sign up page"},
+		{"id":"8e9ed1b8ff0e3436","x":-257,"y":-40,"width":400,"height":400,"type":"file","file":"docs/authentication/Sign up Form Process.canvas"},
+		{"id":"63857c4d4544a24a","x":41,"y":488,"width":250,"height":100,"color":"4","type":"text","text":"If the user has started the quest, then display the [[badge.html.heex]]"},
+		{"id":"96e7095c63edcb8d","x":-380,"y":488,"width":303,"height":100,"color":"4","type":"text","text":"If the user has not started the quest, display the [[no_quest.html.heex]] template"},
+		{"id":"6c25a59dfccffd1d","x":27,"y":660,"width":278,"height":60,"color":"4","type":"text","text":"add badge to user acount"},
+		{"id":"091c7df93b73a748","x":-191,"y":940,"width":268,"height":80,"color":"4","type":"text","text":"User gets redirected to badges page"},
+		{"id":"bc6d2d3199bd2983","x":-560,"y":1177,"width":270,"height":88,"type":"text","text":"use finished quests to redeem rewards"},
+		{"id":"13bd644b059d74e0","x":143,"y":1177,"width":250,"height":60,"color":"1","type":"text","text":"select user profile"},
+		{"id":"5f5678ad406a53db","x":-182,"y":1177,"width":250,"height":71,"color":"4","type":"text","text":"Open up badge details modal"},
+		{"id":"8d3be4cb191f0a46","x":-37,"y":1397,"width":180,"height":60,"color":"1","type":"text","text":"change email"},
+		{"id":"77b110a6736455b6","x":166,"y":1397,"width":214,"height":60,"color":"1","type":"text","text":"change password"},
+		{"id":"c99f2a9f4e2e3080","x":420,"y":1397,"width":250,"height":60,"color":"1","type":"text","text":"change profile picture"}
+	],
+	"edges":[
+		{"id":"471ffd66ded1cf84","fromNode":"f776b7f9164d139d","fromSide":"bottom","toNode":"4761395c7c96a789","toSide":"top"},
+		{"id":"88b81938618629ee","fromNode":"4761395c7c96a789","fromSide":"bottom","toNode":"8e9ed1b8ff0e3436","toSide":"top"},
+		{"id":"5447faf5399d02c1","fromNode":"8e9ed1b8ff0e3436","fromSide":"bottom","toNode":"96e7095c63edcb8d","toSide":"top"},
+		{"id":"f027f671405e5827","fromNode":"8e9ed1b8ff0e3436","fromSide":"bottom","toNode":"63857c4d4544a24a","toSide":"top"},
+		{"id":"235275f96bb6cecc","fromNode":"63857c4d4544a24a","fromSide":"bottom","toNode":"6c25a59dfccffd1d","toSide":"top"},
+		{"id":"8db974ccd470fc4f","fromNode":"96e7095c63edcb8d","fromSide":"bottom","toNode":"091c7df93b73a748","toSide":"top"},
+		{"id":"26986583abe938d3","fromNode":"6c25a59dfccffd1d","fromSide":"bottom","toNode":"091c7df93b73a748","toSide":"top"},
+		{"id":"7cdeaf14f0109230","fromNode":"091c7df93b73a748","fromSide":"bottom","toNode":"13bd644b059d74e0","toSide":"top"},
+		{"id":"3661a289ab5210cd","fromNode":"091c7df93b73a748","fromSide":"bottom","toNode":"bc6d2d3199bd2983","toSide":"top"},
+		{"id":"6ae88e395579fa2c","fromNode":"091c7df93b73a748","fromSide":"bottom","toNode":"5f5678ad406a53db","toSide":"top"},
+		{"id":"176253f1336f3781","fromNode":"13bd644b059d74e0","fromSide":"bottom","toNode":"8d3be4cb191f0a46","toSide":"top"},
+		{"id":"499274d27931e72a","fromNode":"13bd644b059d74e0","fromSide":"bottom","toNode":"77b110a6736455b6","toSide":"top"},
+		{"id":"0c11cf4f25b1fc4e","fromNode":"13bd644b059d74e0","fromSide":"bottom","toNode":"c99f2a9f4e2e3080","toSide":"top"}
+	]
+}

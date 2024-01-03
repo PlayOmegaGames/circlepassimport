@@ -1,0 +1,29 @@
+{
+	"nodes":[
+		{"id":"c012a09fe501a24a","type":"text","text":"User clicks on sign google sign up button for /auth/google [[auth_splash.html.heex]]","x":-275,"y":-371,"width":395,"height":91},
+		{"id":"47d3ad13a84b301d","type":"text","text":"Here is the router.ex code that handles that request. Specifically the get /:provider line.\n\n```elixir\nscope \"/auth\", QuestApiV21Web do\n\tpipe_through :browser\n\tget \"/:provider\", AuthController, :request\t\n\tget \"/:provider/callback\", AuthController, :callback\nend\n```\n\n","x":-386,"y":-180,"width":618,"height":260},
+		{"id":"b3113a39c045294b","type":"text","text":"Here is the function in the auth controller that handles the auth/:provider route. Here is [docs for uberauth](https://hexdocs.pm/ueberauth/readme.html)\n\n```elixir\ndef request(_conn, _params) do\n\n# This will be handled by the Ueberauth library to redirect to Google\n\nend\n```","x":-317,"y":180,"width":479,"height":280},
+		{"id":"5a87da70c27dd386","type":"text","text":"If in production add gitpod url in the google dev console","x":-545,"y":620,"width":318,"height":93},
+		{"id":"61fe493cdf3a5118","x":-511,"y":780,"width":250,"height":80,"type":"text","text":"manually export all the google env variables"},
+		{"id":"745e92c6f67e2e1a","type":"text","text":"user is redirected to google sign in page","x":-202,"y":1060,"width":262,"height":80},
+		{"id":"52de32b5c4948b84","x":-200,"y":1240,"width":258,"height":80,"type":"text","text":"once signed in the user is redirect to /auth/callback"},
+		{"id":"0d875ea2d4e0228b","x":-480,"y":1580,"width":343,"height":126,"type":"text","text":"If an account already exists\n```elixir\n{:ok, account, :existing} ->\n```"},
+		{"id":"5e2507bb43ce2927","x":20,"y":1580,"width":320,"height":126,"type":"text","text":"If an account does not exist\n```elixir\n{:ok, account, :new} ->\n```\n"},
+		{"id":"c91086da55fe9e1d","x":-279,"y":1900,"width":416,"height":126,"type":"text","text":"authenticates the user\n\n```elixir\n|> put_session(:user_id, account.id)\n```"},
+		{"id":"f8f6d6ecd95f538a","x":-236,"y":2120,"width":331,"height":120,"type":"text","text":"redirects to badges page\n```elixir\n|> redirect(to: \"/badges\")\n```"}
+	],
+	"edges":[
+		{"id":"e2f2f0d5d79a1885","fromNode":"c012a09fe501a24a","fromSide":"bottom","toNode":"47d3ad13a84b301d","toSide":"top"},
+		{"id":"70c3186d84afbbb8","fromNode":"47d3ad13a84b301d","fromSide":"bottom","toNode":"b3113a39c045294b","toSide":"top"},
+		{"id":"6c5ecf8949ea48a8","fromNode":"b3113a39c045294b","fromSide":"bottom","toNode":"5a87da70c27dd386","toSide":"top"},
+		{"id":"c10ff09189b1a22e","fromNode":"b3113a39c045294b","fromSide":"bottom","toNode":"745e92c6f67e2e1a","toSide":"top"},
+		{"id":"aacb5114a1b71ade","fromNode":"5a87da70c27dd386","fromSide":"bottom","toNode":"61fe493cdf3a5118","toSide":"top"},
+		{"id":"41525717842473a1","fromNode":"61fe493cdf3a5118","fromSide":"bottom","toNode":"745e92c6f67e2e1a","toSide":"top"},
+		{"id":"bb84f2c95eba97a6","fromNode":"745e92c6f67e2e1a","fromSide":"bottom","toNode":"52de32b5c4948b84","toSide":"top"},
+		{"id":"01ccb452de1788a1","fromNode":"52de32b5c4948b84","fromSide":"bottom","toNode":"0d875ea2d4e0228b","toSide":"top"},
+		{"id":"06d25d13e514d93e","fromNode":"52de32b5c4948b84","fromSide":"bottom","toNode":"5e2507bb43ce2927","toSide":"top"},
+		{"id":"f75d6e4586c7dede","fromNode":"0d875ea2d4e0228b","fromSide":"bottom","toNode":"c91086da55fe9e1d","toSide":"top"},
+		{"id":"283821995621576f","fromNode":"5e2507bb43ce2927","fromSide":"bottom","toNode":"c91086da55fe9e1d","toSide":"top"},
+		{"id":"e51abee555c191de","fromNode":"c91086da55fe9e1d","fromSide":"bottom","toNode":"f8f6d6ecd95f538a","toSide":"top"}
+	]
+}

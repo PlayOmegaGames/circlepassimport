@@ -1,0 +1,28 @@
+{
+	"nodes":[
+		{"id":"dab1b16a0a47ef91","type":"link","url":"https://circlepass-quest-api.postman.co/workspace/Quest-Api~61058871-1d2a-4e63-b3f1-e14b2f666aee/request/26834282-e519e09b-9262-458d-bc1a-18b23a4ef21a?ctx=documentation","x":-360,"y":-200,"width":560,"height":280},
+		{"id":"a5393548e5185118","type":"text","text":"**Create a host**","x":-172,"y":-260,"width":185,"height":60,"color":"5"},
+		{"id":"de6a1e5a074693f9","type":"link","url":"https://circlepass-quest-api.postman.co/workspace/Quest-Api~61058871-1d2a-4e63-b3f1-e14b2f666aee/request/26834282-92f967b5-a69b-4334-acef-779e43ebef8e?ctx=documentation","x":-361,"y":260,"width":560,"height":260},
+		{"id":"e9204ea938b91ab4","type":"text","text":"**create org**","x":-162,"y":200,"width":164,"height":60,"color":"5"},
+		{"id":"e4cec03f968b021e","type":"link","url":"https://circlepass-quest-api.postman.co/workspace/Quest-Api~61058871-1d2a-4e63-b3f1-e14b2f666aee/request/26834282-31436f45-c7ef-4228-b3b0-abfd099e33a8?ctx=documentation","x":-360,"y":700,"width":560,"height":280},
+		{"id":"419f3dfc31b3529b","type":"text","text":"**create quest**","x":-163,"y":640,"width":164,"height":60,"color":"5"},
+		{"id":"eeab1e70ce5461d7","type":"link","url":"https://circlepass-quest-api.postman.co/workspace/Quest-Api~61058871-1d2a-4e63-b3f1-e14b2f666aee/request/26834282-03fea36d-14e5-4540-b1d4-52aa362eb97d?ctx=documentation","x":-360,"y":1280,"width":560,"height":260},
+		{"id":"15693c40e7ea2ebb","type":"text","text":"**create collector**\nCopy the quest id from the previous step and put it in  \"quest_start\" if it is the starting collector for a quest, if it is not starting the quest then put the quest id in \"quest_ids\"","x":-304,"y":1100,"width":446,"height":180,"color":"5"},
+		{"id":"74b158e947cbb028","type":"link","url":"https://circlepass-quest-api.postman.co/workspace/Quest-Api~61058871-1d2a-4e63-b3f1-e14b2f666aee/request/26834282-e73bb652-d6b9-4f42-bb6d-0994dbd0f864?ctx=documentation","x":-360,"y":1860,"width":560,"height":320},
+		{"id":"1f0e565d83cc8d15","type":"text","text":"**Create badge** by copy over the quest id and collector id from the previous steps.\n- image: location of the image for the badge\n- redirect_url: the location of the badge details image. If no badge details image use the same url to the image.","x":-312,"y":1640,"width":464,"height":220,"color":"5"},
+		{"id":"3313523831469e12","type":"text","text":"repeat creating the collector and badge for multiple badges in the same quest","x":-780,"y":1609,"width":250,"height":141},
+		{"id":"42bf46b8970b0e36","type":"text","text":"repeat when creating a new quest, make sure to start with a collector that starts off the quest (put quest id in quest_start instead of quest_ids when creating a collector)","x":440,"y":1321,"width":313,"height":179}
+	],
+	"edges":[
+		{"id":"b2d3f8214b6b9e9f","fromNode":"a5393548e5185118","fromSide":"bottom","toNode":"dab1b16a0a47ef91","toSide":"top","toEnd":"none"},
+		{"id":"51da99d1feaef8d7","fromNode":"dab1b16a0a47ef91","fromSide":"bottom","toNode":"e9204ea938b91ab4","toSide":"top"},
+		{"id":"d8676a3400d888f0","fromNode":"e9204ea938b91ab4","fromSide":"bottom","toNode":"de6a1e5a074693f9","toSide":"top"},
+		{"id":"ec8c4198352f12c1","fromNode":"de6a1e5a074693f9","fromSide":"bottom","toNode":"419f3dfc31b3529b","toSide":"top"},
+		{"id":"1267e99432353d3c","fromNode":"e4cec03f968b021e","fromSide":"bottom","toNode":"15693c40e7ea2ebb","toSide":"top"},
+		{"id":"019012dc8653a1bf","fromNode":"eeab1e70ce5461d7","fromSide":"bottom","toNode":"1f0e565d83cc8d15","toSide":"top"},
+		{"id":"32ebd8b2816ed3c0","fromNode":"74b158e947cbb028","fromSide":"left","toNode":"3313523831469e12","toSide":"bottom"},
+		{"id":"823f3c9f0902b0ec","fromNode":"3313523831469e12","fromSide":"top","toNode":"eeab1e70ce5461d7","toSide":"left"},
+		{"id":"f3f91c32acaf559e","fromNode":"74b158e947cbb028","fromSide":"right","toNode":"42bf46b8970b0e36","toSide":"bottom"},
+		{"id":"c118a6a6bf80ece5","fromNode":"42bf46b8970b0e36","fromSide":"top","toNode":"e4cec03f968b021e","toSide":"right"}
+	]
+}
