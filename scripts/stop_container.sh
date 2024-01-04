@@ -1,13 +1,9 @@
 #!/bin/bash
 
-# Stop all running Docker containers
-echo "Stopping all running containers..."
-sudo docker stop $(sudo docker ps -aq)
+cd /home/ubuntu/
 
-# Remove all stopped containers
-echo "Removing all containers..."
-sudo docker rm $(sudo docker ps -aq)
+# Stop the current container (if running)
+docker stop quest-api-v2 || true
 
-# Optional: Cleanup unused Docker images and networks
-echo "Cleaning up unused Docker images and networks..."
-sudo docker system prune -af
+# Remove the stopped container
+docker rm quest-api-v2 || true

@@ -1,12 +1,15 @@
 version: 0.0
 os: linux
 hooks:
+  BeforeInstall:
+    - location: scripts/pull_new_image.sh
+      timeout: 300
+      runas: root
   ApplicationStop:
     - location: scripts/stop_container.sh
-      timeout: 30
-  AfterInstall:
-    - location: scripts/pull_container.sh
-      timeout: 120
+      timeout: 300
+      runas: root
   ApplicationStart:
     - location: scripts/start_container.sh
-      timeout: 30
+      timeout: 300
+      runas: root
