@@ -1,17 +1,17 @@
 {
 	"nodes":[
-		{"id":"f8f12f7b3acae8f1","x":-178,"y":-240,"width":294,"height":60,"type":"text","text":"pull changes on local machine"},
-		{"id":"315df8105b9ef3ef","x":-156,"y":-120,"width":250,"height":60,"type":"text","text":"build docker image"},
-		{"id":"ee4f1823b50004e2","x":-156,"y":160,"width":250,"height":60,"type":"text","text":"pull image on EC2"},
-		{"id":"1394482f1b832cff","x":-166,"y":20,"width":271,"height":65,"type":"text","text":"push docker image to ECR"},
-		{"id":"12bfa4803ca3fa81","x":-156,"y":280,"width":250,"height":60,"type":"text","text":"restart docker container"},
-		{"id":"167a4836e1c6fa51","x":-182,"y":-360,"width":302,"height":65,"type":"text","text":"Changes are pushed to master"},
-		{"id":"5fc752f4cc51e3a2","x":383,"y":-295,"width":202,"height":60,"type":"text","text":"dev environment"},
-		{"id":"c5439702e48d0f15","x":662,"y":-295,"width":108,"height":60,"type":"text","text":"Dev DB"},
-		{"id":"c7743775b1b0cd3c","x":383,"y":190,"width":205,"height":60,"type":"text","text":"Prod Server - EC2"},
-		{"id":"350ad9c914e3008c","x":665,"y":190,"width":138,"height":60,"type":"text","text":"Prod DB"},
-		{"id":"b001bd80fe540023","x":281,"y":-180,"width":406,"height":70,"type":"text","text":"Build Image and upload to ECR - CodeBuild"},
-		{"id":"ad6dcb7a3f1de18b","x":358,"y":-42,"width":250,"height":60,"type":"text","text":""}
+		{"id":"f8f12f7b3acae8f1","type":"text","text":"pull changes on local machine","x":-178,"y":-240,"width":294,"height":60},
+		{"id":"315df8105b9ef3ef","type":"text","text":"build docker image","x":-156,"y":-120,"width":250,"height":60},
+		{"id":"ee4f1823b50004e2","type":"text","text":"pull image on EC2","x":-156,"y":160,"width":250,"height":60},
+		{"id":"1394482f1b832cff","type":"text","text":"push docker image to ECR","x":-166,"y":20,"width":271,"height":65},
+		{"id":"12bfa4803ca3fa81","type":"text","text":"restart docker container","x":-156,"y":280,"width":250,"height":60},
+		{"id":"167a4836e1c6fa51","type":"text","text":"Changes are pushed to master","x":-182,"y":-360,"width":302,"height":65},
+		{"id":"b001bd80fe540023","type":"text","text":"Build Image and upload to ECR - CodeBuild","x":281,"y":-180,"width":406,"height":70},
+		{"id":"ad6dcb7a3f1de18b","type":"text","text":"deploy to EC2 instance - codedeploy","x":305,"y":-40,"width":358,"height":60},
+		{"id":"c7743775b1b0cd3c","type":"text","text":"Prod Server - EC2","x":382,"y":100,"width":205,"height":60},
+		{"id":"350ad9c914e3008c","type":"text","text":"Prod DB","x":664,"y":100,"width":138,"height":60},
+		{"id":"c5439702e48d0f15","type":"text","text":"Dev DB","x":684,"y":-300,"width":140,"height":60},
+		{"id":"5fc752f4cc51e3a2","type":"text","text":"gitpod dev environment","x":362,"y":-300,"width":245,"height":60}
 	],
 	"edges":[
 		{"id":"02dcfc638bb98858","fromNode":"167a4836e1c6fa51","fromSide":"bottom","toNode":"f8f12f7b3acae8f1","toSide":"top"},
@@ -22,6 +22,7 @@
 		{"id":"61a1c2a6726ff2d9","fromNode":"c7743775b1b0cd3c","fromSide":"right","toNode":"350ad9c914e3008c","toSide":"left"},
 		{"id":"8b1ea8134bf0c2ef","fromNode":"5fc752f4cc51e3a2","fromSide":"right","toNode":"c5439702e48d0f15","toSide":"left"},
 		{"id":"12200fbd4326f274","fromNode":"5fc752f4cc51e3a2","fromSide":"bottom","toNode":"b001bd80fe540023","toSide":"top"},
-		{"id":"34ef3863f8095968","fromNode":"b001bd80fe540023","fromSide":"bottom","toNode":"ad6dcb7a3f1de18b","toSide":"top"}
+		{"id":"34ef3863f8095968","fromNode":"b001bd80fe540023","fromSide":"bottom","toNode":"ad6dcb7a3f1de18b","toSide":"top"},
+		{"id":"84bff4e587f1b3fe","fromNode":"ad6dcb7a3f1de18b","fromSide":"bottom","toNode":"c7743775b1b0cd3c","toSide":"top"}
 	]
 }
