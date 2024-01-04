@@ -6,11 +6,12 @@
 		{"id":"1394482f1b832cff","x":-166,"y":20,"width":271,"height":65,"type":"text","text":"push docker image to ECR"},
 		{"id":"12bfa4803ca3fa81","x":-156,"y":280,"width":250,"height":60,"type":"text","text":"restart docker container"},
 		{"id":"167a4836e1c6fa51","x":-182,"y":-360,"width":302,"height":65,"type":"text","text":"Changes are pushed to master"},
-		{"id":"c7743775b1b0cd3c","x":380,"y":55,"width":205,"height":60,"type":"text","text":"Prod Server - EC2"},
-		{"id":"350ad9c914e3008c","x":662,"y":55,"width":138,"height":60,"type":"text","text":"Prod DB"},
 		{"id":"5fc752f4cc51e3a2","x":383,"y":-295,"width":202,"height":60,"type":"text","text":"dev environment"},
 		{"id":"c5439702e48d0f15","x":662,"y":-295,"width":108,"height":60,"type":"text","text":"Dev DB"},
-		{"id":"b001bd80fe540023","x":434,"y":-180,"width":101,"height":60,"type":"text","text":"ECR"}
+		{"id":"c7743775b1b0cd3c","x":383,"y":190,"width":205,"height":60,"type":"text","text":"Prod Server - EC2"},
+		{"id":"350ad9c914e3008c","x":665,"y":190,"width":138,"height":60,"type":"text","text":"Prod DB"},
+		{"id":"b001bd80fe540023","x":281,"y":-180,"width":406,"height":70,"type":"text","text":"Build Image and upload to ECR - CodeBuild"},
+		{"id":"ad6dcb7a3f1de18b","x":358,"y":-42,"width":250,"height":60,"type":"text","text":""}
 	],
 	"edges":[
 		{"id":"02dcfc638bb98858","fromNode":"167a4836e1c6fa51","fromSide":"bottom","toNode":"f8f12f7b3acae8f1","toSide":"top"},
@@ -20,7 +21,7 @@
 		{"id":"2d4b39141a818f67","fromNode":"ee4f1823b50004e2","fromSide":"bottom","toNode":"12bfa4803ca3fa81","toSide":"top"},
 		{"id":"61a1c2a6726ff2d9","fromNode":"c7743775b1b0cd3c","fromSide":"right","toNode":"350ad9c914e3008c","toSide":"left"},
 		{"id":"8b1ea8134bf0c2ef","fromNode":"5fc752f4cc51e3a2","fromSide":"right","toNode":"c5439702e48d0f15","toSide":"left"},
-		{"id":"616055e2c9f7a3a4","fromNode":"5fc752f4cc51e3a2","fromSide":"bottom","toNode":"b001bd80fe540023","toSide":"top"},
-		{"id":"37e4e11df85d478c","fromNode":"b001bd80fe540023","fromSide":"bottom","toNode":"c7743775b1b0cd3c","toSide":"top"}
+		{"id":"12200fbd4326f274","fromNode":"5fc752f4cc51e3a2","fromSide":"bottom","toNode":"b001bd80fe540023","toSide":"top"},
+		{"id":"34ef3863f8095968","fromNode":"b001bd80fe540023","fromSide":"bottom","toNode":"ad6dcb7a3f1de18b","toSide":"top"}
 	]
 }

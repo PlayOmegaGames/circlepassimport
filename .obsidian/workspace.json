@@ -15,7 +15,7 @@
               "state": {
                 "file": "docs/infrastructure/Pipeline.canvas",
                 "viewState": {
-                  "x": 279.93000000000006,
+                  "x": 679.8300000000002,
                   "y": 91.14000000000001,
                   "zoom": 0
                 }
@@ -161,6 +161,7 @@
   },
   "active": "6924d3820047ce8d",
   "lastOpenFiles": [
+    "scripts/pull_new_image.sh",
     "buildspec.yml",
     "priv/static/images/DefaultAvatar.svg",
     "docs/authentication/Google Oauth.canvas",
@@ -188,7 +189,6 @@
     "priv/static/images/link-raleigh-christmas/meet_founders_quest",
     "priv/static/images/link-raleigh-christmas/founders_quest",
     "priv/static/images/link-raleigh-christmas/description_images_for_collect_all_cars_quest",
-    "priv/static/images/link-raleigh-christmas/description_happy_holidays",
     "README.md",
     "docs/Untitled.md"
   ]
