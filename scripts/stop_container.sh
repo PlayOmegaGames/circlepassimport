@@ -1,4 +1,7 @@
 #!/bin/bash
+
+cd /home/ubuntu/
+
 # Stop the current container (if running)
 docker stop quest-api-v2 || true
 
