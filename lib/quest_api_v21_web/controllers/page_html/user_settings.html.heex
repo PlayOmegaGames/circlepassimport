@@ -1,0 +1,48 @@
+<div class="bg-white mt-4 shadow-md rounded px-8 pt-2 pb-8 mb-4">
+    <h1 class="text-center text-xl mb-4">User Settings</h1>
+    <p>Wake up, Neo. The Matrix has you. Follow the White Rabbit.</p>
+    <div class="flex flex-col justify-between items-center px-2">
+        <div class="flex items-center gap-4 px-4 grow">
+            <form id="change-username-form" action="/change_username" method="post" class="bg-white mt-4 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <%= csrf_input_tag("/change_username") %>
+                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                    Change Username
+                </h1>
+                <div class="mb-4">
+                    <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="username" name="account[username]" placeholder="Mr. Anderson" required>
+                </div>
+                <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Update
+                </button>
+            </form>
+        </div>
+        <div class="flex items-center gap-4 px-4 grow">
+            <form id="change-email-form" action="/change_email" method="post" class="bg-white mt-4 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <%= csrf_input_tag("/change_email") %>
+                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                    Change Email
+                </h1>
+                <div class="mb-4">
+                    <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="email" name="account[email]" placeholder="mranderson@thematrix.com" required>
+                </div>
+                <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Update
+                </button>
+            </form>
+        </div>
+        <div class="flex items-center gap-4 px-4">
+            <form id="change-password-form" action="/change_password" method="post" class="bg-white mt-4 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <%= csrf_input_tag("/change_password") %>
+                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                    Change Password
+                </h1>
+                <div class="mb-4">
+                    <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="ThereIsNoSpoon" required>
+                </div>
+                <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Update
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
