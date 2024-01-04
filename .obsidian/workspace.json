@@ -11,6 +11,21 @@
             "id": "6924d3820047ce8d",
             "type": "leaf",
             "state": {
+              "type": "canvas",
+              "state": {
+                "file": "docs/infrastructure/Pipeline.canvas",
+                "viewState": {
+                  "x": 279.93000000000006,
+                  "y": 91.14000000000001,
+                  "zoom": 0
+                }
+              }
+            }
+          },
+          {
+            "id": "6f80762eadee8861",
+            "type": "leaf",
+            "state": {
               "type": "kanban",
               "state": {
                 "file": "docs/Proj management/Quest Kanban.md"
@@ -83,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/Proj management/Quest Kanban.md",
+                "file": "docs/infrastructure/Pipeline.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -100,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/Proj management/Quest Kanban.md",
+                "file": "docs/infrastructure/Pipeline.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -123,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/Proj management/Quest Kanban.md"
+                "file": "docs/infrastructure/Pipeline.canvas"
               }
             }
           }
@@ -146,19 +161,35 @@
   },
   "active": "6924d3820047ce8d",
   "lastOpenFiles": [
-    "docs/infrastructure/Pipeline.canvas",
-    "docs/Proj management/Quest Kanban.md",
-    "docs/authentication/Sign up Form Process.canvas",
+    "buildspec.yml",
+    "priv/static/images/DefaultAvatar.svg",
     "docs/authentication/Google Oauth.canvas",
+    "docs/infrastructure/Pipeline.canvas",
     "docs/infrastructure",
-    "docs/authentication",
+    "docs/Proj management/Quest Kanban.md",
+    "docs/authentication/Google Oauth.md",
+    "docs/Proj management",
     "docs/User Flows/Organization user flow.canvas",
     "docs/User Flows/End user flow.canvas",
+    "docs/authentication/Sign up Form Process.canvas",
     "docs/User Flows",
-    "docs/Proj management",
-    "docs/Sign up Form Process.canvas",
+    "docs/authentication",
+    "priv/static/images/link-raleigh-christmas/description_drink_menu_lounge_bade.png",
+    "lib/quest_api_v21_web/controllers/collector_html/no_quest.html.heex",
+    "priv/static/images/link-raleigh-christmas/description_meet_founders_for_sponsor_badges/9.png",
+    "priv/static/images/link-raleigh-christmas/description_meet_founders_for_sponsor_badges/8.png",
+    "priv/static/images/link-raleigh-christmas/description_meet_founders_for_sponsor_badges/7.png",
+    "priv/static/images/link-raleigh-christmas/description_meet_founders_for_sponsor_badges/6.png",
+    "priv/static/images/link-raleigh-christmas/description_meet_founders_for_sponsor_badges/5.png",
+    "priv/static/images/link-raleigh-christmas/description_meet_founders_for_sponsor_badges",
+    "priv/static/images/link-raleigh-christmas/meet_founders_quest/9.png",
+    "priv/static/images/link-raleigh-christmas/meet_founders_quest/8.png",
+    "priv/static/images/link-raleigh-christmas/meet_founders_quest/7.png",
+    "priv/static/images/link-raleigh-christmas/meet_founders_quest",
+    "priv/static/images/link-raleigh-christmas/founders_quest",
+    "priv/static/images/link-raleigh-christmas/description_images_for_collect_all_cars_quest",
+    "priv/static/images/link-raleigh-christmas/description_happy_holidays",
     "README.md",
-    "docs/Untitled.md",
-    "docs"
+    "docs/Untitled.md"
   ]
 }
