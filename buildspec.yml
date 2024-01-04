@@ -3,7 +3,8 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - $(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 692454124440.dkr.ecr.us-east-1.amazonaws.com)
+      - LOGIN_COMMAND=$(aws ecr get-login-password --region us-east-1)
+      - echo $LOGIN_COMMAND | docker login --username AWS --password-stdin 692454124440.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
       - docker build -t quest-api:latest .
@@ -11,3 +12,4 @@ phases:
   post_build:
     commands:
       - docker push 692454124440.dkr.ecr.us-east-1.amazonaws.com/quest-api:latest
+
