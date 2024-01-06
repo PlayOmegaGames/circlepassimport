@@ -54,6 +54,11 @@ defmodule QuestApiV21.MixProject do
       {:comeonin, "~> 5.3"},
       {:ueberauth, "~> 0.6"},
       {:ueberauth_google, "0.10.1"},
+      {:qr_code, "~> 3.0.0"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:sweet_xml, "~> 0.6"},
+      {:hackney, "~> 1.15"},
       {:bcrypt_elixir, "~> 2.0"}
     ]
   end
