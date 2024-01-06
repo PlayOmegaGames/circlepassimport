@@ -49,6 +49,10 @@ config :ueberauth, Ueberauth,
 # at the `config/runtime.exs`.
 config :quest_api_v21, QuestApiV21.Mailer, adapter: Swoosh.Adapters.Local
 
+config :ex_aws,
+  access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],
+  secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role]
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

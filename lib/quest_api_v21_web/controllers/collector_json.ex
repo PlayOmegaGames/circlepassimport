@@ -13,8 +13,8 @@ defmodule QuestApiV21Web.CollectorJSON do
   @doc """
   Renders a single collector.
   """
-  def show(%{collector: collector}) do
-    %{data: data(collector)}
+  def show(%{collector: collector, qr_code_url: qr_code_url}) do
+    %{data: data(collector, qr_code_url)}
   end
 
     @doc """
@@ -23,8 +23,8 @@ defmodule QuestApiV21Web.CollectorJSON do
   def render("error.json", %{message: message}) do
     %{errors: %{detail: message}}
   end
-  
-  defp data(%Collector{badges: badges, quests: quests} = collector) do
+
+  defp data(%Collector{badges: badges, quests: quests} = collector, qr_code_url \\ nil) do
     %{
       id: collector.id,
       name: collector.name,
@@ -33,7 +33,8 @@ defmodule QuestApiV21Web.CollectorJSON do
       organization_id: collector.organization_id,
       quest_start: collector.quest_start,
       badges: badges_data(badges),
-      quest_ids: quests_data(quests)
+      quest_ids: quests_data(quests),
+      qr_code_url: qr_code_url
     }
   end
 
