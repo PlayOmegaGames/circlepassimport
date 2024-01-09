@@ -91,7 +91,7 @@ defmodule QuestApiV21Web.Router do
   scope "/api", QuestApiV21Web do
     pipe_through :api
 
-    #account authentication
+    #end-user authentication
     get "/sign_up", AuthController, :new
     post "/sign_up", AuthController, :sign_up
     post "/sign_in", AuthController, :sign_in
@@ -108,9 +108,9 @@ defmodule QuestApiV21Web.Router do
 
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
-    resources "/quests", QuestController
-    resources "/badges", BadgeController
-    resources "/collectors", CollectorController
+    get "/quests", QuestController, :show
+    get "/badges", BadgeController, :show
+    get "/collectors", CollectorController, :show
     resources "/accounts", AccountController, except: [:index]
     get "/*path", ErrorController, :not_found
 
