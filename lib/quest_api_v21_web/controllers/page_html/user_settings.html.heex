@@ -1,0 +1,132 @@
+<div class="flex flex-col items-center">
+    <img style="border:5px solid black; border-radius: 50%" src={~p"/images/DefaultAvatar.svg"} width="100" />
+    <%= if @user_id do %>
+    <p class="text-center text-xl mb-4"><%= @user_id %></p>
+    <p class="text-center text-xl mb-4"><%= @user_email %></p>
+    <% end %>
+</div>
+
+  <div class="relative mb-3">
+    <h6 class="mb-0">
+      <button
+        class="relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
+        data-collapse-target="animated-collapse-1"
+      >
+        <span>Change Password</span>
+        <i class="items right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
+      </button>
+      
+    </h6>
+    <div
+      data-collapse="animated-collapse-1"
+      class="h-0 overflow-hidden transition-all duration-300 ease-in-out"
+    >
+      <div class="flex items-center gap-4 px-4">
+            <form id="change-password-form" action="/change_password" method="post" class="px-8 pt-6 pb-8 mb-4">
+                <%= csrf_input_tag("/change_password") %>
+                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                    Current Password
+                </h1>
+                <div class="mb-4">
+                    <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="ThereIsNoSpoon" required>
+                </div>
+                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                    New Password
+                </h1>
+                <div class="mb-4">
+                    <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="ThereIsNoSpoon" required>
+                </div>
+                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                    Confirm New Password
+                </h1>
+                <div class="mb-4">
+                    <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="ThereIsNoSpoon" required>
+                </div>
+                <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Update
+                </button>
+            </form>
+        </div>
+    </div>
+  </div>
+  <div class="relative mb-3">
+    <h6 class="mb-0">
+      <button
+        class="relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
+        data-collapse-target="animated-collapse-2"
+      >
+        <span>New Email</span>
+        <i class="absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
+      </button>
+    </h6>
+    <div
+      data-collapse="animated-collapse-2"
+      class="h-0 overflow-hidden transition-all duration-300 ease-in-out"
+    >
+      <div class="flex items-center gap-4 px-4 grow">
+            <form id="change-email-form" action="/change_email" method="post" class="px-8 pt-6 pb-8 mb-4">
+                <%= csrf_input_tag("/change_email") %>
+                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                    Change Email
+                </h1>
+                <div class="mb-4">
+                    <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="email" name="account[email]" placeholder="mranderson@thematrix.com" required>
+                </div>
+                <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Update
+                </button>
+            </form>
+        </div>
+    </div>
+  </div>
+  <div class="relative mb-3">
+    <h6 class="mb-0">
+      <button
+        class="relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
+        data-collapse-target="animated-collapse-3"
+      >
+        <span>Change Username</span>
+        <i class="absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
+      </button>
+    </h6>
+    <div
+      data-collapse="animated-collapse-3"
+      class="h-0 overflow-hidden transition-all duration-300 ease-in-out"
+    >
+      <div class="flex items-center gap-4 px-4 grow">
+            <form id="change-username-form" action="/change_username" method="post" class="px-8 pt-6 pb-8 mb-4">
+                <%= csrf_input_tag("/change_username") %>
+                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                    New Username
+                </h1>
+                <div class="mb-4">
+                    <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="username" name="account[username]" placeholder="Mr. Anderson" required>
+                </div>
+                <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Update
+                </button>
+            </form>
+        </div>
+    </div>
+  </div>
+  <div class="relative mb-3">
+    <h6 class="mb-0">
+      <%= if @user_id do %>
+  <form action="/sign_out" method="post">
+        <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()}>
+        <input type="hidden" name="_method" value="delete">
+          <button type="submit" class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline">
+        Sign Out
+      </button>
+    </form>
+  <% end %>
+      
+    </h6>
+    
+  </div>
+
+<!-- from node_modules -->
+<script src="node_modules/@material-tailwind/html/scripts/collapse.js"></script>
+ 
+<!-- from cdn -->
+<script src="https://unpkg.com/@material-tailwind/html@latest/scripts/collapse.js"></script>
