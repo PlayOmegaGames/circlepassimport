@@ -12,6 +12,9 @@ defmodule QuestApiV21.Repo.Migrations.CreateQuests do
       add :start_date, :date
       add :end_date, :date
       add :address, :string
+      add :organization_id, references(:organizations, type: :binary_id, on_delete: :delete_all)
+      add :quest_id, references(:quests, type: :binary_id, on_delete: :delete_all)
+      add :description, :string
 
       timestamps()
     end
