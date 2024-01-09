@@ -7,6 +7,8 @@ defmodule QuestApiV21.Repo.Migrations.CreateAccounts do
       add :name, :string
       add :email, :string
       add :hashed_passowrd, :string
+      add :role, :string
+      add :is_passwordless, :boolean, default: false
 
       timestamps()
     end

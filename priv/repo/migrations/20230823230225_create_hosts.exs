@@ -7,6 +7,8 @@ defmodule QuestApiV21.Repo.Migrations.CreateHosts do
       add :name, :string
       add :email, :string
       add :hashed_password, :string
+      add :password, :string, virtual: true
+      add :role, :string, default: "default"
 
       timestamps()
     end
