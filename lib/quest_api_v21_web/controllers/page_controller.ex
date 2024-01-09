@@ -21,10 +21,12 @@ defmodule QuestApiV21Web.PageController do
   end
 
   def user_settings(conn, _params) do
-    user_email = get_session(conn, :user_email)
-    user_id = get_session(conn, :user_id)
+    email = conn.assigns.current_user.email
+    name = conn.assigns.current_user.name
 
-    render(conn, "user_settings.html", user_email: user_email, user_id: user_id)
+    #IO.inspect(conn)
+
+    render(conn, "user_settings.html", name: name, email: email)
   end
 
   def auth_splash(conn, _params) do

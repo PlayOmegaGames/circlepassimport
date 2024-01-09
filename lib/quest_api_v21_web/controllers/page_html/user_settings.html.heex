@@ -1,9 +1,8 @@
 <div class="flex flex-col items-center">
     <img style="border:5px solid black; border-radius: 50%" src={~p"/images/DefaultAvatar.svg"} width="100" />
-    <%= if @user_id do %>
-    <p class="text-center text-xl mb-4"><%= @user_id %></p>
-    <p class="text-center text-xl mb-4"><%= @user_email %></p>
-    <% end %>
+    <p class="text-center text-xl mb-4"><%= @email %></p>
+
+
 </div>
 
   <div class="relative mb-3">
@@ -57,6 +56,12 @@
       >
         <span>New Email</span>
         <i class="absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+      class="w-6 h-6 absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+      </svg>
+
+
       </button>
     </h6>
     <div
@@ -111,7 +116,6 @@
   </div>
   <div class="relative mb-3">
     <h6 class="mb-0">
-      <%= if @user_id do %>
   <form action="/sign_out" method="post">
         <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()}>
         <input type="hidden" name="_method" value="delete">
@@ -119,7 +123,6 @@
         Sign Out
       </button>
     </form>
-  <% end %>
       
     </h6>
     
