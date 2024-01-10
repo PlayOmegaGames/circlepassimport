@@ -8,6 +8,7 @@ defmodule QuestApiV21Web.AccountController do
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Guardian
 
+  require Logger
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController
 
@@ -74,6 +75,27 @@ defmodule QuestApiV21Web.AccountController do
     end
   end
 
+  #account updates for web forms
+  def update_from_web(conn, %{"account" => account_params}) do
+    current_user = conn.assigns[:current_user]
+
+    with {:ok, %Account{} = updated_account} <- Accounts.update_account(current_user, account_params) do
+      Logger.info("Account updated successfully: #{updated_account.id}")
+
+      # On successful update, redirect back to the same page
+      conn
+      |> put_flash(:info, "Account updated successfully.")
+    else
+      {:error, changeset} ->
+        # On error, set a flash message and redirect back
+        error_message = changeset.errors
+          |> Enum.map(fn {k, v} -> "#{Atom.to_string(k)} #{Enum.join(v)}" end)
+          |> Enum.join(", ")
+
+        conn
+        |> put_flash(:error, "Error updating account: #{error_message}")
+    end
+  end
 
   # Defines the delete action to delete an existing account.
   def delete(conn, %{"id" => id}) do

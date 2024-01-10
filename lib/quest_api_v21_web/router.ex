@@ -28,8 +28,12 @@ defmodule QuestApiV21Web.Router do
   pipeline :authenticated_host_api do
     plug :accepts, ["json"]
     plug QuestApiV21.HostGuardianPipeline
-
   end
+
+#  pipeline :web_auth do
+#    plug :accepts, ["html"]
+#    plug QuestApiV21.WebAuthPipeline
+#  end
 
 
   scope "/", QuestApiV21Web do
@@ -69,9 +73,11 @@ defmodule QuestApiV21Web.Router do
     #badge page
     get "/badges", BadgeController, :show_badge
     get "/badge/:id", CollectorController, :show_collector
+    put "/update_profile", AccountController, :update_from_web
+
   end
 
-    #for SSO
+  #for SSO Oauth
   scope "/auth", QuestApiV21Web do
     pipe_through :browser
 
@@ -87,7 +93,7 @@ defmodule QuestApiV21Web.Router do
     resources "/hosts", HostController, except: [:index]
   end
 
-
+  #authentication for API
   scope "/api", QuestApiV21Web do
     pipe_through :api
 
@@ -106,6 +112,7 @@ defmodule QuestApiV21Web.Router do
 
   end
 
+  #End user authenticated scope fpr api
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
     get "/quests", QuestController, :show
