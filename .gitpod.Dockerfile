@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Git, Node.js, Inotify-tools, Fish, ImageMagick, and other dependencies
 RUN apt-get update && \
-    apt-get install -y git nodejs npm inotify-tools tzdata fish imagemagick && \
+    apt-get install -y git nodejs npm inotify-tools tzdata fish zip imagemagick && \
     ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt-get clean
