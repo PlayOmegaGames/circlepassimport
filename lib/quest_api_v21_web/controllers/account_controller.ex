@@ -8,6 +8,7 @@ defmodule QuestApiV21Web.AccountController do
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Guardian
 
+  require Logger
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController
 
@@ -75,6 +76,9 @@ defmodule QuestApiV21Web.AccountController do
   end
 
 
+
+
+
   # Defines the delete action to delete an existing account.
   def delete(conn, %{"id" => id}) do
     # Retrieves the account by ID.
@@ -87,4 +91,50 @@ defmodule QuestApiV21Web.AccountController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  #Web
+
+  def user_settings(conn, _params) do
+    email = conn.assigns.current_user.email
+    name = conn.assigns.current_user.name
+    user_id = get_session(conn, :user_id)
+
+    #IO.inspect(conn)
+
+    render(conn, "user_settings.html", name: name, email: email, user_id: user_id)
+  end
+
+  def update_from_web(conn, %{"id" => id, "account" => account_params}) do
+    email = conn.assigns.current_user.email
+    name = conn.assigns.current_user.name
+    user_id = get_session(conn, :user_id)
+    account = Accounts.get_account!(id)
+            |> QuestApiV21.Repo.preload([:badges, :quests])
+
+    with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, account_params) do
+      updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
+      conn
+      |> put_flash(:info, "Account updated successfully.")
+      |> render("user_settings.html",
+        account: updated_account,
+        name: name,
+        email: email,
+        user_id: user_id
+        )
+    else
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> put_flash(:error, "Error updating account.")
+        |> render("user_settings.html",
+          account: account,
+          changeset: changeset,
+          name: name,
+          email: email,
+          user_id: user_id
+          )
+    end
+  end
+
+
 end

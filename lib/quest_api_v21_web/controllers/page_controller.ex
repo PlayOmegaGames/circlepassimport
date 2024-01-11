@@ -20,6 +20,7 @@ defmodule QuestApiV21Web.PageController do
     render(conn, "privacy.html")
   end
 
+
   def auth_splash(conn, _params) do
     conn
     |> put_layout(false)
