@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"c4c860a178814e59","type":"text","text":"Html Page","x":-160,"y":-340,"width":160,"height":60},
+		{"id":"6a7efa8c1335ff1b","type":"text","text":"sends post request to a destination url","x":-252,"y":-80,"width":345,"height":80},
+		{"id":"1f78192a4bb63b72","type":"text","text":"processes information and sends a response","x":-205,"y":60,"width":250,"height":80},
+		{"id":"23fb662868ea4f83","type":"text","text":"move user onto next","x":-205,"y":189,"width":250,"height":60},
+		{"id":"ca4c774e5216d54c","type":"text","text":"form code","x":-172,"y":-220,"width":186,"height":60}
+	],
+	"edges":[
+		{"id":"df2839074f8d1333","fromNode":"c4c860a178814e59","fromSide":"bottom","toNode":"ca4c774e5216d54c","toSide":"top"},
+		{"id":"0293363afe9d26da","fromNode":"ca4c774e5216d54c","fromSide":"bottom","toNode":"6a7efa8c1335ff1b","toSide":"top"},
+		{"id":"39e84571600a4a87","fromNode":"6a7efa8c1335ff1b","fromSide":"bottom","toNode":"1f78192a4bb63b72","toSide":"top"},
+		{"id":"ed23d679e48f3def","fromNode":"1f78192a4bb63b72","fromSide":"bottom","toNode":"23fb662868ea4f83","toSide":"top"}
+	]
+}
