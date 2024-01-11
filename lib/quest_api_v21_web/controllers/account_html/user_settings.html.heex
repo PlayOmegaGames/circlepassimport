@@ -1,18 +1,23 @@
 <div class="flex flex-col items-center">
-    <img style="border:5px solid black; border-radius: 50%" src={~p"/images/DefaultAvatar.svg"} width="100" />
-    <p class="text-center text-xl mb-4"><%= @email %></p>
-
+  <img class="mb-4" style="border:5px solid black; border-radius: 50%" src={~p"/images/DefaultAvatar.svg"} width="100" />
+  <div class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+    <span class="font-medium text-gray-600 dark:text-gray-300"><%= @name %></span>
+  </div>
+  <p class="text-center text-xl mb-4"><%= @email %></p>
 
 </div>
 
   <div class="relative mb-3">
     <h6 class="mb-0">
       <button
-        class="relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
+        class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
         data-collapse-target="animated-collapse-1"
       >
         <span>Password</span>
-        <i class="items right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+          class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
       </button>
       
     </h6>
@@ -23,26 +28,26 @@
       <div class="flex items-center gap-4 px-4">
             <form id="change-password-form" action="/change_password" method="post" class="px-8 pt-6 pb-8 mb-4">
                 <%= csrf_input_tag("/user-settings") %>
-                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                <h1 class="text-left mb-5 text-1xl font-medium text-gray-600">
                     Current Password
                 </h1>
                 <div class="mb-4">
                     <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="ThereIsNoSpoon" required>
                 </div>
-                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                <h1 class="text-left mb-5 text-1xl font-medium text-gray-600">
                     New Password
                 </h1>
                 <div class="mb-4">
                     <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="ThereIsNoSpoon" required>
                 </div>
-                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                <h1 class="text-left mb-5 text-1xl font-medium text-gray-600">
                     Confirm New Password
                 </h1>
                 <div class="mb-4">
                     <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="ThereIsNoSpoon" required>
                 </div>
                 <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
-                    Update
+                    Update Password
                 </button>
             </form>
         </div>
@@ -51,15 +56,17 @@
   <div class="relative mb-3">
     <h6 class="mb-0">
       <button
-        class="relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
+        class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
         data-collapse-target="animated-collapse-2"
       >
         <span>Email</span>
-        <i class="absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
+
+        <span class="text-slate-600 font-light"><%= @email %></span>
+        
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
-      class="w-6 h-6 absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180">
-        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-      </svg>
+          class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
 
 
       </button>
@@ -71,7 +78,7 @@
       <div class="flex items-center gap-4 px-4 grow">
             <form id="change-email-form" action="/change_email" method="post" class="px-8 pt-6 pb-8 mb-4">
                 <%= csrf_input_tag("/user-settings") %>
-                <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                <h1 class="text-left mb-5 text-1xl font-medium text-gray-600">
                     Change Email
                 </h1>
                 <div class="mb-4">
@@ -117,7 +124,7 @@
           <input type="hidden" name="id" value={@user_id}>
           <input type="hidden" name="email" value={@email}>
 
-            <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+            <h1 class="text-left mb-5 text-1xl font-medium text-gray-600">
                 New Username
             </h1>
 
@@ -136,13 +143,14 @@
 
     </div>
   </div>
-  <div class="relative mb-3">
+  <div class="flex flex-col justify-center items-center relative mb-3">
     <h6 class="mb-0">
     <form action="/sign_out" method="post">
         <%= csrf_input_tag("/user-settings") %>
       <input type="hidden" name="_method" value="delete">
-      <button type="submit" class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline">
-        Sign Out
+      <button type="submit" class="mt-3 w-full p-3 bg-red-500 text-white font-bold rounded focus:outline-none focus:shadow-outline">
+        Sign Out <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" /></svg>
+
       </button>
     </form>
 
