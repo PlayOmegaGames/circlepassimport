@@ -6,6 +6,7 @@ defmodule QuestApiV21Web.BadgeController do
   alias QuestApiV21Web.JWTUtility
   alias QuestApiV21.Repo
   require Logger
+  plug :put_layout, html: {QuestApiV21Web.Layouts, :logged_in}
 
 
   action_fallback QuestApiV21Web.FallbackController
@@ -52,7 +53,9 @@ defmodule QuestApiV21Web.BadgeController do
       user_with_badges_and_quests = Repo.preload(current_user, [:badges, :quests])
 
       if Enum.empty?(user_with_badges_and_quests.badges) do
-        render(conn, "no_badge.html")
+        conn
+        |> assign(:body_class, "bg-light-blue")
+        |>render("no_badge.html", %{page_title: "Home"} )
       else
         all_badges = Repo.all(Badge)
         badges_by_quest = Enum.group_by(all_badges, &(&1.quest_id))
@@ -63,11 +66,14 @@ defmodule QuestApiV21Web.BadgeController do
         end)
         |> Enum.into(%{})
 
-        render(conn, "badge.html",
+        conn
+          |> assign(:body_class, "bg-light-blue")
+          |> render("badge.html", %{
           badges_by_quest: enhanced_badges_by_quest,  # Note the use of enhanced_badges_by_quest here
           quests: user_with_badges_and_quests.quests,
-          user_badge_ids: user_badge_ids
-        )
+          user_badge_ids: user_badge_ids,
+          page_title: "Home"
+          })
       end
     end
   end

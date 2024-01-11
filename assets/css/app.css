@@ -117,3 +117,7 @@ input:focus {
 main {
   scroll-behavior: smooth;
 }
+
+.bg-light-blue {
+  background-color: #F4F5FF;
+}

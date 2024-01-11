@@ -9,6 +9,9 @@ defmodule QuestApiV21Web.AccountController do
   alias QuestApiV21.Guardian
 
   require Logger
+
+  plug :put_layout, {QuestApiV21Web.Layouts, "logged_in.html"}
+
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController
 
@@ -101,7 +104,7 @@ defmodule QuestApiV21Web.AccountController do
 
     #IO.inspect(conn)
 
-    render(conn, "user_settings.html", name: name, email: email, user_id: user_id)
+    render(conn, "user_settings.html", page_title: "Home", name: name, email: email, user_id: user_id)
   end
 
   def update_from_web(conn, %{"id" => id, "account" => account_params}) do
@@ -119,6 +122,7 @@ defmodule QuestApiV21Web.AccountController do
         account: updated_account,
         name: name,
         email: email,
+        page_title: "Home",
         user_id: user_id
         )
     else
@@ -131,6 +135,7 @@ defmodule QuestApiV21Web.AccountController do
           changeset: changeset,
           name: name,
           email: email,
+          page_title: "Home",
           user_id: user_id
           )
     end
