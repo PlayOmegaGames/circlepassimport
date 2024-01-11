@@ -28,17 +28,21 @@ defmodule QuestApiV21.Accounts.Account do
   end
 
   defp maybe_hash_password(changeset) do
-    if get_change(changeset, :is_passwordless, false) do
-      changeset
-    else
+    if get_change(changeset, :password) do
       put_password_hash(changeset)
+    else
+      changeset
     end
   end
 
   defp put_password_hash(changeset) do
     password = get_change(changeset, :password)
-    hash = Bcrypt.hash_pwd_salt(password)
-    put_change(changeset, :hashed_password, hash)
+    if password do
+      hash = Bcrypt.hash_pwd_salt(password)
+      put_change(changeset, :hashed_password, hash)
+    else
+      changeset
+    end
   end
 
 

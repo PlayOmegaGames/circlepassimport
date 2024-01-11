@@ -11,7 +11,7 @@
         class="relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
         data-collapse-target="animated-collapse-1"
       >
-        <span>Change Password</span>
+        <span>Password</span>
         <i class="items right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
       </button>
       
@@ -54,7 +54,7 @@
         class="relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
         data-collapse-target="animated-collapse-2"
       >
-        <span>New Email</span>
+        <span>Email</span>
         <i class="absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
       class="w-6 h-6 absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180">
@@ -90,11 +90,20 @@
   <div class="relative mb-3">
     <h6 class="mb-0">
       <button
-        class="relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
+        class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
         data-collapse-target="animated-collapse-3"
       >
-        <span>Change Username</span>
-        <i class="absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down group-open:rotate-180"></i>
+        <span>Username</span>
+
+        <span class="text-slate-600 font-light"><%= @name %></span>
+
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+          class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </span>
+
       </button>
     </h6>
     <div
@@ -104,10 +113,14 @@
       <div class="flex items-center gap-4 px-4 grow">
         <form id="change-username-form" action="/update_profile" method="post" class="px-8 pt-6 pb-8 mb-4">
                 <%= csrf_input_tag("/user-settings") %>
-          <input type="hidden" name="_method" value="put">
-          <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
-              New Username
-          </h1>
+
+          <input type="hidden" name="id" value={@user_id}>
+          <input type="hidden" name="email" value={@email}>
+
+            <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+                New Username
+            </h1>
+
           <div class="mb-4">
             <input 
               class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 

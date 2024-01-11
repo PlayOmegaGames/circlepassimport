@@ -75,27 +75,9 @@ defmodule QuestApiV21Web.AccountController do
     end
   end
 
-  #account updates for web forms
-  def update_from_web(conn, %{"account" => account_params}) do
-    current_user = conn.assigns[:current_user]
 
-    with {:ok, %Account{} = updated_account} <- Accounts.update_account(current_user, account_params) do
-      Logger.info("Account updated successfully: #{updated_account.id}")
 
-      # On successful update, redirect back to the same page
-      conn
-      |> put_flash(:info, "Account updated successfully.")
-    else
-      {:error, changeset} ->
-        # On error, set a flash message and redirect back
-        error_message = changeset.errors
-          |> Enum.map(fn {k, v} -> "#{Atom.to_string(k)} #{Enum.join(v)}" end)
-          |> Enum.join(", ")
 
-        conn
-        |> put_flash(:error, "Error updating account: #{error_message}")
-    end
-  end
 
   # Defines the delete action to delete an existing account.
   def delete(conn, %{"id" => id}) do
@@ -109,4 +91,50 @@ defmodule QuestApiV21Web.AccountController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  #Web
+
+  def user_settings(conn, _params) do
+    email = conn.assigns.current_user.email
+    name = conn.assigns.current_user.name
+    user_id = get_session(conn, :user_id)
+
+    #IO.inspect(conn)
+
+    render(conn, "user_settings.html", name: name, email: email, user_id: user_id)
+  end
+
+  def update_from_web(conn, %{"id" => id, "account" => account_params}) do
+    email = conn.assigns.current_user.email
+    name = conn.assigns.current_user.name
+    user_id = get_session(conn, :user_id)
+    account = Accounts.get_account!(id)
+            |> QuestApiV21.Repo.preload([:badges, :quests])
+
+    with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, account_params) do
+      updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
+      conn
+      |> put_flash(:info, "Account updated successfully.")
+      |> render("user_settings.html",
+        account: updated_account,
+        name: name,
+        email: email,
+        user_id: user_id
+        )
+    else
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> put_flash(:error, "Error updating account.")
+        |> render("user_settings.html",
+          account: account,
+          changeset: changeset,
+          name: name,
+          email: email,
+          user_id: user_id
+          )
+    end
+  end
+
+
 end

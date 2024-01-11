@@ -68,12 +68,12 @@ defmodule QuestApiV21Web.Router do
     pipe_through [:browser, :authenticated]  # Use both browser and authenticated pipelines
 
     #user settings page
-    get "/user-settings", PageController, :user_settings
+    get "/user-settings", AccountController, :user_settings
 
     #badge page
     get "/badges", BadgeController, :show_badge
     get "/badge/:id", CollectorController, :show_collector
-    put "/update_profile", AccountController, :update_from_web
+    post "/update_profile", AccountController, :update_from_web
 
   end
 
