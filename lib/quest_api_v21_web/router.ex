@@ -69,11 +69,11 @@ defmodule QuestApiV21Web.Router do
 
     #user settings page
     get "/user-settings", AccountController, :user_settings
+    post "/update_profile", AccountController, :update_from_web
 
     #badge page
     get "/badges", BadgeController, :show_badge
     get "/badge/:id", CollectorController, :show_collector
-    post "/update_profile", AccountController, :update_from_web
 
   end
 
