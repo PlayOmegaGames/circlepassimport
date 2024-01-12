@@ -10,7 +10,7 @@ defmodule QuestApiV21Web.AccountController do
 
   require Logger
 
-  plug :put_layout, {QuestApiV21Web.Layouts, "logged_in.html"}
+  plug :put_layout, html: {QuestApiV21Web.Layouts, :logged_in}
 
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController

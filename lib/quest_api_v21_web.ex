@@ -40,7 +40,7 @@ defmodule QuestApiV21Web do
     quote do
       use Phoenix.Controller,
         formats: [:html, :json],
-        layouts: [html: QuestApiV21Web.Layouts]
+        layouts: [html: {QuestApiV21Web.Layouts, :app}]
 
       import Plug.Conn
       import QuestApiV21Web.Gettext
