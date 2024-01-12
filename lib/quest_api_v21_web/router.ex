@@ -17,6 +17,11 @@ defmodule QuestApiV21Web.Router do
 
   pipeline :authenticated do
     plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {QuestApiV21Web.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
     plug QuestApiV21Web.AuthPlug
   end
 
@@ -65,7 +70,7 @@ defmodule QuestApiV21Web.Router do
 
 
   scope "/", QuestApiV21Web do
-    pipe_through [:browser, :authenticated]  # Use both browser and authenticated pipelines
+    pipe_through :authenticated  # Use both browser and authenticated pipelines
 
     #user settings page
     get "/user-settings", AccountController, :user_settings
