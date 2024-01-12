@@ -79,6 +79,8 @@ defmodule QuestApiV21Web.Router do
     #badge page
     get "/badges", BadgeController, :show_badge
     get "/badge/:id", CollectorController, :show_collector
+    get "/new", PageController, :new_page
+
 
   end
 

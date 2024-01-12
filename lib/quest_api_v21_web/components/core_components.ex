@@ -19,6 +19,29 @@ defmodule QuestApiV21Web.CoreComponents do
   alias Phoenix.LiveView.JS
   import QuestApiV21Web.Gettext
 
+
+  @doc """
+  Renders a basic title
+
+  ## Examples
+
+  <.title text="example-title" />
+  """
+  attr :text, :string, required: true
+
+  def title(assigns) do
+    ~H"""
+    <h1 class="text-2xl text-gray-600 font-medium mb-1">
+      <%= @text %>
+    </h1>
+
+    """
+  end
+
+
+
+
+
   @doc """
   Renders a modal.
 
@@ -586,6 +609,33 @@ defmodule QuestApiV21Web.CoreComponents do
     ~H"""
     <span class={[@name, @class]} />
     """
+  end
+
+    @doc """
+  Renders the bottom navbar icons text
+
+  ## Examples
+
+  <.bottom_nav page_name="home" icon="home" />
+  """
+  attr :url, :string, required: true
+  attr :request_path, :string, required: true
+  attr :page_name, :string, required: true
+  attr :icon, :string, required: true
+
+  def bottom_nav(assigns) do
+    ~H"""
+    <a href={@url} class="py-2">
+        <div class={calculate_class(assigns)}>
+          <.icon name={"hero-#{@icon}"} class="ml-1 w-7 h-7" />
+          <p class="text-sm text-center"><%= @page_name %></p>
+      </div>
+      </a>
+    """
+  end
+
+  defp calculate_class(assigns) do
+    if assigns.request_path == assigns.url, do: "text-violet-700", else: "text-slate-700"
   end
 
   ## JS Commands
