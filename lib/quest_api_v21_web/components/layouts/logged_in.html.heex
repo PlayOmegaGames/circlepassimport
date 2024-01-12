@@ -39,28 +39,22 @@
     <!-- Bottom Nav -->
     <div class="fixed w-full bottom-0 bg-white h-18 border-t-2 border-slate-300">
     <div class="grid grid-cols-3 justify-items-center text-slate-700">
-      <div class="my-2">
+
         <.bottom_nav 
             url = "/badges"
             request_path = {@conn.request_path} 
             page_name = "Home"
             icon = "home" />
-      </div>
-
-      <div class="my-2">
         <.bottom_nav 
             url = "/new"
             request_path = {@conn.request_path} 
             page_name = "New"
             icon = "globe-americas" />
-      </div>
-      <div class="my-2">
         <.bottom_nav 
             url = "/profile"
             request_path = {@conn.request_path} 
             page_name = "Profile"
             icon = "user" />
-      </div>
     </div>
     </div>
   </div>
