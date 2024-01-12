@@ -124,3 +124,13 @@ main {
   overflow: hidden;
   transition: height 0.3s ease-out;
 }
+#secondAccordionContent {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-out;
+}
+#thirdAccordionContent {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-out;
+}

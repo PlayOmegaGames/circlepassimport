@@ -1,22 +1,75 @@
+<!--Script for animating accordion menu -->
+<script>
+  function toggleFirstAccordion() {
+    var content = document.getElementById("accordionContent");
+    var chevron = document.getElementById("accordionChevron");
+
+    if (content.style.height === '0px' || content.style.height === '') {
+      content.style.height = content.scrollHeight + 'px';
+    } else {
+      content.style.height = '0px';
+    }
+
+    chevron.classList.toggle('rotate-90');
+  }
+  function toggleSecondAccordion() {
+    var secondContent = document.getElementById("secondAccordionContent");
+    var secondChevron = document.getElementById("secondAccordionChevron");
+
+    if (secondContent.style.height === '0px' || secondContent.style.height === '') {
+      secondContent.style.height = secondContent.scrollHeight + 'px';
+    } else {
+      secondContent.style.height = '0px';
+    }
+
+    secondChevron.classList.toggle('rotate-90');
+  }
+  function toggleThirdAccordion() {
+    var thirdContent = document.getElementById("thirdAccordionContent");
+    var thirdChevron = document.getElementById("thirdAccordionChevron");
+
+    if (thirdContent.style.height === '0px' || thirdContent.style.height === '') {
+      thirdContent.style.height = thirdContent.scrollHeight + 'px';
+    } else {
+      thirdContent.style.height = '0px';
+    }
+
+    thirdChevron.classList.toggle('rotate-90');
+  }
+</script>
+
 <div class="flex flex-col items-center">
   <!--Avatar-->
-  <img class="mb-4" style="border:5px solid black; border-radius: 50%" src={~p"/images/DefaultAvatar.svg"} width="100" />
+  <img
+    class="mb-4 shadow-xl"
+    style="border:1px solid black; border-radius: 50%"
+    src={~p"/images/DefaultAvatar.svg"}
+    width="100" />
+  <!--Alternative Name Avatar
+  <div
+    class="inline-flex shadow-xl items-center justify-center w-24 h-24 text-xl text-black bg-white rounded-full"
+    style="border:1px solid black; border-radius: 50%">
+    <%=@name%>
+  </div>
+  -->
   <!--User Email-->
   <p class="text-center text-xl mb-4"><%= @email %></p>
 </div>
 
+
+
 <!--Change Password Menu Button -->
-<div class="relative mb-3">
+<div class="relative mb-3" onclick="toggleFirstAccordion()">
   <h6 class="mb-0">
     <button
       class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-1">
       <span>Password</span>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90" id="accordionChevron">
         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
       </svg>
     </button>  
   </h6>
-  <div data-collapse="animated-collapse-1" class="h-0 overflow-hidden transition-all duration-300 ease-in-out">
+  <div id="accordionContent" class="cursor-pointer">
     <div class="flex items-center gap-4 px-4">
       <form id="change-password-form" action="/change_password" method="post" class="px-8 pt-6 pb-8 mb-4">
         <%= csrf_input_tag("/user-settings") %>
@@ -47,7 +100,7 @@
 </div>
 
 <!--Change Email Menu Button -->
-<div class="relative mb-3">
+<div class="relative mb-3" onclick="toggleSecondAccordion()">
   <h6 class="mb-0">
     <button
       class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-2"
@@ -58,14 +111,14 @@
 
     <span class="text-slate-600 font-light"><%= @email %></span>
         
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90" id="secondAccordionChevron">
       <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
     </svg>
 
 
     </button>
   </h6>
-  <div data-collapse="animated-collapse-2" class="h-0 overflow-hidden transition-all duration-300 ease-in-out">
+  <div id="secondAccordionContent" class="cursor-pointer">
     <div class="flex items-center gap-4 px-4 grow">
       <form id="change-email-form" action="/update_profile" method="post" class="px-8 pt-6 pb-8 mb-4">
         <%= csrf_input_tag("/user-settings") %>
@@ -98,7 +151,7 @@
 </div>
 
 <!--Change Username Menu Button -->
-<div class="relative mb-3">
+<div class="relative mb-3" onclick="toggleThirdAccordion()">
   <h6 class="mb-0">
     <button class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-3">
       <span>Username</span>
@@ -106,14 +159,14 @@
       <span class="text-slate-600 font-light"><%= @name %></span>
 
       <span>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90" id="thirdAccordionChevron">
           <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
       </span>
 
     </button>
   </h6>
-  <div data-collapse="animated-collapse-3" class="h-0 overflow-hidden transition-all duration-300 ease-in-out">
+  <div id="thirdAccordionContent" class="cursor-pointer">
     <div class="flex items-center gap-4 px-4 grow">
       <form id="change-username-form" action="/update_profile" method="post" class="px-8 pt-6 pb-8 mb-4">
         <%= csrf_input_tag("/user-settings") %>
@@ -152,7 +205,3 @@
     </form>
   </h6>
 </div>
-
- 
-<!-- animation script -->
-<script src="https://unpkg.com/@material-tailwind/html@latest/scripts/collapse.js"></script>
