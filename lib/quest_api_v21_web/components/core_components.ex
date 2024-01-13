@@ -31,7 +31,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def title(assigns) do
     ~H"""
-    <h1 class="text-2xl text-gray-600 font-medium mb-1">
+    <h1 class="text-2xl text-center text-gray-600 font-medium mb-1">
       <%= @text %>
     </h1>
 
