@@ -31,7 +31,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def title(assigns) do
     ~H"""
-    <h1 class="text-2xl text-gray-600 font-medium mb-1">
+    <h1 class="text-2xl text-gray-600 font-medium my-2">
       <%= @text %>
     </h1>
 
@@ -711,5 +711,32 @@ defmodule QuestApiV21Web.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  attr :name, :string, required: true
+  attr :email, :string, required: true
+
+  ##Avatar and Email
+  def avatar(assigns) do
+    ~H"""
+    <div class="flex flex-col items-center">
+    <!--Avatar-->
+    <!--<img
+      class="mb-4 shadow-xl bg-slate-100"
+      style="border:1px solid black; border-radius: 50%"
+      src={~p"/images/DefaultAvatar.svg"}
+      width="100" />-->
+
+
+    <div
+      class="inline-flex shadow-xl items-center justify-center w-24 h-24 text-xl text-black bg-slate-100 rounded-full"
+      style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;">
+      <%=@name%>
+    </div>
+
+    <!--User Email-->
+    <p class="text-center text-xl mb-4"><%= @email %></p>
+  </div>
+  """
   end
 end
