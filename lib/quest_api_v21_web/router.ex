@@ -68,7 +68,7 @@ defmodule QuestApiV21Web.Router do
   end
 
 
-
+  #end-user authenticated
   scope "/", QuestApiV21Web do
     pipe_through :authenticated  # Use both browser and authenticated pipelines
 
@@ -80,6 +80,7 @@ defmodule QuestApiV21Web.Router do
     get "/badges", BadgeController, :show_badge
     get "/badge/:id", CollectorController, :show_collector
     get "/new", PageController, :new_page
+    get "/profile", PageController, :profile
 
 
   end
