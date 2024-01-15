@@ -718,6 +718,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
   ##Avatar and Email
   def avatar(assigns) do
+
     ~H"""
     <div class="flex flex-col items-center">
     <!--Avatar-->
