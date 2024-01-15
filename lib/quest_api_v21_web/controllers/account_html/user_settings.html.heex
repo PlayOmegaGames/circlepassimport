@@ -38,11 +38,28 @@
   }
 </script>
 
-<.avatar
-name= {@name}
-email= {@email}
-/>
 
+
+<div class="flex flex-col items-center">
+    <!--Avatar-->
+    <!--<img
+      class="mb-4 shadow-xl bg-slate-100"
+      style="border:1px solid black; border-radius: 50%"
+      src={~p"/images/DefaultAvatar.svg"}
+      width="100" />-->
+
+
+    <.avatar
+      name= {@name}
+    />
+
+    <!--User Email-->
+    <p class="text-center text-xl mb-4"><%= @email %></p>
+  </div>
+
+<!--<.accordionButton
+  buttonTitle = "Hello"
+/>-->
 
 <!--Change Password Menu Button -->
 <div class="relative mb-3">
