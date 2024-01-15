@@ -38,29 +38,32 @@
   }
 </script>
 
+
+
 <div class="flex flex-col items-center">
-  <!--Avatar-->
-  <img
-    class="mb-4 shadow-xl"
-    style="border:1px solid black; border-radius: 50%"
-    src={~p"/images/DefaultAvatar.svg"}
-    width="100" />
-  <!--Alternative Name Avatar
-  <div
-    class="inline-flex shadow-xl items-center justify-center w-24 h-24 text-xl text-black bg-white rounded-full"
-    style="border:1px solid black; border-radius: 50%">
-    <%=@name%>
+    <!--Avatar-->
+    <!--<img
+      class="mb-4 shadow-xl bg-slate-100"
+      style="border:1px solid black; border-radius: 50%"
+      src={~p"/images/DefaultAvatar.svg"}
+      width="100" />-->
+
+
+    <.avatar
+      name= {@name}
+    />
+
+    <!--User Email-->
+    <p class="text-center text-xl mb-4"><%= @email %></p>
   </div>
-  -->
-  <!--User Email-->
-  <p class="text-center text-xl mb-4"><%= @email %></p>
-</div>
 
-
+<!--<.accordionButton
+  buttonTitle = "Hello"
+/>-->
 
 <!--Change Password Menu Button -->
-<div class="relative mb-3" onclick="toggleFirstAccordion()">
-  <h6 class="mb-0">
+<div class="relative mb-3">
+  <h6 class="mb-0" onclick="toggleFirstAccordion()">
     <button
       class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-1">
       <span>Password</span>
@@ -100,8 +103,8 @@
 </div>
 
 <!--Change Email Menu Button -->
-<div class="relative mb-3" onclick="toggleSecondAccordion()">
-  <h6 class="mb-0">
+<div class="relative mb-3">
+  <h6 class="mb-0" onclick="toggleSecondAccordion()">
     <button
       class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-2"
     >
@@ -142,7 +145,7 @@
             name="account[email]" 
             placeholder={@email} required>
         </div>
-        <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
+        <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit" onsubmit="setTimeout(function () { window.location.reload(); }, 10000000)">
           Update
         </button>
       </form>
@@ -151,8 +154,8 @@
 </div>
 
 <!--Change Username Menu Button -->
-<div class="relative mb-3" onclick="toggleThirdAccordion()">
-  <h6 class="mb-0">
+<div class="relative mb-3">
+  <h6 class="mb-0" onclick="toggleThirdAccordion()">
     <button class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-3">
       <span>Username</span>
 

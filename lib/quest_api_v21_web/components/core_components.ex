@@ -31,7 +31,8 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def title(assigns) do
     ~H"""
-    <h1 class="my-4 text-2xl text-center text-gray-600 font-medium mb-1">
+    <h1 class="text-2xl text-gray-600 font-medium my-2">
+
       <%= @text %>
     </h1>
 
@@ -784,4 +785,61 @@ defmodule QuestApiV21Web.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  attr :name, :string, required: true
+
+  ##Avatar
+  def avatar(assigns) do
+
+    initialsList = String.split(assigns.name)
+
+
+    ~H"""
+
+ <!-- font-sans, text-black, and bg-purple-500 can be changed to change the look of the avatar -->
+    <div
+      class="inline-flex shadow-xl items-center justify-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full"
+      style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;">
+      <%=Enum.map(initialsList, fn name ->
+        String.first(name)
+      end)%>
+    </div>
+  """
+  end
+
+  attr :buttonTitle, :string, required: true
+
+  def accordionButton(assigns) do
+    ~H"""
+    <script>
+  function toggleFirstAccordion() {
+    var content = document.getElementById("accordionContent");
+    var chevron = document.getElementById("accordionChevron");
+
+    if (content.style.height === '0px' || content.style.height === '') {
+      content.style.height = content.scrollHeight + 'px';
+    } else {
+      content.style.height = '0px';
+    }
+
+    chevron.classList.toggle('rotate-90');
+  }
+  </script>
+
+    <div class="relative mb-3">
+  <h6 class="mb-0" onclick="toggleFirstAccordion()">
+    <button
+      class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-1">
+      <span><%=assigns.buttonTitle%></span>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90" id="accordionChevron">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+      </svg>
+    </button>
+  </h6>
+
+</div>
+    """
+  end
+
+
 end
