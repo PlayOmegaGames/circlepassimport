@@ -19,6 +19,101 @@ defmodule QuestApiV21Web.CoreComponents do
   alias Phoenix.LiveView.JS
   import QuestApiV21Web.Gettext
 
+
+  @doc """
+  Renders a basic title
+
+  ## Examples
+
+  <.title text="example-title" />
+  """
+  attr :text, :string, required: true
+
+  def title(assigns) do
+    ~H"""
+    <h1 class="my-4 text-2xl text-center text-gray-600 font-medium mb-1">
+      <%= @text %>
+    </h1>
+
+    """
+  end
+
+  @doc """
+  renders the concentric circles
+
+  """
+
+  attr :width, :string, required: true
+  attr :border, :string, required: true
+  attr :glow, :boolean, default: false
+  def circles(assigns) do
+    ~H"""
+     <!-- Inner concentric circles -->
+      <div class={" #{calculate_glow(assigns)} h-#{@width} w-#{@width} bg-brand rounded-full
+      flex items-center justify-center relative"}>
+        <div class={"absolute rounded-full border-#{@border} border-white h-3/4 w-3/4"}></div>
+        <div class={"absolute rounded-full border-#{@border} border-white h-2/5 w-2/5"}></div>
+      </div>
+    """
+  end
+
+  defp calculate_glow(assigns) do
+    if assigns.glow, do: "glow-button mx-auto"
+  end
+
+  @doc"""
+  Renders reward pill
+
+  <.reward text="test" color="green" />
+  """
+  attr :text, :string, required: true
+  attr :color, :string, required: true
+
+  def reward(assigns) do
+    ~H"""
+    <div class={"inline-flex border-2 border-#{@color}-300 text-#{@color}-600 bg-#{@color}-100 rounded-lg py-1 my-4"}>
+
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="ml-2 my-auto w-4 h-full">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+        </svg>
+
+        <h1 class="text-[13px] my-auto mx-2"><%= @text %></h1>
+    </div>
+    """
+  end
+
+
+  @doc """
+  Renders a location with link to maps of that location
+
+  ## Examples
+
+  <.location text="Luna" url="https:/googlemaps.com"
+  """
+
+  attr :text, :string, required: true
+  attr :url, :string, default: nil
+
+  def location(assigns) do
+    ~H"""
+    <a class=" text-slate-500 my-2" href={@url}>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"
+          class="w-4 h-4 inline">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+      </svg>
+      <span class="my-auto text-xs">
+          <%= @text %>
+      </span>
+    </a>
+
+
+    """
+  end
+
+
+
   @doc """
   Renders a modal.
 
@@ -586,6 +681,33 @@ defmodule QuestApiV21Web.CoreComponents do
     ~H"""
     <span class={[@name, @class]} />
     """
+  end
+
+    @doc """
+  Renders the bottom navbar icons text
+
+  ## Examples
+
+  <.bottom_nav page_name="home" icon="home" />
+  """
+  attr :url, :string, required: true
+  attr :request_path, :string, required: true
+  attr :page_name, :string, required: true
+  attr :icon, :string, required: true
+
+  def bottom_nav(assigns) do
+    ~H"""
+    <a href={@url} class="py-2">
+        <div class={calculate_class(assigns)}>
+          <.icon name={"hero-#{@icon}"} class="ml-1 w-7 h-7" />
+          <p class="text-sm text-center"><%= @page_name %></p>
+      </div>
+      </a>
+    """
+  end
+
+  defp calculate_class(assigns) do
+    if assigns.request_path == assigns.url, do: "text-violet-700", else: "text-slate-700"
   end
 
   ## JS Commands

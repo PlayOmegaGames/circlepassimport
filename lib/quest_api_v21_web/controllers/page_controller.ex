@@ -20,9 +20,22 @@ defmodule QuestApiV21Web.PageController do
     render(conn, "privacy.html")
   end
 
+  def new_page(conn, _params) do
+    conn
+    |> put_layout(html: :logged_in)
+    |> assign(:body_class, "bg-light-blue")
+    |> render("new_page.html", %{page_title: "New"})
+  end
+
+  def profile(conn, _params) do
+    conn
+    |> put_layout(html: :logged_in)
+    |> assign(:body_class, "bg-light-blue")
+    |> render("profile.html", %{page_title: "Profile"})
+  end
+
   def auth_splash(conn, _params) do
     conn
-    |> put_layout(false)
     |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-purple-800 h-screen")
     |> render("auth_splash.html")
   end

@@ -11,7 +11,8 @@
 		{"id":"c7743775b1b0cd3c","type":"text","text":"Prod Server - EC2","x":382,"y":100,"width":205,"height":60},
 		{"id":"350ad9c914e3008c","type":"text","text":"Prod DB","x":664,"y":100,"width":138,"height":60},
 		{"id":"c5439702e48d0f15","type":"text","text":"Dev DB","x":684,"y":-300,"width":140,"height":60},
-		{"id":"5fc752f4cc51e3a2","type":"text","text":"gitpod dev environment","x":362,"y":-300,"width":245,"height":60}
+		{"id":"5fc752f4cc51e3a2","type":"text","text":"gitpod dev environment","x":362,"y":-300,"width":245,"height":60},
+		{"id":"1c242a71a98cbc91","x":780,"y":-60,"width":250,"height":60,"type":"text","text":"S3 Bucket for images"}
 	],
 	"edges":[
 		{"id":"02dcfc638bb98858","fromNode":"167a4836e1c6fa51","fromSide":"bottom","toNode":"f8f12f7b3acae8f1","toSide":"top"},
@@ -23,6 +24,8 @@
 		{"id":"8b1ea8134bf0c2ef","fromNode":"5fc752f4cc51e3a2","fromSide":"right","toNode":"c5439702e48d0f15","toSide":"left"},
 		{"id":"12200fbd4326f274","fromNode":"5fc752f4cc51e3a2","fromSide":"bottom","toNode":"b001bd80fe540023","toSide":"top"},
 		{"id":"34ef3863f8095968","fromNode":"b001bd80fe540023","fromSide":"bottom","toNode":"ad6dcb7a3f1de18b","toSide":"top"},
-		{"id":"84bff4e587f1b3fe","fromNode":"ad6dcb7a3f1de18b","fromSide":"bottom","toNode":"c7743775b1b0cd3c","toSide":"top"}
+		{"id":"84bff4e587f1b3fe","fromNode":"ad6dcb7a3f1de18b","fromSide":"bottom","toNode":"c7743775b1b0cd3c","toSide":"top"},
+		{"id":"f94cc190c80b44a7","fromNode":"5fc752f4cc51e3a2","fromSide":"right","toNode":"1c242a71a98cbc91","toSide":"left"},
+		{"id":"57228e3c50fa2e21","fromNode":"c7743775b1b0cd3c","fromSide":"right","toNode":"1c242a71a98cbc91","toSide":"left"}
 	]
 }

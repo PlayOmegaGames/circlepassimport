@@ -17,6 +17,11 @@ defmodule QuestApiV21Web.Router do
 
   pipeline :authenticated do
     plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {QuestApiV21Web.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
     plug QuestApiV21Web.AuthPlug
   end
 
@@ -28,8 +33,12 @@ defmodule QuestApiV21Web.Router do
   pipeline :authenticated_host_api do
     plug :accepts, ["json"]
     plug QuestApiV21.HostGuardianPipeline
-
   end
+
+#  pipeline :web_auth do
+#    plug :accepts, ["html"]
+#    plug QuestApiV21.WebAuthPipeline
+#  end
 
 
   scope "/", QuestApiV21Web do
@@ -59,16 +68,24 @@ defmodule QuestApiV21Web.Router do
   end
 
 
-
+  #end-user authenticated
   scope "/", QuestApiV21Web do
-    pipe_through [:browser, :authenticated]  # Use both browser and authenticated pipelines
+    pipe_through :authenticated  # Use both browser and authenticated pipelines
+
+    #user settings page
+    get "/user-settings", AccountController, :user_settings
+    post "/update_profile", AccountController, :update_from_web
 
     #badge page
     get "/badges", BadgeController, :show_badge
     get "/badge/:id", CollectorController, :show_collector
+    get "/new", PageController, :new_page
+    get "/profile", PageController, :profile
+
+
   end
 
-    #for SSO
+  #for SSO Oauth
   scope "/auth", QuestApiV21Web do
     pipe_through :browser
 
@@ -84,11 +101,11 @@ defmodule QuestApiV21Web.Router do
     resources "/hosts", HostController, except: [:index]
   end
 
-
+  #authentication for API
   scope "/api", QuestApiV21Web do
     pipe_through :api
 
-    #account authentication
+    #end-user authentication
     get "/sign_up", AuthController, :new
     post "/sign_up", AuthController, :sign_up
     post "/sign_in", AuthController, :sign_in
@@ -103,11 +120,12 @@ defmodule QuestApiV21Web.Router do
 
   end
 
+  #End user authenticated scope fpr api
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
-    resources "/quests", QuestController
-    resources "/badges", BadgeController
-    resources "/collectors", CollectorController
+    get "/quests", QuestController, :show
+    get "/badges", BadgeController, :show
+    get "/collectors", CollectorController, :show
     resources "/accounts", AccountController, except: [:index]
     get "/*path", ErrorController, :not_found
 

@@ -1,0 +1,16 @@
+{
+	"nodes":[
+		{"id":"71f2c33a3ac69f8a","x":-313,"y":-403,"width":133,"height":60,"type":"text","text":"## Web"},
+		{"id":"95f037a80ebfca02","x":-372,"y":-286,"width":250,"height":86,"type":"text","text":"signs in user email/pwd or [[Google Oauth.canvas|Google Oauth]]"},
+		{"id":"d31183cbca2fde52","x":120,"y":-403,"width":144,"height":60,"type":"text","text":"## API"},
+		{"id":"e5a3a2b432d81772","x":67,"y":-286,"width":250,"height":60,"type":"text","text":"sends a post request with email and pwd"},
+		{"id":"8de3318d4c8a55a9","x":46,"y":-180,"width":292,"height":113,"type":"text","text":"[[guardian_pipeline.ex]] checks to make sure that its valid and generates token"},
+		{"id":"8d5013a6606a45d3","x":56,"y":0,"width":272,"height":81,"type":"text","text":"recieves a bearer token to be used in future requests"}
+	],
+	"edges":[
+		{"id":"365611c8c66ff195","fromNode":"71f2c33a3ac69f8a","fromSide":"bottom","toNode":"95f037a80ebfca02","toSide":"top"},
+		{"id":"76c0696937aab979","fromNode":"d31183cbca2fde52","fromSide":"bottom","toNode":"e5a3a2b432d81772","toSide":"top"},
+		{"id":"84bf9e5e55510fe1","fromNode":"e5a3a2b432d81772","fromSide":"bottom","toNode":"8de3318d4c8a55a9","toSide":"top"},
+		{"id":"0b0d26063078642e","fromNode":"8de3318d4c8a55a9","fromSide":"bottom","toNode":"8d5013a6606a45d3","toSide":"top"}
+	]
+}

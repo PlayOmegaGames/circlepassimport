@@ -13,10 +13,10 @@
             "state": {
               "type": "canvas",
               "state": {
-                "file": "docs/infrastructure/Pipeline.canvas",
+                "file": "docs/authentication/End user web vs api authentication.canvas",
                 "viewState": {
-                  "x": 679.8300000000002,
-                  "y": 91.14000000000001,
+                  "x": 0,
+                  "y": 0,
                   "zoom": 0
                 }
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/infrastructure/Pipeline.canvas",
+                "file": "docs/authentication/End user web vs api authentication.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/infrastructure/Pipeline.canvas",
+                "file": "docs/authentication/End user web vs api authentication.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/infrastructure/Pipeline.canvas"
+                "file": "docs/authentication/End user web vs api authentication.canvas"
               }
             }
           }
@@ -161,11 +161,15 @@
   },
   "active": "6924d3820047ce8d",
   "lastOpenFiles": [
+    "docs/How things work/How forms work.canvas",
+    "docs/authentication/End user web vs api authentication.canvas",
+    "docs/User Flows/Untitled.canvas",
+    "docs/How things work",
+    "docs/infrastructure/Pipeline.canvas",
     "scripts/pull_new_image.sh",
     "buildspec.yml",
     "priv/static/images/DefaultAvatar.svg",
     "docs/authentication/Google Oauth.canvas",
-    "docs/infrastructure/Pipeline.canvas",
     "docs/infrastructure",
     "docs/Proj management/Quest Kanban.md",
     "docs/authentication/Google Oauth.md",
@@ -187,8 +191,6 @@
     "priv/static/images/link-raleigh-christmas/meet_founders_quest/8.png",
     "priv/static/images/link-raleigh-christmas/meet_founders_quest/7.png",
     "priv/static/images/link-raleigh-christmas/meet_founders_quest",
-    "priv/static/images/link-raleigh-christmas/founders_quest",
-    "priv/static/images/link-raleigh-christmas/description_images_for_collect_all_cars_quest",
     "README.md",
     "docs/Untitled.md"
   ]
