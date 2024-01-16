@@ -9,7 +9,9 @@ defmodule QuestApiV21Web.PageController do
   end
 
   def sign_in(conn, _params) do
-    render(conn, "sign_in.html")
+    conn
+      |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen")
+      |> render("sign_in.html")
   end
 
   def sign_up(conn, _params) do
@@ -36,7 +38,7 @@ defmodule QuestApiV21Web.PageController do
 
   def auth_splash(conn, _params) do
     conn
-    |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-purple-800 h-screen")
+    |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen")
     |> render("auth_splash.html")
   end
 end

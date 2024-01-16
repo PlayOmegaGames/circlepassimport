@@ -5,32 +5,27 @@
         <img class="mx-auto mt-8 h-32 w-auto" src="/images/WhiteQuestLogo.svg" alt="Quest Logo">
     </div>
 
-    <div class="fixed inset-x-0 bottom-8 p-4 bg-transparent">
-      <div class="mb-6">
-        <a href="/sign_up">
-          <button class="w-full text-xl flex items-center justify-center bg-white text-black border border-gray-300 rounded-xl py-4 px-4 hover:bg-gray-100">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-            </svg>
-            SIGNUP WITH EMAIL
-          </button>
-        </a>
-      </div>
 
-      <div class="mb-4">
+    <div class="fixed inset-x-0 bottom-4 p-4 bg-transparent">
+    <p class="py-4 text-center text-base text-white">Have an account? <a href="/sign_in" class="underline text-white hover:text-black">Sign in</a></p>
+
+      <a href="/sign_up">
+        <div class="mx-auto py-2 w-52 bg-white text-slate-800 border border-gray-300 rounded-full hover:bg-gray-100">
+            <button class="my-auto">
+                <span class="hero-envelope w-6 h-6 mx-2 ml-4 my-auto" />
+                Sign up with Email
+            </button>
+        </div>
+      </a>
+      <p class="text-center text-white my-4">or</p>
+      <div class="mb-4 flex justify-center">
         <a href="/auth/google">
-          <button class="w-full text-xl flex items-center justify-center bg-white text-black border border-gray-300 rounded-xl py-4 px-4 hover:bg-gray-100">
-              SIGNUP WITH GOOGLE
-          </button>
+          <.google />
         </a>
       </div>
 
       <div class="mb-6 text-center">
         <p class="text-sm text-white">By signing up, you agree with our <a href="/privacy-policy" class="underline underline-offset-4">privacy policy</a>  and terms of use.</p>
-      </div>
-
-      <div class="text-center">
-        <p class="text-lg text-white">Have an account? <a href="/sign_in" class="underline text-white hover:text-black">Sign in</a></p>
       </div>
     </div>
   </div>
