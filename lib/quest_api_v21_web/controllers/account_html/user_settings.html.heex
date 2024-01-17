@@ -38,24 +38,12 @@
   }
 </script>
 
-
-
-<div class="flex flex-col items-center">
-    <!--Avatar-->
-    <!--<img
-      class="mb-4 shadow-xl bg-slate-100"
-      style="border:1px solid black; border-radius: 50%"
-      src={~p"/images/DefaultAvatar.svg"}
-      width="100" />-->
-
-
-    <.avatar
-      name= {@name}
-    />
+  <div class="justify-center flex">
+    <.avatar name= {@name} />
+  </div>
 
     <!--User Email-->
     <p class="text-center text-xl mb-4"><%= @email %></p>
-  </div>
 
 <!--<.accordionButton
   buttonTitle = "Hello"

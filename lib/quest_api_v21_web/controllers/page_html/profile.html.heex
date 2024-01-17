@@ -1,6 +1,36 @@
 
-  <img
-    class="mb-4 shadow-xl mx-auto border-2 border-slate-900 rounded-full"
-    src={~p"/images/DefaultAvatar.svg"}
-    width="100" />
 
+<!-- Profile header -->
+<div class="pb-8 border-b-2 border-slate-200 bg-white">
+    <div class="justify-center flex">
+        <.avatar name="test" class="shadow-xl mx-auto border-2 border-slate-900" />
+    </div>
+    <p class="text-center mt-4 text-xl">
+        <%= @account.name %>
+    </p>
+
+    <div class="mt-4 grid grid-cols-3 place-content-center w-10/12 mx-auto">
+
+        <.stats_bubble number="3" color="violet" text="Quests" />
+
+        <div class="border-x-2 border-slate-300">
+            <.stats_bubble number="10" color="lime" text="Badges" />
+        </div>      
+        
+        <.stats_bubble number="2" color="amber" text="Rewards" />
+    </div>
+</div>
+
+<div class="bg-light-blue h-80 flex items-center">
+
+    <a class=" flex mb-20 bg-white rounded-lg w-10/12 mx-auto text-slate-600 shadow-md" href="/new">
+
+        <img class="w-10 h-10 ml-2 my-auto" src="/images/PurpleQuestLogo.svg" />
+
+        <p class="flex-grow text-xl text-center py-4">
+        Find a Quest
+        </p>
+
+        <span class="animate-pulse my-auto hero-chevron-right mr-2" />
+    </a>
+</div>
