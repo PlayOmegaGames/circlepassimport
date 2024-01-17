@@ -1,29 +1,40 @@
-<div class="flex flex-col justify-center items-center">
-  <form id="sign-in-form" action="/sign_in" method="post" class="bg-white mt-36 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+
+  <div class="w-full flex justify-center">
+    <a href="/sign_up" class="text-white absolute">No account? - <span class="underline underline-offset-1">sign up</span></a>
+  </div>
+
+  <img class="mx-auto mt-8 h-32 w-auto" src="/images/WhiteQuestLogo.svg" alt="Quest Logo">
+
+<div class="flex flex-col justify-center items-center max-w-sm w-80 mx-auto">
+  <form id="sign-in-form" action="/sign_in" method="post" class="mt-12 shadow-md rounded px-8">
     <%= csrf_input_tag("/sign_in") %>
-      <h1 class="text-center mb-5 text-2xl font-medium text-gray-600">
+      <h1 class="text-center mb-5 text-2xl font-medium text-gray-100">
       Sign In
       </h1>
 
     <!-- Email Field -->
     <div class="mb-4">
-      <input class="border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="email" name="account[email]" placeholder="Email" required>
+      <input class="border rounded-full w-full pl-4 p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="email" name="account[email]" placeholder="Email" required>
     </div>
 
     <!-- Password Field -->
     <div class="mb-4">
 
-      <input class="border rounded w-full p-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="Password" required>
+      <input class="border rounded-full w-full p-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" type="password" name="account[password]" placeholder="Password" required>
     </div>
 
     <!-- Submit Button -->
-      <button class="mt-3 w-full p-3 bg-brand text-white font-bold rounded focus:outline-none focus:shadow-outline" type="submit">
+      <button class="border-2 border-brand white-glow mt-3 w-full p-2 bg-white text-slate-700 text-lg font-bold rounded-lg focus:outline-none focus:shadow-outline" type="submit">
         Sign In
       </button>
-
-      <div class="w-full mt-12 flex justify-center">
-        <a href="/auth_splash" class="text-blue-500">Sign Up</a>
+      
+    <p class="text-center text-white my-4">or</p>
+      <div class="mb-4 flex justify-center">
+        <a href="/auth/google">
+          <.google />
+        </a>
       </div>
+
   </form>
   
 </div>
