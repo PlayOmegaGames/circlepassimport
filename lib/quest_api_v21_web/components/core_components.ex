@@ -39,6 +39,25 @@ defmodule QuestApiV21Web.CoreComponents do
     """
   end
 
+    @doc """
+  create a
+  """
+
+  def find_quests(assigns) do
+    ~H"""
+      <a class=" flex mb-20 bg-white rounded-lg w-10/12 mx-auto text-slate-600 shadow-md" href="/new">
+
+      <img class="w-10 h-10 ml-2 my-auto" src="/images/PurpleQuestLogo.svg" />
+
+      <p class="flex-grow text-xl text-center py-4">
+      Find a Quest
+      </p>
+
+      <span class="animate-pulse my-auto hero-chevron-right mr-2" />
+      </a>
+    """
+  end
+
   @doc """
     the stat bubbles
   """
