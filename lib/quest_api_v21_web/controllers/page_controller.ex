@@ -30,10 +30,13 @@ defmodule QuestApiV21Web.PageController do
   end
 
   def profile(conn, _params) do
+    account = conn.assigns[:current_user]
+    #IO.inspect(user)
+
     conn
     |> put_layout(html: :logged_in)
-    |> assign(:body_class, "bg-light-blue")
-    |> render("profile.html", %{page_title: "Profile"})
+    |> assign(:body_class, "bg-white")
+    |> render("profile.html", %{page_title: "Profile", account: account})
   end
 
   def auth_splash(conn, _params) do

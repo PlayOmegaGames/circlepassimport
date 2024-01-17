@@ -39,6 +39,30 @@ defmodule QuestApiV21Web.CoreComponents do
     """
   end
 
+  @doc """
+    the stat bubbles
+  """
+  attr :text, :string, required: true
+  attr :color, :string, required: true
+  attr :number, :string, required: true
+
+
+  def stats_bubble(assigns) do
+    ~H"""
+    <div class="">
+      <div class={"mx-auto bg-#{@color}-200 border-2 shadow-lg border-#{@color}-500 flex justify-center items-center rounded-full h-14 w-14"}>
+          <p class="text-slate-700 font-semibold">
+            <%= @number %>
+          </p>
+      </div>
+
+      <p class="text-center mt-2 text-sm font-light text-slate-700">
+      <%= @text %>
+      </p>
+    </div>
+    """
+  end
+
 
   @doc """
   Google sign in approved button
@@ -815,24 +839,31 @@ defmodule QuestApiV21Web.CoreComponents do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
-  attr :name, :string, required: true
 
   ##Avatar
   #<!-- font-sans, text-black, and bg-purple-500 can be changed to change the look of the avatar -->
 
-  def avatar(assigns) do
 
-    initialsList = String.split(assigns.name)
+  attr :name, :string, required: true
+  attr :class, :string, default: nil
+
+
+  def avatar(assigns) do
+    initials = String.split(assigns.name)
+               |> Enum.map(fn name -> String.first(name) end)
+               |> Enum.join("")
+
+    assigns = assign(assigns, :initials, initials)
     ~H"""
-      <div
-        class="inline-flex shadow-xl items-center justify-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full"
-        style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;">
-        <%=Enum.map(initialsList, fn name ->
-          String.first(name)
-        end)%>
-      </div>
+    <div
+      class={"#{@class} inline-flex shadow-xl items-center justify-center
+            w-24 h-24 font-sans text-5xl text-black
+            bg-purple-500 rounded-full border-2 border-slate-900"}>
+      <%= @initials %>
+    </div>
     """
   end
+
 
   attr :buttonTitle, :string, required: true
 
