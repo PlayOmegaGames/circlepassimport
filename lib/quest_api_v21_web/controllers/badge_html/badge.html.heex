@@ -44,9 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Initiate progress bar animation when DOM content is loaded.
-  document.addEventListener('DOMContentLoaded', animateProgressBars);
-
   //accordian styles
   function toggleAccordion(contentId, chevronId) {
     var content = document.getElementById(contentId);
@@ -60,6 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     chevron.classList.toggle('rotate-90');
   }
+
+  // Initiate progress bar animation when DOM content is loaded.
+  document.addEventListener('DOMContentLoaded', animateProgressBars);
 
 </script>
 
@@ -118,18 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
               <div id={"accordionContent#{quest_id}"} 
                     style="  height: 0; overflow: hidden; transition: height 0.3s ease-out;">
               <!-- Reward -->
-              <%= if unlocked_badges == total_badges do %>
-                <.reward color="amber" text={quest.reward}  />
-              <% else %>
+
                 <.reward color="slate" text={quest.reward}  />
-              <% end %>
               <!-- Badge display for each quest -->
               <div class="grid grid-cols-3 gap-4 justify-items-between my-4">
                 <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
-                  <div class="">
                     <%= content_tag :div, class: 
                       (if badge.id in @user_badge_ids, 
-                      do: "bg-white rounded-full cursor-pointer", 
+                      do: "badge-container bg-white rounded-full cursor-pointer", 
                       else: "opacity-50 grayscale"), 
                       data: [
                         redirect_url: badge.redirect_url, 
@@ -140,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
                       <img src={badge.image} alt={badge.name} class="rounded-full">
                       <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
                     <% end %>
-                  </div>
                 <% end %>
               </div>
                 <!--Location-->
@@ -215,10 +210,9 @@ document.addEventListener('DOMContentLoaded', () => {
               <!-- Badge display for each quest -->
               <div class="grid grid-cols-3 gap-4 justify-items-between my-4">
                 <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
-                  <div class="">
                     <%= content_tag :div, class: 
                       (if badge.id in @user_badge_ids, 
-                      do: "bg-white rounded-full cursor-pointer", 
+                      do: "badge-container bg-white rounded-full cursor-pointer", 
                       else: "opacity-50 grayscale"), 
                       data: [
                         redirect_url: badge.redirect_url, 
@@ -229,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
                       <img src={badge.image} alt={badge.name} class="rounded-full">
                       <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
                     <% end %>
-                  </div>
                 <% end %>
               </div>
                 <!--Location-->
