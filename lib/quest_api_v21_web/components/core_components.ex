@@ -70,7 +70,8 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def google(assigns) do
     ~H"""
-      <button class="gsi-material-button mx-auto">
+    <a href="/auth/google">
+      <div class="gsi-material-button mx-auto">
         <div class="gsi-material-button-state"></div>
         <div class="gsi-material-button-content-wrapper">
           <div class="gsi-material-button-icon">
@@ -85,7 +86,8 @@ defmodule QuestApiV21Web.CoreComponents do
           <span class="gsi-material-button-contents">Sign in with Google</span>
           <span style="display: none;">Sign in with Google</span>
         </div>
-      </button>
+      </div>
+    </a>
     """
   end
 
