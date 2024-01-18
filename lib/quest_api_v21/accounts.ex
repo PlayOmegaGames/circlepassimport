@@ -257,10 +257,18 @@ def create_account(attrs \\ %{}) do
     case Map.get(attrs, "badge_ids") do
       nil -> changeset
       badge_ids ->
-        badges = Repo.all(from c in Badge, where: c.id in ^badge_ids)
-        Ecto.Changeset.put_assoc(changeset, :badges, badges)
+        badges = Repo.all(from b in Badge, where: b.id in ^badge_ids)
+
+        # Get the current badges_stats value
+        current_stats = changeset.data.badges_stats
+        badges_count = length(badge_ids)
+
+        updated_changeset = Ecto.Changeset.put_assoc(changeset, :badges, badges)
+        Ecto.Changeset.put_change(updated_changeset, :badges_stats, current_stats + badges_count)
     end
   end
+
+
 
   defp maybe_add_quests(changeset, attrs) do
     case Map.get(attrs, "quest_ids") do
