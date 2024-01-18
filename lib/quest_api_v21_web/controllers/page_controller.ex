@@ -10,7 +10,7 @@ defmodule QuestApiV21Web.PageController do
 
   def sign_in(conn, _params) do
     conn
-      |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen")
+      |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen bg-no-repeat")
       |> render("sign_in.html")
   end
 
@@ -23,16 +23,18 @@ defmodule QuestApiV21Web.PageController do
   end
 
   def new_page(conn, _params) do
+    quests = QuestApiV21.Quests.list_public_quests()
+    #IO.inspect(quests)
+
     conn
     |> put_layout(html: :logged_in)
     |> assign(:body_class, "bg-light-blue")
-    |> render("new_page.html", %{page_title: "New"})
+    |> render("new_page.html", %{page_title: "New", quests: quests})
   end
 
   def profile(conn, _params) do
     account = conn.assigns[:current_user]
     #IO.inspect(user)
-
     conn
     |> put_layout(html: :logged_in)
     |> assign(:body_class, "bg-white")
@@ -41,7 +43,7 @@ defmodule QuestApiV21Web.PageController do
 
   def auth_splash(conn, _params) do
     conn
-    |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen")
+    |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen bg-no-repeat")
     |> render("auth_splash.html")
   end
 end

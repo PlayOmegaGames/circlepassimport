@@ -19,13 +19,14 @@ defmodule QuestApiV21Web.SignUpLive do
         form_valid: false,
         redirect_path: redirect_path,
         error_message: nil,
-        body_class: "bg-gradient-to-b from-purple-400 to-brand h-screen"
+        body_class: "bg-gradient-to-b from-purple-400 to-brand h-screen bg-no-repeat"
         )}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
+
     <div class="w-full flex justify-center mt-8">
       <a href="/sign_in" class="text-white absolute">Have an account? - <span class="underline underline-offset-1">sign in</span></a>
     </div>

@@ -23,6 +23,10 @@
       Repo.all(Quest)
     end
 
+    def list_public_quests do
+      Repo.all(from q in Quest, where: q.public == true)
+    end
+
     #only returns the quests that are associated to that record
 
 
