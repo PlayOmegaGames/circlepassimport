@@ -123,9 +123,9 @@ defmodule QuestApiV21Web.Router do
   #End user authenticated scope fpr api
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
-    get "/quests", QuestController, :show
-    get "/badges", BadgeController, :show
-    get "/collectors", CollectorController, :show
+    resources "/quests", QuestController
+    resources "/badges", BadgeController
+    resources "/collectors", CollectorController
     resources "/accounts", AccountController, except: [:index]
     get "/*path", ErrorController, :not_found
 

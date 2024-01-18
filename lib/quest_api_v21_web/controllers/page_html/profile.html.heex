@@ -3,7 +3,7 @@
 <!-- Profile header -->
 <div class="pb-8 border-b-2 border-slate-200 bg-white">
     <div class="justify-center flex">
-        <.avatar name="test" class="shadow-xl mx-auto border-2 border-slate-900" />
+        <.avatar name={@account.name} class="shadow-xl mx-auto border-2 border-slate-900" />
     </div>
     <p class="text-center mt-4 text-xl">
         <%= @account.name %>
@@ -11,13 +11,13 @@
 
     <div class="mt-4 grid grid-cols-3 place-content-center w-10/12 mx-auto">
 
-        <.stats_bubble number="3" color="violet" text="Quests" />
+        <.stats_bubble number={@account.quests_stats} color="violet" text="Quests" />
 
         <div class="border-x-2 border-slate-300">
-            <.stats_bubble number="10" color="lime" text="Badges" />
+            <.stats_bubble number={@account.badges_stats} color="lime" text="Badges" />
         </div>      
         
-        <.stats_bubble number="2" color="amber" text="Rewards" />
+        <.stats_bubble number={@account.rewards_stats} color="amber" text="Rewards" />
     </div>
 </div>
 

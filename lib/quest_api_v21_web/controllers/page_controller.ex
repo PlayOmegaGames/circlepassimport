@@ -34,7 +34,7 @@ defmodule QuestApiV21Web.PageController do
 
   def profile(conn, _params) do
     account = conn.assigns[:current_user]
-    #IO.inspect(user)
+    #IO.inspect(account)
     conn
     |> put_layout(html: :logged_in)
     |> assign(:body_class, "bg-white")

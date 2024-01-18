@@ -9,9 +9,9 @@ defmodule QuestApiV21.Repo.Migrations.AnimazeQuestAndAccountsUpdates do
     end
 
     alter table(:accounts) do
-      add :quests_stats, :string
-      add :badges_stats, :string
-      add :rewards_stats, :string
+      add :quests_stats, :integer, default: 0
+      add :badges_stats, :integer, default: 0
+      add :rewards_stats, :integer, default: 0
       add :pfps, :string
     end
   end
