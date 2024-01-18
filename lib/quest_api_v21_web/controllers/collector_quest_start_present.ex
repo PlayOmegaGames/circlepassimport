@@ -3,7 +3,12 @@ defmodule QuestApiV21Web.CollectorQuestStartPresent do
   alias QuestApiV21.{Accounts, Quests}
   require Logger
 
+  @spec handle_present_quest_start(
+          Plug.Conn.t(),
+          atom() | %{:badges => any(), :quest_start => any(), optional(any()) => any()}
+        ) :: Plug.Conn.t()
   def handle_present_quest_start(conn, collector) do
+    IO.inspect(collector, label: "handle_present_quest_start data")
     account = Accounts.get_account!(conn.assigns.current_user.id)
     quest = Quests.get_quest(collector.quest_start)
     badge = find_associated_badge(collector, quest)
