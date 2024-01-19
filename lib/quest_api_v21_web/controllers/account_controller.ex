@@ -98,13 +98,11 @@ defmodule QuestApiV21Web.AccountController do
   #Web
 
   def user_settings(conn, _params) do
-    email = conn.assigns.current_user.email
-    name = conn.assigns.current_user.name
-    user_id = get_session(conn, :user_id)
+    account = conn.assigns.current_user
 
     #IO.inspect(conn)
 
-    render(conn, "user_settings.html", page_title: "Home", name: name, email: email, user_id: user_id)
+    render(conn, "user_settings.html", page_title: "Home", account: account)
   end
 
   def update_from_web(conn, %{"id" => id, "account" => account_params}) do
@@ -138,6 +136,63 @@ defmodule QuestApiV21Web.AccountController do
           page_title: "Home",
           user_id: user_id
           )
+    end
+  end
+
+  defp log_session_info(conn) do
+    Logger.info("Session set for user: #{inspect(get_session(conn, :user_email))}")
+    conn
+  end
+
+  # API `change_email` function for password authentication
+  def change_email(conn, %{"account" => %{"email" => email, "password" => password}}) do
+
+    account = conn.assigns[:current_user]
+    IO.inspect(account.id)
+    case Accounts.authenticate_user_by_id(email, account.id, password) do
+      {:ok, account} ->
+
+        with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, %{"email" => email, "password" => password}) do
+          updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
+          conn
+          |> put_flash(:info, "Account updated successfully.")
+          |> render("user_settings.html",
+            account: updated_account,
+            email: email,
+            page_title: "Home"
+            )
+        else
+          {:error, changeset} ->
+            conn
+            |> put_status(:unprocessable_entity)
+            |> put_flash(:error, "Error updating account.")
+            |> render("user_settings.html",
+              account: account,
+              changeset: changeset,
+              email: email,
+              page_title: "Home"
+              )
+          end
+
+        redirect_path = get_session(conn, :redirect_path) || "/user-settings"
+        Logger.debug("Email change successful. Redirecting to: #{redirect_path}")
+        conn
+        |> put_flash(:info, "Successfully changed email.")
+        |> put_session(:user_id, account.id)
+        |> put_session(:user_email, account.email)
+        |> log_session_info()
+        |> redirect(to: redirect_path)
+
+
+      {:error, :not_found} ->
+        conn
+        |> put_flash(:error, "Incorrect password")
+        |> redirect(to: "/sign_in")
+
+      {:error, :unauthorized} ->
+        conn
+        |> put_flash(:error, "Incorrect password")
+        |> redirect(to: "/sign_in")
     end
   end
 

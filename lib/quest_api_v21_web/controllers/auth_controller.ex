@@ -31,6 +31,60 @@
       end
     end
 
+    
+
+    # API `change_email` function for password authentication
+    def change_email(conn, %{"account" => %{"email" => email, "password" => password}}) do
+
+      account = conn.assigns[:current_user]
+      IO.inspect(account.id)
+      case Accounts.authenticate_user_by_id(email, account.id, password) do
+        {:ok, account} ->
+
+          with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, %{"email" => email, "password" => password}) do
+            updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
+            conn
+            |> put_flash(:info, "Account updated successfully.")
+            |> render("user_settings.html",
+              account: updated_account,
+              email: email,
+              page_title: "Home"
+              )
+          else
+            {:error, changeset} ->
+              conn
+              |> put_status(:unprocessable_entity)
+              |> put_flash(:error, "Error updating account.")
+              |> render("user_settings.html",
+                account: account,
+                changeset: changeset,
+                email: email,
+                page_title: "Home"
+                )
+            end
+
+          redirect_path = get_session(conn, :redirect_path) || "/user-settings"
+          Logger.debug("Email change successful. Redirecting to: #{redirect_path}")
+          conn
+          |> put_flash(:info, "Successfully changed email.")
+          |> put_session(:user_id, account.id)
+          |> put_session(:user_email, account.email)
+          |> log_session_info()
+          |> redirect(to: redirect_path)
+
+
+        {:error, :not_found} ->
+          conn
+          |> put_flash(:error, "Incorrect password")
+          |> redirect(to: "/sign_in")
+
+        {:error, :unauthorized} ->
+          conn
+          |> put_flash(:error, "Incorrect password")
+          |> redirect(to: "/sign_in")
+      end
+    end
+
     # API `sign_up` function for account creation
     def sign_up(conn, %{"account" => account_params}) do
       case Accounts.create_account(account_params) do
@@ -66,6 +120,32 @@
 
     # Add HTML-Based Authentication Functions
     def html_sign_in(conn, %{"account" => %{"email" => email, "password" => password}}) do
+      case Accounts.authenticate_user(email, password) do
+        {:ok, account} ->
+          redirect_path = get_session(conn, :redirect_path) || "/badges"
+          Logger.debug("Sign in successful. Redirecting to: #{redirect_path}")
+          conn
+          |> put_flash(:info, "Successfully signed in.")
+          |> put_session(:user_id, account.id)
+          |> put_session(:user_email, account.email)
+          |> log_session_info()
+          |> redirect(to: redirect_path)
+
+
+        {:error, :not_found} ->
+          conn
+          |> put_flash(:error, "Account not found")
+          |> redirect(to: "/sign_in")
+
+        {:error, :unauthorized} ->
+          conn
+          |> put_flash(:error, "Incorrect password")
+          |> redirect(to: "/sign_in")
+      end
+    end
+
+    # Change Email Authentication Functions
+    def change_email_sign_in(conn, %{"account" => %{"email" => email, "password" => password}}) do
       case Accounts.authenticate_user(email, password) do
         {:ok, account} ->
           redirect_path = get_session(conn, :redirect_path) || "/badges"
