@@ -870,12 +870,10 @@ defmodule QuestApiV21Web.CoreComponents do
 
 
   def avatar(assigns) do
-    initials = String.split(assigns.name)
-               |> Enum.map(fn name -> String.first(name) end)
-               |> Enum.join("")
 
-    assigns = assign(assigns, :initials, initials)
+    initialsList = String.split(assigns.name)
     ~H"""
+
       <div
         class="inline-flex shadow-xl items-center justify-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full"
         style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;">
@@ -887,10 +885,12 @@ defmodule QuestApiV21Web.CoreComponents do
   end
 
 
+
   attr :buttonTitle, :string, required: true
   attr :contentID, :string, required: true
   slot :inner_block, required: true
 
+  @spec accordionButton(map()) :: Phoenix.LiveView.Rendered.t()
   def accordionButton(assigns) do
     ~H"""
 
