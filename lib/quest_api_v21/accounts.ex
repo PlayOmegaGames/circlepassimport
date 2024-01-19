@@ -72,9 +72,8 @@ def create_account(attrs \\ %{}) do
         |> maybe_add_quests(attrs)
         |> Repo.insert()
 
-        existing_account ->
-          Logger.error("An account with this email already exists: #{email}")
-          {:error, "An account with this email already exists", existing_account}
+        _existing_account ->
+          {:error, :email_taken}
       end
   end
 

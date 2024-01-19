@@ -98,19 +98,12 @@ defmodule QuestApiV21Web.AccountController do
   #Web
 
   def user_settings(conn, _params) do
-    email = conn.assigns.current_user.email
-    name = conn.assigns.current_user.name
-    user_id = get_session(conn, :user_id)
-
+    account = conn.assigns[:current_user]
     #IO.inspect(conn)
-
-    render(conn, "user_settings.html", page_title: "Home", name: name, email: email, user_id: user_id)
+    render(conn, "user_settings.html", page_title: "Home", account: account)
   end
 
   def update_from_web(conn, %{"id" => id, "account" => account_params}) do
-    email = conn.assigns.current_user.email
-    name = conn.assigns.current_user.name
-    user_id = get_session(conn, :user_id)
     account = Accounts.get_account!(id)
             |> QuestApiV21.Repo.preload([:badges, :quests])
 
@@ -118,26 +111,14 @@ defmodule QuestApiV21Web.AccountController do
       updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
       conn
       |> put_flash(:info, "Account updated successfully.")
-      |> render("user_settings.html",
-        account: updated_account,
-        name: name,
-        email: email,
-        page_title: "Home",
-        user_id: user_id
-        )
+      |> render("user_settings.html", account: updated_account, page_title: "Home"
+      )
     else
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
         |> put_flash(:error, "Error updating account.")
-        |> render("user_settings.html",
-          account: account,
-          changeset: changeset,
-          name: name,
-          email: email,
-          page_title: "Home",
-          user_id: user_id
-          )
+        |> render("user_settings.html", account: account, changeset: changeset, page_title: "Home")
     end
   end
 
