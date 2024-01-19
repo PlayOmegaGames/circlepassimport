@@ -144,6 +144,23 @@ main {
   transition: height 0.3s ease-out;
 }
 
+#accordionContentPasswordID {
+        height: 0;
+        overflow: hidden;
+        transition: height 0.3s ease-out;
+}
+#accordionContentEmailID {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-out;
+}
+#accordionContentUsernameID {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-out;
+}
+
+
 
 /* Google css styles */
 

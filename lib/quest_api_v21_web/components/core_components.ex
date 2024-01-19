@@ -876,47 +876,61 @@ defmodule QuestApiV21Web.CoreComponents do
 
     assigns = assign(assigns, :initials, initials)
     ~H"""
-    <div
-      class={"#{@class} inline-flex shadow-xl items-center justify-center
-            w-24 h-24 font-sans text-5xl text-black
-            bg-purple-500 rounded-full border-2 border-slate-900"}>
-      <%= @initials %>
-    </div>
+      <div
+        class="inline-flex shadow-xl items-center justify-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full"
+        style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;">
+        <%=Enum.map(initialsList, fn name ->
+        String.first(name)
+        end)%>
+      </div>
     """
   end
 
 
   attr :buttonTitle, :string, required: true
+  attr :contentID, :string, required: true
+  slot :inner_block, required: true
 
   def accordionButton(assigns) do
     ~H"""
-      <script>
-        function toggleFirstAccordion() {
-        var content = document.getElementById("accordionContent");
-        var chevron = document.getElementById("accordionChevron");
 
-        if (content.style.height === '0px' || content.style.height === '') {
-          content.style.height = content.scrollHeight + 'px';
-        } else {
-          content.style.height = '0px';
-        }
+      <style>
+      #accordionContentPasswordID {
+        height: 0;
+        overflow: hidden;
+        transition: height 0.3s ease-out;
+      }
+      </style>
 
-        chevron.classList.toggle('rotate-90');
-          }
-      </script>
+    <script>
+     function toggleAccordion(contentId, chevronId) {
+      var content = document.getElementById(contentId);
+      var chevron = document.getElementById(chevronId);
 
-          <div class="relative mb-3">
-        <h6 class="mb-0" onclick="toggleFirstAccordion()">
-          <button
-            class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-1">
-            <span><%=assigns.buttonTitle%></span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90" id="accordionChevron">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
-        </h6>
+      if (content.style.height === '0px' || content.style.height === '') {
+        content.style.height = content.scrollHeight + 'px';
+      } else {
+        content.style.height = '0px';
+      }
 
-      </div>
+      chevron.classList.toggle('rotate-90');
+    }
+    </script>
+
+
+
+    <h6 class="mb-0" onclick={"toggleAccordion('accordionContent#{assigns.contentID}', 'accordionChevron#{assigns.contentID}')"}>
+      <button
+        class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500" data-collapse-target="animated-collapse-1">
+        <span><%=assigns.buttonTitle%></span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90" id={"accordionChevron#{assigns.contentID}"}>
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+    </h6>
+
+    <%= render_slot(@inner_block) %>
+
     """
   end
 
