@@ -179,5 +179,59 @@ defmodule QuestApiV21Web.AccountController do
     end
   end
 
+  # API `change_password` function for password authentication
+  def change_password(conn, params) do
+    current_password = params["current_password"]
+    new_password = params["password"]
+
+    account = conn.assigns[:current_user]
+    IO.inspect(account.id)
+    case Accounts.authenticate_user_by_password(account.email, account.id, current_password) do
+      {:ok, account} ->
+
+        with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, %{"password" => new_password}) do
+          updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
+          conn
+          |> put_flash(:info, "Account updated successfully.")
+          |> render("user_settings.html",
+            account: updated_account,
+            password: account.password,
+            page_title: "Home"
+            )
+        else
+          {:error, changeset} ->
+            conn
+            |> put_status(:unprocessable_entity)
+            |> put_flash(:error, "Error updating account.")
+            |> render("user_settings.html",
+              account: account,
+              changeset: changeset,
+              password: account.password,
+              page_title: "Home"
+              )
+          end
+
+        redirect_path = get_session(conn, :redirect_path) || "/user-settings"
+        Logger.debug("Password change successful. Redirecting to: #{redirect_path}")
+        conn
+        |> put_flash(:info, "Successfully changed password.")
+        |> put_session(:user_id, account.id)
+        |> put_session(:user_email, account.email)
+        |> log_session_info()
+        |> redirect(to: redirect_path)
+
+
+      {:error, :not_found} ->
+        conn
+        |> put_flash(:error, "Incorrect password")
+        |> redirect(to: "/sign_in")
+
+      {:error, :unauthorized} ->
+        conn
+        |> put_flash(:error, "Incorrect password")
+        |> redirect(to: "/sign_in")
+    end
+  end
+
 
 end

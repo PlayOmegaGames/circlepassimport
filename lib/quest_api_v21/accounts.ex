@@ -268,6 +268,19 @@ def create_account(attrs \\ %{}) do
     end
   end
 
+  def authenticate_user_by_password(_email, id, current_password) do
+    IO.inspect("Authenticate User Function")
+    case find_account_by_id(id) do
+      nil -> {:error, :not_found}
+      account ->
+        if Bcrypt.verify_pass(current_password, account.hashed_password) do
+          {:ok, account}
+        else
+          {:error, :unauthorized}
+        end
+    end
+  end
+
 
   defp maybe_add_badges(changeset, attrs) do
     case Map.get(attrs, "badge_ids") do
