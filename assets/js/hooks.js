@@ -41,8 +41,17 @@ Hooks.FormSubmit = function(csrfToken) {
             body: JSON.stringify({ account: accountParams })
           })
   
-          .then(response => response.json())
-          .then(data => {
+          .then(response => {
+            if (!response.ok && response.status === 409) {
+              // Handle email taken error
+              return response.json().then(data => {
+                alert(data.error); // Display an alert or update the UI with the error message
+                throw new Error(data.error); // Stop further processing
+              });
+            }
+            return response.json();
+          })
+            .then(data => {
             if (data.account && data.account.id) {
               // Account creation successful, set session
               return fetch("/set_session", {

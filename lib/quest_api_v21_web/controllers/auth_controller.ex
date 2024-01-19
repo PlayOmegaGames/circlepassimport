@@ -36,10 +36,11 @@
       case Accounts.create_account(account_params) do
         {:ok, %Account{} = account} ->
           render_jwt_and_account(conn, account)
-        {:error, error_message, _existing_account} ->
+
+        {:error, :email_taken} ->
           conn
           |> put_status(:conflict)
-          |> json(%{error: error_message})
+          |> json(%{error: "Email already in use"})
       end
     end
 

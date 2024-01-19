@@ -147,6 +147,16 @@ defmodule QuestApiV21Web.SignUpLive do
     end
   end
 
+  @impl true
+  def handle_event("email-taken", %{"message" => message}, socket) do
+    # Put a flash message and re-render
+    {:noreply,
+      socket
+      |> put_flash(:error, message)
+      |> assign(:user_params, %{}) # Reset user_params or handle as needed
+    }
+  end
+
   defp extract_error_message(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, _opts} -> msg end)
     |> Enum.join(", ")
