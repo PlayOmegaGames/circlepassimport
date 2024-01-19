@@ -11,6 +11,11 @@ defmodule QuestApiV21.Accounts.Account do
     field :password, :string, virtual: true  # Virtual field for the plaintext password so that it isn't stored in the database
     field :name, :string
     field :role, :string, default: "default"
+    field :quests_stats, :integer, default: 0
+    field :badges_stats, :integer, default: 0
+    field :rewards_stats, :integer, default: 0
+    field :pfps, :string
+
     many_to_many :badges, QuestApiV21.Badges.Badge, join_through: "badges_accounts"
     many_to_many :quests, QuestApiV21.Quests.Quest, join_through: "quests_accounts"
 

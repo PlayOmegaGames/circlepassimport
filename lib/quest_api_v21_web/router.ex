@@ -68,7 +68,7 @@ defmodule QuestApiV21Web.Router do
   end
 
 
-
+  #end-user authenticated
   scope "/", QuestApiV21Web do
     pipe_through :authenticated  # Use both browser and authenticated pipelines
 
@@ -82,6 +82,7 @@ defmodule QuestApiV21Web.Router do
     get "/badges", BadgeController, :show_badge
     get "/badge/:id", CollectorController, :show_collector
     get "/new", PageController, :new_page
+    get "/profile", PageController, :profile
 
 
   end
@@ -124,9 +125,9 @@ defmodule QuestApiV21Web.Router do
   #End user authenticated scope fpr api
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
-    get "/quests", QuestController, :show
-    get "/badges", BadgeController, :show
-    get "/collectors", CollectorController, :show
+    resources "/quests", QuestController
+    resources "/badges", BadgeController
+    resources "/collectors", CollectorController
     resources "/accounts", AccountController, except: [:index]
     get "/*path", ErrorController, :not_found
 

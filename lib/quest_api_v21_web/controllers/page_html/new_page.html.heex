@@ -1,3 +1,24 @@
 
 
 <.title text="Available Quests" />
+
+<%= for quest <- @quests do %>
+
+<div class="mt-8 mx-8 font-base bg-white rounded-xl shadow-md">
+    <div class="mx-4 py-2">
+        <div class="flex mb-4">
+
+        <.circles width="8" border="2" />
+            <h1 class="ml-3 text-lg text-slate-700"><%= quest.name %></h1>
+        </div>
+        <p class="text-gray-600 text-xs">4 Badges ~<%= quest.quest_time %>mins</p>
+        <.location text={quest.address} url={quest.address_url} />
+        <p class="pl-1 text-[13px] italic text-slate-800 mt-2 border-l-2 border-violet-700">
+                <%= quest.description %>
+        </p>
+        <.reward color="lime"  text={quest.reward} />
+
+    </div>
+</div>
+
+<% end %>

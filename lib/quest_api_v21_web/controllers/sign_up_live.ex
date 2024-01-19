@@ -19,18 +19,22 @@ defmodule QuestApiV21Web.SignUpLive do
         form_valid: false,
         redirect_path: redirect_path,
         error_message: nil,
-        body_class: "bg-gradient-to-b from-purple-400 to-purple-800 h-screen"
+        body_class: "bg-gradient-to-b from-purple-400 to-brand h-screen bg-no-repeat"
         )}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
+
+    <div class="w-full flex justify-center mt-8">
+      <a href="/sign_in" class="text-white absolute">Have an account? - <span class="underline underline-offset-1">sign in</span></a>
+    </div>
+
+    <img class="mx-auto mt-8 h-32 w-auto" src="/images/WhiteQuestLogo.svg" alt="Quest Logo">
+
     <div class="flex flex-col items-center justify-content-center">
 
-      <div class="">
-        <img class="mx-auto mt-8 h-32 w-auto" src="/images/WhiteQuestLogo.svg" alt="Quest Logo">
-      </div>
 
     <!-- Form for user sign-up -->
     <%= form_for :user, "#", [
@@ -39,9 +43,9 @@ defmodule QuestApiV21Web.SignUpLive do
       phx_hook: "FormSubmit",
       data: [redirect_path: @redirect_path]], fn f -> %>
 
-      <div class="px-8 pt-6 mt-20 bg-white w-full rounded-xl shadow-md pb-8">
+      <div class="px-8 pb-8  pt-6 mt-8 bg-transparent max-w-sm w-80 rounded-xl shadow-md mx-auto">
 
-        <h1 class="text-center mb-6 text-2xl font-medium text-gray-600">
+        <h1 class="text-center mb-6 text-2xl font-medium text-white">
           Sign Up
         </h1>
 
@@ -53,23 +57,26 @@ defmodule QuestApiV21Web.SignUpLive do
 
       <div class="mb-4">
       <!-- Text input for name -->
-        <%= text_input f, :name, value: @user_params[:name], placeholder: "Name", class: "w-full p-2 border rounded", phx_change: :validate_name %>
+        <%= text_input f, :name, value: @user_params[:name], placeholder: "Name",
+            class: "w-full pl-4 p-3 border rounded-full", phx_change: :validate_name %>
       </div>
         <div class="mb-4">
           <!-- Text input for email -->
-          <%= email_input f, :email, value: @user_params[:email], placeholder: "Email", class: "w-full p-2 border rounded  #{if @email_valid, do: "focus:outline-none focus:ring-2 focus:ring-green-500 border-1 focus:border-green-500 border-green-500"}", phx_change: :validate_email %>
+          <%= email_input f, :email, value: @user_params[:email], placeholder: "Email",
+              class: "w-full pl-4 p-3 border rounded-full  #{if @email_valid, do: "focus:outline-none focus:ring-2 focus:ring-green-500 border-1 focus:border-green-500 border-green-500"}", phx_change: :validate_email %>
             <%= error_tag(@errors, :email) %>
         </div>
         <div class="mb-6">
           <!-- Text input for password -->
-          <%= password_input f, :password, value: @user_params[:password], placeholder: "Password", class: "w-full p-2 border rounded #{password_input_class(@password_strength)}", phx_hook: "PasswordStrength" %>
+          <%= password_input f, :password, value: @user_params[:password], placeholder: "Password",
+              class: "w-full pl-4 p-3 border rounded-full #{password_input_class(@password_strength)}", phx_hook: "PasswordStrength" %>
           <!-- Password Strength Indicator -->
           <div class="mt-2">
-            <div class="bg-gray-300 w-full rounded">
+            <div class="bg-gray-300 w-11/12 rounded-full ml-3">
               <%= raw password_strength_indicator(@password_strength) %>
             </div>
             <!-- Crack Time Indicator -->
-            <div class="mt-2 text-sm text-gray-600">
+            <div class="mt-2 text-sm text-gray-100 ml-4">
               Estimated crack time: <%= @crack_time %>
             </div>
 
@@ -79,11 +86,10 @@ defmodule QuestApiV21Web.SignUpLive do
 
         <div class="mt-3">
           <!-- Submit button -->
-          <%= submit "Sign Up", class: "w-full py-2 px-4 bg-brand text-white rounded #{if !@form_valid, do: "opacity-50 cursor-not-allowed bg-brand", else: ""}", disabled: !@form_valid %>
+          <%= submit "Sign Up",
+          class: "border-2 border-brand text-lg w-full py-2 px-4 bg-white font-medium text-slate-900 rounded-lg
+                  #{if !@form_valid, do: "opacity-50 cursor-not-allowed bg-brand ", else: "white-glow drop-shadow-2xl"}", disabled: !@form_valid %>
 
-        </div>
-        <div class="w-full mt-6 flex justify-center">
-          <a href="/sign_in" class="text-blue-500">Sign In</a>
         </div>
 
         </div>
@@ -93,8 +99,8 @@ defmodule QuestApiV21Web.SignUpLive do
   end
 
   defp password_input_class(strength) do
-    if strength == 100 do
-      "focus:outline-none focus:ring-2 focus:ring-green-500 border-1 focus:border-green-500 border-green-500"
+    if strength >= 50 do
+      "shadow-inner focus:outline-none focus:ring-2 focus:ring-green-500 border-1 focus:border-green-500 border-green-500"
     else
       ""
     end
@@ -141,6 +147,16 @@ defmodule QuestApiV21Web.SignUpLive do
     end
   end
 
+  @impl true
+  def handle_event("email-taken", %{"message" => message}, socket) do
+    # Put a flash message and re-render
+    {:noreply,
+      socket
+      |> put_flash(:error, message)
+      |> assign(:user_params, %{}) # Reset user_params or handle as needed
+    }
+  end
+
   defp extract_error_message(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, _opts} -> msg end)
     |> Enum.join(", ")
@@ -163,7 +179,7 @@ defmodule QuestApiV21Web.SignUpLive do
       75 -> "bg-yellow-500"  # Medium
       _ -> "bg-green-500"  # Strong
     end
-    ~s(<div class="#{class} h-3" style="width: #{strength}%;"></div>)
+    ~s(<div class="#{class} rounded-full h-3" style="width: #{strength}%;"></div>)
   end
 
   defp validate_email(email) do

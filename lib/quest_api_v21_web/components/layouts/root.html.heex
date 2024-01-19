@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="[scrollbar-gutter:stable]">
+<html lang="en" class= "[scrollbar-gutter:stable]  max-h-screen">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,10 +26,9 @@
         gtag('config', 'G-F7RQVMPZHX');
       </script>
     <% end %>
-
   </head>
   
-<body class={"antialiased " <> (assigns[:body_class] || "bg-white")}>
+<body class={"antialiased bg-brand " <> (assigns[:body_class] || "bg-white")}>
   <%= @inner_content %>
 </body>
 

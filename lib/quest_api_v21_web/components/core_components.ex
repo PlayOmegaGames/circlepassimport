@@ -31,14 +31,161 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def title(assigns) do
     ~H"""
-    <h1 class="text-2xl text-gray-600 font-medium my-2">
+    <h1 class="text-center text-2xl text-gray-600 font-medium my-4">
+
       <%= @text %>
     </h1>
 
     """
   end
 
+    @doc """
+  create a
+  """
 
+  def find_quests(assigns) do
+    ~H"""
+      <a class=" flex mb-20 bg-white rounded-lg w-10/12 mx-auto text-slate-600 shadow-md" href="/new">
+
+      <img class="w-10 h-10 ml-2 my-auto" src="/images/PurpleQuestLogo.svg" />
+
+      <p class="flex-grow text-xl text-center py-4">
+      Find a Quest
+      </p>
+
+      <span class="animate-pulse my-auto hero-chevron-right mr-2" />
+      </a>
+    """
+  end
+
+  @doc """
+    the stat bubbles
+  """
+  attr :text, :string, required: true
+  attr :color, :string, required: true
+  attr :number, :string, required: true
+
+
+  def stats_bubble(assigns) do
+    ~H"""
+    <div class="">
+      <div class={"mx-auto bg-#{@color}-200 border-2 shadow-lg border-#{@color}-500 flex justify-center items-center rounded-full h-14 w-14"}>
+          <p class="text-slate-700 font-semibold">
+            <%= @number %>
+          </p>
+      </div>
+
+      <p class="text-center mt-2 text-sm font-light text-slate-700">
+      <%= @text %>
+      </p>
+    </div>
+    """
+  end
+
+
+  @doc """
+  Google sign in approved button
+  """
+
+  def google(assigns) do
+    ~H"""
+    <a href="/auth/google">
+      <div class="gsi-material-button mx-auto">
+        <div class="gsi-material-button-state"></div>
+        <div class="gsi-material-button-content-wrapper">
+          <div class="gsi-material-button-icon">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: block;">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+              <path fill="none" d="M0 0h48v48H0z"></path>
+            </svg>
+          </div>
+          <span class="gsi-material-button-contents">Sign in with Google</span>
+          <span style="display: none;">Sign in with Google</span>
+        </div>
+      </div>
+    </a>
+    """
+  end
+
+  @doc """
+  renders the concentric circles
+
+  """
+
+  attr :width, :string, required: true
+  attr :border, :string, required: true
+  attr :glow, :boolean, default: false
+  def circles(assigns) do
+    ~H"""
+     <!-- Inner concentric circles -->
+      <div class={" #{calculate_glow(assigns)} h-#{@width} w-#{@width} bg-brand rounded-full
+      flex items-center justify-center relative"}>
+        <div class={"absolute rounded-full border-#{@border} border-white h-3/4 w-3/4"}></div>
+        <div class={"absolute rounded-full border-#{@border} border-white h-2/5 w-2/5"}></div>
+      </div>
+    """
+  end
+
+  defp calculate_glow(assigns) do
+    if assigns.glow, do: "glow-button mx-auto"
+  end
+
+  @doc"""
+  Renders reward pill
+
+  <.reward text="test" color="green" />
+
+  Then put that compiled style in the tailwindconfig file under safelist
+  as the styles will not be compiled
+  """
+  attr :text, :string, required: true
+  attr :color, :string, required: true
+
+  def reward(assigns) do
+    ~H"""
+    <div class={"inline-flex text-#{@color}-600 bg-#{@color}-100 rounded-lg py-1 my-4"}>
+
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="ml-2 my-auto w-4 h-full">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+        </svg>
+
+        <h1 class="text-[13px] my-auto mx-2"><%= @text %></h1>
+    </div>
+    """
+  end
+
+
+  @doc """
+  Renders a location with link to maps of that location
+
+  ## Examples
+
+  <.location text="Luna" url="https:/googlemaps.com"
+  """
+
+  attr :text, :string, required: true
+  attr :url, :string, default: nil
+
+  def location(assigns) do
+    ~H"""
+    <a class=" text-slate-500 my-2" href={@url}>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"
+          class="w-4 h-4 inline">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+      </svg>
+      <span class="my-auto text-xs">
+          <%= @text %>
+      </span>
+    </a>
+
+
+    """
+  end
 
 
 
@@ -713,16 +860,22 @@ defmodule QuestApiV21Web.CoreComponents do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
-  attr :name, :string, required: true
 
   ##Avatar
+  #<!-- font-sans, text-black, and bg-purple-500 can be changed to change the look of the avatar -->
+
+
+  attr :name, :string, required: true
+  attr :class, :string, default: nil
+
+
   def avatar(assigns) do
+    initials = String.split(assigns.name)
+               |> Enum.map(fn name -> String.first(name) end)
+               |> Enum.join("")
 
-    initialsList = String.split(assigns.name)
-
-
+    assigns = assign(assigns, :initials, initials)
     ~H"""
-
       <div
         class="inline-flex shadow-xl items-center justify-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full"
         style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;">
@@ -732,6 +885,7 @@ defmodule QuestApiV21Web.CoreComponents do
       </div>
     """
   end
+
 
   attr :buttonTitle, :string, required: true
   attr :contentID, :string, required: true

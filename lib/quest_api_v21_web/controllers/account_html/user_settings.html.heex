@@ -40,20 +40,17 @@
   
 </script>
 
-
-
-
-
-<div class="flex flex-col items-center">
-
-
-    <.avatar
-      name= {@account.name}
-    />
+  <div class="justify-center flex">
+    <.avatar name= {@account.name} />
+  </div>
 
     <!--User Email-->
-    <p class="text-center text-l mb-4"><%= @account.email %></p>
-  </div>
+    <p class="text-center text-xl mb-4"><%= @account.email %></p>
+
+
+
+<!--Change Password Menu Button -->
+
 <div class="relative mb-3">
 <.accordionButton
   buttonTitle = "Password"
@@ -96,6 +93,7 @@
   contentID = "EmailID"
   >
   <div id="accordionContentEmailID" class="cursor-pointer">
+
     <div class="flex items-center gap-4 px-4 grow">
       <form id="change-email-form" action="/update_email" method="post" class="px-8 pt-6 pb-8 mb-4">
         <%= csrf_input_tag("/user-settings") %>
@@ -139,6 +137,7 @@
   contentID = "UsernameID"
   >
   <div id="accordionContentUsernameID" class="cursor-pointer">
+
     <div class="flex items-center gap-4 px-4 grow">
       <form id="change-username-form" action="/update_profile" method="post" class="px-8 pt-6 pb-8 mb-4">
         <%= csrf_input_tag("/user-settings") %>

@@ -72,9 +72,8 @@ def create_account(attrs \\ %{}) do
         |> maybe_add_quests(attrs)
         |> Repo.insert()
 
-        existing_account ->
-          Logger.error("An account with this email already exists: #{email}")
-          {:error, "An account with this email already exists", existing_account}
+        _existing_account ->
+          {:error, :email_taken}
       end
   end
 
@@ -272,12 +271,28 @@ def create_account(attrs \\ %{}) do
 
   defp maybe_add_badges(changeset, attrs) do
     case Map.get(attrs, "badge_ids") do
-      nil -> changeset
+      nil ->
+        Logger.debug("No badge IDs provided in attributes")
+        changeset
+
       badge_ids ->
-        badges = Repo.all(from c in Badge, where: c.id in ^badge_ids)
-        Ecto.Changeset.put_assoc(changeset, :badges, badges)
+        Logger.debug("Badge IDs provided: #{inspect(badge_ids)}")
+        badges = Repo.all(from b in Badge, where: b.id in ^badge_ids)
+        Logger.debug("Badges found: #{inspect(badges)}")
+
+        current_stats = changeset.data.badges_stats
+        Logger.debug("Current badge stats: #{inspect(current_stats)}")
+        badges_count = length(badge_ids)
+
+        updated_changeset = Ecto.Changeset.put_assoc(changeset, :badges, badges)
+        updated_changeset_with_stats = Ecto.Changeset.put_change(updated_changeset, :badges_stats, current_stats + badges_count)
+
+        Logger.debug("Updated changeset: #{inspect(updated_changeset_with_stats)}")
+        updated_changeset_with_stats
     end
   end
+
+
 
   defp maybe_add_quests(changeset, attrs) do
     case Map.get(attrs, "quest_ids") do
@@ -302,6 +317,7 @@ def create_account(attrs \\ %{}) do
       updated_quests = [quest | account.quests]
       Ecto.Changeset.change(account)
       |> Ecto.Changeset.put_assoc(:quests, updated_quests)
+      |> Ecto.Changeset.put_change(:quests_stats, account.quests_stats + 1)
       |> Repo.update()
       |> case do
         {:ok, updated_account} -> {:ok, "Quest added to the account", updated_account}
@@ -312,7 +328,7 @@ def create_account(attrs \\ %{}) do
 
 
   def add_badge_to_user(user_id, badge) do
-    account = Repo.get!(Account, user_id) |> Repo.preload(:badges)
+    account = Repo.get!(Account, user_id) |> Repo.preload([:badges])
 
     if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
       Logger.info("Badge ID: #{badge.id} already associated with Account ID: #{account.id}")
@@ -320,14 +336,34 @@ def create_account(attrs \\ %{}) do
     else
       Logger.info("Adding Badge ID: #{badge.id} to Account ID: #{account.id}")
       updated_badges = [badge | account.badges]
-      Ecto.Changeset.change(account)
-      |> Ecto.Changeset.put_assoc(:badges, updated_badges)
-      |> Repo.update()
-      |> case do
-        {:ok, updated_account} -> {:ok, "Badge added to the account", updated_account}
-        {:error, reason} -> {:error, reason}
+
+      changeset =
+        account
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(:badges, updated_badges)
+        |> Ecto.Changeset.put_change(:badges_stats, account.badges_stats + 1)
+
+      with {:ok, updated_account} <- Repo.update(changeset) do
+        if quest_completed?(updated_account, badge.quest_id) do
+          updated_account = Ecto.Changeset.change(updated_account, rewards_stats: updated_account.rewards_stats + 1)
+          case Repo.update(updated_account) do
+            {:ok, updated_account} -> {:ok, "Badge and reward added to the account", updated_account}
+            {:error, reason} -> {:error, reason}
+          end
+        else
+          {:ok, "Badge added to the account", updated_account}
+        end
       end
     end
   end
+
+  defp quest_completed?(account, quest_id) do
+    quest_badges = Repo.all(from b in Badge, where: b.quest_id == ^quest_id, select: b.id)
+    Enum.all?(quest_badges, fn badge_id ->
+      Enum.any?(account.badges, fn b -> b.id == badge_id end)
+    end)
+  end
+
+
 
 end
