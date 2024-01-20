@@ -45,7 +45,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def find_quests(assigns) do
     ~H"""
-      <a class=" flex mb-20 bg-white rounded-lg w-10/12 mx-auto text-slate-600 shadow-md" href="/new">
+      <a class=" flex bg-white rounded-lg w-10/12 mx-auto text-slate-600 shadow-md" href="/new">
 
       <img class="w-10 h-10 ml-2 my-auto" src="/images/PurpleQuestLogo.svg" />
 
@@ -146,7 +146,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def reward(assigns) do
     ~H"""
-    <div class={"inline-flex text-#{@color}-600 bg-#{@color}-100 rounded-lg py-1 my-4"}>
+    <div class={"p-1 inline-flex text-#{@color}-600 bg-#{@color}-100 rounded-lg"}>
 
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
             class="ml-2 my-auto w-4 h-full">

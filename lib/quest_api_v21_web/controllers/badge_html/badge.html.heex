@@ -73,14 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
 <.title text="Active" />
 
   <div class="bg-white rounded-lg mb-12">
-  
+    <div class="hidden">
+      <%= quests_displayed = false %>
+    </div>
+    
     <%= for {quest_id, badges} <- @badges_by_quest do %>
       <% quest = Enum.find(@quests, fn q -> q.id == quest_id end) %>
       <% total_badges = length(badges) %>
       <% unlocked_badges = Enum.count(badges, fn badge -> badge.id in @user_badge_ids end) %>
       <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
       <%= if quest && unlocked_badges < total_badges do %>
-  
+        <%= quests_displayed = true %>
+    
         <div class="border-b-2">
           <div class="flex justify-between">
             <div class="flex-1 mx-4 text-start py-4">
@@ -118,35 +122,41 @@ document.addEventListener('DOMContentLoaded', () => {
               <div id={"accordionContent#{quest_id}"} 
                     style="  height: 0; overflow: hidden; transition: height 0.3s ease-out;">
               <!-- Reward -->
-
+                <div class="my-4">
                 <.reward color="slate" text={quest.reward}  />
+                </div>
               <!-- Badge display for each quest -->
-              <div class="grid grid-cols-3 gap-4 justify-items-between my-4">
-                <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
-                    <%= content_tag :div, class: 
-                      (if badge.id in @user_badge_ids, 
-                      do: "badge-container bg-white rounded-full cursor-pointer", 
-                      else: "opacity-50 grayscale"), 
-                      data: [
-                        redirect_url: badge.redirect_url, 
-                        badge_description: badge.badge_description,
-                        is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
-                      ] do %>
-                      <!-- Badge image and name -->
-                      <img src={badge.image} alt={badge.name} class="rounded-full">
-                      <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
-                    <% end %>
-                <% end %>
-              </div>
+                <div class="grid grid-cols-3 gap-4 justify-items-between my-4 mx-1">
+                  <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
+                      <%= content_tag :div, class: 
+                        (if badge.id in @user_badge_ids, 
+                        do: "badge-container bg-white rounded-full cursor-pointer", 
+                        else: "opacity-50 grayscale"), 
+                        data: [
+                          redirect_url: badge.redirect_url, 
+                          badge_description: badge.badge_description,
+                          is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
+                        ] do %>
+                        <!-- Badge image and name -->
+                        <img src={badge.image} alt={badge.name} class="rounded-full ring-2">
+                        <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
+                      <% end %>
+                  <% end %>
+                </div>
                 <!--Location-->
                 <.location text="8613 Glenwood Ave Suite 101, Raleigh, NC" url="https://www.google.com/maps/place/Animazed/@35.8846901,-78.7428717,17z/data=!4m6!3m5!1s0x89acf72748b90fd9:0xba0bf5af6a658a16!8m2!3d35.8846901!4d-78.7428717!16s%2Fg%2F11s8wmrx18?entry=ttu" />
               </div>
             </div>
           </div>
         </div>
-
       <% end %>
-    <% end %>  
+    <% end %> 
+
+      <%= if not @has_active_quests do %>
+        <div class="py-8">
+          <.find_quests />
+        </div>
+      <% end %>
   </div>
 
   <!--Completed Quests-->
@@ -205,8 +215,54 @@ document.addEventListener('DOMContentLoaded', () => {
               <!--Accordian content -->
               <div id={"accordionContent#{quest_id}"} style="  height: 0; overflow: hidden; transition: height 0.3s ease-out;">
               <!-- Reward -->
-              <.reward color="amber" text={quest.reward}  />
 
+              <%= if quest.redemption do %>
+                <!-- Link around Reward component if redemption field exists -->
+                <a class="flex my-4" href={quest.redemption} target="_blank" rel="noopener noreferrer">
+                  <.reward color="amber" text={quest.reward} />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+                    class="w-4 h-4 text-slate-700 my-auto">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                    </svg>
+                </a>
+              <% else %>
+                <!-- Reward component without link -->
+                <.reward color="amber" text={quest.reward} />
+              <% end %>
+              <!-- Display discount code if it exists -->
+              <%= if quest.discount_code do %>
+                <div class="flex items-center mb-8">
+                    <p class="text-sm text-slate-600">
+                        Your code: 
+                    </p>
+                    <button 
+                        onclick="copyToClipboard('#{quest.discount_code}', this)"
+                        class="ml-1 flex border-2 border-green-300 bg-green-100 px-2 py-1 text-green-600 text-xs rounded-full">
+                        <span class="text-sm text-green-600 mr-2"><%= quest.discount_code %></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 my-auto">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                        </svg>
+                    </button>
+                    <span id="copiedText" class="text-sm text-slate-400 ml-2 opacity-0 transition-opacity">Copied!</span>
+                </div>
+
+                <script>
+                    function copyToClipboard(text, buttonElement) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            // Show "Copied!" message
+                            const copiedTextElement = buttonElement.nextElementSibling;
+                            copiedTextElement.classList.remove('opacity-0');
+                            
+                            // Hide "Copied!" message after 2 seconds
+                            setTimeout(() => {
+                                copiedTextElement.classList.add('opacity-0');
+                            }, 1000);
+                        }).catch(err => {
+                            console.error('Failed to copy: ', err);
+                        });
+                    }
+                </script>
+              <% end %>
               <!-- Badge display for each quest -->
               <div class="grid grid-cols-3 gap-4 px-1 justify-items-between my-4">
                 <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
