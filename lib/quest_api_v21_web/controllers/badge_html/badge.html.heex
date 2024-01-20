@@ -74,12 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   <div class="bg-white rounded-lg mb-12">
 
-      <%= if not @has_active_quests do %>
-        <div class="py-8">
-          <.find_quests />
-        </div>
-      <% end %>
-    
+
     <%= for {quest_id, badges} <- @badges_by_quest do %>
       <% quest = Enum.find(@quests, fn q -> q.id == quest_id end) %>
       <% total_badges = length(badges) %>
@@ -153,8 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       <% end %>
     <% end %> 
-
-
+      <%= if !@has_active_quests do %>
+        <div class="py-8">
+          <.find_quests />
+        </div>
+      <% end %>
+    
   </div>
 
   <!--Completed Quests-->
