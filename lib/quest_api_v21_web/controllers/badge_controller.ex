@@ -4,6 +4,7 @@ defmodule QuestApiV21Web.BadgeController do
   alias QuestApiV21.Badges
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21Web.JWTUtility
+  alias QuestApiV21.Accounts
   alias QuestApiV21.Repo
   require Logger
   plug :put_layout, html: {QuestApiV21Web.Layouts, :logged_in}
@@ -50,32 +51,32 @@ defmodule QuestApiV21Web.BadgeController do
     current_user = conn.assigns[:current_user]
 
     if current_user do
+      # Preload badges and quests for the current user
       user_with_badges_and_quests = Repo.preload(current_user, [:badges, :quests])
 
+      # Get all badges and group them by quest ID
       all_badges = Repo.all(Badge)
       badges_by_quest = Enum.group_by(all_badges, &(&1.quest_id))
       user_badge_ids = Enum.map(user_with_badges_and_quests.badges, &(&1.id))
 
+      # Prepare badges data for rendering
       enhanced_badges_by_quest = Enum.map(badges_by_quest, fn {quest_id, badges} ->
         {quest_id, prepare_badge_data(badges, user_badge_ids)}
       end)
       |> Enum.into(%{})
 
-      # Determine if there are any active quests
-      has_active_quests = Enum.any?(enhanced_badges_by_quest, fn {_quest_id, badges} ->
-        total_badges = length(badges)
-        unlocked_badges = Enum.count(badges, fn badge -> badge.id in user_badge_ids end)
-        unlocked_badges < total_badges
-      end)
-
+      # Determine if there are any active quests using the context function
+      has_active_quests = Accounts.has_active_quests?(current_user.id)
+      IO.inspect(has_active_quests)
+      # Render the page with all necessary assigns
       conn
         |> assign(:body_class, "bg-light-blue")
         |> assign(:has_active_quests, has_active_quests)
         |> render("badge.html", %{
-        badges_by_quest: enhanced_badges_by_quest,
-        quests: user_with_badges_and_quests.quests,
-        user_badge_ids: user_badge_ids,
-        page_title: "Home"
+          badges_by_quest: enhanced_badges_by_quest,
+          quests: user_with_badges_and_quests.quests,
+          user_badge_ids: user_badge_ids,
+          page_title: "Home"
         })
     end
   end
