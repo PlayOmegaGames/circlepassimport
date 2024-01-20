@@ -205,8 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
               <!--Accordian content -->
               <div id={"accordionContent#{quest_id}"} style="  height: 0; overflow: hidden; transition: height 0.3s ease-out;">
               <!-- Reward -->
-              <.reward color="amber" text={quest.reward}  />
 
+              <%= if quest.redemption do %>
+                <!-- Link around Reward component if redemption field exists -->
+                <a class="flex" href={quest.redemption} target="_blank" rel="noopener noreferrer">
+                  <.reward color="amber" text={quest.reward} />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+                    class="w-4 h-4 text-slate-700 my-auto">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                    </svg>
+                </a>
+              <% else %>
+                <!-- Reward component without link -->
+                <.reward color="amber" text={quest.reward} />
+              <% end %>
               <!-- Badge display for each quest -->
               <div class="grid grid-cols-3 gap-4 px-1 justify-items-between my-4">
                 <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
