@@ -357,30 +357,20 @@ def create_account(attrs \\ %{}) do
     end
   end
 
-  defp quest_completed?(account, quest_id) do
-    quest_badges = Repo.all(from b in Badge, where: b.quest_id == ^quest_id, select: b.id)
-    Enum.all?(quest_badges, fn badge_id ->
-      Enum.any?(account.badges, fn b -> b.id == badge_id end)
-    end)
-  end
-
   def has_active_quests?(account_id) do
     account = Repo.get!(Account, account_id)
     user_with_badges_and_quests = Repo.preload(account, [:badges, :quests])
 
-    user_badge_ids = Enum.map(user_with_badges_and_quests.badges, &(&1.id))
-
-    # Filter the quests and badges to only those associated with the account
-    associated_quests = user_with_badges_and_quests.quests
-    associated_badges = Enum.filter(user_with_badges_and_quests.badges, fn badge ->
-      badge.quest_id in Enum.map(associated_quests, &(&1.id))
+    # Check if there's any quest that is not completed
+    Enum.any?(user_with_badges_and_quests.quests, fn quest ->
+      not quest_completed?(user_with_badges_and_quests, quest.id)
     end)
-    badges_by_quest = Enum.group_by(associated_badges, &(&1.quest_id))
+  end
 
-    Enum.any?(badges_by_quest, fn {_quest_id, badges} ->
-      total_badges = length(badges)
-      unlocked_badges = Enum.count(badges, fn badge -> badge.id in user_badge_ids end)
-      unlocked_badges < total_badges
+  defp quest_completed?(account, quest_id) do
+    quest_badges = Repo.all(from b in Badge, where: b.quest_id == ^quest_id, select: b.id)
+    Enum.all?(quest_badges, fn badge_id ->
+      Enum.any?(account.badges, fn b -> b.id == badge_id end)
     end)
   end
 
