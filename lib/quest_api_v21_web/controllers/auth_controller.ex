@@ -31,7 +31,7 @@
       end
     end
 
-    
+
 
     # API `change_email` function for password authentication
     def change_email(conn, %{"account" => %{"email" => email, "password" => password}}) do
@@ -44,7 +44,7 @@
           with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, %{"email" => email, "password" => password}) do
             updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
             conn
-            |> put_flash(:info, "Account updated successfully.")
+            #|> put_flash(:info, "Account updated successfully.")
             |> render("user_settings.html",
               account: updated_account,
               email: email,
@@ -66,7 +66,7 @@
           redirect_path = get_session(conn, :redirect_path) || "/user-settings"
           Logger.debug("Email change successful. Redirecting to: #{redirect_path}")
           conn
-          |> put_flash(:info, "Successfully changed email.")
+          #|> put_flash(:info, "Successfully changed email.")
           |> put_session(:user_id, account.id)
           |> put_session(:user_email, account.email)
           |> log_session_info()
@@ -126,7 +126,7 @@
           redirect_path = get_session(conn, :redirect_path) || "/badges"
           Logger.debug("Sign in successful. Redirecting to: #{redirect_path}")
           conn
-          |> put_flash(:info, "Successfully signed in.")
+          #|> put_flash(:info, "Successfully signed in.")
           |> put_session(:user_id, account.id)
           |> put_session(:user_email, account.email)
           |> log_session_info()
@@ -152,7 +152,7 @@
           redirect_path = get_session(conn, :redirect_path) || "/badges"
           Logger.debug("Sign in successful. Redirecting to: #{redirect_path}")
           conn
-          |> put_flash(:info, "Successfully signed in.")
+          #|> put_flash(:info, "Successfully signed in.")
           |> put_session(:user_id, account.id)
           |> put_session(:user_email, account.email)
           |> log_session_info()
@@ -179,7 +179,7 @@
           Logger.debug("Sign up successful. Redirecting to: #{redirect_path}")
 
           conn
-          |> put_flash(:info, "Account successfully created.")
+          #|> put_flash(:info, "Account successfully created.")
           |> put_session(:user_id, account.id) # Ensure this matches the key expected by AuthPlug
           |> put_session(:redirect_path, nil) # Clear the stored redirect path
           |> redirect(to: redirect_path)
@@ -224,7 +224,7 @@
 
           # Set a flash message to indicate successful account creation.
           conn
-          |> put_flash(:info, "Account created and signed in with Google.")
+          #|> put_flash(:info, "Account created and signed in with Google.")
 
           # Store user ID in the session for the newly created account.
           |> put_session(:user_id, account.id)
@@ -238,7 +238,7 @@
 
           # Set a flash message to indicate successful sign-in.
           conn
-          |> put_flash(:info, "Successfully signed in with Google.")
+          #|> put_flash(:info, "Successfully signed in with Google.")
 
           # Store user ID in the session for the existing account.
           |> put_session(:user_id, account.id)

@@ -73,9 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
 <.title text="Active" />
 
   <div class="bg-white rounded-lg mb-12">
-    <div class="hidden">
-      <%= quests_displayed = false %>
-    </div>
+
+      <%= if not @has_active_quests do %>
+        <div class="py-8">
+          <.find_quests />
+        </div>
+      <% end %>
     
     <%= for {quest_id, badges} <- @badges_by_quest do %>
       <% quest = Enum.find(@quests, fn q -> q.id == quest_id end) %>
@@ -83,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
       <% unlocked_badges = Enum.count(badges, fn badge -> badge.id in @user_badge_ids end) %>
       <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
       <%= if quest && unlocked_badges < total_badges do %>
-        <%= quests_displayed = true %>
     
         <div class="border-b-2">
           <div class="flex justify-between">
@@ -152,11 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <% end %>
     <% end %> 
 
-      <%= if not @has_active_quests do %>
-        <div class="py-8">
-          <.find_quests />
-        </div>
-      <% end %>
+
   </div>
 
   <!--Completed Quests-->
