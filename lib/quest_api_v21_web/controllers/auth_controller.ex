@@ -215,22 +215,20 @@
       user_info = auth.info
       email = user_info.email
       name = user_info.name
-      Logger.debug("Extracted email: #{inspect(email)}")
+
 
       case Accounts.handle_oauth_login(email, name) do
         {:ok, account, :new} ->
           # If a new account is created, handle accordingly.
           Logger.info("New OAuth account created for #{email}")
 
-          # Set a flash message to indicate successful account creation.
+          redirect_path = get_session(conn, :redirect_path) || "/badges"
           conn
           #|> put_flash(:info, "Account created and signed in with Google.")
 
-          # Store user ID in the session for the newly created account.
-          |> put_session(:user_id, account.id)
-
-          # Redirect to the badges page after successful sign-up.
-          |> redirect(to: "/badges")
+          |> put_session(:user_id, account.id) # Ensure this matches the key expected by AuthPlug
+          |> put_session(:redirect_path, nil) # Clear the stored redirect path
+          |> redirect(to: redirect_path)
 
         {:ok, account, :existing} ->
           # If an existing account is found, handle the login.
