@@ -13,9 +13,14 @@ defmodule QuestApiV21Web.CollectorQuestStartNil do
     case compare_quests(collector, current_account) do
       [] ->
         Logger.info("No quests in common, rendering no_quest.html")
-        render(conn, "no_quest.html", collector: collector, quests: collector.quests)
 
-      common_quests_ids ->
+        # Filter the quests to include only those where public is true
+        conn
+          |> put_layout(html: :logged_in)
+          |> render("no_quest.html", %{page_title: "No Quest", collector: collector,  quests: collector.quests})
+
+
+      _common_quests_ids ->
         case compare_badges(collector) do
           [] ->
             Logger.info("No common badges, rendering a suitable template")

@@ -72,9 +72,8 @@ def create_account(attrs \\ %{}) do
         |> maybe_add_quests(attrs)
         |> Repo.insert()
 
-        existing_account ->
-          Logger.error("An account with this email already exists: #{email}")
-          {:error, "An account with this email already exists", existing_account}
+        _existing_account ->
+          {:error, :email_taken}
       end
   end
 
@@ -210,6 +209,10 @@ def create_account(attrs \\ %{}) do
     Repo.get_by(Account, email: email)
   end
 
+  def find_account_by_id(id) do
+    Repo.get_by(Account, id: id)
+  end
+
     @doc """
   Finds an account by a unique identifier.
 
@@ -242,6 +245,19 @@ def create_account(attrs \\ %{}) do
 
   def authenticate_user(email, password) do
     case find_account_by_email(email) do
+      nil -> {:error, :not_found}
+      account ->
+        if Bcrypt.verify_pass(password, account.hashed_password) do
+          {:ok, account}
+        else
+          {:error, :unauthorized}
+        end
+    end
+  end
+
+  def authenticate_user_by_id(_email, id, password) do
+    IO.inspect("Authenticate User Function")
+    case find_account_by_id(id) do
       nil -> {:error, :not_found}
       account ->
         if Bcrypt.verify_pass(password, account.hashed_password) do
