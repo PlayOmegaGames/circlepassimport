@@ -122,10 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
               <div id={"accordionContent#{quest_id}"} 
                     style="  height: 0; overflow: hidden; transition: height 0.3s ease-out;">
               <!-- Reward -->
-
+                <div class="my-4">
                 <.reward color="slate" text={quest.reward}  />
+                </div>
               <!-- Badge display for each quest -->
-                <div class="grid grid-cols-3 gap-4 justify-items-between my-4">
+                <div class="grid grid-cols-3 gap-4 justify-items-between my-4 mx-1">
                   <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
                       <%= content_tag :div, class: 
                         (if badge.id in @user_badge_ids, 
@@ -137,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
                         ] do %>
                         <!-- Badge image and name -->
-                        <img src={badge.image} alt={badge.name} class="rounded-full">
+                        <img src={badge.image} alt={badge.name} class="rounded-full ring-2">
                         <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
                       <% end %>
                   <% end %>
