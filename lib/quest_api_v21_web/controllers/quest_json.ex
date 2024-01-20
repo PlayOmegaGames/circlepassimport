@@ -47,6 +47,7 @@ defmodule QuestApiV21Web.QuestJSON do
       address: quest.address,
       organization_id: quest.organization_id,
       description: quest.description,
+      discount_code: quest.discount_code,
       badges: badges_data(badges),
       collectors: collectors_data(collectors),
       #accounts: accounts_data(accounts)

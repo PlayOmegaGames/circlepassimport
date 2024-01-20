@@ -11,6 +11,7 @@ defmodule QuestApiV21.Quests.Quest do
     field :name, :string
     field :quest_type, :string, default: "Treasure Hunt"
     field :redemption, :string
+    field :discount_code, :string
     field :reward, :string
     field :scans, :integer, default: 0
     field :start_date, :date
@@ -32,7 +33,7 @@ defmodule QuestApiV21.Quests.Quest do
   @doc false
   def changeset(quest, attrs) do
     quest
-    |> cast(attrs, [:name, :scans, :quest_type, :reward, :redemption, :start_date, :description, :end_date, :address, :organization_id])
+    |> cast(attrs, [:name, :discount_code, :scans, :quest_type, :reward, :redemption, :start_date, :description, :end_date, :address, :organization_id])
     |> validate_required([:name, :reward, :address, :organization_id])
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
     |> cast_assoc(:collectors, with: &QuestApiV21.Collectors.Collector.changeset/2)
