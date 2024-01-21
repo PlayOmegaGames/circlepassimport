@@ -70,4 +70,9 @@ defmodule QuestApiV21Web.PageController do
     |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen bg-no-repeat")
     |> render("auth_splash.html")
   end
+
+  def redirect_to_badges(conn, _params) do
+    conn
+    |> redirect(to: "/badges")
+  end
 end

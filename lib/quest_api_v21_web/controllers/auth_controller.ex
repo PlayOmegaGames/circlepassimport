@@ -235,14 +235,14 @@
           Logger.info("Existing user found for #{email}, signing in")
 
           # Set a flash message to indicate successful sign-in.
+          redirect_path = get_session(conn, :redirect_path) || "/badges"
           conn
           #|> put_flash(:info, "Successfully signed in with Google.")
 
-          # Store user ID in the session for the existing account.
-          |> put_session(:user_id, account.id)
-
-          # Redirect to the badges page after successful sign-in.
-          |> redirect(to: "/badges")
+          #|> put_flash(:info, "Account created and signed in with Google.")
+          |> put_session(:user_id, account.id) # Ensure this matches the key expected by AuthPlug
+          |> put_session(:redirect_path, nil) # Clear the stored redirect path
+          |> redirect(to: redirect_path)
 
         {:error, reason} ->
           # If there is an error during account retrieval or creation, handle it.

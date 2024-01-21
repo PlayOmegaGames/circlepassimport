@@ -80,6 +80,7 @@ defmodule QuestApiV21Web.Router do
 
     #badge page
     get "/badges", BadgeController, :show_badge
+    get "/badge/eb759dbc-a43b-4208-b157-103b95110831", PageController, :redirect_to_badges
     get "/badge/:id", CollectorController, :show_collector
     get "/new", PageController, :new_page
     get "/profile", PageController, :profile
