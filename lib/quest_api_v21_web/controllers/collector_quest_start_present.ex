@@ -8,14 +8,14 @@ defmodule QuestApiV21Web.CollectorQuestStartPresent do
           atom() | %{:badges => any(), :quest_start => any(), optional(any()) => any()}
         ) :: Plug.Conn.t()
     def handle_present_quest_start(conn, collector) do
-      IO.inspect(collector, label: "handle_present_quest_start data")
+      #IO.inspect(collector, label: "handle_present_quest_start data")
       account = Accounts.get_account!(conn.assigns.current_user.id)
       quest = Quests.get_quest(collector.quest_start)
       badge = find_associated_badge(collector, quest)
 
       if badge do
         if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
-          Logger.info("User already has badge ID: #{badge.id}. No action taken.")
+          #Logger.info("User already has badge ID: #{badge.id}. No action taken.")
         else
           add_badge_and_create_scan(account, badge)
           add_quest_to_user(account, quest)
@@ -31,7 +31,7 @@ defmodule QuestApiV21Web.CollectorQuestStartPresent do
           render(conn, "collector.html", collector: collector, badge: badge)
         end
       else
-        Logger.error("No badge found associated with both Collector ID: #{collector.id} and Quest ID: #{quest.id}")
+        #Logger.error("No badge found associated with both Collector ID: #{collector.id} and Quest ID: #{quest.id}")
         # Handle the error case, possibly by rendering a different template or redirecting
       end
     end
