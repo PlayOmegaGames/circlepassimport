@@ -23,7 +23,8 @@ module.exports = {
 
   safelist: [
     'text-slate-600', 'bg-slate-100', 'text-lime-600', 'bg-lime-100', 'text-amber-600', 'bg-amber-100',  
-    'bg-violet-200', 'border-violet-500', `bg-lime-200`, `border-lime-500`, `bg-amber-200`, 'border-amber-500'
+    'bg-violet-200', 'border-violet-500', `bg-lime-200`, `border-lime-500`, `bg-amber-200`, 'border-amber-500',
+    'bg-white', 'rounded-full', 'cursor-pointer', 'opacity-50 grayscale',
   ],
   plugins: [
     require("@tailwindcss/forms"),

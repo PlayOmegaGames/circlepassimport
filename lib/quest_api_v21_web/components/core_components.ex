@@ -39,6 +39,40 @@ defmodule QuestApiV21Web.CoreComponents do
     """
   end
 
+
+  @doc """
+    List badges
+  """
+  attr :quest_id, :string, required: true
+  attr :quest_name, :string, required: true
+  attr :quest_progress, :string, required: true
+  attr :unlocked_badges, :string, required: true
+  attr :total_badges, :string, required: true
+  attr :quest_reward, :string, required: true
+  attr :badge_image, :string, required: true
+  attr :badge_name, :string, required: true
+
+  def badge_accordion(assigns) do
+    ~H"""
+      Test
+    """
+  end
+
+  @doc """
+  rendering badges component
+  """
+
+  def badge_component(assigns) do
+    ~H"""
+    <div class={assigns[:class]} data-redirect-url={assigns[:redirect_url]} data-badge-description={assigns[:badge_description]} data-is-user-badge={assigns[:is_user_badge]}>
+      <!-- Badge image and name -->
+        <img src={assigns[:image]} alt={assigns[:name]} class="rounded-full ring-2">
+        <p class="text-center mt-2 text-xs text-slate-700"><%= assigns[:name] %></p>
+    </div>
+    """
+  end
+
+
     @doc """
   create a
   """
