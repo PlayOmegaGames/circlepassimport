@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <!-- Active Quests -->
 <.title text="Active" />
 
-  <div class="bg-white rounded-lg mb-12">
+  <div class="bg-light-blue rounded-xl mb-12 soft-shadow-outer shadow-black">
 
 
     <%= for {quest_id, badges} <- @badges_by_quest do %>
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
       <%= if quest && unlocked_badges < total_badges do %>
     
-        <div class="border-b-2">
+        <div class="">
           <div class="flex justify-between">
             <div class="flex-1 mx-4 text-start py-4">
             <div
@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             <!-- Progress bar for quest completion -->
      
-              <div class="text-center progress-bar bg-gray-300 rounded-full overflow-hidden h-6 my-2">
-                <div class="progress" style={"width: #{progress_percentage}%"}></div>
+              <div class="text-center soft-shadow-inner progress-bar bg-gray-300 rounded-full h-6 my-2 overflow-hidden">
+                <div class="rounded-full progress" style={"width: #{progress_percentage}%"}></div>
               </div>
 
               <p class="text-gray-600 text-xs"><%= unlocked_badges %> of <%= total_badges %> badges collected</p>

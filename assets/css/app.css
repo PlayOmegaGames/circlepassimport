@@ -3,6 +3,10 @@
 @import "tailwindcss/utilities";
 
 
+:root {
+  --brand-color: #6A43B8;
+}
+
 
 /* White sign up pages */
 .white-glow {
@@ -91,10 +95,11 @@ input:focus {
 }
 
 .progress {
-  background-color: #6A43B8; /* Replace with your brand color */
+  background: rgb(106,67,184);
+  background: linear-gradient(90deg, rgba(106,67,184,1) 37%, rgba(0,168,230,1) 100%);
   height: 100%;
   transition: width 0.3s;
-  
+
 }
 
 /* Normal progress bar without glow */
@@ -123,8 +128,15 @@ main {
 }
 
 .bg-light-blue {
-  background-color: #F4F5FF;
+  background-color: #f2f7ff;
 }
+
+
+
+.soft-shadow-inner {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.39);
+}
+
 
 /* Accordian styles */
 
@@ -159,6 +171,55 @@ main {
   overflow: hidden;
   transition: height 0.3s ease-out;
 }
+
+
+
+/* Neomorphism sandbox */
+.frosted-glass {
+
+
+  background: linear-gradient(
+    to top, 
+    rgb(255, 255, 255) 10%,  /* More solid white at the bottom */
+    rgba(255, 255, 255, 0.4) 100%   /* More transparent white at the top */
+  );
+  /* Apply the frosted glass effect */
+  backdrop-filter: blur(6px); /* Adjust the blur value as needed */
+}
+
+
+.frosted-glass-b {
+
+
+  background: linear-gradient(
+    to bottom, 
+    rgb(242, 247, 255) 10%,  /* More solid white at the bottom */
+    rgba(255, 255, 255, 0.4) 100%   /* More transparent white at the top */
+  );
+  /* Apply the frosted glass effect */
+  backdrop-filter: blur(4px); /* Adjust the blur value as needed */
+}
+
+
+.glowing-purple-text {
+  
+  color: var(--brand-color);
+  text-shadow: 0px 0px 8px rgb(111, 0, 255);
+}
+
+
+
+
+.soft-shadow-outer {
+  background: #f2f7ff;
+  box-shadow:  7px 7px 14px #ced2d9,
+               -7px -7px 14px #ffffff;
+  }
+
+
+  
+
+
 
 
 
