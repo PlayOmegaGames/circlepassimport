@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <!-- Active Quests -->
 <.title text="Active" />
 
-  <div class="bg-light-blue rounded-xl mb-12 soft-shadow-outer shadow-black">
+  <div class="bg-light-blue rounded-xl mb-12 soft-shadow-outer">
 
 
     <%= for {quest_id, badges} <- @badges_by_quest do %>
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   <!--Completed Quests-->
   <.title text="Completed" />
-  <div class="bg-white rounded-lg">
+  <div class=" soft-shadow-outer bg-light-blue rounded-xl mb-12">
   <%= for {quest_id, badges} <- @badges_by_quest do %>
     <% quest = Enum.find(@quests, fn q -> q.id == quest_id end) %>
     <% total_badges = length(badges) %>

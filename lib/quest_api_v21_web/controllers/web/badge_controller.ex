@@ -30,7 +30,7 @@ defmodule QuestApiV21Web.Web.BadgeController do
       # Render the page with all necessary assigns
       conn
         |> put_layout(html: :logged_in)
-        |> assign(:body_class, "bg-light-blue")
+        |> assign(:body_class, "bg-light-neo")
         |> assign(:has_active_quests, has_active_quests)
         |> render("badge.html", %{
           badges_by_quest: enhanced_badges_by_quest,

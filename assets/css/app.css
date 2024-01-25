@@ -181,7 +181,7 @@ main {
   background: linear-gradient(
     to top, 
     rgb(255, 255, 255) 10%,  /* More solid white at the bottom */
-    rgba(255, 255, 255, 0.4) 100%   /* More transparent white at the top */
+    rgba(255, 255, 255, 0.63) 100%   /* More transparent white at the top */
   );
   /* Apply the frosted glass effect */
   backdrop-filter: blur(6px); /* Adjust the blur value as needed */
@@ -194,18 +194,12 @@ main {
   background: linear-gradient(
     to bottom, 
     rgb(242, 247, 255) 10%,  /* More solid white at the bottom */
-    rgba(255, 255, 255, 0.4) 100%   /* More transparent white at the top */
+    rgba(255, 255, 255, 0.527) 100%   /* More transparent white at the top */
   );
   /* Apply the frosted glass effect */
   backdrop-filter: blur(4px); /* Adjust the blur value as needed */
 }
 
-
-.glowing-purple-text {
-  
-  color: var(--brand-color);
-  text-shadow: 0px 0px 8px rgb(111, 0, 255);
-}
 
 
 
@@ -216,8 +210,13 @@ main {
                -7px -7px 14px #ffffff;
   }
 
-
+  .bg-light-neo {
+    background-color: #f2f7ff;
+  }
   
+  .nav-glow {
+    box-shadow:  0px 0px 14px #2374ff,
+  }
 
 
 
