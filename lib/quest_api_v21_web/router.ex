@@ -76,7 +76,7 @@ defmodule QuestApiV21Web.Router do
     get "/user-settings", AccountController, :user_settings
     post "/update_profile", AccountController, :update_from_web
     post "/update_email", AccountController, :change_email
-    #post "/update_email", AuthController, :change_email
+    post "/change_password", AccountController, :change_password
 
     #badge page
     get "/badges", BadgeController, :show_badge
