@@ -96,7 +96,7 @@ input:focus {
 
 .progress {
   background: rgb(106,67,184);
-  background: linear-gradient(90deg, rgba(106,67,184,1) 37%, rgba(0,168,230,1) 100%);
+  background: linear-gradient(90deg, rgba(106,67,184,1) 50%, rgba(0,168,230,1) 100%);
   height: 100%;
   transition: width 0.3s;
 
@@ -109,12 +109,13 @@ input:focus {
 
 /* Glow effect for completed progress bar container */
 .completed-progress-bar-glow {
-  box-shadow: 0 0 8px 3px #cab0ff; /* Strong glow for completion */
   transition: all 1s ease;
 }
 
 .completed-progress {
-  background-color: #6A43B8; 
+  background: rgb(189,156,255);
+  background: linear-gradient(180deg, rgba(189,156,255,1) 0%, rgba(106,67,184,1) 80%, rgba(189,156,255,1) 100%);
+  
   height: 100%;
   transition: width 0.3s;
 }
@@ -214,11 +215,32 @@ main {
     background-color: #f2f7ff;
   }
   
-  .nav-glow {
-    box-shadow:  0px 0px 14px #2374ff,
-  }
+.badge-neo {
+  box-shadow:  2px 2px 10px #bebebe,
+             -2px -2px 10px #ffffff;
+}
+
+.gradient-b-p {
+  padding: 3px;
+}
 
 
+.neo-border {
+  position: relative;
+  background: white; /* Background color of the content area */
+  padding: 10px; /* Adjust as needed */
+}
+
+.neo-border::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(to right, red, blue); /* Gradient colors */
+  z-index: -1;
+  padding: 3px; /* Adjust border size */
+  box-sizing: border-box;
+}
 
 
 
