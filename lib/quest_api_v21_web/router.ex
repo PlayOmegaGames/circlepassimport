@@ -44,11 +44,11 @@ defmodule QuestApiV21Web.Router do
   scope "/", QuestApiV21Web do
     pipe_through :browser
 
-    get "/", PageController, :home
+    get "/", Web.PageController, :home
 
 
     #sign up pages for testing
-    get "/sign_in", PageController, :sign_in
+    get "/sign_in", Web.PageController, :sign_in
     post "/sign_in", AuthController, :html_sign_in
     #post "/sign_up", AuthController, :html_sign_up
 
@@ -60,8 +60,8 @@ defmodule QuestApiV21Web.Router do
     live "/test_event", TestLive
 
     #policy of boring
-    get "/privacy-policy", PageController, :privacy
-    get "/auth_splash", PageController, :auth_splash
+    get "/privacy-policy", Web.PageController, :privacy
+    get "/auth_splash", Web.PageController, :auth_splash
 
 
 
@@ -79,11 +79,11 @@ defmodule QuestApiV21Web.Router do
     #post "/update_email", AuthController, :change_email
 
     #badge page
-    get "/badges", BadgeController, :show_badge
-    get "/badge/eb759dbc-a43b-4208-b157-103b95110831", PageController, :redirect_to_badges
+    get "/badges", Web.BadgeController, :show_badge
+    get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
     get "/badge/:id", CollectorController, :show_collector
-    get "/new", PageController, :new_page
-    get "/profile", PageController, :profile
+    get "/new", Web.PageController, :new_page
+    get "/profile", Web.PageController, :profile
 
 
   end

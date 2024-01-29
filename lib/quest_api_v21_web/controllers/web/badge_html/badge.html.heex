@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <!-- Active Quests -->
 <.title text="Active" />
 
-  <div class="bg-white rounded-lg mb-12">
+  <div class="bg-light-blue rounded-xl mb-12 soft-shadow-outer">
 
 
     <%= for {quest_id, badges} <- @badges_by_quest do %>
@@ -82,37 +82,29 @@ document.addEventListener('DOMContentLoaded', () => {
       <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
       <%= if quest && unlocked_badges < total_badges do %>
     
-        <div class="border-b-2">
+        <div class="">
           <div class="flex justify-between">
             <div class="flex-1 mx-4 text-start py-4">
             <div
               onclick={"toggleAccordion('accordionContent#{quest_id}', 'accordianChevron#{quest_id}')"}
               class="cursor-pointer">
               <div class="flex justify-between text-slate-700 mb-4">
-                <h2 class="text-xl my-auto font-base"><%= quest.name %></h2>
-
-                <div class="w-10 h-10 bg-slate-100 rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
-                      class="w-6 m-auto text-slate-500 h-full">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
-                  </svg>
-                </div>
+                <h2 class="text-md my-auto font-base"><%= quest.name %></h2>
                 
                 <!-- Chevron -->
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" 
-                    class="my-auto w-8 h-8 justify-self-end text-slate-600 transition-transform	"
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" 
+                    class="my-auto w-6 h-6 justify-self-end text-slate-600 transition-transform	"
                     id={"accordianChevron#{quest_id}"}
                     >
                   <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                 </svg>
               </div>
-            <!-- Progress bar for quest completion -->
-     
-              <div class="text-center progress-bar bg-gray-300 rounded-full overflow-hidden h-6 my-2">
-                <div class="progress" style={"width: #{progress_percentage}%"}></div>
+              <!-- Progress bar for quest completion -->
+              <div class="text-center soft-shadow-inner progress-bar bg-gray-300 rounded-full h-3 my-2 overflow-hidden">
+                <div class="rounded-full progress" style={"width: #{progress_percentage}%"}></div>
               </div>
 
-              <p class="text-gray-600 text-xs"><%= unlocked_badges %> of <%= total_badges %> badges collected</p>
+              <p class="text-gray-600 text-xs"><%= unlocked_badges %> of <%= total_badges %> badges</p>
 
               </div>
               <!--Accordian content -->
@@ -125,19 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
               <!-- Badge display for each quest -->
                 <div class="grid grid-cols-3 gap-4 justify-items-between my-4 mx-1">
                   <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
-                      <%= content_tag :div, class: 
-                        (if badge.id in @user_badge_ids, 
-                        do: "badge-container bg-white rounded-full cursor-pointer", 
-                        else: "opacity-50 grayscale"), 
-                        data: [
-                          redirect_url: badge.redirect_url, 
+                    <%= badge_component(
+                          class: if(badge.id in @user_badge_ids, do: "badge-container rounded-full cursor-pointer", else: "opacity-50 grayscale"),
+                          redirect_url: badge.redirect_url,
                           badge_description: badge.badge_description,
-                          is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
-                        ] do %>
-                        <!-- Badge image and name -->
-                        <img src={badge.image} alt={badge.name} class="rounded-full ring-2">
-                        <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
-                      <% end %>
+                          is_user_badge: (badge.id in @user_badge_ids) |> to_string(), # Convert boolean to string
+                          image: badge.image,
+                          name: badge.name
+                        ) %>
                   <% end %>
                 </div>
                 <!--Location-->
@@ -158,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   <!--Completed Quests-->
   <.title text="Completed" />
-  <div class="bg-white rounded-lg">
+  <div class=" soft-shadow-outer bg-light-blue rounded-xl mb-12">
   <%= for {quest_id, badges} <- @badges_by_quest do %>
     <% quest = Enum.find(@quests, fn q -> q.id == quest_id end) %>
     <% total_badges = length(badges) %>
@@ -166,48 +153,43 @@ document.addEventListener('DOMContentLoaded', () => {
     <% progress_percentage = if total_badges > 0, do: Integer.to_string(floor(unlocked_badges / total_badges * 100)), else: "0" %>
     <%= if quest && unlocked_badges == total_badges do %>
 
-          <div class="border-b-2">
+          <div class="">
           <div class="flex justify-between">
             <div class="flex-1 mx-4 text-start py-4">
             <div
               onclick={"toggleAccordion('accordionContent#{quest_id}', 'accordianChevron#{quest_id}')"}
               class="cursor-pointer">
               <div class="flex justify-between text-slate-700 mb-4">
-                <h2 class="text-xl my-auto font-base"><%= quest.name %></h2>
-                  <div class="w-10 h-10 bg-amber-100 rounded-full">
+                <h2 class="text-md my-auto font-base"><%= quest.name %></h2>
+                  <div class="w-10 h-10 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
-                        class="w-6 m-auto text-amber-500 h-full">
+                        class="w-4 m-auto text-slate-500 h-full">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
                     </svg>
                   </div>
 
-                <!-- Chevron -->
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" 
-                    class="my-auto w-8 h-8 justify-self-end text-slate-600 transition-transform	"
-                    id={"accordianChevron#{quest_id}"}
-                    >
-                    
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </div>
-            <!-- Progress bar for quest completion -->
-              <div class="text-center progress-bar completed-progress-bar-glow bg-gray-300 rounded-full overflow-hidden h-6 my-2">
-                <div class="completed-progress" style={"width: #{progress_percentage}%"}>
-                  <div class="text-slate-100">
-                    <%= quest.reward %>
-                  </div>
-                </div>
-              </div>
-   
 
-              <p class="text-gray-600 text-xs">
+              <!-- Progress bar for quest completion -->
+              <div>
+                <div class="text-center progress-bar completed-progress-bar-glow rounded-full overflow-hidden h-3 my-2">
+                  <div class="completed-progress" style={"width: #{progress_percentage}%"}></div>
+                </div>
+                <p class="text-gray-600 text-xs">
                 <span>Quest Completed</span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
                   class="w-4 h-4 inline">
                   <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                 </svg>
               </p>
- 
+              </div>
+                <!-- Chevron -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" 
+                    class="my-auto w-6 h-6 justify-self-end text-slate-600 transition-transform	"
+                    id={"accordianChevron#{quest_id}"}>
+                    
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </div>
               </div>
               <!--Accordian content -->
               <div id={"accordionContent#{quest_id}"} style="  height: 0; overflow: hidden; transition: height 0.3s ease-out;">
@@ -218,13 +200,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <a class="flex my-4" href={quest.redemption} target="_blank" rel="noopener noreferrer">
                   <.reward color="amber" text={quest.reward} />
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
-                    class="w-4 h-4 text-slate-700 my-auto">
+                      class="w-4 h-4 text-slate-700 my-auto ml-2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                     </svg>
                 </a>
               <% else %>
                 <!-- Reward component without link -->
-                <.reward color="amber" text={quest.reward} />
+                <.reward color="slate" text={quest.reward} />
               <% end %>
               <!-- Display discount code if it exists -->
               <%= if quest.discount_code do %>
@@ -263,19 +245,14 @@ document.addEventListener('DOMContentLoaded', () => {
               <!-- Badge display for each quest -->
               <div class="grid grid-cols-3 gap-4 px-1 justify-items-between my-4">
                 <%= for badge <- Map.get(@badges_by_quest, quest.id, []) do %>
-                    <%= content_tag :div, class: 
-                      (if badge.id in @user_badge_ids, 
-                      do: "badge-container bg-white rounded-full cursor-pointer", 
-                      else: "opacity-50 grayscale"), 
-                      data: [
-                        redirect_url: badge.redirect_url, 
-                        badge_description: badge.badge_description,
-                        is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
-                      ] do %>
-                      <!-- Badge image and name -->
-                      <img src={badge.image} alt={badge.name} class="rounded-full ring-2">
-                      <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
-                    <% end %>
+                    <%= badge_component(
+                          class: if(badge.id in @user_badge_ids, do: "badge-container rounded-full cursor-pointer", else: "opacity-50 grayscale"),
+                          redirect_url: badge.redirect_url,
+                          badge_description: badge.badge_description,
+                          is_user_badge: (badge.id in @user_badge_ids) |> to_string(), # Convert boolean to string
+                          image: badge.image,
+                          name: badge.name
+                        ) %>
                 <% end %>
               </div>
                 <!--Location-->
