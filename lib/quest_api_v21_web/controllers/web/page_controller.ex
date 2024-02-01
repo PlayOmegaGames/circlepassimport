@@ -48,6 +48,10 @@ defmodule QuestApiV21Web.Web.PageController do
     })
   end
 
+  def camera(conn, _params) do
+    render(conn, "camera.html")
+  end
+
   defp calculate_badge_count(quests) do
     Enum.map(quests, fn quest ->
       badge_count = if Enum.empty?(quest.badges), do: "?", else: Enum.count(quest.badges)

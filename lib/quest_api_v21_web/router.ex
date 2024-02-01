@@ -85,6 +85,9 @@ defmodule QuestApiV21Web.Router do
     get "/new", Web.PageController, :new_page
     get "/profile", Web.PageController, :profile
 
+    #camera page
+    get "/camera", Web.PageController, :camera
+
 
   end
 
