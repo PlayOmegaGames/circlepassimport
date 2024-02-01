@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.PageHTML do
+defmodule QuestApiV21Web.Web.PageHTML do
   use QuestApiV21Web, :html
   import Phoenix.HTML.Tag
 
