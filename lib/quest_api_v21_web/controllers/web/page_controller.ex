@@ -43,13 +43,16 @@ defmodule QuestApiV21Web.Web.PageController do
     |> assign(:body_class, "bg-light-blue")
     |> render("new_page.html", %{
       page_title: "New",
+      camera: true,
       available_quests: available_quests_with_badge_count,
       future_quests: future_quests_with_badge_count
     })
   end
 
   def camera(conn, _params) do
-    render(conn, "camera.html")
+    conn
+    |> put_layout(html: :logged_in)
+    |> render("camera.html", %{page_title: "Camera", camera: false})
   end
 
   defp calculate_badge_count(quests) do
@@ -66,7 +69,7 @@ defmodule QuestApiV21Web.Web.PageController do
     conn
     |> put_layout(html: :logged_in)
     |> assign(:body_class, "bg-white")
-    |> render("profile.html", %{page_title: "Profile", account: account})
+    |> render("profile.html", %{page_title: "Profile", account: account, camera: true})
   end
 
   def auth_splash(conn, _params) do

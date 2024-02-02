@@ -10,7 +10,7 @@ defmodule QuestApiV21Web.Web.AccountController do
   def user_settings(conn, _params) do
     account = conn.assigns[:current_user]
     #IO.inspect(conn)
-    render(conn, "user_settings.html", page_title: "Home", account: account)
+    render(conn, "user_settings.html", page_title: "Home", account: account, camera: true)
   end
 
   def update_from_web(conn, %{"id" => id, "account" => account_params}) do
@@ -21,14 +21,13 @@ defmodule QuestApiV21Web.Web.AccountController do
       updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
       conn
       |> put_flash(:info, "Account updated successfully.")
-      |> render("user_settings.html", account: updated_account, page_title: "Home"
-      )
+      |> render("user_settings.html", account: updated_account, page_title: "Home", camera: true)
     else
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
         |> put_flash(:error, "Error updating account.")
-        |> render("user_settings.html", account: account, changeset: changeset, page_title: "Home")
+        |> render("user_settings.html", account: account, changeset: changeset, page_title: "Home", camera: true)
     end
   end
 
@@ -48,7 +47,8 @@ defmodule QuestApiV21Web.Web.AccountController do
           |> render("user_settings.html",
             account: updated_account,
             email: email,
-            page_title: "Home"
+            page_title: "Home",
+            camera: true
             )
         else
           {:error, changeset} ->
@@ -59,7 +59,8 @@ defmodule QuestApiV21Web.Web.AccountController do
               account: account,
               changeset: changeset,
               email: email,
-              page_title: "Home"
+              page_title: "Home",
+              camera: true
               )
           end
 
@@ -102,7 +103,8 @@ defmodule QuestApiV21Web.Web.AccountController do
           |> render("user_settings.html",
             account: updated_account,
             password: account.password,
-            page_title: "User Settings"
+            page_title: "User Settings",
+            camera: true
             )
         else
           {:error, changeset} ->
@@ -113,7 +115,8 @@ defmodule QuestApiV21Web.Web.AccountController do
               account: account,
               changeset: changeset,
               password: account.password,
-              page_title: "User Settings"
+              page_title: "User Settings",
+              camera: true
               )
           end
 

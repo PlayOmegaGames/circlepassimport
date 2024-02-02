@@ -66,30 +66,6 @@ defmodule QuestApiV21Web.Router do
   end
 
 
-  #end-user authenticated
-  scope "/", QuestApiV21Web do
-    pipe_through :authenticated  # Use both browser and authenticated pipelines
-
-    #user settings page
-    get "/user-settings", AccountController, :user_settings
-    post "/update_profile", AccountController, :update_from_web
-    post "/update_email", AccountController, :change_email
-    post "/change_password", AccountController, :change_password
-
-    #badge page
-    get "/badges", Web.BadgeController, :show_badge
-    get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
-    get "/badge/:id", CollectorController, :show_collector
-    get "/new", Web.PageController, :new_page
-    get "/profile", Web.PageController, :profile
-
-    #camera page
-    get "/camera", Web.PageController, :camera
-
-
-
-
-
   #authentication for API
   scope "/api", QuestApiV21Web do
     pipe_through :api
@@ -149,6 +125,8 @@ defmodule QuestApiV21Web.Router do
     get "/new", Web.PageController, :new_page
     get "/profile", Web.PageController, :profile
 
+    #camera page
+    get "/camera", Web.PageController, :camera
 
   end
 

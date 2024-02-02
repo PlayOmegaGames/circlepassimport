@@ -30,11 +30,20 @@
     
   </div>
 </header>
+
+<!-- Content -->
 <main class="md:px-8 py-8 sm:px-6 lg:px-8 min-h-screen">
   <div class="mx-auto max-w-2xl">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
-  
+
+    <!--Camera Button-->
+      <%= if @camera do %>
+        <a href="/camera" class="fixed bottom-24 right-4 bg-brand w-[45px] h-[45px] rounded-full">
+          <span class="hero-qr-code w-8 h-8 mt-1.5 ml-1.5 text-white"></span>
+        </a>
+      <% end %>
+
 
     <!-- Bottom Nav -->
     <div class="frosted-glass fixed w-full bottom-0 h-16 border-t-2 border-slate-300">
