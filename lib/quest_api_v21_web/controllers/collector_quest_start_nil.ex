@@ -17,7 +17,7 @@ defmodule QuestApiV21Web.CollectorQuestStartNil do
         # Filter the quests to include only those where public is true
         conn
           |> put_layout(html: :logged_in)
-          |> render("no_quest.html", %{page_title: "No Quest", collector: collector,  quests: collector.quests})
+          |> render("no_quest.html", %{page_title: "No Quest", camera: true, collector: collector,  quests: collector.quests})
 
 
       _common_quests_ids ->

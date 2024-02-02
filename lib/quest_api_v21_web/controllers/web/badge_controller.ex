@@ -36,7 +36,8 @@ defmodule QuestApiV21Web.Web.BadgeController do
           badges_by_quest: enhanced_badges_by_quest,
           quests: user_with_badges_and_quests.quests,
           user_badge_ids: user_badge_ids,
-          page_title: "Home"
+          page_title: "Home",
+          camera: true
         })
     end
   end
