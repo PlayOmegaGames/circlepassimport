@@ -48,7 +48,8 @@
             |> render("user_settings.html",
               account: updated_account,
               email: email,
-              page_title: "Home"
+              page_title: "Home",
+              camera: false
               )
           else
             {:error, changeset} ->
@@ -59,7 +60,8 @@
                 account: account,
                 changeset: changeset,
                 email: email,
-                page_title: "Home"
+                page_title: "Home",
+                camera: false
                 )
             end
 
