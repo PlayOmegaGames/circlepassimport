@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.CollectorQuestStartNil do
+defmodule QuestApiV21Web.Web.CollectorQuestStartNil do
   use QuestApiV21Web, :controller
   alias QuestApiV21.{Accounts, Badges}
   require Logger
