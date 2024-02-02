@@ -63,8 +63,6 @@ defmodule QuestApiV21Web.Router do
     get "/privacy-policy", Web.PageController, :privacy
     get "/auth_splash", Web.PageController, :auth_splash
 
-
-
   end
 
 
@@ -89,23 +87,8 @@ defmodule QuestApiV21Web.Router do
     get "/camera", Web.PageController, :camera
 
 
-  end
 
-  #for SSO Oauth
-  scope "/auth", QuestApiV21Web do
-    pipe_through :browser
 
-    get "/:provider", AuthController, :request
-    get "/:provider/callback", AuthController, :callback
-  end
-
-  scope "/api", QuestApiV21Web do
-    pipe_through :authenticated_host_api
-
-    resources "/organizations", OrganizationController
-    resources "/scans", ScanController
-    resources "/hosts", HostController, except: [:index]
-  end
 
   #authentication for API
   scope "/api", QuestApiV21Web do
@@ -126,6 +109,14 @@ defmodule QuestApiV21Web.Router do
 
   end
 
+  scope "/api", QuestApiV21Web do
+    pipe_through :authenticated_host_api
+
+    resources "/organizations", OrganizationController
+    resources "/scans", ScanController
+    resources "/hosts", HostController, except: [:index]
+  end
+
   #End user authenticated scope fpr api
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
@@ -134,8 +125,41 @@ defmodule QuestApiV21Web.Router do
     resources "/collectors", CollectorController
     resources "/accounts", AccountController, except: [:index]
     get "/*path", ErrorController, :not_found
+  end
+
+
+# |=============================|
+# |         WEB ROUTES          |
+# |=============================|
+
+  #end-user authenticated
+  scope "/", QuestApiV21Web do
+    pipe_through :authenticated  # Use both browser and authenticated pipelines
+
+    #user settings page
+    get "/user-settings", Web.AccountController, :user_settings
+    post "/update_profile", Web.AccountController, :update_from_web
+    post "/update_email", Web.AccountController, :change_email
+    post "/change_password", Web.AccountController, :change_password
+
+    #badge page
+    get "/badges", Web.BadgeController, :show_badge
+    get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
+    get "/badge/:id", CollectorController, :show_collector
+    get "/new", Web.PageController, :new_page
+    get "/profile", Web.PageController, :profile
+
 
   end
+
+  #for SSO Oauth
+  scope "/auth", QuestApiV21Web do
+    pipe_through :browser
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+  end
+
 
 
   # Other scopes may use custom stacks.
