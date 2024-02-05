@@ -1,105 +1,47 @@
 defmodule QuestApiV21Web.Web.CollectorQuestStartNil do
   use QuestApiV21Web, :controller
-  alias QuestApiV21.{Accounts, Badges}
+  alias QuestApiV21.Badges
+  alias QuestApiV21.Quests
+  alias QuestApiV21.Collectors.Collector
   require Logger
 
-  @spec handle_nil_quest_start(
-          atom() | %{:assigns => nil | maybe_improper_list() | map(), optional(any()) => any()},
-          atom() | %{:id => any(), :quests => any(), optional(any()) => any()}
-        ) :: :ok | Plug.Conn.t()
-  def handle_nil_quest_start(conn, collector) do
+
+  def handle_nil_quest_start(conn, %Collector{id: collector_id} = collector) do
     current_account = conn.assigns[:current_user]
+    account_id = current_account.id
 
-    case compare_quests(collector, current_account) do
-      [] ->
-        Logger.info("No quests in common, rendering no_quest.html")
-
-        # Filter the quests to include only those where public is true
+    # Use Quests context to compare quests
+    with {:ok, common_quests_ids} <- Quests.compare_collector_account_quests(collector_id, account_id) do
+      if Enum.empty?(common_quests_ids) do
+        Logger.debug("No quests in common, rendering no_quest.html")
         conn
-          |> put_layout(html: :logged_in)
-          |> render("no_quest.html", %{page_title: "No Quest", camera: true, collector: collector,  quests: collector.quests})
-
-
-      _common_quests_ids ->
-        case compare_badges(collector) do
-          [] ->
+        |> put_layout(html: :logged_in)
+        |> render("no_quest.html", %{page_title: "No Quest", camera: true, collector: collector, quests: collector.quests})
+      else
+        # Use Badges context to compare badges
+        with {:ok, common_badges} <- Badges.compare_collector_badges_to_quest_badges(collector_id) do
+          if Enum.empty?(common_badges) do
             Logger.info("No common badges, rendering a suitable template")
             # Render appropriate template or take action
-
-          common_badges ->
-            add_common_badges_to_account(common_badges, current_account)
-            common_badge = common_badges |> List.first()
-            badge = if common_badge, do: Badges.get_badge!(common_badge), else: nil
-            render(conn, "collector.html", collector: collector, badge: badge)
-        end
-    end
-  end
-
-  defp compare_quests(collector, account) do
-    collector_quests_ids = Enum.map(collector.quests, & &1.id)
-    account_quests_ids = Enum.map(account.quests, & &1.id)
-
-    common_quests_ids = collector_quests_ids |> Enum.filter(&Enum.member?(account_quests_ids, &1))
-    log_common_quests(common_quests_ids, collector.id, account.id)
-    common_quests_ids
-  end
-
-  defp log_common_quests([], collector_id, account_id) do
-    Logger.info("Collector #{collector_id} and account #{account_id} have no quests in common")
-  end
-
-  defp log_common_quests(common_quests, collector_id, account_id) do
-    Logger.info("Collector #{collector_id} and account #{account_id} share quests: #{inspect(common_quests)}")
-  end
-
-  defp compare_badges(collector) do
-    collector_badges = Enum.map(collector.badges, & &1.id)
-    Logger.debug("Collector badges: #{inspect(collector_badges)}")
-    quest_badges = collector.quests |> Enum.flat_map(& &1.badges) |> Enum.map(& &1.id)
-    Logger.debug("Quest badges: #{inspect(quest_badges)}")
-    common_badges = Enum.filter(quest_badges, &Enum.member?(collector_badges, &1))
-    Logger.debug("Common badges: #{inspect(common_badges)}")
-    log_common_badges(common_badges, collector.id)
-    common_badges
-  end
-
-  defp log_common_badges([], collector_id) do
-    Logger.info("Collector #{collector_id} has no common badges between its quests and direct associations")
-  end
-
-  defp log_common_badges(common_badges, collector_id) do
-    Logger.info("Collector #{collector_id} shares badges between its quests and direct associations: #{inspect(common_badges)}")
-  end
-
-  defp add_common_badges_to_account(common_badge_ids, account) do
-    Logger.debug("Adding common badges to account. Badge IDs: #{inspect(common_badge_ids)}")
-    if is_list(common_badge_ids) and not Enum.empty?(common_badge_ids) do
-      Logger.debug("Fetching badges from database.")
-      common_badges = Badges.list_badges_by_ids(common_badge_ids)
-      Logger.debug("Fetched badges: #{inspect(common_badges)}")
-      Enum.each(common_badges, fn badge ->
-        if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
-          Logger.info("Badge #{badge.id} already associated with account #{account.id}. No action taken.")
+          else
+            # Update the following call to match your context function for adding badges to an account
+            QuestApiV21.Accounts.add_badges_to_account(account_id, common_badges)
+            |> handle_add_badges_result(conn, collector, common_badges)
+          end
         else
-          add_badge_to_account_and_log(account, badge)
-        end
-      end)
+          {:error, :collector_not_found} ->
+            Logger.error("Collector not found.")
+          end
+      end
     else
-      Logger.error("Invalid badge IDs: #{inspect(common_badge_ids)}")
-    end
+      {:error, :entity_not_found} ->
+        Logger.error("Collector not found.")
+      end
   end
 
-  defp add_badge_to_account_and_log(account, badge) do
-    Logger.debug("Attempting to add badge #{inspect(badge)} to account #{account.id}")
-    case Accounts.add_badge_to_user(account.id, badge) do
-      {:ok, msg, _updated_account} ->
-        Logger.info("Badge #{badge.id} added to account #{account.id}: #{msg}")
-        # Call to create scan record for the badge
-        QuestApiV21.Scans.create_scan_for_badge_account(badge.id, account.id)
-      {:error, reason} ->
-        Logger.error("Failed to add badge #{badge.id} to account #{account.id}: #{reason}")
-    end
+  defp handle_add_badges_result({:ok, _new_badges}, conn, collector, common_badges) do
+    common_badge = common_badges |> List.first()
+    badge = if common_badge, do: Badges.get_badge!(common_badge), else: nil
+    render(conn, "collector.html", collector: collector, badge: badge)
   end
-
-
 end

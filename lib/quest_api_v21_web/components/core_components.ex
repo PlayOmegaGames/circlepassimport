@@ -904,19 +904,19 @@ defmodule QuestApiV21Web.CoreComponents do
 
 
   def avatar(assigns) do
-
     initialsList = String.split(assigns.name)
+    assigns = assign(assigns, :initialsList, initialsList)
     ~H"""
-
       <div
         class="inline-flex shadow-xl items-center justify-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full"
         style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;">
-        <%=Enum.map(initialsList, fn name ->
-        String.first(name)
-        end)%>
+        <%= for name <- @initialsList do %>
+          <%= String.first(name) %>
+        <% end %>
       </div>
     """
   end
+
 
 
 

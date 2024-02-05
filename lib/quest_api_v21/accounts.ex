@@ -256,6 +256,37 @@ def create_account(attrs \\ %{}) do
     Account.changeset(account, attrs)
   end
 
+
+# In QuestApiV21.Accounts context
+
+  def add_badges_to_account(account_id, badge_ids) when is_list(badge_ids) do
+    account = Repo.get!(Account, account_id) |> Repo.preload(:badges)
+
+    # Calculate which badge IDs are new to avoid duplications
+    existing_badge_ids = Enum.map(account.badges, & &1.id)
+    new_badge_ids = badge_ids -- existing_badge_ids
+
+    if Enum.empty?(new_badge_ids) do
+      {:ok, []} # No new badges to add
+    else
+      new_badges = Repo.all(from b in Badge, where: b.id in ^new_badge_ids)
+
+      # Ensure there are badges to add; otherwise, it might indicate invalid badge IDs were provided
+      if Enum.empty?(new_badges) do
+        {:error, :no_badges_found}
+      else
+        updated_badges = account.badges ++ new_badges
+        case Repo.update(Ecto.Changeset.change(account) |> Ecto.Changeset.put_assoc(:badges, updated_badges)) do
+          {:ok, _account} -> {:ok, new_badges}
+          {:error, changeset} -> {:error, changeset}
+        end
+      end
+    end
+  rescue
+    # Handle cases where the account doesn't exist
+    Ecto.NoResultsError -> {:error, :account_not_found}
+  end
+
   def authenticate_user(email, password) do
     case find_account_by_email(email) do
       nil -> {:error, :not_found}
@@ -274,19 +305,6 @@ def create_account(attrs \\ %{}) do
       nil -> {:error, :not_found}
       account ->
         if Bcrypt.verify_pass(password, account.hashed_password) do
-          {:ok, account}
-        else
-          {:error, :unauthorized}
-        end
-    end
-  end
-
-  def authenticate_user_by_password(_email, id, current_password) do
-    IO.inspect("Authenticate User Function")
-    case find_account_by_id(id) do
-      nil -> {:error, :not_found}
-      account ->
-        if Bcrypt.verify_pass(current_password, account.hashed_password) do
           {:ok, account}
         else
           {:error, :unauthorized}
