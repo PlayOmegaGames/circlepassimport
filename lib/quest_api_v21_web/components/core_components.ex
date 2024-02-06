@@ -64,7 +64,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def badge_component(assigns) do
     ~H"""
-    <div class={assigns[:class]} data-redirect-url={assigns[:redirect_url]} data-badge-description={assigns[:badge_description]} data-is-user-badge={assigns[:is_user_badge]}>
+    <div class={assigns[:class]} data-redirect-url={assigns[:badge_details_image]} data-badge-description={assigns[:badge_description]} data-is-user-badge={assigns[:is_user_badge]}>
       <!-- Badge image and name -->
         <img src={assigns[:image]} alt={assigns[:name]} class="rounded-full badge-neo">
         <p class="text-center mt-2 text-xs text-slate-700"><%= assigns[:name] %></p>

@@ -30,7 +30,7 @@
     
     <div class="image-container rounded-md mx-auto">
       <img 
-        src={"#{@badge.image}"} 
+        src={"#{@badge.badge_image}"} 
         alt= {"#{@badge.name}"}
         loading="lazy"
         class="mx-auto rounded-md badge-image shadow-2xl">
@@ -90,7 +90,7 @@
 
         <!-- Modal Content -->
         <div class="mt-2">
-          <img src={ @badge.redirect_url } alt="Badge Image" class="w-full rounded">
+          <img src={ @badge.badge_details_image } alt="Badge Image" class="w-full rounded">
         </div>
       </div>
     </div>
