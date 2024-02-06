@@ -1,5 +1,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  // Existing code to handle modal functionality
   const modal = document.getElementById('modal');
   const modalBackdrop = document.getElementById('modalBackdrop');
   const closeModalButton = document.getElementById('closeModalButton');
@@ -16,17 +17,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Additional code for drag-to-close functionality
+  let startY; // Variable to store the start Y position of the touch
+
+  modal.addEventListener('touchstart', function(e) {
+    startY = e.touches[0].clientY; // Capture the starting Y position
+  }, {passive: true});
+
+  modal.addEventListener('touchmove', function(e) {
+    const moveY = e.touches[0].clientY; // Get the current Y position of the touch
+    const distance = moveY - startY; // Calculate the distance moved
+
+    if (distance > 100) { // Check if the distance moved is greater than 100px
+      toggleModal(); // Close the modal if true
+    }
+  }, {passive: true});
+
   function openBadgeModal(badge) {
-    // Only proceed if the badge is associated with the user's account
-    if (badge.dataset.isUserBadge === "true" && badge.dataset.redirectUrl) {
+    // Check if the clicked badge is associated with the user's account and has a redirect URL.
+    // The `dataset.isUserBadge` property checks if the badge belongs to the user (it should be "true"),
+    // and `dataset.badgeDetailsImage` ensures there is an image to or display in the modal.
+    if (badge.dataset.isUserBadge === "true" && badge.dataset.badgeDetailsImage) {
+      // Get the modal image element where the badge image will be displayed.
       const modalImage = document.getElementById('modalImage');
+      // Get the modal title element where the badge description will be displayed.
       const modalTitle = document.getElementById('modalTitle');
-      modalImage.src = badge.dataset.redirectUrl;
+      
+      // Set the source of the modal image to the URL provided in the badge's dataset.
+      // This changes the image in the modal to reflect the specific badge clicked.
+      modalImage.src = badge.dataset.badgeDetailsImage;
+      
+      // Set the content of the modal title to the description provided in the badge's dataset.
+      // This changes the title in the modal to reflect the specific badge's description.
       modalTitle.textContent = badge.dataset.badgeDescription;
+      
+      // Call `toggleModal` function to show or hide the modal.
+      // If the modal was hidden, it becomes visible showing the badge details;
+      // if it was already visible, this would hide it, but this use-case seems primarily to show the modal.
       toggleModal();
     }
   }
-
 
   document.querySelectorAll('.badge-container').forEach(badge => {
     badge.addEventListener('click', () => openBadgeModal(badge));
@@ -130,12 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         do: "badge-container bg-white rounded-full cursor-pointer", 
                         else: "opacity-50 grayscale"), 
                         data: [
-                          redirect_url: badge.redirect_url, 
+                          badge_details_image: badge.badge_details_image, 
                           badge_description: badge.badge_description,
                           is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
                         ] do %>
                         <!-- Badge image and name -->
-                        <img src={badge.image} alt={badge.name} class="rounded-full ring-2">
+                        <img src={badge.badge_image} alt={badge.name} class="rounded-full ring-2">
                         <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
                       <% end %>
                   <% end %>
@@ -268,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       do: "badge-container bg-white rounded-full cursor-pointer", 
                       else: "opacity-50 grayscale"), 
                       data: [
-                        redirect_url: badge.redirect_url, 
+                        badge_details_image: badge.badge_details_image, 
                         badge_description: badge.badge_description,
                         is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
                       ] do %>
@@ -295,23 +325,25 @@ document.addEventListener('DOMContentLoaded', () => {
 <div id="modalBackdrop" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
 <!-- Modal -->
-<div id="modal" class="hidden fixed inset-0 flex items-center justify-center">
-  <div class="modal-content bg-white p-6 rounded shadow-lg max-w-xs mx-auto">
-    <!-- Close Button -->
-    <div class="flex justify-end mb-4">
-      <p id="modalTitle" class="text-normal mr-12 text-gray-700 text-lg"></p>
-      <button id="closeModalButton" class="text-gray-400 hover:text-gray-500">
-        <span class="sr-only">Close</span>
-        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-  
+<div id="modal" class="hidden">
+  <div class="fixed flex inset-0 items-center justify-center">
+    <div class="modal-content bg-white p-6 rounded shadow-lg max-w-xs mx-auto">
+      <!-- Close Button -->
+      <div class="flex justify-end mb-4">
+        <p id="modalTitle" class="text-normal mr-12 text-gray-700 text-lg"></p>
+        <button id="closeModalButton" class="text-gray-400 hover:text-gray-500">
+          <span class="sr-only">Close</span>
+          <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    
 
-    <!-- Modal Content -->
-    <div class="mt-2">
-      <img id="modalImage" src="" alt="Badge Image" class="w-full rounded">
+      <!-- Modal Content -->
+      <div class="mt-2">
+        <img id="modalImage" src="" alt="Badge Image" class="w-full rounded">
+      </div>
     </div>
   </div>
 </div>

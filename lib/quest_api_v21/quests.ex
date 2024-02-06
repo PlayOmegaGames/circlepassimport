@@ -10,6 +10,7 @@
     alias QuestApiV21.Accounts.Account
     alias QuestApiV21.Repo
 
+
     @doc """
     Returns the list of quests.
 
@@ -140,6 +141,30 @@
       OrganizationScopedQueries.delete_item(Quest, quest.id, organization_ids)
     end
 
+
+    # Compare quests between a collector and an account
+    # @param collector_id The ID of the collector
+    # @param account_id The ID of the account
+    # @return Returns a list of common quest IDs between the collector and the account
+    def compare_collector_account_quests(collector_id, account_id) do
+      # Assuming you have functions to get collector and account that preload quests
+      collector = Repo.get!(Collector, collector_id) |> Repo.preload(:quests)
+      account = Repo.get!(Account, account_id) |> Repo.preload(:quests)
+
+      # Extract quest IDs from both entities
+      collector_quests_ids = Enum.map(collector.quests, & &1.id)
+      account_quests_ids = Enum.map(account.quests, & &1.id)
+
+      # Find common IDs
+      common_quests_ids = Enum.filter(collector_quests_ids, &Enum.member?(account_quests_ids, &1))
+
+      {:ok, common_quests_ids}
+    rescue
+      Ecto.NoResultsError ->
+        {:error, :entity_not_found}
+    end
+
+    
     @doc """
     Returns an `%Ecto.Changeset{}` for tracking quest changes.
 

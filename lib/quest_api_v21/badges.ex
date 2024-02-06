@@ -6,6 +6,7 @@ defmodule QuestApiV21.Badges do
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
   alias QuestApiV21.Accounts.Account
+  alias QuestApiV21.Collector
 
   alias QuestApiV21.Badges.Badge
 
@@ -124,6 +125,43 @@ end
   def change_badge(%Badge{} = badge, attrs \\ %{}) do
     Badge.changeset(badge, attrs)
   end
+
+
+  @doc """
+
+    Compares badges in the quest vs badges the user has collected
+
+  """
+
+  # Compares badges associated with a collector to those associated with the collector's quests.
+  # @param collector_id The ID of the collector whose badges are to be compared.
+  # @return Returns {:ok, common_badges} if common badges are found, or {:error, :collector_not_found} if the collector does not exist.
+  def compare_collector_badges_to_quest_badges(collector_id) do
+    # Fetch the collector from the database and preload its badges and quests' badges.
+    # This ensures we have all necessary data loaded for comparison.
+    collector = Repo.get!(Collector, collector_id) |> Repo.preload([badges: [], quests: :badges])
+
+    # Extract the IDs of all badges directly associated with the collector.
+    # This step prepares the list of badge IDs for the comparison.
+    collector_badges = Enum.map(collector.badges, fn badge -> badge.id end)
+
+    # Extract the IDs of all badges associated with the collector's quests.
+    # This involves flattening the list since each quest may have multiple badges.
+    quest_badges = Enum.flat_map(collector.quests, fn quest -> Enum.map(quest.badges, fn badge -> badge.id end) end)
+
+    # Find the common badge IDs between the collector's badges and the quests' badges.
+    # This comparison identifies which badges are shared across the collector's direct badges and their quests.
+    common_badges = Enum.filter(quest_badges, fn badge_id -> Enum.member?(collector_badges, badge_id) end)
+
+    # Return the list of common badge IDs wrapped in an {:ok, _} tuple to indicate success.
+    {:ok, common_badges}
+  rescue
+    # Catch the case where the collector does not exist (e.g., an invalid collector_id was provided).
+    # In such cases, return an error tuple indicating the collector was not found.
+    Ecto.NoResultsError ->
+      {:error, :collector_not_found}
+  end
+
 
   defp maybe_add_accounts(changeset, attrs) do
     case Map.get(attrs, "accounts_id") do

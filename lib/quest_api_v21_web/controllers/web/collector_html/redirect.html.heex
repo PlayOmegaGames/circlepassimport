@@ -48,7 +48,7 @@
 <div class="flex justify-center mb-8">
       <!-- Pill button for badge description -->
   
-  <a href={@badge.unauthorized_url} class="white-glow border-2 bg-white border-gray-300 text-gray-700 rounded-full py-2 px-4 flex">
+  <a href={@badge.badge_details_image} class="white-glow border-2 bg-white border-gray-300 text-gray-700 rounded-full py-2 px-4 flex">
     <span>
         Take me there now!
     </span>
@@ -71,7 +71,7 @@
   let countdown = 2; // Set the initial countdown time here
   const countdownElement = document.getElementById('countdownTimer');
   const domainNameElement = document.getElementById('domainName');
-  const unauthorizedUrl = "<%= @badge.unauthorized_url %>";
+  const unauthorizedUrl = "<%= @badge.badge_details_image %>";
 
   // Extract domain name from URL and remove 'www.'
   const url = new URL(unauthorizedUrl);
