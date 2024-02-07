@@ -83,6 +83,10 @@ defmodule QuestApiV21Web.Router do
     #token exchange for partner
     post "/token_exchange", AuthController, :token_exchange
 
+    #Bubble retardation
+    post "/bubble_wrap", BubbleController, :bubble_wrap
+
+
   end
 
   scope "/api", QuestApiV21Web do

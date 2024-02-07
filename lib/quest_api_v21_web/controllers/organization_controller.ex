@@ -49,7 +49,7 @@ defmodule QuestApiV21Web.OrganizationController do
 
   def show(conn, %{"id" => id}) do
     organization = Organizations.get_organization!(id)
-    |> QuestApiV21.Repo.preload([:hosts, :quests, :badges, :collectors])
+    |> QuestApiV21.Repo.preload([:hosts])
 
     render(conn, :show, organization: organization)
   end

@@ -59,7 +59,8 @@ defmodule QuestApiV21.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.15"},
-      {:bcrypt_elixir, "~> 2.0"}
+      {:bcrypt_elixir, "~> 2.0"},
+      {:httpoison, "~> 2.0"}
     ]
   end
 
