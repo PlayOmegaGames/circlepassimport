@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         is_user_badge: (badge.id in @user_badge_ids) |> to_string()  # Convert boolean to string
                       ] do %>
                       <!-- Badge image and name -->
-                      <img src={badge.image} alt={badge.name} class="rounded-full ring-2">
+                      <img src={badge.badge_image} alt={badge.name} class="rounded-full ring-2">
                       <p class="text-center mt-2 text-xs text-slate-700"><%= badge.name %></p>
                     <% end %>
                 <% end %>
