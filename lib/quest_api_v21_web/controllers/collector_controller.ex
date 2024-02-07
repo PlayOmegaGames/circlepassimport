@@ -23,15 +23,15 @@ defmodule QuestApiV21Web.CollectorController do
     case Collectors.create_collector_with_organization(collector_params, organization_id) do
       {:ok, collector} ->
         # Temporarily bypass QR code generation
-        # url = "questapp.io/badge/#{collector.id}"
-        # case QuestApiV21Web.QrGenerator.create_and_upload_qr(url) do
-        #   {:ok, qr_code_url} ->
+         url = "questapp.io/badge/#{collector.id}"
+         case QuestApiV21Web.QrGenerator.create_and_upload_qr(url) do
+           {:ok, qr_code_url} ->
             collector = QuestApiV21.Repo.preload(collector, [:badges, :quests])
             conn
             |> put_status(:created)
             |> put_resp_header("location", ~p"/api/collector/#{collector}")
-            |> render(:show, collector: collector, qr_code_url: "nil") # or qr_code_url: nil
-        # end
+            |> render(:show, collector: collector, qr_code_url: qr_code_url) # or qr_code_url: nil
+         end
 
       {:error, changeset} ->
         conn
