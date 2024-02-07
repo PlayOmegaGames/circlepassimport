@@ -45,10 +45,10 @@ defmodule QuestApiV21Web.Web.BadgeController do
   def prepare_badge_data(badges, user_badge_ids) do
     Enum.map(badges, fn badge ->
       badge_data = Map.from_struct(badge)
-      is_clickable = badge.id in user_badge_ids and not is_nil(badge.redirect_url) and not is_nil(badge.badge_description)
+      is_clickable = badge.id in user_badge_ids and not is_nil(badge.badge_details_image) and not is_nil(badge.badge_description)
 
       attributes = if is_clickable, do: [
-        {:data_redirect_url, badge.redirect_url},
+        {:data_badge_details_image, badge.badge_details_image},
         {:data_badge_description, badge.badge_description}
       ], else: []
 

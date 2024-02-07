@@ -1,9 +1,6 @@
 defmodule QuestApiV21Web.OrganizationJSON do
   alias QuestApiV21.Organizations.Organization
   alias QuestApiV21.Hosts.Host
-  alias QuestApiV21.Quests.Quest
-  alias QuestApiV21.Badges.Badge
-  alias QuestApiV21.Collectors.Collector
 
   @doc """
   Renders a list of organizations.
@@ -19,50 +16,21 @@ defmodule QuestApiV21Web.OrganizationJSON do
     %{data: data(organization), jwt: jwt}
   end
 
-  defp data(%Organization{hosts: hosts, quests: quests, badges: badges, collectors: collectors} = organization) do
+  # Adjusted data function to include only id, name, and hosts for an organization
+  defp data(%Organization{hosts: hosts} = organization) do
     %{
       id: organization.id,
       name: organization.name,
-      hosts: hosts_data(hosts),
-      quests: quests_data(quests),
-      badges: badges_data(badges),
-      collectors: collectors_data(collectors)
+      hosts: hosts_data(hosts)
     }
   end
 
+  # Provided hosts_data function remains to handle hosts details
   defp hosts_data(hosts) do
-    Enum.map(hosts, fn %Host{id: id, name: name, email: email} ->
+    Enum.map(hosts, fn %Host{id: id, name: name} ->
       %{
         id: id,
         name: name,
-        email: email
-      }
-    end)
-  end
-
-  defp quests_data(quests) do
-    Enum.map(quests, fn %Quest{id: id, name: name} ->
-      %{
-        id: id,
-        name: name
-      }
-    end)
-  end
-
-  defp badges_data(badges) do
-    Enum.map(badges, fn %Badge{id: id, name: name} ->
-      %{
-        id: id,
-        name: name
-      }
-    end)
-  end
-
-  defp collectors_data(collectors) do
-    Enum.map(collectors, fn %Collector{id: id, name: name} ->
-      %{
-        id: id,
-        name: name
       }
     end)
   end

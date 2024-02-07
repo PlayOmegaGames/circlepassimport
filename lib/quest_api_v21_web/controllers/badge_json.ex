@@ -27,14 +27,14 @@ defmodule QuestApiV21Web.BadgeJSON do
     %{
       id: badge.id,
       name: badge.name,
-      image: badge.image,
+      badge_image: badge.badge_image,
       scans: badge.scans,
-      redirect_url: badge.redirect_url,
+      badge_details_image: badge.badge_details_image,
       badge_description: badge.badge_description,
       organization_id: badge.organization_id,
       quest_id: badge.quest_id,
       collector_id: badge.collector_id,
-      unauthorized_url: badge.unauthorized_url,
+      badge_redirect: badge.badge_redirect,
       account_ids: accounts_data(accounts)
     }
   end

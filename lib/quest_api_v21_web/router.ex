@@ -83,6 +83,10 @@ defmodule QuestApiV21Web.Router do
     #token exchange for partner
     post "/token_exchange", AuthController, :token_exchange
 
+    #Bubble retardation
+    post "/bubble_wrap", BubbleController, :bubble_wrap
+
+
   end
 
   scope "/api", QuestApiV21Web do
@@ -121,7 +125,7 @@ defmodule QuestApiV21Web.Router do
     #badge page
     get "/badges", Web.BadgeController, :show_badge
     get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
-    get "/badge/:id", CollectorController, :show_collector
+    get "/badge/:id", Web.CollectorController, :show_collector
     get "/new", Web.PageController, :new_page
     get "/profile", Web.PageController, :profile
 

@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.CollectorQuestStartPresent do
+defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
   use QuestApiV21Web, :controller
   alias QuestApiV21.{Accounts, Quests}
   require Logger
@@ -21,8 +21,8 @@ defmodule QuestApiV21Web.CollectorQuestStartPresent do
           add_quest_to_user(account, quest)
         end
 
-        if badge.unauthorized_url do
-          # Render redirect template if unauthorized_url is present
+        if badge.badge_details_image do
+          # Render redirect template if badge_details_image is present
           conn
           |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen bg-no-repeat")
           |> render("redirect.html", %{badge: badge})
