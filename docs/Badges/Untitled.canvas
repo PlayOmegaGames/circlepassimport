@@ -1,0 +1,32 @@
+{
+	"nodes":[
+		{"id":"eb71b77061c1d16d","x":-281,"y":160,"width":250,"height":60,"type":"text","text":"Badge Schema"},
+		{"id":"f00ddff1130607c1","x":-281,"y":20,"width":250,"height":60,"type":"text","text":"Badge context"},
+		{"id":"b92359f26ceea87c","x":-120,"y":-200,"width":250,"height":60,"type":"text","text":"Web Badge Controller"},
+		{"id":"8b6e6a3693d59680","type":"text","text":"Quest Schema","x":100,"y":160,"width":250,"height":60},
+		{"id":"fcb8cc878c7171c0","type":"text","text":"Quest context","x":100,"y":20,"width":250,"height":60},
+		{"id":"ce8fd083b0120ef0","x":-120,"y":-600,"width":250,"height":60,"type":"text","text":"Badge html template"},
+		{"id":"ce683375b5444536","x":260,"y":-340,"width":250,"height":60,"type":"text","text":"Core Components "},
+		{"id":"27f304905cb18012","type":"text","text":"Badge Schema","x":-1260,"y":160,"width":250,"height":60},
+		{"id":"21f6feb5706d9db1","type":"text","text":"Badge context","x":-1260,"y":20,"width":250,"height":60},
+		{"id":"d8f90874b5277748","type":"text","text":"Web Badge Controller","x":-1099,"y":-200,"width":250,"height":60},
+		{"id":"ef6f5902bc67c611","type":"text","text":"Quest Schema","x":-879,"y":160,"width":250,"height":60},
+		{"id":"26b93ff1d0511637","type":"text","text":"Quest context","x":-879,"y":20,"width":250,"height":60},
+		{"id":"543795fd9efd0e08","type":"text","text":"Badge html template","x":-1099,"y":-600,"width":250,"height":60},
+		{"id":"bc9be3596acc8db7","type":"text","text":"Core Components ","x":-719,"y":-340,"width":250,"height":60}
+	],
+	"edges":[
+		{"id":"b5843873473562cd","fromNode":"f00ddff1130607c1","fromSide":"bottom","toNode":"eb71b77061c1d16d","toSide":"top"},
+		{"id":"05c082cb2784bf9b","fromNode":"b92359f26ceea87c","fromSide":"bottom","toNode":"f00ddff1130607c1","toSide":"top"},
+		{"id":"45d36d81e369f2fb","fromNode":"fcb8cc878c7171c0","fromSide":"bottom","toNode":"8b6e6a3693d59680","toSide":"top"},
+		{"id":"075e1846beac5ab1","fromNode":"b92359f26ceea87c","fromSide":"bottom","toNode":"fcb8cc878c7171c0","toSide":"top"},
+		{"id":"551b994df3684c2d","fromNode":"ce8fd083b0120ef0","fromSide":"bottom","toNode":"b92359f26ceea87c","toSide":"top","fromEnd":"arrow"},
+		{"id":"b27f3883d1189df3","fromNode":"ce8fd083b0120ef0","fromSide":"bottom","toNode":"ce683375b5444536","toSide":"top"},
+		{"id":"c26809525cf6a594","fromNode":"21f6feb5706d9db1","fromSide":"bottom","toNode":"27f304905cb18012","toSide":"top"},
+		{"id":"0cb2ae42c9bcfe62","fromNode":"d8f90874b5277748","fromSide":"bottom","toNode":"21f6feb5706d9db1","toSide":"top"},
+		{"id":"85fdf4740e780dcc","fromNode":"d8f90874b5277748","fromSide":"bottom","toNode":"26b93ff1d0511637","toSide":"top"},
+		{"id":"7457f715190e61cf","fromNode":"543795fd9efd0e08","fromSide":"bottom","toNode":"d8f90874b5277748","toSide":"top","fromEnd":"arrow"},
+		{"id":"f82b7be67dfc5932","fromNode":"26b93ff1d0511637","fromSide":"bottom","toNode":"ef6f5902bc67c611","toSide":"top"},
+		{"id":"58d363ddb017c86d","fromNode":"543795fd9efd0e08","fromSide":"bottom","toNode":"bc9be3596acc8db7","toSide":"top"}
+	]
+}
