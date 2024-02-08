@@ -77,7 +77,7 @@ defmodule QuestApiV21Web.QrGenerator do
       file: "png"
     }
 
-    case HTTPoison.post(api_url, Poison.encode!(body), headers) do
+    case HTTPoison.post(api_url, Jason.encode!(body), headers) do
       {:ok, %{status_code: 200, body: response_body}} ->
         # Handle the successful response
         IO.inspect(response_body)
