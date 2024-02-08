@@ -2,7 +2,7 @@ defmodule QuestApiV21Web.QrGenerator do
   # Function to create a QR code from the given url and upload it to AWS S3
   def create_and_upload_qr(url) do
     # Attempt to create and render a QR code from the provided url
-    case QRCode.create(url) |> QRCode.render() do
+    case request_qrcode(url) do
       # If QR code creation and rendering succeed
       {:ok, qr_code} ->
         # Define the AWS S3 bucket name where the QR code will be stored
@@ -45,4 +45,52 @@ defmodule QuestApiV21Web.QrGenerator do
 
   # Helper function to process error responses from S3
   defp handle_s3_response({:error, error}), do: {:error, error}
+
+  def request_qrcode(url) do
+    api_url = "https://qrcode-monkey.p.rapidapi.com/qr/custom"
+    headers = [
+      {"Content-Type", "application/json"},
+      {"X-RapidAPI-Key", "afcc3f8992msh4a29a9bf6c8d2a7p12fa15jsn9663ee7baf58"},
+      {"X-RapidAPI-Host", "qrcode-monkey.p.rapidapi.com"}
+    ]
+    body = %{
+      data: url,
+      config: %{
+        body: "circular",
+        eye: "frame2",
+        eyeBall: "ball2",
+        erf1: ["fv"],
+        erf2: [],
+        erf3: [],
+        brf1: ["fv"],
+        brf2: [],
+        brf3: [],
+        eyeBall1Color: "#000000",
+        eyeBall2Color: "#000000",
+        eyeBall3Color: "#000000",
+        bodyColor: "#000000",
+        logo: "https://quest-optimized-images.s3.amazonaws.com/optimized-images/webapp-images/QuestLogo.png",
+        logoMode: "clean"
+      },
+      size: 300,
+      download: false,
+      file: "png"
+    }
+
+    IO.inspect(body)
+
+    case HTTPoison.post(api_url, Jason.encode!(body), headers) do
+      {:ok, %{status_code: 200, body: response_body}} ->
+        # Directly return the binary data of the QR code
+        {:ok, response_body}
+
+      {:ok, %{status_code: _status_code, body: _body}} ->
+        {:error, "Unexpected success response"}
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        {:error, "API request failed: #{reason}"}
+    end
+  end
+
+
 end
