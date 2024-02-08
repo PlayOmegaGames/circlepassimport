@@ -45,6 +45,7 @@ defmodule QuestApiV21Web.QuestJSON do
       start_date: quest.start_date,
       end_date: quest.end_date,
       address: quest.address,
+      address_url: quest.address_url,
       organization_id: quest.organization_id,
       description: quest.description,
       discount_code: quest.discount_code,
@@ -52,7 +53,6 @@ defmodule QuestApiV21Web.QuestJSON do
       quest_time: quest.quest_time,
       badges: badges_data(badges),
       collectors: collectors_data(collectors),
-      #accounts: accounts_data(accounts)
     }
   end
 
