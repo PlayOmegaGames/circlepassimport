@@ -2,7 +2,7 @@ defmodule QuestApiV21Web.QrGenerator do
   # Function to create a QR code from the given url and upload it to AWS S3
   def create_and_upload_qr(url) do
     # Attempt to create and render a QR code from the provided url
-    case QRCode.create(url) |> request_qrcode() do
+    case request_qrcode(url) do
       # If QR code creation and rendering succeed
       {:ok, qr_code} ->
         # Define the AWS S3 bucket name where the QR code will be stored
@@ -77,18 +77,17 @@ defmodule QuestApiV21Web.QrGenerator do
       file: "png"
     }
 
+    IO.inspect(body)
+
     case HTTPoison.post(api_url, Jason.encode!(body), headers) do
       {:ok, %{status_code: 200, body: response_body}} ->
-        # Handle the successful response
-        IO.inspect(response_body)
+        # Directly return the binary data of the QR code
         {:ok, response_body}
 
       {:ok, %{status_code: _status_code, body: _body}} ->
-        # Handle other success scenarios
         {:error, "Unexpected success response"}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        # Handle errors
         {:error, "API request failed: #{reason}"}
     end
   end
