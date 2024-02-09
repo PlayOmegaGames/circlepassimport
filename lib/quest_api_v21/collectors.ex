@@ -6,7 +6,7 @@ defmodule QuestApiV21.Collectors do
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
   alias QuestApiV21.Collectors.Collector
-
+  alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Quests.Quest
 
 
@@ -21,6 +21,11 @@ defmodule QuestApiV21.Collectors do
   """
   def list_collectors do
     Repo.all(Collector)
+  end
+
+  def list_collectors_by_organization_ids(organization_ids) do
+    preloads = [:quests, :badges]
+    OrganizationScopedQueries.scope_query(Collector, organization_ids, preloads)
   end
 
   @doc """
@@ -39,8 +44,6 @@ defmodule QuestApiV21.Collectors do
   """
 
 
-  def get_collector!(id), do: Repo.get!(Collector, id) |> Repo.preload([:quests, :badges])
-
 
   def get_quest_name(quest_id) do
     QuestApiV21.Repo.get(QuestApiV21.Quests.Quest, quest_id)
@@ -50,6 +53,25 @@ defmodule QuestApiV21.Collectors do
     end
   end
 
+
+    @doc """
+  Gets a single collector by ID, scoped by organization IDs.
+
+  ## Parameters
+
+    - id: The ID of the collector to fetch.
+    - organization_ids: A list of organization IDs to scope the query.
+
+  ## Returns
+
+    - A collector struct if found within the scoped organizations, otherwise nil.
+
+  """
+  def get_collector(id, organization_ids) do
+    preloads = [:quests, :badges] 
+
+    OrganizationScopedQueries.get_item(Collector, id, organization_ids, preloads)
+  end
 
     @doc """
   Gets a single collector without raising an exception.
@@ -114,11 +136,10 @@ defmodule QuestApiV21.Collectors do
 
   def create_collector_with_organization(collector_params, organization_id) do
     %Collector{}
-      |> Collector.changeset(Map.put(collector_params, "organization_id", organization_id))
-      |> maybe_add_quests(collector_params)
-      |> Repo.insert()
+    |> Collector.changeset(Map.put(collector_params, "organization_id", organization_id))
+    |> maybe_add_quests(collector_params)
+    |> Repo.insert()
   end
-
   @doc """
   Updates a collector.
 
@@ -131,18 +152,14 @@ defmodule QuestApiV21.Collectors do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_collector(%Collector{} = collector, attrs) do
-    collector
-    |> Collector.changeset(attrs)
-    |> maybe_add_quests(attrs)
-    |> Repo.update()
-    |> case do
-      {:ok, updated_collector} ->
-        updated_collector = Repo.preload(updated_collector, [:quests, :badges])
-        {:ok, updated_collector}
-
-      {:error, _} = error ->
-        error
+  def update_collector(%Collector{} = collector, attrs, organization_ids) do
+    if collector.organization_id in organization_ids do
+      collector
+      |> Collector.changeset(attrs)
+      |> maybe_add_quests(attrs)
+      |> Repo.update()
+    else
+      {:error, :unauthorized}
     end
   end
 
@@ -159,11 +176,14 @@ defmodule QuestApiV21.Collectors do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_collector(%Collector{} = collector) do
-    Repo.delete(collector)
+  def delete_collector(%Collector{} = collector, organization_ids) do
+    if collector.organization_id in organization_ids do
+      Repo.delete(collector)
+    else
+      {:error, :unauthorized}
+    end
   end
 
-  
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking collector changes.
 

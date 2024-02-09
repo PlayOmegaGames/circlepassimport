@@ -4,15 +4,14 @@ defmodule QuestApiV21Web.CollectorController do
   alias QuestApiV21.Collectors
   alias QuestApiV21.Collectors.Collector
   alias QuestApiV21Web.JWTUtility
-
-
-  require Logger
+  alias QuestApiV21.Repo
 
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-    collectors = Collectors.list_collectors()
-    |> QuestApiV21.Repo.preload([:badges, :quests])
+    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    collectors = Collectors.list_collectors_by_organization_ids(organization_ids)
+                |> Repo.preload([:badges, :quests])
 
     render(conn, :index, collectors: collectors)
   end
@@ -22,16 +21,16 @@ defmodule QuestApiV21Web.CollectorController do
 
     case Collectors.create_collector_with_organization(collector_params, organization_id) do
       {:ok, collector} ->
-        # Temporarily bypass QR code generation
-         url = "questapp.io/badge/#{collector.id}"
-         case QuestApiV21Web.QrGenerator.create_and_upload_qr(url) do
-           {:ok, qr_code_url} ->
-            collector = QuestApiV21.Repo.preload(collector, [:badges, :quests])
+        # Assuming QR code generation logic is correct and remains unchanged
+        url = "questapp.io/badge/#{collector.id}"
+        case QuestApiV21Web.QrGenerator.create_and_upload_qr(url) do
+          {:ok, qr_code_url} ->
+            collector = Repo.preload(collector, [:badges, :quests])
             conn
             |> put_status(:created)
-            |> put_resp_header("location", ~p"/api/collector/#{collector}")
-            |> render(:show, collector: collector, qr_code_url: qr_code_url) # or qr_code_url: nil
-         end
+            |> put_resp_header("location", ~p"/api/collector/#{collector.id}")
+            |> render("show.json", collector: collector, qr_code_url: qr_code_url)
+        end
 
       {:error, changeset} ->
         conn
@@ -40,38 +39,52 @@ defmodule QuestApiV21Web.CollectorController do
     end
   end
 
-
   def show(conn, %{"id" => id}) do
-    case Collectors.get_collector(id) do
+    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+
+    case Collectors.get_collector(id, organization_ids) do
       nil ->
         conn
         |> put_status(:not_found)
         |> render("error.json", message: "Collector not found")
 
       %Collector{} = collector ->
-        render(conn, :show, collector: collector)
+        render(conn, "show.json", collector: collector)
     end
   end
-
-
-
 
   def update(conn, %{"id" => id, "collector" => collector_params}) do
-    collector = Collectors.get_collector!(id)
+    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
 
-    with {:ok, %Collector{} = collector} <- Collectors.update_collector(collector, collector_params) do
-      collector = QuestApiV21.Repo.preload(collector, [:badges, :quests])
-      render(conn, :show, collector: collector)
+    case Collectors.get_collector(id, organization_ids) do
+      nil ->
+        send_resp(conn, :not_found, "")
+      %Collector{} = collector ->
+        case Collectors.update_collector(collector, collector_params, organization_ids) do
+          {:ok, updated_collector} ->
+            updated_collector = Repo.preload(updated_collector, [:badges, :quests])
+            render(conn, "show.json", collector: updated_collector)
+          {:error, :unauthorized} ->
+            send_resp(conn, :forbidden, "")
+          {:error, _changeset} ->
+            send_resp(conn, :unprocessable_entity, "")
+        end
     end
   end
-
 
   def delete(conn, %{"id" => id}) do
-    collector = Collectors.get_collector!(id)
+    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
 
-    with {:ok, %Collector{}} <- Collectors.delete_collector(collector) do
-      send_resp(conn, :no_content, "")
+    case Collectors.get_collector(id, organization_ids) do
+      nil ->
+        send_resp(conn, :not_found, "")
+      %Collector{} = collector ->
+        case Collectors.delete_collector(collector, organization_ids) do
+          {:ok, %Collector{}} ->
+            send_resp(conn, :no_content, "")
+          {:error, :unauthorized} ->
+            send_resp(conn, :forbidden, "")
+        end
     end
   end
-
 end
