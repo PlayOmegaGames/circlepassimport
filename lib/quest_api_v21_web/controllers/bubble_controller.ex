@@ -2,7 +2,7 @@ defmodule QuestApiV21Web.BubbleController do
   use QuestApiV21Web, :controller
 
   def bubble_wrap(conn, %{"jwt_token" => jwt_token, "endpoint" => endpoint, "method" => method, "body" => body} = _params) do
-    target_url = "https://questapp.io" <> endpoint
+    target_url = "https://questapp.io/" <> endpoint
 
     # Dynamically handling the request body
     # Assuming the `body` is already a properly structured JSON map
