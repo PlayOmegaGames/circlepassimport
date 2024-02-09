@@ -86,7 +86,6 @@ defmodule QuestApiV21Web.Router do
     #Bubble retardation
     post "/bubble_wrap", BubbleController, :bubble_wrap
 
-
   end
 
   scope "/api", QuestApiV21Web do

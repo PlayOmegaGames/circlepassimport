@@ -34,7 +34,7 @@ defmodule QuestApiV21.Quests.Quest do
   def changeset(quest, attrs) do
     quest
     |> cast(attrs, [:address, :address_url, :start_date, :end_date, :name, :quest_type, :redemption, :discount_code, :reward, :scans, :description, :public, :quest_time, :organization_id])
-    |> validate_required([:name, :reward, :address, :organization_id])
+    |> validate_required([:name, :organization_id])
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
     |> cast_assoc(:collectors, with: &QuestApiV21.Collectors.Collector.changeset/2)
     |> assoc_constraint(:organization)

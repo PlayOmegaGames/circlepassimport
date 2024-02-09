@@ -56,6 +56,7 @@ defmodule QuestApiV21.MixProject do
       {:ueberauth_google, "0.10.1"},
       {:qr_code, "~> 3.0.0"},
       {:ex_aws, "~> 2.1"},
+      {:ex_aws_ses, "~> 2.4"},
       {:ex_aws_s3, "~> 2.0"},
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.15"},
