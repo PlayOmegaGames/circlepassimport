@@ -19,25 +19,32 @@ defmodule QuestApiV21Web.CollectorController do
   def create(conn, %{"collector" => collector_params}) do
     organization_id = JWTUtility.extract_primary_organization_id_from_jwt(conn)
 
-    case Collectors.create_collector_with_organization(collector_params, organization_id) do
-      {:ok, collector} ->
-        # Assuming QR code generation logic is correct and remains unchanged
-        url = "questapp.io/badge/#{collector.id}"
-        case QuestApiV21Web.QrGenerator.create_and_upload_qr(url) do
-          {:ok, qr_code_url} ->
-            collector = Repo.preload(collector, [:badges, :quests])
-            conn
-            |> put_status(:created)
-            |> put_resp_header("location", ~p"/api/collector/#{collector.id}")
-            |> render("show.json", collector: collector, qr_code_url: qr_code_url)
-        end
+    with {:ok, collector} <- Collectors.create_collector_with_organization(collector_params, organization_id),
+         url = "questapp.io/badge/#{collector.id}",
+         {:ok, qr_code_url} <- QuestApiV21Web.QrGenerator.create_and_upload_qr(url) do
+      updated_collector = collector
+                          |> Ecto.Changeset.change(%{qr_code_url: qr_code_url})
+                          |> Repo.update!
 
+      updated_collector = Repo.preload(updated_collector, [:badges, :quests])
+
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", ~p"/api/collector/#{updated_collector.id}")
+      |> render("show.json", collector: updated_collector)
+    else
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
         |> render("error.json", %{message: "Collector creation failed", errors: changeset})
+
+      error ->
+        conn
+        |> put_status(:internal_server_error)
+        |> render("error.json", %{message: "Failed to create QR code", error: error})
     end
   end
+
 
   def show(conn, %{"id" => id}) do
     organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
