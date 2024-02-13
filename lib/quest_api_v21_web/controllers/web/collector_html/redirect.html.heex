@@ -71,7 +71,7 @@
   let countdown = 2; // Set the initial countdown time here
   const countdownElement = document.getElementById('countdownTimer');
   const domainNameElement = document.getElementById('domainName');
-  const unauthorizedUrl = "<%= @badge.badge_details_image %>";
+  const unauthorizedUrl = "<%= @badge.badge_redirect %>";
 
   // Extract domain name from URL and remove 'www.'
   const url = new URL(unauthorizedUrl);

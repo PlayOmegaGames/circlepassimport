@@ -3,25 +3,22 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
   alias QuestApiV21.{Accounts, Quests}
   require Logger
 
-  @spec handle_present_quest_start(
-          Plug.Conn.t(),
-          atom() | %{:badges => any(), :quest_start => any(), optional(any()) => any()}
-        ) :: Plug.Conn.t()
     def handle_present_quest_start(conn, collector) do
-      #IO.inspect(collector, label: "handle_present_quest_start data")
+      IO.inspect(collector, label: "handle_present_quest_start data")
       account = Accounts.get_account!(conn.assigns.current_user.id)
       quest = Quests.get_quest(collector.quest_start)
       badge = find_associated_badge(collector, quest)
 
       if badge do
         if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
-          #Logger.info("User already has badge ID: #{badge.id}. No action taken.")
+         # Logger.info("User already has badge ID: #{badge.id}. No action taken.")
         else
           add_badge_and_create_scan(account, badge)
           add_quest_to_user(account, quest)
         end
 
-        if badge.badge_details_image do
+        IO.inspect(badge.badge_redirect)
+        if badge.badge_redirect not in [nil, ""] do
           # Render redirect template if badge_details_image is present
           conn
           |> assign(:body_class, "bg-gradient-to-b from-purple-400 to-brand h-screen bg-no-repeat")
@@ -39,8 +36,8 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
 
   defp add_badge_and_create_scan(account, badge) do
     case Accounts.add_badge_to_user(account.id, badge) do
-      {:ok, msg, _updated_account} ->
-        Logger.info(msg)
+      {:ok, _msg, _updated_account} ->
+        #Logger.info(msg)
         QuestApiV21.Scans.create_scan_for_badge_account(badge.id, account.id)
       {:error, reason} ->
         Logger.error("Failed to add badge: #{reason}")
