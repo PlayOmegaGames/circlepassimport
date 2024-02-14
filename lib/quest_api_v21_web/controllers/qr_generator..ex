@@ -3,8 +3,8 @@ defmodule QuestApiV21Web.QrGenerator do
   def create_and_upload_qr(url) do
     case request_qrcode(url) do
       {:ok, qr_code} ->
-        bucket = "quest-api-resources"
-        s3_path = "qr-codes/#{unique_identifier(url)}.png"
+        bucket = "qr-codes-public"
+        s3_path = "prod/#{unique_identifier(url)}.png"
 
         case ExAws.S3.put_object(bucket, s3_path, qr_code) |> ExAws.request() do
           {:ok, _response} ->
@@ -12,7 +12,6 @@ defmodule QuestApiV21Web.QrGenerator do
             # Make sure your S3 bucket is configured for public access if you use this method
             public_url = "https://#{bucket}.s3.amazonaws.com/#{s3_path}"
             {:ok, public_url}
-
           {:error, error} ->
             {:error, error}
         end
@@ -21,6 +20,7 @@ defmodule QuestApiV21Web.QrGenerator do
         {:error, reason}
     end
   end
+
 
   # Generates a unique identifier for the QR code based on the provided url
   defp unique_identifier(url), do: "#{url}-#{:erlang.unique_integer([:positive])}"
