@@ -32,6 +32,7 @@ defmodule QuestApiV21.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
@@ -60,7 +61,6 @@ defmodule QuestApiV21.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.15"},
-      {:bcrypt_elixir, "~> 2.0"},
       {:httpoison, "~> 2.0"}
     ]
   end

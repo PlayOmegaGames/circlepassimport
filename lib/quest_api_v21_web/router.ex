@@ -1,5 +1,7 @@
 defmodule QuestApiV21Web.Router do
   use QuestApiV21Web, :router
+
+  import QuestApiV21Web.SuperadminAuth
   import Phoenix.LiveView.Router
 
   pipeline :browser do
@@ -9,6 +11,7 @@ defmodule QuestApiV21Web.Router do
     plug :put_root_layout, html: {QuestApiV21Web.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_superadmin
   end
 
   pipeline :api do
@@ -162,6 +165,44 @@ defmodule QuestApiV21Web.Router do
 
       live_dashboard "/dashboard", metrics: QuestApiV21Web.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+  end
+
+  ## Authentication routes
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser, :redirect_if_superadmin_is_authenticated]
+
+    live_session :redirect_if_superadmin_is_authenticated,
+      on_mount: [{QuestApiV21Web.SuperadminAuth, :redirect_if_superadmin_is_authenticated}] do
+      live "/superadmin/register", SuperadminRegistrationLive, :new
+      live "/superadmin/log_in", SuperadminLoginLive, :new
+      live "/superadmin/reset_password", SuperadminForgotPasswordLive, :new
+      live "/superadmin/reset_password/:token", SuperadminResetPasswordLive, :edit
+    end
+
+    post "/superadmin/log_in", SuperadminSessionController, :create
+  end
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser, :require_authenticated_superadmin]
+
+    live_session :require_authenticated_superadmin,
+      on_mount: [{QuestApiV21Web.SuperadminAuth, :ensure_authenticated}] do
+      live "/superadmin/settings", SuperadminSettingsLive, :edit
+      live "/superadmin/settings/confirm_email/:token", SuperadminSettingsLive, :confirm_email
+    end
+  end
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser]
+
+    delete "/superadmin/log_out", SuperadminSessionController, :delete
+
+    live_session :current_superadmin,
+      on_mount: [{QuestApiV21Web.SuperadminAuth, :mount_current_superadmin}] do
+      live "/superadmin/confirm/:token", SuperadminConfirmationLive, :edit
+      live "/superadmin/confirm", SuperadminConfirmationInstructionsLive, :new
     end
   end
 end

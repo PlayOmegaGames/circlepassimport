@@ -35,4 +35,30 @@ defmodule QuestApiV21Web.ConnCase do
     QuestApiV21.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  @doc """
+  Setup helper that registers and logs in superadmin.
+
+      setup :register_and_log_in_superadmin
+
+  It stores an updated connection and a registered superadmin in the
+  test context.
+  """
+  def register_and_log_in_superadmin(%{conn: conn}) do
+    superadmin = QuestApiV21.AdminFixtures.superadmin_fixture()
+    %{conn: log_in_superadmin(conn, superadmin), superadmin: superadmin}
+  end
+
+  @doc """
+  Logs the given `superadmin` into the `conn`.
+
+  It returns an updated `conn`.
+  """
+  def log_in_superadmin(conn, superadmin) do
+    token = QuestApiV21.Admin.generate_superadmin_session_token(superadmin)
+
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Plug.Conn.put_session(:superadmin_token, token)
+  end
 end
