@@ -19,7 +19,7 @@ defmodule QuestApiV21.MixProject do
   def application do
     [
       mod: {QuestApiV21.Application, []},
-      extra_applications: [:logger, :runtime_tools, :ssl]
+      extra_applications: [:logger, :runtime_tools, :ssl, :os_mon]
     ]
   end
 
