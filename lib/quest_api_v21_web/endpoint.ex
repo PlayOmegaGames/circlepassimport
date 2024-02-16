@@ -9,7 +9,8 @@ defmodule QuestApiV21Web.Endpoint do
     key: "_quest_api_v21_key",
     signing_salt: "nrmdsYih",
     same_site: "Lax",
-    max_age: 14 * 24 * 60 * 60 # Session expires after 14 days
+    # Session expires after 14 days
+    max_age: 14 * 24 * 60 * 60
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]

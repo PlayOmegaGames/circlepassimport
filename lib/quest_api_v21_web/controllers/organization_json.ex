@@ -30,7 +30,7 @@ defmodule QuestApiV21Web.OrganizationJSON do
     Enum.map(hosts, fn %Host{id: id, name: name} ->
       %{
         id: id,
-        name: name,
+        name: name
       }
     end)
   end

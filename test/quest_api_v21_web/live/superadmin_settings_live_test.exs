@@ -89,7 +89,11 @@ defmodule QuestApiV21Web.SuperadminSettingsLiveTest do
       %{conn: log_in_superadmin(conn, superadmin), superadmin: superadmin, password: password}
     end
 
-    test "updates the superadmin password", %{conn: conn, superadmin: superadmin, password: password} do
+    test "updates the superadmin password", %{
+      conn: conn,
+      superadmin: superadmin,
+      password: password
+    } do
       new_password = valid_superadmin_password()
 
       {:ok, lv, _html} = live(conn, ~p"/superadmin/settings")
@@ -110,7 +114,8 @@ defmodule QuestApiV21Web.SuperadminSettingsLiveTest do
 
       assert redirected_to(new_password_conn) == ~p"/superadmin/settings"
 
-      assert get_session(new_password_conn, :superadmin_token) != get_session(conn, :superadmin_token)
+      assert get_session(new_password_conn, :superadmin_token) !=
+               get_session(conn, :superadmin_token)
 
       assert Phoenix.Flash.get(new_password_conn.assigns.flash, :info) =~
                "Password updated successfully"
@@ -165,13 +170,27 @@ defmodule QuestApiV21Web.SuperadminSettingsLiveTest do
 
       token =
         extract_superadmin_token(fn url ->
-          Admin.deliver_superadmin_update_email_instructions(%{superadmin | email: email}, superadmin.email, url)
+          Admin.deliver_superadmin_update_email_instructions(
+            %{superadmin | email: email},
+            superadmin.email,
+            url
+          )
         end)
 
-      %{conn: log_in_superadmin(conn, superadmin), token: token, email: email, superadmin: superadmin}
+      %{
+        conn: log_in_superadmin(conn, superadmin),
+        token: token,
+        email: email,
+        superadmin: superadmin
+      }
     end
 
-    test "updates the superadmin email once", %{conn: conn, superadmin: superadmin, token: token, email: email} do
+    test "updates the superadmin email once", %{
+      conn: conn,
+      superadmin: superadmin,
+      token: token,
+      email: email
+    } do
       {:error, redirect} = live(conn, ~p"/superadmin/settings/confirm_email/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect

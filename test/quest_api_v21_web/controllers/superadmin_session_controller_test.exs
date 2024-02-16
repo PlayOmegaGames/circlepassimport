@@ -11,7 +11,10 @@ defmodule QuestApiV21Web.SuperadminSessionControllerTest do
     test "logs the superadmin in", %{conn: conn, superadmin: superadmin} do
       conn =
         post(conn, ~p"/superadmin/log_in", %{
-          "superadmin" => %{"email" => superadmin.email, "password" => valid_superadmin_password()}
+          "superadmin" => %{
+            "email" => superadmin.email,
+            "password" => valid_superadmin_password()
+          }
         })
 
       assert get_session(conn, :superadmin_token)

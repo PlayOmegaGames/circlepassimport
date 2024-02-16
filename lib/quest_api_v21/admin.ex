@@ -90,7 +90,10 @@ defmodule QuestApiV21.Admin do
 
   """
   def change_superadmin_registration(%Superadmin{} = superadmin, attrs \\ %{}) do
-    Superadmin.registration_changeset(superadmin, attrs, hash_password: false, validate_email: false)
+    Superadmin.registration_changeset(superadmin, attrs,
+      hash_password: false,
+      validate_email: false
+    )
   end
 
   ## Settings
@@ -154,7 +157,10 @@ defmodule QuestApiV21.Admin do
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:superadmin, changeset)
-    |> Ecto.Multi.delete_all(:tokens, SuperadminToken.by_superadmin_and_contexts_query(superadmin, [context]))
+    |> Ecto.Multi.delete_all(
+      :tokens,
+      SuperadminToken.by_superadmin_and_contexts_query(superadmin, [context])
+    )
   end
 
   @doc ~S"""
@@ -166,12 +172,21 @@ defmodule QuestApiV21.Admin do
       {:ok, %{to: ..., body: ...}}
 
   """
-  def deliver_superadmin_update_email_instructions(%Superadmin{} = superadmin, current_email, update_email_url_fun)
+  def deliver_superadmin_update_email_instructions(
+        %Superadmin{} = superadmin,
+        current_email,
+        update_email_url_fun
+      )
       when is_function(update_email_url_fun, 1) do
-    {encoded_token, superadmin_token} = SuperadminToken.build_email_token(superadmin, "change:#{current_email}")
+    {encoded_token, superadmin_token} =
+      SuperadminToken.build_email_token(superadmin, "change:#{current_email}")
 
     Repo.insert!(superadmin_token)
-    SuperadminNotifier.deliver_update_email_instructions(superadmin, update_email_url_fun.(encoded_token))
+
+    SuperadminNotifier.deliver_update_email_instructions(
+      superadmin,
+      update_email_url_fun.(encoded_token)
+    )
   end
 
   @doc """
@@ -207,7 +222,10 @@ defmodule QuestApiV21.Admin do
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:superadmin, changeset)
-    |> Ecto.Multi.delete_all(:tokens, SuperadminToken.by_superadmin_and_contexts_query(superadmin, :all))
+    |> Ecto.Multi.delete_all(
+      :tokens,
+      SuperadminToken.by_superadmin_and_contexts_query(superadmin, :all)
+    )
     |> Repo.transaction()
     |> case do
       {:ok, %{superadmin: superadmin}} -> {:ok, superadmin}
@@ -256,14 +274,21 @@ defmodule QuestApiV21.Admin do
       {:error, :already_confirmed}
 
   """
-  def deliver_superadmin_confirmation_instructions(%Superadmin{} = superadmin, confirmation_url_fun)
+  def deliver_superadmin_confirmation_instructions(
+        %Superadmin{} = superadmin,
+        confirmation_url_fun
+      )
       when is_function(confirmation_url_fun, 1) do
     if superadmin.confirmed_at do
       {:error, :already_confirmed}
     else
       {encoded_token, superadmin_token} = SuperadminToken.build_email_token(superadmin, "confirm")
       Repo.insert!(superadmin_token)
-      SuperadminNotifier.deliver_confirmation_instructions(superadmin, confirmation_url_fun.(encoded_token))
+
+      SuperadminNotifier.deliver_confirmation_instructions(
+        superadmin,
+        confirmation_url_fun.(encoded_token)
+      )
     end
   end
 
@@ -276,7 +301,8 @@ defmodule QuestApiV21.Admin do
   def confirm_superadmin(token) do
     with {:ok, query} <- SuperadminToken.verify_email_token_query(token, "confirm"),
          %Superadmin{} = superadmin <- Repo.one(query),
-         {:ok, %{superadmin: superadmin}} <- Repo.transaction(confirm_superadmin_multi(superadmin)) do
+         {:ok, %{superadmin: superadmin}} <-
+           Repo.transaction(confirm_superadmin_multi(superadmin)) do
       {:ok, superadmin}
     else
       _ -> :error
@@ -286,7 +312,10 @@ defmodule QuestApiV21.Admin do
   defp confirm_superadmin_multi(superadmin) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:superadmin, Superadmin.confirm_changeset(superadmin))
-    |> Ecto.Multi.delete_all(:tokens, SuperadminToken.by_superadmin_and_contexts_query(superadmin, ["confirm"]))
+    |> Ecto.Multi.delete_all(
+      :tokens,
+      SuperadminToken.by_superadmin_and_contexts_query(superadmin, ["confirm"])
+    )
   end
 
   ## Reset password
@@ -300,11 +329,20 @@ defmodule QuestApiV21.Admin do
       {:ok, %{to: ..., body: ...}}
 
   """
-  def deliver_superadmin_reset_password_instructions(%Superadmin{} = superadmin, reset_password_url_fun)
+  def deliver_superadmin_reset_password_instructions(
+        %Superadmin{} = superadmin,
+        reset_password_url_fun
+      )
       when is_function(reset_password_url_fun, 1) do
-    {encoded_token, superadmin_token} = SuperadminToken.build_email_token(superadmin, "reset_password")
+    {encoded_token, superadmin_token} =
+      SuperadminToken.build_email_token(superadmin, "reset_password")
+
     Repo.insert!(superadmin_token)
-    SuperadminNotifier.deliver_reset_password_instructions(superadmin, reset_password_url_fun.(encoded_token))
+
+    SuperadminNotifier.deliver_reset_password_instructions(
+      superadmin,
+      reset_password_url_fun.(encoded_token)
+    )
   end
 
   @doc """
@@ -343,7 +381,10 @@ defmodule QuestApiV21.Admin do
   def reset_superadmin_password(superadmin, attrs) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:superadmin, Superadmin.password_changeset(superadmin, attrs))
-    |> Ecto.Multi.delete_all(:tokens, SuperadminToken.by_superadmin_and_contexts_query(superadmin, :all))
+    |> Ecto.Multi.delete_all(
+      :tokens,
+      SuperadminToken.by_superadmin_and_contexts_query(superadmin, :all)
+    )
     |> Repo.transaction()
     |> case do
       {:ok, %{superadmin: superadmin}} -> {:ok, superadmin}

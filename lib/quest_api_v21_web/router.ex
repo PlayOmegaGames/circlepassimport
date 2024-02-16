@@ -38,22 +38,20 @@ defmodule QuestApiV21Web.Router do
     plug QuestApiV21.HostGuardianPipeline
   end
 
-#  pipeline :web_auth do
-#    plug :accepts, ["html"]
-#    plug QuestApiV21.WebAuthPipeline
-#  end
-
+  #  pipeline :web_auth do
+  #    plug :accepts, ["html"]
+  #    plug QuestApiV21.WebAuthPipeline
+  #  end
 
   scope "/", QuestApiV21Web do
     pipe_through :browser
 
     get "/", Web.PageController, :home
 
-
-    #sign up pages for testing
+    # sign up pages for testing
     get "/sign_in", Web.PageController, :sign_in
     post "/sign_in", AuthController, :html_sign_in
-    #post "/sign_up", AuthController, :html_sign_up
+    # post "/sign_up", AuthController, :html_sign_up
 
     delete "/sign_out", AuthController, :html_sign_out
 
@@ -62,33 +60,30 @@ defmodule QuestApiV21Web.Router do
     post "/set_session", SessionController, :set_session
     live "/test_event", TestLive
 
-    #policy of boring
+    # policy of boring
     get "/privacy-policy", Web.PageController, :privacy
     get "/auth_splash", Web.PageController, :auth_splash
-
   end
 
-
-  #authentication for API
+  # authentication for API
   scope "/api", QuestApiV21Web do
     pipe_through :api
 
-    #end-user authentication
+    # end-user authentication
     get "/sign_up", AuthController, :new
     post "/sign_up", AuthController, :sign_up
     post "/sign_in", AuthController, :sign_in
 
-    #host authentication
+    # host authentication
     get "/host/sign_up", HostAuthController, :new_host
     post "/host/sign_up", HostAuthController, :sign_up_host
     post "/host/sign_in", HostAuthController, :sign_in_host
 
-    #token exchange for partner
+    # token exchange for partner
     post "/token_exchange", AuthController, :token_exchange
 
-    #Bubble retardation
+    # Bubble retardation
     post "/bubble_wrap", BubbleController, :bubble_wrap
-
   end
 
   scope "/api", QuestApiV21Web do
@@ -99,7 +94,7 @@ defmodule QuestApiV21Web.Router do
     resources "/hosts", HostController, except: [:index]
   end
 
-  #End user authenticated scope fpr api
+  # End user authenticated scope fpr api
   scope "/api", QuestApiV21Web do
     pipe_through :authenticated_api
     resources "/quests", QuestController
@@ -109,42 +104,39 @@ defmodule QuestApiV21Web.Router do
     get "/*path", ErrorController, :not_found
   end
 
+  # |=============================|
+  # |         WEB ROUTES          |
+  # |=============================|
 
-# |=============================|
-# |         WEB ROUTES          |
-# |=============================|
-
-  #end-user authenticated
+  # end-user authenticated
   scope "/", QuestApiV21Web do
-    pipe_through :authenticated  # Use both browser and authenticated pipelines
+    # Use both browser and authenticated pipelines
+    pipe_through :authenticated
 
-    #user settings page
+    # user settings page
     get "/user-settings", Web.AccountController, :user_settings
     post "/update_profile", Web.AccountController, :update_from_web
     post "/update_email", Web.AccountController, :change_email
     post "/change_password", Web.AccountController, :change_password
 
-    #badge page
+    # badge page
     get "/badges", Web.BadgeController, :show_badge
     get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
     get "/badge/:id", Web.CollectorController, :show_collector
     get "/new", Web.PageController, :new_page
     get "/profile", Web.PageController, :profile
 
-    #camera page
+    # camera page
     get "/camera", Web.PageController, :camera
-
   end
 
-  #for SSO Oauth
+  # for SSO Oauth
   scope "/auth", QuestApiV21Web do
     pipe_through :browser
 
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
   end
-
-
 
   # Other scopes may use custom stacks.
   # scope "/api", QuestApiV21Web do
@@ -161,7 +153,7 @@ defmodule QuestApiV21Web.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through [:browser, :require_authenticated_superadmin]
 
       live_dashboard "/dashboard", metrics: QuestApiV21Web.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview

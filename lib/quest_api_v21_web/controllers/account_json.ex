@@ -31,7 +31,7 @@ defmodule QuestApiV21Web.AccountJSON do
       data: data(account)
     }
   end
-  
+
   def data(%Account{badges: badges, quests: quests} = account) do
     %{
       id: account.id,

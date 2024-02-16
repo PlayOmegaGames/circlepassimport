@@ -22,7 +22,6 @@ defmodule QuestApiV21.OrganizationScopedQueries do
     |> Repo.all()
   end
 
-
   @doc """
   Retrieves a single item by its ID, scoped to the given organization IDs.
 
@@ -62,7 +61,9 @@ defmodule QuestApiV21.OrganizationScopedQueries do
   def update_item(queryable, id, organization_ids, update_fn) do
     get_item(queryable, id, organization_ids)
     |> case do
-      nil -> {:error, :not_found}
+      nil ->
+        {:error, :not_found}
+
       item ->
         item
         |> update_fn.()

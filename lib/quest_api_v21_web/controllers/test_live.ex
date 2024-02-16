@@ -25,5 +25,4 @@ defmodule QuestApiV21Web.TestLive do
     Logger.debug("test_event pushed")
     {:noreply, assign(socket, :some_data, "Data to send back to client")}
   end
-
 end

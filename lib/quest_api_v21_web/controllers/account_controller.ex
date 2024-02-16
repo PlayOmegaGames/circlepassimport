@@ -10,10 +10,8 @@ defmodule QuestApiV21Web.AccountController do
 
   require Logger
 
-
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController
-
 
   # Defines the create action to create a new account.
   def create(conn, %{"account" => account_params}) do
@@ -35,7 +33,10 @@ defmodule QuestApiV21Web.AccountController do
         # Sets the response status to 409 Conflict and returns a JSON error message.
         conn
         |> put_status(:conflict)
-        |> json(%{error: "An account with this email already exists", existing_account: existing_account})
+        |> json(%{
+          error: "An account with this email already exists",
+          existing_account: existing_account
+        })
 
       # Handles other errors with the provided changeset.
       {:error, changeset} ->
@@ -49,8 +50,9 @@ defmodule QuestApiV21Web.AccountController do
   # Defines the show action to display a single account.
   def show(conn, %{"id" => id}) do
     # Retrieves the account by ID, preloading associated collection points.
-    account = Accounts.get_account!(id)
-    |> QuestApiV21.Repo.preload([:badges, :quests])
+    account =
+      Accounts.get_account!(id)
+      |> QuestApiV21.Repo.preload([:badges, :quests])
 
     # Renders the show view for the retrieved account.
     render(conn, :show, account: account)
@@ -58,12 +60,14 @@ defmodule QuestApiV21Web.AccountController do
 
   # Defines the update action to update an existing account.
   def update(conn, %{"id" => id, "account" => account_params}) do
-    account = Accounts.get_account!(id)
-            |> QuestApiV21.Repo.preload([:badges, :quests])
+    account =
+      Accounts.get_account!(id)
+      |> QuestApiV21.Repo.preload([:badges, :quests])
 
     with {:ok, %Account{} = updated_account} <- Accounts.update_account(account, account_params),
          {:ok, new_jwt, _full_claims} <- Guardian.encode_and_sign(updated_account) do
       updated_account = QuestApiV21.Repo.preload(updated_account, [:badges, :quests])
+
       conn
       |> put_status(:ok)
       |> render("account.json", account: updated_account, jwt: new_jwt)
@@ -80,8 +84,9 @@ defmodule QuestApiV21Web.AccountController do
   # Defines the delete action to delete an existing account.
   def delete(conn, %{"id" => id}) do
     # Retrieves the account by ID.
-    account = Accounts.get_account!(id)
-    |> QuestApiV21.Repo.preload([:badges, :quests])
+    account =
+      Accounts.get_account!(id)
+      |> QuestApiV21.Repo.preload([:badges, :quests])
 
     # Attempts to delete the account.
     with {:ok, %Account{}} <- Accounts.delete_account(account) do
@@ -89,6 +94,4 @@ defmodule QuestApiV21Web.AccountController do
       send_resp(conn, :no_content, "")
     end
   end
-
-
 end

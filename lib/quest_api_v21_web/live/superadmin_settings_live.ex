@@ -9,7 +9,13 @@ defmodule QuestApiV21Web.SuperadminSettingsLive do
       Account Settings
       <:subtitle>Manage your account email address and password settings</:subtitle>
     </.header>
-
+    <form action="/superadmin/log_out" method="post">
+      <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+      <input type="hidden" name="_method" value="delete" />
+      <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        Sign Out
+      </button>
+    </form>
     <div class="space-y-12 divide-y">
       <div>
         <.simple_form

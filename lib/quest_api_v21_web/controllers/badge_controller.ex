@@ -4,17 +4,17 @@ defmodule QuestApiV21Web.BadgeController do
   alias QuestApiV21.Badges
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21Web.JWTUtility
-  #alias QuestApiV21.Accounts
-  #alias QuestApiV21.Repo
+  # alias QuestApiV21.Accounts
+  # alias QuestApiV21.Repo
   require Logger
   plug :put_layout, html: {QuestApiV21Web.Layouts, :logged_in}
-
 
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-    badge = Badges.list_badge()
-    |> QuestApiV21.Repo.preload([:organization, :accounts])
+    badge =
+      Badges.list_badge()
+      |> QuestApiV21.Repo.preload([:organization, :accounts])
 
     render(conn, :index, badge: badge)
   end
@@ -25,27 +25,28 @@ defmodule QuestApiV21Web.BadgeController do
     case Badges.create_badge_with_organization(badge_params, organization_id) do
       {:ok, badge} ->
         badge = QuestApiV21.Repo.preload(badge, [:accounts])
+
         conn
         |> put_status(:created)
         |> put_resp_header("location", ~p"/api/badge/#{badge}")
         |> render(:show, badge: badge)
 
-        {:error, changeset} ->
-          Logger.error("Changeset error: #{inspect(changeset.errors)}")
-          conn
-          |> put_status(:unprocessable_entity)
-          |> render("error.json", %{message: "Badge creation failed", errors: changeset})
-      end
+      {:error, changeset} ->
+        Logger.error("Changeset error: #{inspect(changeset.errors)}")
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "Badge creation failed", errors: changeset})
+    end
   end
 
   def show(conn, %{"id" => id}) do
-    badge = Badges.get_badge!(id)
-    |> QuestApiV21.Repo.preload([:organization, :accounts])
-
+    badge =
+      Badges.get_badge!(id)
+      |> QuestApiV21.Repo.preload([:organization, :accounts])
 
     render(conn, :show, badge: badge)
   end
-
 
   def update(conn, %{"id" => id, "badge" => badge_params}) do
     badge = Badges.get_badge!(id)

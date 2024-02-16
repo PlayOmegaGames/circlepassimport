@@ -5,12 +5,8 @@ defmodule QuestApiV21Web.ScanControllerTest do
 
   alias QuestApiV21.Scans.Scan
 
-  @create_attrs %{
-
-  }
-  @update_attrs %{
-
-  }
+  @create_attrs %{}
+  @update_attrs %{}
   @invalid_attrs %{}
 
   setup %{conn: conn} do

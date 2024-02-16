@@ -22,7 +22,6 @@ defmodule QuestApiV21Web.HostAuthController do
     end
   end
 
-
   def sign_up_host(conn, %{"host" => host_params}) do
     case Hosts.create_host(host_params) do
       {:ok, host} ->
@@ -45,8 +44,10 @@ defmodule QuestApiV21Web.HostAuthController do
           jwt: jwt,
           host: %{email: host.email, name: host.name, id: host.id}
         })
+
       {:error, reason} ->
         IO.inspect(reason, label: "Error in JWT encoding")
+
         conn
         |> put_status(:internal_server_error)
         |> json(%{error: "Internal server error"})

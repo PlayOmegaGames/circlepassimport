@@ -58,12 +58,13 @@ defmodule QuestApiV21.Organizations do
       |> Organization.changeset(attrs)
       |> Ecto.Changeset.put_assoc(:hosts, [host])
 
-    #retrieves the organization id of the newly created org
+    # retrieves the organization id of the newly created org
     case Repo.insert(organization_changeset) do
       {:ok, organization} ->
         updated_organization_ids = fetch_updated_organization_ids_for_host(host)
         new_jwt = generate_new_jwt_for_host(host, updated_organization_ids)
         {:ok, organization, new_jwt}
+
       {:error, changeset} ->
         {:error, changeset}
     end
@@ -119,7 +120,9 @@ defmodule QuestApiV21.Organizations do
 
   defp maybe_add_hosts(changeset, attrs) do
     case Map.get(attrs, "host_ids") do
-      nil -> changeset
+      nil ->
+        changeset
+
       host_ids ->
         hosts = Repo.all(from h in Host, where: h.id in ^host_ids)
         Ecto.Changeset.put_assoc(changeset, :hosts, hosts)
@@ -131,10 +134,10 @@ defmodule QuestApiV21.Organizations do
       from(o in Organization,
         join: h in assoc(o, :hosts),
         where: h.id == ^host.id,
-        select: o.id)
+        select: o.id
+      )
     )
   end
-
 
   defp generate_new_jwt_for_host(host, organization_ids) do
     # Assuming HostGuardian.encode_and_sign can accept additional claims
@@ -142,5 +145,4 @@ defmodule QuestApiV21.Organizations do
     {:ok, jwt, _full_claims} = QuestApiV21.HostGuardian.encode_and_sign(host, claims)
     jwt
   end
-
 end

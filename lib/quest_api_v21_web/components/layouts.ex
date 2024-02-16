@@ -8,5 +8,6 @@ defmodule QuestApiV21Web.Layouts do
   def calculate_icon(request_path, url) do
     if request_path == url, do: "-solid", else: ""
   end
+
   embed_templates "layouts/*"
 end

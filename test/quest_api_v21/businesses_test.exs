@@ -26,7 +26,9 @@ defmodule QuestApiV21.OrganizationsTest do
     test "create_organization/1 with valid data creates a organization" do
       valid_attrs = %{name: "some name"}
 
-      assert {:ok, %Organization{} = organization} = Organizations.create_organization(valid_attrs)
+      assert {:ok, %Organization{} = organization} =
+               Organizations.create_organization(valid_attrs)
+
       assert organization.name == "some name"
     end
 
@@ -38,13 +40,18 @@ defmodule QuestApiV21.OrganizationsTest do
       organization = organization_fixture()
       update_attrs = %{name: "some updated name"}
 
-      assert {:ok, %Organization{} = organization} = Organizations.update_organization(organization, update_attrs)
+      assert {:ok, %Organization{} = organization} =
+               Organizations.update_organization(organization, update_attrs)
+
       assert organization.name == "some updated name"
     end
 
     test "update_organization/2 with invalid data returns error changeset" do
       organization = organization_fixture()
-      assert {:error, %Ecto.Changeset{}} = Organizations.update_organization(organization, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Organizations.update_organization(organization, @invalid_attrs)
+
       assert organization == Organizations.get_organization!(organization.id)
     end
 
@@ -63,11 +70,19 @@ defmodule QuestApiV21.OrganizationsTest do
   describe "many-to-many association between hosts and organizations" do
     test "associates a host with a organization" do
       # Create a host
-      host_changeset = Host.changeset(%Host{}, %{name: "Host Name", email: "host@example.com", hashed_password: "password"})
+      host_changeset =
+        Host.changeset(%Host{}, %{
+          name: "Host Name",
+          email: "host@example.com",
+          hashed_password: "password"
+        })
+
       {:ok, host} = Repo.insert(host_changeset)
 
       # Create a organization
-      organization_changeset = Organization.changeset(%Organization{}, %{name: "Organization Name"})
+      organization_changeset =
+        Organization.changeset(%Organization{}, %{name: "Organization Name"})
+
       {:ok, organization} = Repo.insert(organization_changeset)
 
       # Preload the hosts association for the organization
@@ -75,11 +90,15 @@ defmodule QuestApiV21.OrganizationsTest do
 
       # Associate the host with the organization
       intermediate_changeset = Ecto.Changeset.change(organization)
-      updated_organization_changeset = Ecto.Changeset.put_assoc(intermediate_changeset, :hosts, [host])
+
+      updated_organization_changeset =
+        Ecto.Changeset.put_assoc(intermediate_changeset, :hosts, [host])
+
       {:ok, updated_organization} = Repo.update(updated_organization_changeset)
 
       # Retrieve the organization with the associated hosts
-      organization_with_hosts = Repo.get!(Organization, updated_organization.id) |> Repo.preload(:hosts)
+      organization_with_hosts =
+        Repo.get!(Organization, updated_organization.id) |> Repo.preload(:hosts)
 
       # Assert that the host was associated with the organization
       assert [^host] = organization_with_hosts.hosts

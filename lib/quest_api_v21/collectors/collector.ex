@@ -24,13 +24,14 @@ defmodule QuestApiV21.Collectors.Collector do
     |> validate_required([:name])
     |> maybe_extract_and_set_quest_start(attrs)
     |> cast_assoc(:quests, with: &QuestApiV21.Quests.Quest.changeset/2)
-
   end
 
-  #for Bubble
+  # for Bubble
   defp maybe_extract_and_set_quest_start(changeset, attrs) do
     case Map.get(attrs, "name_id") do
-      nil -> changeset
+      nil ->
+        changeset
+
       name_id ->
         [_, quest_id] = String.split(name_id, " - ")
         change(changeset, %{quest_start: quest_id})

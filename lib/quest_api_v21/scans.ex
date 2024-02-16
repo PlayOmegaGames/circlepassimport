@@ -55,8 +55,7 @@ defmodule QuestApiV21.Scans do
     |> Repo.insert()
   end
 
-  
-    @doc """
+  @doc """
   Creates a scan for a given badge and account.
   """
   def create_scan_for_badge_account(badge_id, account_id) do

@@ -21,7 +21,11 @@ defmodule QuestApiV21.HostsTest do
     end
 
     test "create_host/1 with valid data creates a host" do
-      valid_attrs = %{email: "some email", hashed_password: "some hashed_password", name: "some name"}
+      valid_attrs = %{
+        email: "some email",
+        hashed_password: "some hashed_password",
+        name: "some name"
+      }
 
       assert {:ok, %Host{} = host} = Hosts.create_host(valid_attrs)
       assert host.email == "some email"
@@ -35,7 +39,12 @@ defmodule QuestApiV21.HostsTest do
 
     test "update_host/2 with valid data updates the host" do
       host = host_fixture()
-      update_attrs = %{email: "some updated email", hashed_password: "some updated hashed_password", name: "some updated name"}
+
+      update_attrs = %{
+        email: "some updated email",
+        hashed_password: "some updated hashed_password",
+        name: "some updated name"
+      }
 
       assert {:ok, %Host{} = host} = Hosts.update_host(host, update_attrs)
       assert host.email == "some updated email"

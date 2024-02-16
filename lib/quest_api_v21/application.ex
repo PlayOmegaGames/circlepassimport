@@ -6,7 +6,6 @@ defmodule QuestApiV21.Application do
   use Application
   require Logger
 
-
   @impl true
   def start(_type, _args) do
     # For debugging secrets
@@ -14,7 +13,6 @@ defmodule QuestApiV21.Application do
     Logger.info("Google Client ID: #{google_client_id}")
 
     configure_ueberauth()
-
 
     children = [
       # Start the Telemetry supervisor
@@ -35,7 +33,6 @@ defmodule QuestApiV21.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: QuestApiV21.Supervisor]
     Supervisor.start_link(children, opts)
-
   end
 
   defp configure_ueberauth do
@@ -47,7 +44,7 @@ defmodule QuestApiV21.Application do
 
     Application.put_env(:ueberauth, Ueberauth.Strategy.Google.OAuth, config)
   end
-  
+
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   @impl true

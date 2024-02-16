@@ -46,18 +46,21 @@ defmodule QuestApiV21.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-def create_account(attrs \\ %{}) do
-  email =
-    case Map.fetch(attrs, "email") do
-      {:ok, email} -> email
-      :error -> Map.get(attrs, :email)
-    end
+  def create_account(attrs \\ %{}) do
+    email =
+      case Map.fetch(attrs, "email") do
+        {:ok, email} -> email
+        :error -> Map.get(attrs, :email)
+      end
 
     Logger.debug("create_account called with attrs: #{inspect(attrs)}")
 
-  case find_account_by_email(email) do
-    nil ->
-      Logger.debug("No existing account found for email: #{email}, proceeding to create new account")
+    case find_account_by_email(email) do
+      nil ->
+        Logger.debug(
+          "No existing account found for email: #{email}, proceeding to create new account"
+        )
+
         updated_attrs =
           if Map.get(attrs, "is_passwordless", false) do
             # Skip password hashing for passwordless accounts
@@ -72,15 +75,17 @@ def create_account(attrs \\ %{}) do
         |> maybe_add_quests(attrs)
         |> Repo.insert()
 
-        _existing_account ->
-          {:error, :email_taken}
-      end
+      _existing_account ->
+        {:error, :email_taken}
+    end
   end
 
   defp put_password_hash(%{"password" => password} = attrs) do
     Map.put(attrs, "hashed_password", Bcrypt.hash_pwd_salt(password))
   end
-  defp put_password_hash(attrs), do: attrs  # for cases where password is not provided
+
+  # for cases where password is not provided
+  defp put_password_hash(attrs), do: attrs
 
   @doc """
   Finds or creates a user based on email. If a user doesn't exist, creates a new user with the provided email and name.
@@ -108,7 +113,8 @@ def create_account(attrs \\ %{}) do
     user_attrs = %{
       email: email,
       name: name,
-      is_passwordless: true # Indicate that this account does not use a password
+      # Indicate that this account does not use a password
+      is_passwordless: true
     }
 
     create_account(user_attrs)
@@ -126,17 +132,19 @@ def create_account(attrs \\ %{}) do
       {:error, %Ecto.Changeset{}}
 
   """
-   # Existing clauses
-   def update_account(%Account{} = account, attrs) do
+  # Existing clauses
+  def update_account(%Account{} = account, attrs) do
     account = Repo.preload(account, :badges)
+
     account
-    |> Account.changeset(attrs)  # Pass the struct and attrs to changeset/2
+    # Pass the struct and attrs to changeset/2
+    |> Account.changeset(attrs)
     |> maybe_add_badges(attrs)
     |> maybe_add_quests(attrs)
     |> Repo.update()
   end
 
-    @doc """
+  @doc """
   Handles the OAuth login or account creation flow.
 
   If the email exists, it returns the existing account.
@@ -152,6 +160,7 @@ def create_account(attrs \\ %{}) do
   """
   def handle_oauth_login(email, name) do
     Logger.debug("handle_oauth_login called with email: #{email} and name: #{name}")
+
     case find_account_by_email(email) do
       nil ->
         create_oauth_account(email, name)
@@ -167,16 +176,16 @@ def create_account(attrs \\ %{}) do
 
   def create_oauth_account(email, name) do
     Logger.debug("create_oauth_account called with email: #{email}")
+
     user_attrs = %{
       email: email,
       name: name,
       is_passwordless: true
     }
+
     Logger.debug("user_attrs for account creation: #{inspect(user_attrs)}")
     create_account(user_attrs)
   end
-
-
 
   @doc """
   Deletes a account.
@@ -215,8 +224,11 @@ def create_account(attrs \\ %{}) do
 
   def authenticate_user_by_password(_email, id, current_password) do
     IO.inspect("Authenticate User Function")
+
     case find_account_by_id(id) do
-      nil -> {:error, :not_found}
+      nil ->
+        {:error, :not_found}
+
       account ->
         if Bcrypt.verify_pass(current_password, account.hashed_password) do
           {:ok, account}
@@ -226,7 +238,7 @@ def create_account(attrs \\ %{}) do
     end
   end
 
-    @doc """
+  @doc """
   Finds an account by a unique identifier.
 
   ## Examples
@@ -237,7 +249,7 @@ def create_account(attrs \\ %{}) do
       iex> get_user_by_identifier("nonexistent@example.com")
       nil
   """
-  #For the token exchange how to identify the account
+  # For the token exchange how to identify the account
   def get_user_by_identifier(identifier) do
     Repo.get_by(Account, email: identifier)
   end
@@ -256,8 +268,7 @@ def create_account(attrs \\ %{}) do
     Account.changeset(account, attrs)
   end
 
-
-# In QuestApiV21.Accounts context
+  # In QuestApiV21.Accounts context
 
   def add_badges_to_account(account_id, badge_ids) when is_list(badge_ids) do
     account = Repo.get!(Account, account_id) |> Repo.preload(:badges)
@@ -267,7 +278,8 @@ def create_account(attrs \\ %{}) do
     new_badge_ids = badge_ids -- existing_badge_ids
 
     if Enum.empty?(new_badge_ids) do
-      {:ok, []} # No new badges to add
+      # No new badges to add
+      {:ok, []}
     else
       new_badges = Repo.all(from b in Badge, where: b.id in ^new_badge_ids)
 
@@ -276,7 +288,11 @@ def create_account(attrs \\ %{}) do
         {:error, :no_badges_found}
       else
         updated_badges = account.badges ++ new_badges
-        case Repo.update(Ecto.Changeset.change(account) |> Ecto.Changeset.put_assoc(:badges, updated_badges)) do
+
+        case Repo.update(
+               Ecto.Changeset.change(account)
+               |> Ecto.Changeset.put_assoc(:badges, updated_badges)
+             ) do
           {:ok, _account} -> {:ok, new_badges}
           {:error, changeset} -> {:error, changeset}
         end
@@ -289,7 +305,9 @@ def create_account(attrs \\ %{}) do
 
   def authenticate_user(email, password) do
     case find_account_by_email(email) do
-      nil -> {:error, :not_found}
+      nil ->
+        {:error, :not_found}
+
       account ->
         if Bcrypt.verify_pass(password, account.hashed_password) do
           {:ok, account}
@@ -301,8 +319,11 @@ def create_account(attrs \\ %{}) do
 
   def authenticate_user_by_id(_email, id, password) do
     IO.inspect("Authenticate User Function")
+
     case find_account_by_id(id) do
-      nil -> {:error, :not_found}
+      nil ->
+        {:error, :not_found}
+
       account ->
         if Bcrypt.verify_pass(password, account.hashed_password) do
           {:ok, account}
@@ -311,7 +332,6 @@ def create_account(attrs \\ %{}) do
         end
     end
   end
-
 
   defp maybe_add_badges(changeset, attrs) do
     case Map.get(attrs, "badge_ids") do
@@ -329,18 +349,24 @@ def create_account(attrs \\ %{}) do
         badges_count = length(badge_ids)
 
         updated_changeset = Ecto.Changeset.put_assoc(changeset, :badges, badges)
-        updated_changeset_with_stats = Ecto.Changeset.put_change(updated_changeset, :badges_stats, current_stats + badges_count)
+
+        updated_changeset_with_stats =
+          Ecto.Changeset.put_change(
+            updated_changeset,
+            :badges_stats,
+            current_stats + badges_count
+          )
 
         Logger.debug("Updated changeset: #{inspect(updated_changeset_with_stats)}")
         updated_changeset_with_stats
     end
   end
 
-
-
   defp maybe_add_quests(changeset, attrs) do
     case Map.get(attrs, "quest_ids") do
-      nil -> changeset
+      nil ->
+        changeset
+
       quest_ids when is_list(quest_ids) ->
         current_quests = Ecto.assoc(changeset.data, :quests) |> Repo.all()
         new_quests = Repo.all(from q in Quest, where: q.id in ^quest_ids)
@@ -349,7 +375,7 @@ def create_account(attrs \\ %{}) do
     end
   end
 
-  #for the show collector function
+  # for the show collector function
   def add_quest_to_user(user_id, quest) do
     account = Repo.get!(Account, user_id) |> Repo.preload(:quests)
 
@@ -359,6 +385,7 @@ def create_account(attrs \\ %{}) do
     else
       Logger.info("Adding Quest ID: #{quest.id} to Account ID: #{account.id}")
       updated_quests = [quest | account.quests]
+
       Ecto.Changeset.change(account)
       |> Ecto.Changeset.put_assoc(:quests, updated_quests)
       |> Ecto.Changeset.put_change(:quests_stats, account.quests_stats + 1)
@@ -369,7 +396,6 @@ def create_account(attrs \\ %{}) do
       end
     end
   end
-
 
   def add_badge_to_user(user_id, badge) do
     account = Repo.get!(Account, user_id) |> Repo.preload([:badges])
@@ -389,10 +415,17 @@ def create_account(attrs \\ %{}) do
 
       with {:ok, updated_account} <- Repo.update(changeset) do
         if quest_completed?(updated_account, badge.quest_id) do
-          updated_account = Ecto.Changeset.change(updated_account, rewards_stats: updated_account.rewards_stats + 1)
+          updated_account =
+            Ecto.Changeset.change(updated_account,
+              rewards_stats: updated_account.rewards_stats + 1
+            )
+
           case Repo.update(updated_account) do
-            {:ok, updated_account} -> {:ok, "Badge and reward added to the account", updated_account}
-            {:error, reason} -> {:error, reason}
+            {:ok, updated_account} ->
+              {:ok, "Badge and reward added to the account", updated_account}
+
+            {:error, reason} ->
+              {:error, reason}
           end
         else
           {:ok, "Badge added to the account", updated_account}
@@ -413,9 +446,9 @@ def create_account(attrs \\ %{}) do
 
   defp quest_completed?(account, quest_id) do
     quest_badges = Repo.all(from b in Badge, where: b.quest_id == ^quest_id, select: b.id)
+
     Enum.all?(quest_badges, fn badge_id ->
       Enum.any?(account.badges, fn b -> b.id == badge_id end)
     end)
   end
-
 end

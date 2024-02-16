@@ -18,15 +18,18 @@ defmodule QuestApiV21Web.AuthPlug do
     if user_id && Accounts.get_account!(user_id) do
       Logger.debug("User authenticated. User ID: #{user_id}")
       assign_user(conn, user_id)
-  else
-    redirect_path = if Regex.match?(badge_path_regex, request_path), do: request_path, else: "/badges"
-    Logger.debug("Redirect path set in session. Path: #{redirect_path}")
-    conn
-    |> put_session(:redirect_path, redirect_path)
-    |> redirect(to: "/auth_splash")
-    |> halt()
+    else
+      redirect_path =
+        if Regex.match?(badge_path_regex, request_path), do: request_path, else: "/badges"
+
+      Logger.debug("Redirect path set in session. Path: #{redirect_path}")
+
+      conn
+      |> put_session(:redirect_path, redirect_path)
+      |> redirect(to: "/auth_splash")
+      |> halt()
+    end
   end
-end
 
   defp assign_user(conn, user_id) do
     Logger.info("Session accessed for user_id: #{user_id}, at: #{DateTime.utc_now()}")

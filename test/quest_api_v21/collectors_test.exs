@@ -35,9 +35,16 @@ defmodule QuestApiV21.CollectorsTest do
 
     test "update_collector/2 with valid data updates the collector" do
       collector = collector_fixture()
-      update_attrs = %{coordinates: "some updated coordinates", height: "some updated height", name: "some updated name"}
 
-      assert {:ok, %Collector{} = collector} = Collectors.update_collector(collector, update_attrs)
+      update_attrs = %{
+        coordinates: "some updated coordinates",
+        height: "some updated height",
+        name: "some updated name"
+      }
+
+      assert {:ok, %Collector{} = collector} =
+               Collectors.update_collector(collector, update_attrs)
+
       assert collector.coordinates == "some updated coordinates"
       assert collector.height == "some updated height"
       assert collector.name == "some updated name"

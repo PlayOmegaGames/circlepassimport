@@ -12,6 +12,7 @@ defmodule QuestApiV21Web.QrGenerator do
             # Make sure your S3 bucket is configured for public access if you use this method
             public_url = "https://#{bucket}.s3.amazonaws.com/#{s3_path}"
             {:ok, public_url}
+
           {:error, error} ->
             {:error, error}
         end
@@ -21,17 +22,18 @@ defmodule QuestApiV21Web.QrGenerator do
     end
   end
 
-
   # Generates a unique identifier for the QR code based on the provided url
   defp unique_identifier(url), do: "#{url}-#{:erlang.unique_integer([:positive])}"
 
   def request_qrcode(url) do
     api_url = "https://qrcode-monkey.p.rapidapi.com/qr/custom"
+
     headers = [
       {"Content-Type", "application/json"},
       {"X-RapidAPI-Key", "afcc3f8992msh4a29a9bf6c8d2a7p12fa15jsn9663ee7baf58"},
       {"X-RapidAPI-Host", "qrcode-monkey.p.rapidapi.com"}
     ]
+
     body = %{
       data: url,
       config: %{
@@ -48,7 +50,8 @@ defmodule QuestApiV21Web.QrGenerator do
         eyeBall2Color: "#000000",
         eyeBall3Color: "#000000",
         bodyColor: "#000000",
-        logo: "https://quest-optimized-images.s3.amazonaws.com/optimized-images/webapp-images/QuestLogo.png",
+        logo:
+          "https://quest-optimized-images.s3.amazonaws.com/optimized-images/webapp-images/QuestLogo.png",
         logoMode: "clean"
       },
       size: 300,
@@ -56,7 +59,7 @@ defmodule QuestApiV21Web.QrGenerator do
       file: "png"
     }
 
-    #IO.inspect(body)
+    # IO.inspect(body)
 
     case HTTPoison.post(api_url, Jason.encode!(body), headers) do
       {:ok, %{status_code: 200, body: response_body}} ->
@@ -70,6 +73,4 @@ defmodule QuestApiV21Web.QrGenerator do
         {:error, "API request failed: #{reason}"}
     end
   end
-
-
 end

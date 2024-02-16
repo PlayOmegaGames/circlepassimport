@@ -29,10 +29,14 @@ defmodule QuestApiV21Web.SuperadminConfirmationInstructionsLiveTest do
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
                "If your email is in our system"
 
-      assert Repo.get_by!(Admin.SuperadminToken, superadmin_id: superadmin.id).context == "confirm"
+      assert Repo.get_by!(Admin.SuperadminToken, superadmin_id: superadmin.id).context ==
+               "confirm"
     end
 
-    test "does not send confirmation token if superadmin is confirmed", %{conn: conn, superadmin: superadmin} do
+    test "does not send confirmation token if superadmin is confirmed", %{
+      conn: conn,
+      superadmin: superadmin
+    } do
       Repo.update!(Admin.Superadmin.confirm_changeset(superadmin))
 
       {:ok, lv, _html} = live(conn, ~p"/superadmin/confirm")

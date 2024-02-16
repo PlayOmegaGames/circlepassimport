@@ -12,7 +12,7 @@ defmodule QuestApiV21.QuestsFixtures do
       attrs
       |> Enum.into(%{
         address: "some address",
-        #end-date: ~D[2023-08-23],
+        # end-date: ~D[2023-08-23],
         name: "some name",
         quest_type: "some quest-type",
         redemption: "some redemption",

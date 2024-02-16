@@ -9,7 +9,6 @@ defmodule QuestApiV21.Collectors do
   alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Quests.Quest
 
-
   @doc """
   Returns the list of collectors.
 
@@ -43,8 +42,6 @@ defmodule QuestApiV21.Collectors do
 
   """
 
-
-
   def get_quest_name(quest_id) do
     QuestApiV21.Repo.get(QuestApiV21.Quests.Quest, quest_id)
     |> case do
@@ -53,8 +50,7 @@ defmodule QuestApiV21.Collectors do
     end
   end
 
-
-    @doc """
+  @doc """
   Gets a single collector by ID, scoped by organization IDs.
 
   ## Parameters
@@ -68,12 +64,12 @@ defmodule QuestApiV21.Collectors do
 
   """
   def get_collector(id, organization_ids) do
-    preloads = [:quests, :badges] 
+    preloads = [:quests, :badges]
 
     OrganizationScopedQueries.get_item(Collector, id, organization_ids, preloads)
   end
 
-    @doc """
+  @doc """
   Gets a single collector without raising an exception.
 
   Returns nil if the Collector does not exist.
@@ -87,8 +83,11 @@ defmodule QuestApiV21.Collectors do
       nil
   """
   def get_collector(id) do
-    Repo.get(Collector, id) |> case do
-      nil -> nil
+    Repo.get(Collector, id)
+    |> case do
+      nil ->
+        nil
+
       collector ->
         Repo.preload(collector,
           quests: [badges: :accounts],
@@ -97,23 +96,22 @@ defmodule QuestApiV21.Collectors do
     end
   end
 
+  @doc """
+  Gets a single quest.
 
-      @doc """
-    Gets a single quest.
+  Raises `Ecto.NoResultsError` if the Quest does not exist.
 
-    Raises `Ecto.NoResultsError` if the Quest does not exist.
+  ## Examples
 
-    ## Examples
+      iex> get_quest!(123)
+      %Quest{}
 
-        iex> get_quest!(123)
-        %Quest{}
-
-        iex> get_quest!(456)
-        ** (Ecto.NoResultsError)
-    """
-    def get_quest!(id) do
-      Repo.get!(Quest, id)
-    end
+      iex> get_quest!(456)
+      ** (Ecto.NoResultsError)
+  """
+  def get_quest!(id) do
+    Repo.get!(Quest, id)
+  end
 
   @doc """
   Creates a collector.
@@ -140,6 +138,7 @@ defmodule QuestApiV21.Collectors do
     |> maybe_add_quests(collector_params)
     |> Repo.insert()
   end
+
   @doc """
   Updates a collector.
 
@@ -162,7 +161,6 @@ defmodule QuestApiV21.Collectors do
       {:error, :unauthorized}
     end
   end
-
 
   @doc """
   Deletes a collector.
@@ -216,7 +214,9 @@ defmodule QuestApiV21.Collectors do
 
   defp add_quest_start_if_valid(quest_ids, attrs) do
     case Map.get(attrs, "quest_start") do
-      nil -> {:ok, quest_ids}
+      nil ->
+        {:ok, quest_ids}
+
       quest_start_id ->
         # Check if quest_start_id exists in the database
         case Repo.get(Quest, quest_start_id) do

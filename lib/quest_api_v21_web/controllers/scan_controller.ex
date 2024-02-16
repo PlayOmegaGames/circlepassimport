@@ -9,7 +9,6 @@ defmodule QuestApiV21Web.ScanController do
   def index(conn, _params) do
     scans = Scans.list_scans()
 
-
     render(conn, :index, scans: scans)
   end
 

@@ -32,7 +32,9 @@ defmodule QuestApiV21Web.SuperadminLoginLiveTest do
       {:ok, lv, _html} = live(conn, ~p"/superadmin/log_in")
 
       form =
-        form(lv, "#login_form", superadmin: %{email: superadmin.email, password: password, remember_me: true})
+        form(lv, "#login_form",
+          superadmin: %{email: superadmin.email, password: password, remember_me: true}
+        )
 
       conn = submit_form(form, conn)
 

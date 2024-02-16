@@ -30,6 +30,7 @@ defmodule QuestApiV21Web.AuthJSON do
       }
     }
   end
+
   def sign_in_error(%{error: error_message}) do
     %{
       errors: %{

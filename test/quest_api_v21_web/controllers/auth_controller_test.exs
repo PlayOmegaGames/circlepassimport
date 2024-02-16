@@ -19,7 +19,8 @@ defmodule QuestApiV21Web.AuthControllerTest do
   describe "sign_up" do
     test "with valid data creates an account and returns 201 status with JWT", %{conn: conn} do
       conn
-      |> Ecto.Adapters.SQL.begin_test_transaction()  # Start a transaction for data setup
+      # Start a transaction for data setup
+      |> Ecto.Adapters.SQL.begin_test_transaction()
 
       # Ensure no existing account with the same email
       assert Accounts.find_account_by_email("test@example.com") == nil
@@ -33,7 +34,8 @@ defmodule QuestApiV21Web.AuthControllerTest do
       assert "test@example.com" = response["email"]
 
       conn
-      |> Ecto.Adapters.SQL.rollback_test_transaction()  # Rollback the transaction after the test
+      # Rollback the transaction after the test
+      |> Ecto.Adapters.SQL.rollback_test_transaction()
     end
 
     test "with invalid data returns 422 status with error messages", %{conn: conn} do

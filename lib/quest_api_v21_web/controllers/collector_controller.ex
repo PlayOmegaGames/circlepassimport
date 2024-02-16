@@ -10,8 +10,10 @@ defmodule QuestApiV21Web.CollectorController do
 
   def index(conn, _params) do
     organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
-    collectors = Collectors.list_collectors_by_organization_ids(organization_ids)
-                |> Repo.preload([:badges, :quests])
+
+    collectors =
+      Collectors.list_collectors_by_organization_ids(organization_ids)
+      |> Repo.preload([:badges, :quests])
 
     render(conn, :index, collectors: collectors)
   end
@@ -19,12 +21,14 @@ defmodule QuestApiV21Web.CollectorController do
   def create(conn, %{"collector" => collector_params}) do
     organization_id = JWTUtility.extract_primary_organization_id_from_jwt(conn)
 
-    with {:ok, collector} <- Collectors.create_collector_with_organization(collector_params, organization_id),
+    with {:ok, collector} <-
+           Collectors.create_collector_with_organization(collector_params, organization_id),
          url = "questapp.io/badge/#{collector.id}",
          {:ok, qr_code_url} <- QuestApiV21Web.QrGenerator.create_and_upload_qr(url) do
-      updated_collector = collector
-                          |> Ecto.Changeset.change(%{qr_code_url: qr_code_url})
-                          |> Repo.update!
+      updated_collector =
+        collector
+        |> Ecto.Changeset.change(%{qr_code_url: qr_code_url})
+        |> Repo.update!()
 
       updated_collector = Repo.preload(updated_collector, [:badges, :quests])
 
@@ -44,7 +48,6 @@ defmodule QuestApiV21Web.CollectorController do
         |> render("error.json", %{message: "Failed to create QR code", error: error})
     end
   end
-
 
   def show(conn, %{"id" => id}) do
     organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
@@ -66,13 +69,16 @@ defmodule QuestApiV21Web.CollectorController do
     case Collectors.get_collector(id, organization_ids) do
       nil ->
         send_resp(conn, :not_found, "")
+
       %Collector{} = collector ->
         case Collectors.update_collector(collector, collector_params, organization_ids) do
           {:ok, updated_collector} ->
             updated_collector = Repo.preload(updated_collector, [:badges, :quests])
             render(conn, "show.json", collector: updated_collector)
+
           {:error, :unauthorized} ->
             send_resp(conn, :forbidden, "")
+
           {:error, _changeset} ->
             send_resp(conn, :unprocessable_entity, "")
         end
@@ -85,10 +91,12 @@ defmodule QuestApiV21Web.CollectorController do
     case Collectors.get_collector(id, organization_ids) do
       nil ->
         send_resp(conn, :not_found, "")
+
       %Collector{} = collector ->
         case Collectors.delete_collector(collector, organization_ids) do
           {:ok, %Collector{}} ->
             send_resp(conn, :no_content, "")
+
           {:error, :unauthorized} ->
             send_resp(conn, :forbidden, "")
         end

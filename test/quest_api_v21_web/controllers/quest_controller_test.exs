@@ -25,7 +25,16 @@ defmodule QuestApiV21Web.QuestControllerTest do
     scans: 43,
     start_date: ~D[2023-08-24]
   }
-  @invalid_attrs %{address: nil, "end-date": nil, name: nil, "quest-type": nil, redemption: nil, reward: nil, scans: nil, "start-date": nil}
+  @invalid_attrs %{
+    address: nil,
+    "end-date": nil,
+    name: nil,
+    "quest-type": nil,
+    redemption: nil,
+    reward: nil,
+    scans: nil,
+    "start-date": nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

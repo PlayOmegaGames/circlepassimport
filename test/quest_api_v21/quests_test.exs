@@ -8,7 +8,16 @@ defmodule QuestApiV21.QuestsTest do
 
     import QuestApiV21.QuestsFixtures
 
-    @invalid_attrs %{address: nil, "end-date": nil, name: nil, "quest-type": nil, redemption: nil, reward: nil, scans: nil, "start-date": nil}
+    @invalid_attrs %{
+      address: nil,
+      "end-date": nil,
+      name: nil,
+      "quest-type": nil,
+      redemption: nil,
+      reward: nil,
+      scans: nil,
+      "start-date": nil
+    }
 
     test "list_quests/0 returns all quests" do
       quest = quest_fixture()
@@ -21,7 +30,16 @@ defmodule QuestApiV21.QuestsTest do
     end
 
     test "create_quest/1 with valid data creates a quest" do
-      valid_attrs = %{address: "some address", "end-date": ~D[2023-08-23], name: "some name", "quest-type": "some quest-type", redemption: "some redemption", reward: "some reward", scans: 42, "start-date": ~D[2023-08-23]}
+      valid_attrs = %{
+        address: "some address",
+        "end-date": ~D[2023-08-23],
+        name: "some name",
+        "quest-type": "some quest-type",
+        redemption: "some redemption",
+        reward: "some reward",
+        scans: 42,
+        "start-date": ~D[2023-08-23]
+      }
 
       assert {:ok, %Quest{} = quest} = Quests.create_quest(valid_attrs)
       assert quest.address == "some address"
@@ -40,7 +58,17 @@ defmodule QuestApiV21.QuestsTest do
 
     test "update_quest/2 with valid data updates the quest" do
       quest = quest_fixture()
-      update_attrs = %{address: "some updated address", "end-date": ~D[2023-08-24], name: "some updated name", "quest-type": "some updated quest-type", redemption: "some updated redemption", reward: "some updated reward", scans: 43, "start-date": ~D[2023-08-24]}
+
+      update_attrs = %{
+        address: "some updated address",
+        "end-date": ~D[2023-08-24],
+        name: "some updated name",
+        "quest-type": "some updated quest-type",
+        redemption: "some updated redemption",
+        reward: "some updated reward",
+        scans: 43,
+        "start-date": ~D[2023-08-24]
+      }
 
       assert {:ok, %Quest{} = quest} = Quests.update_quest(quest, update_attrs)
       assert quest.address == "some updated address"

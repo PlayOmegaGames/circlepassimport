@@ -52,7 +52,10 @@ defmodule QuestApiV21Web.CollectorControllerTest do
   describe "update collector" do
     setup [:create_collector]
 
-    test "renders collector when data is valid", %{conn: conn, collector: %Collector{id: id} = collector} do
+    test "renders collector when data is valid", %{
+      conn: conn,
+      collector: %Collector{id: id} = collector
+    } do
       conn = put(conn, ~p"/api/collectors/#{collector}", collector: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

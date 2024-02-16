@@ -5,18 +5,24 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartNil do
   alias QuestApiV21.Collectors.Collector
   require Logger
 
-
   def handle_nil_quest_start(conn, %Collector{id: collector_id} = collector) do
     current_account = conn.assigns[:current_user]
     account_id = current_account.id
 
     # Use Quests context to compare quests
-    with {:ok, common_quests_ids} <- Quests.compare_collector_account_quests(collector_id, account_id) do
+    with {:ok, common_quests_ids} <-
+           Quests.compare_collector_account_quests(collector_id, account_id) do
       if Enum.empty?(common_quests_ids) do
         Logger.debug("No quests in common, rendering no_quest.html")
+
         conn
         |> put_layout(html: :logged_in)
-        |> render("no_quest.html", %{page_title: "No Quest", camera: true, collector: collector, quests: collector.quests})
+        |> render("no_quest.html", %{
+          page_title: "No Quest",
+          camera: true,
+          collector: collector,
+          quests: collector.quests
+        })
       else
         # Use Badges context to compare badges
         with {:ok, common_badges} <- Badges.compare_collector_badges_to_quest_badges(collector_id) do
@@ -31,12 +37,12 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartNil do
         else
           {:error, :collector_not_found} ->
             Logger.error("Collector not found.")
-          end
+        end
       end
     else
       {:error, :entity_not_found} ->
         Logger.error("Collector not found.")
-      end
+    end
   end
 
   defp handle_add_badges_result({:ok, _new_badges}, conn, collector, common_badges) do

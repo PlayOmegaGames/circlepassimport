@@ -9,8 +9,6 @@ defmodule QuestApiV21.Scans.Scan do
     belongs_to :account, QuestApiV21.Accounts.Account
     belongs_to :badge, QuestApiV21.Badges.Badge
 
-
-
     timestamps()
   end
 

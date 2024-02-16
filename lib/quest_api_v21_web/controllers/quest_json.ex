@@ -2,10 +2,9 @@ defmodule QuestApiV21Web.QuestJSON do
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Collectors.Collector
-  #alias QuestApiV21.Accounts.Account
+  # alias QuestApiV21.Accounts.Account
 
-
-  #alias QuestApiV21.Organizations.Organization
+  # alias QuestApiV21.Organizations.Organization
 
   @doc """
   Renders a list of quests.
@@ -27,7 +26,7 @@ defmodule QuestApiV21Web.QuestJSON do
     }
   end
 
-    @doc """
+  @doc """
   Renders an error response.
   """
   def render("error.json", %{message: message}) do
@@ -53,7 +52,7 @@ defmodule QuestApiV21Web.QuestJSON do
       quest_time: quest.quest_time,
       name_id: quest.name <> " - " <> quest.id,
       badges: badges_data(badges),
-      collectors: collectors_data(collectors),
+      collectors: collectors_data(collectors)
     }
   end
 
@@ -73,5 +72,4 @@ defmodule QuestApiV21Web.QuestJSON do
       }
     end)
   end
-
 end

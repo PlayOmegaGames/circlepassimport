@@ -12,17 +12,15 @@ config :quest_api_v21,
   ecto_repos: [QuestApiV21.Repo],
   generators: [binary_id: true]
 
-#guardian setup
+# guardian setup
 config :quest_api_v21, QuestApiV21.Guardian,
   issuer: "quest_api_v21",
   secret_key: "Lx0gpm2fd8tsJkAkSkTMeTYc26IPuooCtbRhCM6+/Z+JThmul0pidj+lxvx7/uJI",
   partner_jwt_secret: System.get_env("PARTNER_JWT_SECRET")
 
-
 config :quest_api_v21, QuestApiV21.HostGuardian,
   issuer: "quest_api_v21",
   secret_key: "Lx0gpm2fd8tsJkAkSkTMeTYc26IPuooCtbRhCM6+/Z+JThmul0pidj+lxvx7/uJI"
-
 
 # Configures the endpoint
 config :quest_api_v21, QuestApiV21Web.Endpoint,
@@ -34,10 +32,10 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   pubsub_server: QuestApiV21.PubSub,
   live_view: [signing_salt: "mWI7Ou9T"]
 
-#Google ID
+# Google ID
 config :ueberauth, Ueberauth,
   providers: [
-    google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]},
+    google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]}
   ]
 
 # Configures the mailer
@@ -53,10 +51,9 @@ config :ex_aws,
   access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],
   secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role]
 
-  config :swoosh, :mailers, %{
-    default: {Swoosh.Adapters.AWSSES, []}
-  }
-
+config :swoosh, :mailers, %{
+  default: {Swoosh.Adapters.AWSSES, []}
+}
 
 # Configure esbuild (the version is required)
 config :esbuild,

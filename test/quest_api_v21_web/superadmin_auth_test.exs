@@ -21,23 +21,41 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
     test "stores the superadmin token in the session", %{conn: conn, superadmin: superadmin} do
       conn = SuperadminAuth.log_in_superadmin(conn, superadmin)
       assert token = get_session(conn, :superadmin_token)
-      assert get_session(conn, :live_socket_id) == "superadmin_sessions:#{Base.url_encode64(token)}"
+
+      assert get_session(conn, :live_socket_id) ==
+               "superadmin_sessions:#{Base.url_encode64(token)}"
+
       assert redirected_to(conn) == ~p"/"
       assert Admin.get_superadmin_by_session_token(token)
     end
 
-    test "clears everything previously stored in the session", %{conn: conn, superadmin: superadmin} do
-      conn = conn |> put_session(:to_be_removed, "value") |> SuperadminAuth.log_in_superadmin(superadmin)
+    test "clears everything previously stored in the session", %{
+      conn: conn,
+      superadmin: superadmin
+    } do
+      conn =
+        conn
+        |> put_session(:to_be_removed, "value")
+        |> SuperadminAuth.log_in_superadmin(superadmin)
+
       refute get_session(conn, :to_be_removed)
     end
 
     test "redirects to the configured path", %{conn: conn, superadmin: superadmin} do
-      conn = conn |> put_session(:superadmin_return_to, "/hello") |> SuperadminAuth.log_in_superadmin(superadmin)
+      conn =
+        conn
+        |> put_session(:superadmin_return_to, "/hello")
+        |> SuperadminAuth.log_in_superadmin(superadmin)
+
       assert redirected_to(conn) == "/hello"
     end
 
     test "writes a cookie if remember_me is configured", %{conn: conn, superadmin: superadmin} do
-      conn = conn |> fetch_cookies() |> SuperadminAuth.log_in_superadmin(superadmin, %{"remember_me" => "true"})
+      conn =
+        conn
+        |> fetch_cookies()
+        |> SuperadminAuth.log_in_superadmin(superadmin, %{"remember_me" => "true"})
+
       assert get_session(conn, :superadmin_token) == conn.cookies[@remember_me_cookie]
 
       assert %{value: signed_token, max_age: max_age} = conn.resp_cookies[@remember_me_cookie]
@@ -86,13 +104,20 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
   describe "fetch_current_superadmin/2" do
     test "authenticates superadmin from session", %{conn: conn, superadmin: superadmin} do
       superadmin_token = Admin.generate_superadmin_session_token(superadmin)
-      conn = conn |> put_session(:superadmin_token, superadmin_token) |> SuperadminAuth.fetch_current_superadmin([])
+
+      conn =
+        conn
+        |> put_session(:superadmin_token, superadmin_token)
+        |> SuperadminAuth.fetch_current_superadmin([])
+
       assert conn.assigns.current_superadmin.id == superadmin.id
     end
 
     test "authenticates superadmin from cookies", %{conn: conn, superadmin: superadmin} do
       logged_in_conn =
-        conn |> fetch_cookies() |> SuperadminAuth.log_in_superadmin(superadmin, %{"remember_me" => "true"})
+        conn
+        |> fetch_cookies()
+        |> SuperadminAuth.log_in_superadmin(superadmin, %{"remember_me" => "true"})
 
       superadmin_token = logged_in_conn.cookies[@remember_me_cookie]
       %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]
@@ -118,7 +143,10 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
   end
 
   describe "on_mount: mount_current_superadmin" do
-    test "assigns current_superadmin based on a valid superadmin_token", %{conn: conn, superadmin: superadmin} do
+    test "assigns current_superadmin based on a valid superadmin_token", %{
+      conn: conn,
+      superadmin: superadmin
+    } do
       superadmin_token = Admin.generate_superadmin_session_token(superadmin)
       session = conn |> put_session(:superadmin_token, superadmin_token) |> get_session()
 
@@ -128,7 +156,9 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
       assert updated_socket.assigns.current_superadmin.id == superadmin.id
     end
 
-    test "assigns nil to current_superadmin assign if there isn't a valid superadmin_token", %{conn: conn} do
+    test "assigns nil to current_superadmin assign if there isn't a valid superadmin_token", %{
+      conn: conn
+    } do
       superadmin_token = "invalid_token"
       session = conn |> put_session(:superadmin_token, superadmin_token) |> get_session()
 
@@ -138,7 +168,9 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
       assert updated_socket.assigns.current_superadmin == nil
     end
 
-    test "assigns nil to current_superadmin assign if there isn't a superadmin_token", %{conn: conn} do
+    test "assigns nil to current_superadmin assign if there isn't a superadmin_token", %{
+      conn: conn
+    } do
       session = conn |> get_session()
 
       {:cont, updated_socket} =
@@ -149,7 +181,10 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
   end
 
   describe "on_mount: ensure_authenticated" do
-    test "authenticates current_superadmin based on a valid superadmin_token", %{conn: conn, superadmin: superadmin} do
+    test "authenticates current_superadmin based on a valid superadmin_token", %{
+      conn: conn,
+      superadmin: superadmin
+    } do
       superadmin_token = Admin.generate_superadmin_session_token(superadmin)
       session = conn |> put_session(:superadmin_token, superadmin_token) |> get_session()
 
@@ -168,7 +203,9 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
         assigns: %{__changed__: %{}, flash: %{}}
       }
 
-      {:halt, updated_socket} = SuperadminAuth.on_mount(:ensure_authenticated, %{}, session, socket)
+      {:halt, updated_socket} =
+        SuperadminAuth.on_mount(:ensure_authenticated, %{}, session, socket)
+
       assert updated_socket.assigns.current_superadmin == nil
     end
 
@@ -180,13 +217,18 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
         assigns: %{__changed__: %{}, flash: %{}}
       }
 
-      {:halt, updated_socket} = SuperadminAuth.on_mount(:ensure_authenticated, %{}, session, socket)
+      {:halt, updated_socket} =
+        SuperadminAuth.on_mount(:ensure_authenticated, %{}, session, socket)
+
       assert updated_socket.assigns.current_superadmin == nil
     end
   end
 
   describe "on_mount: :redirect_if_superadmin_is_authenticated" do
-    test "redirects if there is an authenticated  superadmin ", %{conn: conn, superadmin: superadmin} do
+    test "redirects if there is an authenticated  superadmin ", %{
+      conn: conn,
+      superadmin: superadmin
+    } do
       superadmin_token = Admin.generate_superadmin_session_token(superadmin)
       session = conn |> put_session(:superadmin_token, superadmin_token) |> get_session()
 
@@ -214,7 +256,11 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
 
   describe "redirect_if_superadmin_is_authenticated/2" do
     test "redirects if superadmin is authenticated", %{conn: conn, superadmin: superadmin} do
-      conn = conn |> assign(:current_superadmin, superadmin) |> SuperadminAuth.redirect_if_superadmin_is_authenticated([])
+      conn =
+        conn
+        |> assign(:current_superadmin, superadmin)
+        |> SuperadminAuth.redirect_if_superadmin_is_authenticated([])
+
       assert conn.halted
       assert redirected_to(conn) == ~p"/"
     end
@@ -264,7 +310,11 @@ defmodule QuestApiV21Web.SuperadminAuthTest do
     end
 
     test "does not redirect if superadmin is authenticated", %{conn: conn, superadmin: superadmin} do
-      conn = conn |> assign(:current_superadmin, superadmin) |> SuperadminAuth.require_authenticated_superadmin([])
+      conn =
+        conn
+        |> assign(:current_superadmin, superadmin)
+        |> SuperadminAuth.require_authenticated_superadmin([])
+
       refute conn.halted
       refute conn.status
     end

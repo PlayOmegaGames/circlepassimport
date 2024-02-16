@@ -7,9 +7,9 @@ defmodule QuestApiV21Web.OrganizationController do
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-    organizations = Organizations.list_organizations()
-    |> QuestApiV21.Repo.preload([:hosts, :quests, :badges, :collectors])
-
+    organizations =
+      Organizations.list_organizations()
+      |> QuestApiV21.Repo.preload([:hosts, :quests, :badges, :collectors])
 
     render(conn, :index, organizations: organizations)
   end
@@ -24,11 +24,14 @@ defmodule QuestApiV21Web.OrganizationController do
       host_id ->
         case Organizations.create_organization(organization_params, host_id) do
           {:ok, organization, new_jwt} ->
-            organization = QuestApiV21.Repo.preload(organization, [:hosts, :quests, :badges, :collectors])
+            organization =
+              QuestApiV21.Repo.preload(organization, [:hosts, :quests, :badges, :collectors])
+
             conn
             |> put_status(:created)
             |> put_resp_header("location", ~p"/api/organizations/#{organization.id}")
             |> render(:show, organization: organization, jwt: new_jwt)
+
           {:error, changeset} ->
             conn
             |> put_status(:unprocessable_entity)
@@ -37,19 +40,19 @@ defmodule QuestApiV21Web.OrganizationController do
     end
   end
 
-
   defp extract_host_id(conn) do
     claims = Guardian.Plug.current_claims(conn)
+
     case claims do
       %{"sub" => host_id} -> host_id
       _ -> nil
     end
   end
 
-
   def show(conn, %{"id" => id}) do
-    organization = Organizations.get_organization!(id)
-    |> QuestApiV21.Repo.preload([:hosts])
+    organization =
+      Organizations.get_organization!(id)
+      |> QuestApiV21.Repo.preload([:hosts])
 
     render(conn, :show, organization: organization)
   end
@@ -57,7 +60,8 @@ defmodule QuestApiV21Web.OrganizationController do
   def update(conn, %{"id" => id, "organization" => organization_params}) do
     organization = Organizations.get_organization!(id)
 
-    with {:ok, %Organization{} = organization} <- Organizations.update_organization(organization, organization_params) do
+    with {:ok, %Organization{} = organization} <-
+           Organizations.update_organization(organization, organization_params) do
       render(conn, :show, organization: organization)
     end
   end

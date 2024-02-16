@@ -21,7 +21,13 @@ defmodule QuestApiV21.BadgesTest do
     end
 
     test "create_badge/1 with valid data creates a badge" do
-      valid_attrs = %{badge_description: "some badge_description", image: "some image", name: "some name", redirect_url: "some redirect_url", scans: 42}
+      valid_attrs = %{
+        badge_description: "some badge_description",
+        image: "some image",
+        name: "some name",
+        redirect_url: "some redirect_url",
+        scans: 42
+      }
 
       assert {:ok, %Badge{} = badge} = Badges.create_badge(valid_attrs)
       assert badge.badge_description == "some badge_description"
@@ -37,7 +43,14 @@ defmodule QuestApiV21.BadgesTest do
 
     test "update_badge/2 with valid data updates the badge" do
       badge = badge_fixture()
-      update_attrs = %{badge_description: "some updated badge_description", image: "some updated image", name: "some updated name", redirect_url: "some updated redirect_url", scans: 43}
+
+      update_attrs = %{
+        badge_description: "some updated badge_description",
+        image: "some updated image",
+        name: "some updated name",
+        redirect_url: "some updated redirect_url",
+        scans: 43
+      }
 
       assert {:ok, %Badge{} = badge} = Badges.update_badge(badge, update_attrs)
       assert badge.badge_description == "some updated badge_description"

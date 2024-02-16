@@ -31,7 +31,10 @@ defmodule QuestApiV21.AdminTest do
       %{id: id} = superadmin = superadmin_fixture()
 
       assert %Superadmin{id: ^id} =
-               Admin.get_superadmin_by_email_and_password(superadmin.email, valid_superadmin_password())
+               Admin.get_superadmin_by_email_and_password(
+                 superadmin.email,
+                 valid_superadmin_password()
+               )
     end
   end
 
@@ -59,7 +62,8 @@ defmodule QuestApiV21.AdminTest do
     end
 
     test "validates email and password when given" do
-      {:error, changeset} = Admin.register_superadmin(%{email: "not valid", password: "not valid"})
+      {:error, changeset} =
+        Admin.register_superadmin(%{email: "not valid", password: "not valid"})
 
       assert %{
                email: ["must have the @ sign and no spaces"],
@@ -130,13 +134,17 @@ defmodule QuestApiV21.AdminTest do
     end
 
     test "requires email to change", %{superadmin: superadmin} do
-      {:error, changeset} = Admin.apply_superadmin_email(superadmin, valid_superadmin_password(), %{})
+      {:error, changeset} =
+        Admin.apply_superadmin_email(superadmin, valid_superadmin_password(), %{})
+
       assert %{email: ["did not change"]} = errors_on(changeset)
     end
 
     test "validates email", %{superadmin: superadmin} do
       {:error, changeset} =
-        Admin.apply_superadmin_email(superadmin, valid_superadmin_password(), %{email: "not valid"})
+        Admin.apply_superadmin_email(superadmin, valid_superadmin_password(), %{
+          email: "not valid"
+        })
 
       assert %{email: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
@@ -168,7 +176,10 @@ defmodule QuestApiV21.AdminTest do
 
     test "applies the email without persisting it", %{superadmin: superadmin} do
       email = unique_superadmin_email()
-      {:ok, superadmin} = Admin.apply_superadmin_email(superadmin, valid_superadmin_password(), %{email: email})
+
+      {:ok, superadmin} =
+        Admin.apply_superadmin_email(superadmin, valid_superadmin_password(), %{email: email})
+
       assert superadmin.email == email
       assert Admin.get_superadmin!(superadmin.id).email != email
     end
@@ -182,7 +193,11 @@ defmodule QuestApiV21.AdminTest do
     test "sends token through notification", %{superadmin: superadmin} do
       token =
         extract_superadmin_token(fn url ->
-          Admin.deliver_superadmin_update_email_instructions(superadmin, "current@example.com", url)
+          Admin.deliver_superadmin_update_email_instructions(
+            superadmin,
+            "current@example.com",
+            url
+          )
         end)
 
       {:ok, token} = Base.url_decode64(token, padding: false)
@@ -200,13 +215,21 @@ defmodule QuestApiV21.AdminTest do
 
       token =
         extract_superadmin_token(fn url ->
-          Admin.deliver_superadmin_update_email_instructions(%{superadmin | email: email}, superadmin.email, url)
+          Admin.deliver_superadmin_update_email_instructions(
+            %{superadmin | email: email},
+            superadmin.email,
+            url
+          )
         end)
 
       %{superadmin: superadmin, token: token, email: email}
     end
 
-    test "updates the email with a valid token", %{superadmin: superadmin, token: token, email: email} do
+    test "updates the email with a valid token", %{
+      superadmin: superadmin,
+      token: token,
+      email: email
+    } do
       assert Admin.update_superadmin_email(superadmin, token) == :ok
       changed_superadmin = Repo.get!(Superadmin, superadmin.id)
       assert changed_superadmin.email != superadmin.email
@@ -222,8 +245,13 @@ defmodule QuestApiV21.AdminTest do
       assert Repo.get_by(SuperadminToken, superadmin_id: superadmin.id)
     end
 
-    test "does not update email if superadmin email changed", %{superadmin: superadmin, token: token} do
-      assert Admin.update_superadmin_email(%{superadmin | email: "current@example.com"}, token) == :error
+    test "does not update email if superadmin email changed", %{
+      superadmin: superadmin,
+      token: token
+    } do
+      assert Admin.update_superadmin_email(%{superadmin | email: "current@example.com"}, token) ==
+               :error
+
       assert Repo.get!(Superadmin, superadmin.id).email == superadmin.email
       assert Repo.get_by(SuperadminToken, superadmin_id: superadmin.id)
     end
@@ -276,14 +304,18 @@ defmodule QuestApiV21.AdminTest do
       too_long = String.duplicate("db", 100)
 
       {:error, changeset} =
-        Admin.update_superadmin_password(superadmin, valid_superadmin_password(), %{password: too_long})
+        Admin.update_superadmin_password(superadmin, valid_superadmin_password(), %{
+          password: too_long
+        })
 
       assert "should be at most 72 character(s)" in errors_on(changeset).password
     end
 
     test "validates current password", %{superadmin: superadmin} do
       {:error, changeset} =
-        Admin.update_superadmin_password(superadmin, "invalid", %{password: valid_superadmin_password()})
+        Admin.update_superadmin_password(superadmin, "invalid", %{
+          password: valid_superadmin_password()
+        })
 
       assert %{current_password: ["is not valid"]} = errors_on(changeset)
     end
@@ -456,7 +488,10 @@ defmodule QuestApiV21.AdminTest do
       assert Repo.get_by(SuperadminToken, superadmin_id: superadmin.id)
     end
 
-    test "does not return the superadmin if token expired", %{superadmin: superadmin, token: token} do
+    test "does not return the superadmin if token expired", %{
+      superadmin: superadmin,
+      token: token
+    } do
       {1, nil} = Repo.update_all(SuperadminToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
       refute Admin.get_superadmin_by_reset_password_token(token)
       assert Repo.get_by(SuperadminToken, superadmin_id: superadmin.id)
@@ -488,7 +523,9 @@ defmodule QuestApiV21.AdminTest do
     end
 
     test "updates the password", %{superadmin: superadmin} do
-      {:ok, updated_superadmin} = Admin.reset_superadmin_password(superadmin, %{password: "new valid password"})
+      {:ok, updated_superadmin} =
+        Admin.reset_superadmin_password(superadmin, %{password: "new valid password"})
+
       assert is_nil(updated_superadmin.password)
       assert Admin.get_superadmin_by_email_and_password(superadmin.email, "new valid password")
     end

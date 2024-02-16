@@ -21,7 +21,11 @@ defmodule QuestApiV21.AccountsTest do
     end
 
     test "create_account/1 with valid data creates a account" do
-      valid_attrs = %{email: "some email", hashed_passowrd: "some hashed_passowrd", name: "some name"}
+      valid_attrs = %{
+        email: "some email",
+        hashed_passowrd: "some hashed_passowrd",
+        name: "some name"
+      }
 
       assert {:ok, %Account{} = account} = Accounts.create_account(valid_attrs)
       assert account.email == "some email"
@@ -35,7 +39,12 @@ defmodule QuestApiV21.AccountsTest do
 
     test "update_account/2 with valid data updates the account" do
       account = account_fixture()
-      update_attrs = %{email: "some updated email", hashed_passowrd: "some updated hashed_passowrd", name: "some updated name"}
+
+      update_attrs = %{
+        email: "some updated email",
+        hashed_passowrd: "some updated hashed_passowrd",
+        name: "some updated name"
+      }
 
       assert {:ok, %Account{} = account} = Accounts.update_account(account, update_attrs)
       assert account.email == "some updated email"

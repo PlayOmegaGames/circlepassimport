@@ -8,7 +8,8 @@ defmodule QuestApiV21.Accounts.Account do
     field :email, :string
     field :hashed_password, :string, default: nil
     field :is_passwordless, :boolean, default: false
-    field :password, :string, virtual: true  # Virtual field for the plaintext password so that it isn't stored in the database
+    # Virtual field for the plaintext password so that it isn't stored in the database
+    field :password, :string, virtual: true
     field :name, :string
     field :role, :string, default: "default"
     field :quests_stats, :integer, default: 0
@@ -42,6 +43,7 @@ defmodule QuestApiV21.Accounts.Account do
 
   defp put_password_hash(changeset) do
     password = get_change(changeset, :password)
+
     if password do
       hash = Bcrypt.hash_pwd_salt(password)
       put_change(changeset, :hashed_password, hash)
@@ -49,6 +51,4 @@ defmodule QuestApiV21.Accounts.Account do
       changeset
     end
   end
-
-
 end

@@ -23,7 +23,7 @@ defmodule QuestApiV21.Badges do
     Repo.all(Badge)
   end
 
-    @doc """
+  @doc """
   Returns a list of badges filtered by the given list of IDs.
 
   ## Examples
@@ -76,6 +76,7 @@ defmodule QuestApiV21.Badges do
     |> maybe_add_accounts(badge_params)
     |> Repo.insert()
   end
+
   @doc """
   Updates a badge.
 
@@ -88,14 +89,15 @@ defmodule QuestApiV21.Badges do
       {:error, %Ecto.Changeset{}}
 
   """
-def update_badge(%Badge{} = badge, attrs) do
-  badge = Repo.preload(badge, :accounts)  # Preload accounts before updating
-  badge
-  |> Badge.changeset(attrs)
-  |> maybe_add_accounts(attrs)
-  |> Repo.update()
-end
+  def update_badge(%Badge{} = badge, attrs) do
+    # Preload accounts before updating
+    badge = Repo.preload(badge, :accounts)
 
+    badge
+    |> Badge.changeset(attrs)
+    |> maybe_add_accounts(attrs)
+    |> Repo.update()
+  end
 
   @doc """
   Deletes a badge.
@@ -126,7 +128,6 @@ end
     Badge.changeset(badge, attrs)
   end
 
-
   @doc """
 
     Compares badges in the quest vs badges the user has collected
@@ -139,7 +140,7 @@ end
   def compare_collector_badges_to_quest_badges(collector_id) do
     # Fetch the collector from the database and preload its badges and quests' badges.
     # This ensures we have all necessary data loaded for comparison.
-    collector = Repo.get!(Collector, collector_id) |> Repo.preload([badges: [], quests: :badges])
+    collector = Repo.get!(Collector, collector_id) |> Repo.preload(badges: [], quests: :badges)
 
     # Extract the IDs of all badges directly associated with the collector.
     # This step prepares the list of badge IDs for the comparison.
@@ -147,11 +148,15 @@ end
 
     # Extract the IDs of all badges associated with the collector's quests.
     # This involves flattening the list since each quest may have multiple badges.
-    quest_badges = Enum.flat_map(collector.quests, fn quest -> Enum.map(quest.badges, fn badge -> badge.id end) end)
+    quest_badges =
+      Enum.flat_map(collector.quests, fn quest ->
+        Enum.map(quest.badges, fn badge -> badge.id end)
+      end)
 
     # Find the common badge IDs between the collector's badges and the quests' badges.
     # This comparison identifies which badges are shared across the collector's direct badges and their quests.
-    common_badges = Enum.filter(quest_badges, fn badge_id -> Enum.member?(collector_badges, badge_id) end)
+    common_badges =
+      Enum.filter(quest_badges, fn badge_id -> Enum.member?(collector_badges, badge_id) end)
 
     # Return the list of common badge IDs wrapped in an {:ok, _} tuple to indicate success.
     {:ok, common_badges}
@@ -162,14 +167,14 @@ end
       {:error, :collector_not_found}
   end
 
-
   defp maybe_add_accounts(changeset, attrs) do
     case Map.get(attrs, "accounts_id") do
-      nil -> changeset
+      nil ->
+        changeset
+
       account_ids ->
         accounts = Repo.all(from a in Account, where: a.id in ^account_ids)
         Ecto.Changeset.put_assoc(changeset, :accounts, accounts)
     end
   end
-
 end

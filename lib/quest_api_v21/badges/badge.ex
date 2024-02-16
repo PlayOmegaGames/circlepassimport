@@ -22,13 +22,19 @@ defmodule QuestApiV21.Badges.Badge do
 
   @doc false
   def changeset(badge, attrs) do
-
     badge
-    |> cast(attrs, [:name, :badge_image, :scans, :badge_details_image, :badge_description, :badge_redirect, :organization_id, :quest_id, :collector_id])
+    |> cast(attrs, [
+      :name,
+      :badge_image,
+      :scans,
+      :badge_details_image,
+      :badge_description,
+      :badge_redirect,
+      :organization_id,
+      :quest_id,
+      :collector_id
+    ])
     |> validate_required([:name, :badge_image, :badge_details_image])
     |> cast_assoc(:accounts, with: &QuestApiV21.Accounts.Account.changeset/2)
-
   end
-
-
 end

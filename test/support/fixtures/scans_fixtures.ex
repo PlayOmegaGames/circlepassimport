@@ -10,9 +10,7 @@ defmodule QuestApiV21.ScansFixtures do
   def scan_fixture(attrs \\ %{}) do
     {:ok, scan} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> QuestApiV21.Scans.create_scan()
 
     scan

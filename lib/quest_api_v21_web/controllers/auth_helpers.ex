@@ -1,5 +1,4 @@
 defmodule QuestApiV21Web.AuthHelpers do
-
   def generate_jwt_and_account_response(account) do
     custom_claims = %{
       "role" => account.role,

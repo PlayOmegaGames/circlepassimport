@@ -9,7 +9,6 @@ defmodule QuestApiV21.Hosts do
   alias QuestApiV21.Hosts.Host
   alias QuestApiV21.Organizations.Organization
 
-
   @doc """
   Returns the list of hosts.
 
@@ -55,6 +54,7 @@ defmodule QuestApiV21.Hosts do
     case get_host_by_email(attrs["email"]) do
       nil ->
         updated_attrs = attrs |> put_password_hash()
+
         %Host{}
         |> Host.changeset(updated_attrs)
         |> maybe_add_organizations(attrs)
@@ -72,7 +72,9 @@ defmodule QuestApiV21.Hosts do
   defp put_password_hash(%{"password" => password} = attrs) do
     Map.put(attrs, "hashed_password", Bcrypt.hash_pwd_salt(password))
   end
+
   defp put_password_hash(attrs), do: attrs
+
   @doc """
   Updates a host.
 
@@ -123,7 +125,9 @@ defmodule QuestApiV21.Hosts do
 
   defp maybe_add_organizations(changeset, attrs) do
     case Map.get(attrs, "organization_ids") do
-      nil -> changeset
+      nil ->
+        changeset
+
       organization_ids ->
         organizations = Repo.all(from b in Organization, where: b.id in ^organization_ids)
         Ecto.Changeset.put_assoc(changeset, :organizations, organizations)
