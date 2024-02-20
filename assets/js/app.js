@@ -29,7 +29,6 @@
   window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 
-
   
 
 
@@ -43,6 +42,7 @@
   window.addEventListener("phx:test_event", function(event) {
       console.log("Test event received:", event.detail);
   });
+
   
   // expose liveSocket on window for web console debug logs and latency simulation:
   liveSocket.enableDebug()
