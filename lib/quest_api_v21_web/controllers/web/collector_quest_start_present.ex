@@ -13,7 +13,7 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
       if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
         # Logger.info("User already has badge ID: #{badge.id}. No action taken.")
       else
-        add_badge_and_create_scan(account, badge)
+        add_badge_and_create_transaction(account, badge)
         add_quest_to_user(account, quest)
       end
 
@@ -34,11 +34,11 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
     end
   end
 
-  defp add_badge_and_create_scan(account, badge) do
+  defp add_badge_and_create_transaction(account, badge) do
     case Accounts.add_badge_to_user(account.id, badge) do
       {:ok, _msg, _updated_account} ->
         # Logger.info(msg)
-        QuestApiV21.Scans.create_scan_for_badge_account(badge.id, account.id)
+        QuestApiV21.Transactions.create_transaction_for_badge_account(badge.id, account.id)
 
       {:error, reason} ->
         Logger.error("Failed to add badge: #{reason}")

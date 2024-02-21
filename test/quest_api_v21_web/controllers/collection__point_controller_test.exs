@@ -10,16 +10,16 @@ defmodule QuestApiV21Web.BadgeControllerTest do
     image: "some image",
     name: "some name",
     redirect_url: "some redirect_url",
-    scans: 42
+    transactions: 42
   }
   @update_attrs %{
     badge_description: "some updated badge_description",
     image: "some updated image",
     name: "some updated name",
     redirect_url: "some updated redirect_url",
-    scans: 43
+    transactions: 43
   }
-  @invalid_attrs %{badge_description: nil, image: nil, name: nil, redirect_url: nil, scans: nil}
+  @invalid_attrs %{badge_description: nil, image: nil, name: nil, redirect_url: nil, transactions: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -45,7 +45,7 @@ defmodule QuestApiV21Web.BadgeControllerTest do
                "image" => "some image",
                "name" => "some name",
                "redirect_url" => "some redirect_url",
-               "scans" => 42
+               "transactions" => 42
              } = json_response(conn, 200)["data"]
     end
 
@@ -70,7 +70,7 @@ defmodule QuestApiV21Web.BadgeControllerTest do
                "image" => "some updated image",
                "name" => "some updated name",
                "redirect_url" => "some updated redirect_url",
-               "scans" => 43
+               "transactions" => 43
              } = json_response(conn, 200)["data"]
     end
 

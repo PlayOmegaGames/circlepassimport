@@ -15,7 +15,7 @@ defmodule QuestApiV21.QuestsTest do
       "quest-type": nil,
       redemption: nil,
       reward: nil,
-      scans: nil,
+      transactions: nil,
       "start-date": nil
     }
 
@@ -37,7 +37,7 @@ defmodule QuestApiV21.QuestsTest do
         "quest-type": "some quest-type",
         redemption: "some redemption",
         reward: "some reward",
-        scans: 42,
+        transactions: 42,
         "start-date": ~D[2023-08-23]
       }
 
@@ -48,7 +48,7 @@ defmodule QuestApiV21.QuestsTest do
       assert quest.quest_type == "some quest-type"
       assert quest.redemption == "some redemption"
       assert quest.reward == "some reward"
-      assert quest.scans == 42
+      assert quest.transactions == 42
       assert quest.start_date == ~D[2023-08-23]
     end
 
@@ -66,7 +66,7 @@ defmodule QuestApiV21.QuestsTest do
         "quest-type": "some updated quest-type",
         redemption: "some updated redemption",
         reward: "some updated reward",
-        scans: 43,
+        transactions: 43,
         "start-date": ~D[2023-08-24]
       }
 
@@ -77,7 +77,7 @@ defmodule QuestApiV21.QuestsTest do
       assert quest.quest_type == "some updated quest-type"
       assert quest.redemption == "some updated redemption"
       assert quest.reward == "some updated reward"
-      assert quest.scans == 43
+      assert quest.transactions == 43
       assert quest.start_date == ~D[2023-08-24]
     end
 

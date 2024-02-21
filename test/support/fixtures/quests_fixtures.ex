@@ -17,7 +17,7 @@ defmodule QuestApiV21.QuestsFixtures do
         quest_type: "some quest-type",
         redemption: "some redemption",
         reward: "some reward",
-        scans: 42,
+        transactions: 42,
         start_date: ~D[2023-08-23]
       })
       |> QuestApiV21.Quests.create_quest()

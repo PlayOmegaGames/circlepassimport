@@ -90,7 +90,7 @@ defmodule QuestApiV21Web.Router do
     pipe_through :authenticated_host_api
 
     resources "/organizations", OrganizationController
-    resources "/scans", ScanController
+    resources "/transactions", TransactionController
     resources "/hosts", HostController, except: [:index]
   end
 
