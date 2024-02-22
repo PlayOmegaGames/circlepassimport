@@ -138,15 +138,6 @@ defmodule QuestApiV21.Organizations do
     end
   end
 
-  defp fetch_updated_organization_ids_for_host(host) do
-    Repo.all(
-      from(o in Organization,
-        join: h in assoc(o, :hosts),
-        where: h.id == ^host.id,
-        select: o.id
-      )
-    )
-  end
 
   defp generate_new_jwt_for_host(%Host{} = host) do
     # Assuming HostGuardian.encode_and_sign can accept additional claims
