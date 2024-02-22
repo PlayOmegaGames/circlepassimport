@@ -19,7 +19,13 @@ defmodule QuestApiV21Web.BadgeControllerTest do
     redirect_url: "some updated redirect_url",
     transactions: 43
   }
-  @invalid_attrs %{badge_description: nil, image: nil, name: nil, redirect_url: nil, transactions: nil}
+  @invalid_attrs %{
+    badge_description: nil,
+    image: nil,
+    name: nil,
+    redirect_url: nil,
+    transactions: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

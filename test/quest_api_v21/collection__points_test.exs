@@ -8,7 +8,13 @@ defmodule QuestApiV21.BadgesTest do
 
     import QuestApiV21.BadgesFixtures
 
-    @invalid_attrs %{badge_description: nil, image: nil, name: nil, redirect_url: nil, transactions: nil}
+    @invalid_attrs %{
+      badge_description: nil,
+      image: nil,
+      name: nil,
+      redirect_url: nil,
+      transactions: nil
+    }
 
     test "list_badge/0 returns all badge" do
       badge = badge_fixture()

@@ -41,7 +41,10 @@ defmodule QuestApiV21Web.TransactionControllerTest do
   describe "update transaction" do
     setup [:create_transaction]
 
-    test "renders transaction when data is valid", %{conn: conn, transaction: %Transaction{id: id} = transaction} do
+    test "renders transaction when data is valid", %{
+      conn: conn,
+      transaction: %Transaction{id: id} = transaction
+    } do
       conn = put(conn, ~p"/api/transactions/#{transaction}", transaction: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

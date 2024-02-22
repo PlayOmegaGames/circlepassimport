@@ -20,7 +20,7 @@ defmodule QuestApiV21Web.BadgeController do
   end
 
   def create(conn, %{"badge" => badge_params}) do
-    organization_id = JWTUtility.extract_primary_organization_id_from_jwt(conn)
+    organization_id = JWTUtility.extract_organization_id_from_jwt(conn)
 
     case Badges.create_badge_with_organization(badge_params, organization_id) do
       {:ok, badge} ->
@@ -49,9 +49,11 @@ defmodule QuestApiV21Web.BadgeController do
   end
 
   def update(conn, %{"id" => id, "badge" => badge_params}) do
+    organization_id = JWTUtility.extract_organization_id_from_jwt(conn)
+
     badge = Badges.get_badge!(id)
 
-    with {:ok, %Badge{} = badge} <- Badges.update_badge(badge, badge_params) do
+    with {:ok, %Badge{} = badge} <- Badges.update_badge(badge, badge_params, organization_id) do
       render(conn, :show, badge: badge)
     end
   end

@@ -11,6 +11,10 @@ defmodule QuestApiV21.Badges.Badge do
     field :badge_details_image, :string
     field :scans, :integer, default: 0
     field :badge_redirect, :string
+    field :badge_points, :integer, default: 10
+    field :cool_down_reset, :integer, default: 24
+    field :share_location, :boolean, default: false
+    field :hint, :string
     belongs_to :organization, QuestApiV21.Organizations.Organization
     belongs_to :quest, QuestApiV21.Quests.Quest
     belongs_to :collector, QuestApiV21.Collectors.Collector
@@ -30,6 +34,10 @@ defmodule QuestApiV21.Badges.Badge do
       :badge_details_image,
       :badge_description,
       :badge_redirect,
+      :badge_points,
+      :cool_down_reset,
+      :share_location,
+      :hint,
       :organization_id,
       :quest_id,
       :collector_id

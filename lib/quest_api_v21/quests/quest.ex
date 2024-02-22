@@ -18,6 +18,8 @@ defmodule QuestApiV21.Quests.Quest do
     field :description, :string
     field :public, :boolean
     field :quest_time, :string
+    field :completion_score, :integer
+    field :event_name, :string
 
     belongs_to :organization, QuestApiV21.Organizations.Organization
     has_many :badges, QuestApiV21.Badges.Badge
@@ -44,7 +46,9 @@ defmodule QuestApiV21.Quests.Quest do
       :description,
       :public,
       :quest_time,
-      :organization_id
+      :organization_id,
+      :completion_score,
+      :event_name
     ])
     |> validate_required([:name, :organization_id])
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)

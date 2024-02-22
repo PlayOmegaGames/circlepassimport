@@ -28,6 +28,7 @@ defmodule QuestApiV21Web.HostJSON do
       id: host.id,
       name: host.name,
       email: host.email,
+      current_org_id: host.current_org_id,
       hashed_password: host.hashed_password,
       organizations: organizations_data(organizations)
     }
