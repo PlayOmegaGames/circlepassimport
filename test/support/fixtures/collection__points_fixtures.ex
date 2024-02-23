@@ -15,7 +15,7 @@ defmodule QuestApiV21.BadgesFixtures do
         image: "some image",
         name: "some name",
         redirect_url: "some redirect_url",
-        scans: 42
+        transactions: 42
       })
       |> QuestApiV21.Badges.create_badge()
 

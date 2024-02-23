@@ -1,18 +1,18 @@
-defmodule QuestApiV21.ScansFixtures do
+defmodule QuestApiV21.TransactionsFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `QuestApiV21.Scans` context.
+  entities via the `QuestApiV21.Transactions` context.
   """
 
   @doc """
-  Generate a scan.
+  Generate a transaction.
   """
-  def scan_fixture(attrs \\ %{}) do
-    {:ok, scan} =
+  def transaction_fixture(attrs \\ %{}) do
+    {:ok, transaction} =
       attrs
       |> Enum.into(%{})
-      |> QuestApiV21.Scans.create_scan()
+      |> QuestApiV21.Transactions.create_transaction()
 
-    scan
+    transaction
   end
 end

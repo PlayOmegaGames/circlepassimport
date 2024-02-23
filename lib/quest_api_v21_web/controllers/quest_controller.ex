@@ -10,10 +10,10 @@ defmodule QuestApiV21Web.QuestController do
 
   def index(conn, _params) do
     # passes org id onto context file for filtering
-    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    organization_id = JWTUtility.get_organization_id_from_jwt(conn)
 
     quests =
-      Quests.list_quests_by_organization_ids(organization_ids)
+      Quests.list_quests_by_organization_ids(organization_id)
       # Preload accounts here
       |> Repo.preload([:organization, :badges, :collectors, :accounts])
 
@@ -21,7 +21,7 @@ defmodule QuestApiV21Web.QuestController do
   end
 
   def create(conn, %{"quest" => quest_params}) do
-    organization_id = JWTUtility.extract_primary_organization_id_from_jwt(conn)
+    organization_id = JWTUtility.extract_organization_id_from_jwt(conn)
     # IO.inspect(organization_id, label: "Extracted Organization ID")
 
     case Quests.create_quest_with_organization(quest_params, organization_id) do
@@ -41,7 +41,7 @@ defmodule QuestApiV21Web.QuestController do
   end
 
   def show(conn, %{"id" => id}) do
-    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Quests.get_quest(id, organization_ids) do
       nil ->
@@ -54,7 +54,7 @@ defmodule QuestApiV21Web.QuestController do
   end
 
   def update(conn, %{"id" => id, "quest" => quest_params}) do
-    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Quests.get_quest(id, organization_ids) do
       nil ->
@@ -83,7 +83,7 @@ defmodule QuestApiV21Web.QuestController do
   end
 
   def delete(conn, %{"id" => id}) do
-    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Quests.get_quest(id, organization_ids) do
       nil ->

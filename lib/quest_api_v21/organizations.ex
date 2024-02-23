@@ -58,17 +58,26 @@ defmodule QuestApiV21.Organizations do
       |> Organization.changeset(attrs)
       |> Ecto.Changeset.put_assoc(:hosts, [host])
 
-    # retrieves the organization id of the newly created org
     case Repo.insert(organization_changeset) do
       {:ok, organization} ->
-        updated_organization_ids = fetch_updated_organization_ids_for_host(host)
-        new_jwt = generate_new_jwt_for_host(host, updated_organization_ids)
-        {:ok, organization, new_jwt}
+        # Now, update the host's current_org_id
+        case QuestApiV21.Hosts.update_current_org(host, organization.id) do
+          {:ok, _updated_host} ->
+            new_jwt = generate_new_jwt_for_host(host)
+            {:ok, organization, new_jwt}
+
+          {:error, _reason} ->
+            # Handle the error appropriately
+            {:error, :failed_to_update_host}
+        end
 
       {:error, changeset} ->
         {:error, changeset}
     end
   end
+
+
+
 
   @doc """
   Updates a organization.
@@ -129,19 +138,11 @@ defmodule QuestApiV21.Organizations do
     end
   end
 
-  defp fetch_updated_organization_ids_for_host(host) do
-    Repo.all(
-      from(o in Organization,
-        join: h in assoc(o, :hosts),
-        where: h.id == ^host.id,
-        select: o.id
-      )
-    )
-  end
 
-  defp generate_new_jwt_for_host(host, organization_ids) do
+  defp generate_new_jwt_for_host(%Host{} = host) do
     # Assuming HostGuardian.encode_and_sign can accept additional claims
-    claims = %{"organization_ids" => organization_ids}
+    # Directly use the host's current_org_id for the claim
+    claims = %{"organization_id" => host.current_org_id}
     {:ok, jwt, _full_claims} = QuestApiV21.HostGuardian.encode_and_sign(host, claims)
     jwt
   end

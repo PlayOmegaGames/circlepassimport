@@ -11,6 +11,8 @@ defmodule QuestApiV21.Hosts.Host do
     field :password, :string, virtual: true
     field :name, :string
     field :role, :string, default: "default"
+    belongs_to :current_org, QuestApiV21.Organizations.Organization
+
 
     many_to_many :organizations, QuestApiV21.Organizations.Organization,
       join_through: "hosts_organizations"
@@ -22,7 +24,7 @@ defmodule QuestApiV21.Hosts.Host do
   def changeset(host, attrs) do
     host
     # Include password and role in the cast
-    |> cast(attrs, [:name, :email, :hashed_password, :password, :role])
+    |> cast(attrs, [:name, :email, :hashed_password, :password, :role, :current_org_id])
     |> validate_required([:name, :email])
     |> cast_assoc(:organizations, with: &QuestApiV21.Organizations.Organization.changeset/2)
   end

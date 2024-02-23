@@ -9,7 +9,7 @@ defmodule QuestApiV21Web.CollectorController do
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 
     collectors =
       Collectors.list_collectors_by_organization_ids(organization_ids)
@@ -19,7 +19,7 @@ defmodule QuestApiV21Web.CollectorController do
   end
 
   def create(conn, %{"collector" => collector_params}) do
-    organization_id = JWTUtility.extract_primary_organization_id_from_jwt(conn)
+    organization_id = JWTUtility.extract_organization_id_from_jwt(conn)
 
     with {:ok, collector} <-
            Collectors.create_collector_with_organization(collector_params, organization_id),
@@ -50,7 +50,7 @@ defmodule QuestApiV21Web.CollectorController do
   end
 
   def show(conn, %{"id" => id}) do
-    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Collectors.get_collector(id, organization_ids) do
       nil ->
@@ -64,7 +64,7 @@ defmodule QuestApiV21Web.CollectorController do
   end
 
   def update(conn, %{"id" => id, "collector" => collector_params}) do
-    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Collectors.get_collector(id, organization_ids) do
       nil ->
@@ -86,7 +86,7 @@ defmodule QuestApiV21Web.CollectorController do
   end
 
   def delete(conn, %{"id" => id}) do
-    organization_ids = JWTUtility.get_organization_ids_from_jwt(conn)
+    organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Collectors.get_collector(id, organization_ids) do
       nil ->
