@@ -11,8 +11,7 @@
   </video>
 </div>
 <!-- Importing the jsQR library for QR code scanning functionality -->
-<script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js">
-</script>
+<script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
 
 <script>
   // Selecting the video element by its ID
@@ -20,60 +19,63 @@
 
   // Check if the browser supports user media
   if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({
-          video: {
-              facingMode: 'environment' // Requesting the back camera for mobile devices
-          } 
-      })
-      .then(function (stream) {
-          // Assigning the video stream to the video element
-          video.srcObject = stream;
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment' // Requesting the back camera for mobile devices
+      } 
+    })
+    .then(function (stream) {
+      // Assigning the video stream to the video element
+      video.srcObject = stream;
 
-          // Once the video data is loaded, start scanning for QR codes
-          video.addEventListener("loadeddata", function () {
-              scanQRCode();
-          });
-      })
-      .catch(function (err0r) {
-          // Log any errors encountered
-          console.log("Something went wrong!");
-      });    
+      // Once the video data is loaded, start scanning for QR codes
+      video.addEventListener("loadeddata", function () {
+        scanQRCode();
+      });
+    })
+    .catch(function (err0r) {
+      // Log any errors encountered
+      console.log("Something went wrong!");
+    });    
   }
 
   function scanQRCode() {
-      // Creating a canvas to capture frames from the video stream
-      var canvas = document.createElement('canvas');
-      var context = canvas.getContext('2d');
+    // Creating a canvas to capture frames from the video stream
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
 
-      // Setting the canvas size to match the video element
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+    // Setting the canvas size to match the video element
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-      // Continuously capture frames from the video stream for QR code scanning
-      setInterval(function () {
-          // Drawing the current video frame onto the canvas
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
-          var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-          
-          // Attempt to decode any QR code present in the image
-          var code = jsQR(imageData.data, canvas.width, canvas.height);
+    // Continuously capture frames from the video stream for QR code scanning
+    setInterval(function () {
+      // Drawing the current video frame onto the canvas
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      
+      // Attempt to decode any QR code present in the image
+      var code = jsQR(imageData.data, canvas.width, canvas.height);
 
-          if (code) {
-              // If a QR code is detected, log its data
-              console.log("QR Code detected:", code.data);
-              
-              // Check if the decoded data is a valid URL
-              if (isValidURL(code.data)) {
-                  // If valid, open the URL in a new tab
-                  window.open(code.data, '_blank');
-              }
-          }
-      }, 100); // Transactionning interval set to every 100 milliseconds
+      if (code) {
+        // If a QR code is detected, log its data
+        console.log("QR Code detected:", code.data);
+        
+        // Handle the URL based on whether it includes 'https://'
+        handleURL(code.data);
+      }
+    }, 100); // Scanning interval set to every 100 milliseconds
   }
 
-  function isValidURL(url) {
-      // Defining a regex pattern to check for a specific URL format
-      var urlPattern = /questapp\.io\//;
-      return urlPattern.test(url); // Returning true if the URL matches the pattern
+  function handleURL(scannedURL) {
+    // Check if the URL starts with 'http://' or 'https://'
+    if (scannedURL.startsWith('http://') || scannedURL.startsWith('https://')) {
+      // It's an absolute URL, open as is
+      window.open(scannedURL, '_blank');
+    } else {
+      // It's a relative URL, construct with base URL
+      const baseURL = 'https://';
+      window.open(baseURL + scannedURL, '_blank');
+    }
   }
 </script>
