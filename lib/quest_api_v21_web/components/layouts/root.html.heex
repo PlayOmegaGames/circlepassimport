@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" class="[scrollbar-gutter:stable]  max-h-screen">
   <head>
+    <%= env = Application.get_env(:quest_api_v21_web, :env) %>
+    <link rel="icon" href={if env == :prod, do: ~p"/favicon.ico", else: ~p"/images/dev-favicon.ico"} type="image/x-icon">
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
