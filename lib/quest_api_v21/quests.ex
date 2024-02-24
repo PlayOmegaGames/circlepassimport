@@ -104,8 +104,8 @@ defmodule QuestApiV21.Quests do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_quest(%Quest{} = quest, attrs, organization_ids) do
-    if quest.organization_id in organization_ids do
+  def update_quest(%Quest{} = quest, attrs, organization_id) do
+    if quest.organization_id == organization_id do
       updated_attrs = normalize_account_ids(attrs)
 
       quest

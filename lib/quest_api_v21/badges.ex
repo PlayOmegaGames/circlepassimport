@@ -78,7 +78,7 @@ defmodule QuestApiV21.Badges do
     # Only updates the completion score if the record is successfully updated
     |> case do
       {:ok, badge} ->
-        badge |> update_quest_completion_score()
+        badge |> update_quest_numbers()
         {:ok, badge}
 
       error ->
@@ -110,7 +110,7 @@ defmodule QuestApiV21.Badges do
       # Only updates the completion score if the record is successfully updated
       |> case do
         {:ok, badge} ->
-          badge |> update_quest_completion_score()
+          badge |> update_quest_numbers()
           {:ok, badge}
 
         error ->
@@ -151,7 +151,7 @@ defmodule QuestApiV21.Badges do
   end
 
   # update the quest completion score when a badge is associated with a quest
-  defp update_quest_completion_score(%Badge{
+  defp update_quest_numbers(%Badge{
          quest_id: quest_id,
          badge_points: points,
          organization_id: organization_id
@@ -160,9 +160,12 @@ defmodule QuestApiV21.Badges do
       quest = Quests.get_quest(quest_id, organization_id)
       # if it doesnt default to 0 we get an error adding to nil
       score = quest.completion_score || 0
+
+      badge_count = quest.badge_count
       # increase the points by the badge points of the badge
       new_score = score + points
-      Quests.update_quest(quest, %{completion_score: new_score}, organization_id)
+      new_count = badge_count + 1
+      Quests.update_quest(quest, %{completion_score: new_score, badge_count: new_count}, organization_id)
     else
       :noop
     end
