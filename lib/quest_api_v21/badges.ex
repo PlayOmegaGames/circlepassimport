@@ -63,12 +63,6 @@ defmodule QuestApiV21.Badges do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_badge(attrs \\ %{}) do
-    %Badge{}
-    |> Badge.changeset(attrs)
-    |> maybe_add_accounts(attrs)
-    |> Repo.insert()
-  end
 
   def create_badge_with_organization(badge_params, organization_id) do
     %Badge{}
