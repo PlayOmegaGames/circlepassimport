@@ -52,9 +52,9 @@ defmodule QuestApiV21.Quests do
       ** (Ecto.NoResultsError)
 
   """
-  def get_quest(id, organization_ids) do
+  def get_quest(id, organization_id) do
     preloads = [:organization, :badges, :collectors, :accounts]
-    OrganizationScopedQueries.get_item(Quest, id, organization_ids, preloads)
+    OrganizationScopedQueries.get_item(Quest, id, organization_id, preloads)
   end
 
   @doc """
