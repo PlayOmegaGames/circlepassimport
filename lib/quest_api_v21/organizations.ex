@@ -76,9 +76,6 @@ defmodule QuestApiV21.Organizations do
     end
   end
 
-
-
-
   @doc """
   Updates a organization.
 
@@ -137,7 +134,6 @@ defmodule QuestApiV21.Organizations do
         Ecto.Changeset.put_assoc(changeset, :hosts, hosts)
     end
   end
-
 
   defp generate_new_jwt_for_host(%Host{} = host) do
     # Assuming HostGuardian.encode_and_sign can accept additional claims

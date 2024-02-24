@@ -93,7 +93,6 @@ defmodule QuestApiV21Web.Router do
     resources "/transactions", TransactionController
     put "/hosts/change_org", HostController, :change_org
     resources "/hosts", HostController, except: [:index]
-
   end
 
   # End user authenticated scope fpr api

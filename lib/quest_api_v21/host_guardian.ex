@@ -1,7 +1,6 @@
 defmodule QuestApiV21.HostGuardian do
   use Guardian, otp_app: :quest_api_v21
 
-
   def subject_for_token(resource, _claims) do
     # IO.inspect(resource, label: "Resource in subject_for_token")
     {:ok, to_string(resource.id)}
@@ -20,7 +19,6 @@ defmodule QuestApiV21.HostGuardian do
     {:ok, claims}
   end
 
-
   # For regernating the token after an org is created
   # For regenerating the token after an organization is updated
   def regenerate_jwt_for_host(host) do
@@ -30,7 +28,6 @@ defmodule QuestApiV21.HostGuardian do
     # Note: Ensure the module is correctly specified if needed
     Guardian.encode_and_sign(QuestApiV21.HostGuardian, host, updated_claims)
   end
-
 
   def resource_from_claims(claims) do
     # IO.inspect(claims, label: "Decoded JWT Claims")

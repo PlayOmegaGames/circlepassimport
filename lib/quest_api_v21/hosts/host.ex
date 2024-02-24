@@ -13,7 +13,6 @@ defmodule QuestApiV21.Hosts.Host do
     field :role, :string, default: "default"
     belongs_to :current_org, QuestApiV21.Organizations.Organization
 
-
     many_to_many :organizations, QuestApiV21.Organizations.Organization,
       join_through: "hosts_organizations"
 

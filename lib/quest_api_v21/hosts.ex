@@ -22,7 +22,6 @@ defmodule QuestApiV21.Hosts do
     Repo.get(Host, id)
   end
 
-
   @doc """
   Gets a single host.
 
@@ -113,6 +112,7 @@ defmodule QuestApiV21.Hosts do
     host = Repo.get!(Host, host_id) |> Repo.preload(:organizations)
     Enum.any?(host.organizations, fn org -> org.id == org_id end)
   end
+
   @doc """
   Deletes a host.
 

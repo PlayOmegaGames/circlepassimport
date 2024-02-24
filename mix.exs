@@ -62,6 +62,7 @@ defmodule QuestApiV21.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.15"},
       {:mail, ">= 0.0.0"},
+      {:slugy, "~> 4.1"},
       {:httpoison, "~> 2.0"}
     ]
   end

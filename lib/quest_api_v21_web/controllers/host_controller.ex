@@ -53,7 +53,7 @@ defmodule QuestApiV21Web.HostController do
     end
   end
 
-  #Change current_org
+  # Change current_org
   def change_org(conn, %{"organization_id" => org_id}) do
     host_id = QuestApiV21Web.JWTUtility.decode_jwt(conn)["sub"]
 
@@ -62,6 +62,7 @@ defmodule QuestApiV21Web.HostController do
         conn
         |> put_status(:not_found)
         |> json(%{error: "Host not found"})
+
       host ->
         case QuestApiV21.Hosts.is_organization_associated_with_host?(host.id, org_id) do
           true ->
@@ -75,16 +76,19 @@ defmodule QuestApiV21Web.HostController do
                       message: "Current organization updated successfully",
                       jwt_token: token
                     })
+
                   {:error, reason} ->
                     conn
                     |> put_status(:unprocessable_entity)
                     |> json(%{error: "JWT token could not be regenerated: #{reason}"})
                 end
+
               {:error, _reason} ->
                 conn
                 |> put_status(:unprocessable_entity)
                 |> json(%{error: "Could not update the current organization"})
             end
+
           false ->
             conn
             |> put_status(:unprocessable_entity)
@@ -92,5 +96,4 @@ defmodule QuestApiV21Web.HostController do
         end
     end
   end
-
 end

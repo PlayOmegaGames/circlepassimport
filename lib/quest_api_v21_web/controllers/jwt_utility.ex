@@ -1,14 +1,14 @@
 defmodule QuestApiV21Web.JWTUtility do
   alias Guardian.Plug
 
-  #IMPORTANT
-  #When test make sure you test with a new regenerated token, otherwise you will not see your changes
+  # IMPORTANT
+  # When test make sure you test with a new regenerated token, otherwise you will not see your changes
 
   # Decodes the entire JWT token and logs its contents
   def decode_jwt(conn) do
     claims = Plug.current_claims(conn)
     # Uncomment to see decoded JWT token
-    IO.inspect(claims, label: "Decoded JWT Claims")
+    #IO.inspect(claims, label: "Decoded JWT Claims")
     claims
   end
 

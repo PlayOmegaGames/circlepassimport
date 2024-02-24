@@ -57,15 +57,28 @@ defmodule QuestApiV21.Transactions do
 
   @doc """
   Creates a transaction for a given badge and account.
+
+  Example
+  alias QuestApiV21.Repo
+  alias QuestApiV21.Transactions.Transaction
+  alias QuestApiV21.Badges
+  badge = Repo.get!(Badges.Badge, "05b4cf17-e2b7-4e7a-92fe-63143ece098a")
+  account = Repo.get!(QuestApiV21.Accounts.Account, "1f4223ea-813e-42e5-a82a-8e568e7ec6c3")
+  {:ok, transaction} = QuestApiV21.Transactions.create_transaction_for_badge_account(badge.id, account.id)
+
+
   """
   def create_transaction_for_badge_account(badge_id, account_id) do
     badge = Repo.get!(QuestApiV21.Badges.Badge, badge_id)
     organization_id = badge.organization_id
+    badge_points = badge.badge_points
+    IO.inspect(badge_points)
 
     %QuestApiV21.Transactions.Transaction{}
     |> Transaction.changeset(%{
       badge_id: badge_id,
       account_id: account_id,
+      lp_badge: badge_points,
       organization_id: organization_id
     })
     |> Repo.insert()
