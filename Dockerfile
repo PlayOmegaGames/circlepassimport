@@ -3,8 +3,8 @@ ARG RELEASE_VERSION=0.1.1
 ARG ELIXIR_VERSION=1.14.5
 ARG OTP_VERSION=25.3.2.5
 ARG DEBIAN_VERSION=bullseye-20230612-slim
-ARG NODE_VERSION=18.17.1 # Specify the Node.js version you need
 ARG RUNNER_IMAGE="hexpm/elixir:1.14.5-erlang-25.3.2.5-ubuntu-focal-20230126"
+
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 
 FROM ${BUILDER_IMAGE} as builder
@@ -12,13 +12,6 @@ FROM ${BUILDER_IMAGE} as builder
 # Install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*_*
-
-# Install Node.js and npm
-RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz | tar -xz -C /usr/local --strip-components=1 \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-# Verify Node.js and npm installations
-RUN node --version && npm --version
 
 # Prepare build dir
 WORKDIR /app
@@ -32,6 +25,8 @@ ENV MIX_ENV="prod"
 
 # Install mix dependencies
 COPY mix.exs mix.lock ./
+ENV HEX_HTTP_CONCURRENCY=1 \
+    HEX_HTTP_TIMEOUT=120
 RUN mix deps.get --only $MIX_ENV
 RUN mkdir config
 
@@ -44,11 +39,26 @@ COPY lib lib
 COPY assets assets
 COPY global-bundle.pem /app/bin/global-bundle.pem
 
-# Compile assets
-WORKDIR /app/assets
-RUN npm install && npm run deploy
+# Install Node.js and NPM
+RUN curl -o node.tar.gz https://nodejs.org/dist/v18.17.1/node-v18.17.1-linux-x64.tar.gz && \
+    tar -xzf node.tar.gz -C /usr/local --strip-components=1 && \
+    rm node.tar.gz
 
+# Verify Node.js and NPM installation
+RUN node -v
+RUN npm -v
+
+# Change to assets directory, install NPM dependencies, and build assets
+WORKDIR /app/assets
+RUN npm install
+
+
+# Change back to app directory
 WORKDIR /app
+
+# Compile assets
+RUN mix assets.deploy
+
 # Compile the release
 RUN mix compile
 

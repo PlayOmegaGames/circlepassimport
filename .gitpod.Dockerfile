@@ -20,3 +20,8 @@ ENV PATH="/usr/local/bin:${PATH}"
 
 # Verify Node.js and npm installations
 RUN node --version && npm --version
+
+WORKDIR /app/assets
+RUN npm install -g npm@10.4.0
+RUN npm install && npm run deploy
+
