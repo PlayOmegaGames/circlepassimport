@@ -1,6 +1,8 @@
 defmodule QuestApiV21Web.Router do
   use QuestApiV21Web, :router
 
+  import QuestApiV21Web.AccountAuth
+
   import QuestApiV21Web.SuperadminAuth
   import Phoenix.LiveView.Router
 
@@ -11,6 +13,7 @@ defmodule QuestApiV21Web.Router do
     plug :put_root_layout, html: {QuestApiV21Web.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_account
     plug :fetch_current_superadmin
   end
 
@@ -162,7 +165,7 @@ defmodule QuestApiV21Web.Router do
 
   # end
 
-  ## Authentication routes
+  ## Super admin Authentication routes
 
   scope "/", QuestApiV21Web do
     pipe_through [:browser, :redirect_if_superadmin_is_authenticated]
@@ -197,6 +200,44 @@ defmodule QuestApiV21Web.Router do
       on_mount: [{QuestApiV21Web.SuperadminAuth, :mount_current_superadmin}] do
       live "/superadmin/confirm/:token", SuperadminConfirmationLive, :edit
       live "/superadmin/confirm", SuperadminConfirmationInstructionsLive, :new
+    end
+  end
+
+  ## End-user account Authentication routes
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser, :redirect_if_account_is_authenticated]
+
+    live_session :redirect_if_account_is_authenticated,
+      on_mount: [{QuestApiV21Web.AccountAuth, :redirect_if_account_is_authenticated}] do
+      live "/accounts/register", AccountRegistrationLive, :new
+      live "/accounts/log_in", AccountLoginLive, :new
+      live "/accounts/reset_password", AccountForgotPasswordLive, :new
+      live "/accounts/reset_password/:token", AccountResetPasswordLive, :edit
+    end
+
+    post "/accounts/log_in", AccountSessionController, :create
+  end
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser, :require_authenticated_account]
+
+    live_session :require_authenticated_account,
+      on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}] do
+      live "/accounts/settings", AccountSettingsLive, :edit
+      live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash
+    end
+  end
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser]
+
+    delete "/accounts/log_out", AccountSessionController, :delete
+
+    live_session :current_account,
+      on_mount: [{QuestApiV21Web.AccountAuth, :mount_current_account}] do
+      live "/accounts/confirm/:token", AccountConfirmationLive, :edit
+      live "/accounts/confirm", AccountConfirmationInstructionsLive, :new
     end
   end
 end
