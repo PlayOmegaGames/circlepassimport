@@ -668,16 +668,16 @@ defmodule QuestApiV21.Accounts do
   defp maybe_add_badges(changeset, attrs) do
     case Map.get(attrs, "badge_ids") do
       nil ->
-        Logger.debug("No badge IDs provided in attributes")
+        #Logger.debug("No badge IDs provided in attributes")
         changeset
 
       badge_ids ->
-        Logger.debug("Badge IDs provided: #{inspect(badge_ids)}")
+        #Logger.debug("Badge IDs provided: #{inspect(badge_ids)}")
         badges = Repo.all(from b in Badge, where: b.id in ^badge_ids)
-        Logger.debug("Badges found: #{inspect(badges)}")
+        #Logger.debug("Badges found: #{inspect(badges)}")
 
         current_stats = changeset.data.badges_stats
-        Logger.debug("Current badge stats: #{inspect(current_stats)}")
+        #Logger.debug("Current badge stats: #{inspect(current_stats)}")
         badges_count = length(badge_ids)
 
         updated_changeset = Ecto.Changeset.put_assoc(changeset, :badges, badges)
@@ -689,7 +689,7 @@ defmodule QuestApiV21.Accounts do
             current_stats + badges_count
           )
 
-        Logger.debug("Updated changeset: #{inspect(updated_changeset_with_stats)}")
+        #Logger.debug("Updated changeset: #{inspect(updated_changeset_with_stats)}")
         updated_changeset_with_stats
     end
   end
