@@ -73,7 +73,8 @@
 
   function isValidURL(url) {
       // Defining a regex pattern to check for a specific URL format
-      var urlPattern = /^https:\/\/questapp\.io\//;
+      var urlPattern = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+;
       return urlPattern.test(url); // Returning true if the URL matches the pattern
   }
 </script>

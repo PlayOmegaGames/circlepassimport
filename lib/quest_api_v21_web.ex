@@ -85,6 +85,7 @@ defmodule QuestApiV21Web do
       import Phoenix.HTML
       # Core UI components and translation
       import QuestApiV21Web.CoreComponents
+      import QuestApiV21Web.LiveComponents.Navbar
       import QuestApiV21Web.Gettext
 
       # Shortcut for generating JS commands

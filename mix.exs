@@ -62,7 +62,8 @@ defmodule QuestApiV21.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.15"},
       {:mail, ">= 0.0.0"},
-      {:httpoison, "~> 2.0"}
+      {:httpoison, "~> 2.0"},
+      {:heroicons_liveview, "~> 0.3.0"}
     ]
   end
 
