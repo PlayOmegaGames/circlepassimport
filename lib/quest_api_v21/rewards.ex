@@ -60,21 +60,64 @@ defmodule QuestApiV21.Rewards do
 
 
   """
-  def create_reward(attrs, organization_id) do
+  def create_reward(attrs) do
     quest_id = Map.get(attrs, :quest_id)
 
-    case Quests.get_quest(quest_id, organization_id) do
-      nil ->
-        {:error, "Quest not found"}
-      quest ->
+    case Quests.get_quest(quest_id) do
+      %Quests.Quest{} = quest ->
+        organization_id = quest.organization_id
         quest_name = quest.name
 
-        attrs = Map.put(attrs, :reward_name, quest_name)
-        attrs = Map.put(attrs, :organization_id, organization_id)
+        updated_attrs = Map.put(attrs, :reward_name, quest_name)
+        updated_attrs = Map.put(updated_attrs, :organization_id, organization_id)
 
         %Reward{}
-        |> Reward.changeset(attrs)
+        |> Reward.changeset(updated_attrs)
         |> Repo.insert()
+      _ ->
+        {:error, "Quest not found"}
+    end
+  end
+
+
+  @doc """
+  Lists all rewards associated with a specific account.
+
+  ## Examples
+
+    alias QuestApiV21.Rewards
+    Rewards.list_rewards_for_account("d26326d1-be5b-4a24-a82e-57d855f95b89")
+  """
+  def list_rewards_for_account(account_id) do
+    Repo.all(
+      from r in Reward,
+      where: r.account_id == ^account_id,
+      preload: [:organization, :quest]
+    )
+  end
+
+
+  @doc """
+  Redeems a reward based on the organization ID and slug by setting its redeemed field to true.
+
+  ## Examples
+
+    alias QuestApiV21.Rewards
+    Rewards.redeem_reward_by_slug("eec83871-edf0-430f-afbf-6b4c2df3399c", "reward-test-f95b89")
+
+  """
+  def redeem_reward_by_slug(organization_id, slug) do
+    case Repo.get_by(Reward, [organization_id: organization_id, slug: slug]) do
+      nil ->
+        {:error, :not_found}
+
+      %Reward{redeemed: true} ->
+        {:error, :already_redeemed}
+
+      %Reward{} = unredeemed_reward ->
+        unredeemed_reward
+        |> Reward.changeset(%{redeemed: true})
+        |> Repo.update()
     end
   end
 

@@ -104,6 +104,7 @@ defmodule QuestApiV21Web.Router do
     resources "/quests", QuestController
     resources "/badges", BadgeController
     resources "/collectors", CollectorController
+    post "/redeem", RewardController, :redeem
     resources "/accounts", AccountController, except: [:index]
     get "/*path", ErrorController, :not_found
   end

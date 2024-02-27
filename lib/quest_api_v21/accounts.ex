@@ -7,6 +7,7 @@ defmodule QuestApiV21.Accounts do
   alias QuestApiV21.Repo
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Quests.Quest
+  alias QuestApiV21.Rewards
   alias QuestApiV21.Accounts.{Account, AccountToken, AccountNotifier}
   alias Bcrypt
   require Logger
@@ -729,6 +730,20 @@ defmodule QuestApiV21.Accounts do
     end
   end
 
+  @doc """
+
+  the function that handles adding a badge to a user
+
+  Example
+
+  alias QuestApiV21.Repo
+  alias QuestApiV21.Accounts.Account
+  alias QuestApiV21.Accounts
+  alias QuestApiV21.Badges.Badge
+
+  badge = Repo.get(Badge, "9b7015b1-c4bb-4323-b7d2-98f881036553")
+  {:ok, message, updated_account} = Accounts.add_badge_to_user("d26326d1-be5b-4a24-a82e-57d855f95b89", badge)
+  """
   def add_badge_to_user(user_id, badge) do
     account = Repo.get!(Account, user_id) |> Repo.preload([:badges])
 
@@ -746,41 +761,66 @@ defmodule QuestApiV21.Accounts do
         |> Ecto.Changeset.put_change(:badges_stats, account.badges_stats + 1)
 
       with {:ok, updated_account} <- Repo.update(changeset) do
-        if quest_completed?(updated_account, badge.quest_id) do
-          updated_account =
-            Ecto.Changeset.change(updated_account,
-              rewards_stats: updated_account.rewards_stats + 1
-            )
+      if quest_completed?(updated_account, badge.quest_id) do
+        IO.inspect("Completed Quest")
+        updated_account =
+          Ecto.Changeset.change(updated_account,
+            rewards_stats: updated_account.rewards_stats + 1
+          )
 
-          case Repo.update(updated_account) do
-            {:ok, updated_account} ->
-              {:ok, "Badge and reward added to the account", updated_account}
+        # Attempt to create a reward record
+        reward_attrs = %{
+          quest_id: badge.quest_id,
+          account_id: user_id,
+          # Include any other necessary attributes here
+        }
+        case Rewards.create_reward(reward_attrs) do
+          {:ok, _reward} ->
+            IO.inspect("Created reward")
+            # Proceed with updating the account to reflect the reward addition
+            case Repo.update(updated_account) do
+              {:ok, updated_account} ->
+                {:ok, "Badge and reward added to the account", updated_account}
 
-            {:error, reason} ->
-              {:error, reason}
-          end
-        else
-          {:ok, "Badge added to the account", updated_account}
+              {:error, reason} ->
+                {:error, reason}
+            end
+          {:error, reason} ->
+            {:error, reason}
         end
+      else
+        {:ok, "Badge added to the account", updated_account}
+      end
+
       end
     end
   end
 
+  # This function determines if the given account has any active (i.e., incomplete) quests.
   def has_active_quests?(account_id) do
+    # Fetch the account by its ID, raising an error if it's not found.
     account = Repo.get!(Account, account_id)
+
+    # Preload the associated badges and quests for the account to reduce database queries.
     user_with_badges_and_quests = Repo.preload(account, [:badges, :quests])
 
-    # Check if there's any quest that is not completed
+    # Iterate over the quests associated with the user to check for any that are not completed.
     Enum.any?(user_with_badges_and_quests.quests, fn quest ->
+      # If any quest is found to be incomplete (by calling `quest_completed?`), return true.
       not quest_completed?(user_with_badges_and_quests, quest.id)
     end)
   end
 
+  # A helper function to determine if a specific quest for an account is completed by checking associated badges.
   defp quest_completed?(account, quest_id) do
+    # Retrieve all badges associated with the quest_id from the database.
     quest_badges = Repo.all(from b in Badge, where: b.quest_id == ^quest_id, select: b.id)
 
+    # For the quest to be considered completed, the account must have all badges associated with the quest.
     Enum.all?(quest_badges, fn badge_id ->
+      # Check if the account possesses each badge required for the quest's completion.
       Enum.any?(account.badges, fn b -> b.id == badge_id end)
     end)
   end
+
 end
