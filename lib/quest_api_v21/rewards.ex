@@ -60,23 +60,26 @@ defmodule QuestApiV21.Rewards do
 
 
   """
-  def create_reward(attrs, organization_id) do
+  def create_reward(attrs) do
     quest_id = Map.get(attrs, :quest_id)
 
-    case Quests.get_quest(quest_id, organization_id) do
-      nil ->
-        {:error, "Quest not found"}
-      quest ->
+    case Quests.get_quest(quest_id) do
+      %Quests.Quest{} = quest ->
+        organization_id = quest.organization_id
         quest_name = quest.name
 
-        attrs = Map.put(attrs, :reward_name, quest_name)
-        attrs = Map.put(attrs, :organization_id, organization_id)
+        updated_attrs = Map.put(attrs, :reward_name, quest_name)
+        updated_attrs = Map.put(updated_attrs, :organization_id, organization_id)
 
         %Reward{}
-        |> Reward.changeset(attrs)
+        |> Reward.changeset(updated_attrs)
         |> Repo.insert()
+      _ ->
+        {:error, "Quest not found"}
     end
   end
+
+
 
   @doc """
   Updates a reward.

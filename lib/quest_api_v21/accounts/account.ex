@@ -179,7 +179,7 @@ defmodule QuestApiV21.Accounts.Account do
   """
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:name, :role, :quests_stats, :badges_stats, :rewards_stats, :quest_id, :badge_id, :pfps])
+    |> cast(attrs, [:name, :role, :quests_stats, :badges_stats, :rewards_stats, :pfps])
     |> validate_length(:name, max: 100)
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
     |> cast_assoc(:quests, with: &QuestApiV21.Quests.Quest.changeset/2)
