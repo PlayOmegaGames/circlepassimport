@@ -52,4 +52,48 @@ defmodule QuestApiV21Web.HostController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  # Change current_org
+  def change_org(conn, %{"organization_id" => org_id}) do
+    host_id = QuestApiV21Web.JWTUtility.decode_jwt(conn)["sub"]
+
+    case QuestApiV21.Hosts.get_host!(host_id) do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Host not found"})
+
+      host ->
+        case QuestApiV21.Hosts.is_organization_associated_with_host?(host.id, org_id) do
+          true ->
+            case QuestApiV21.Hosts.update_current_org(host, org_id) do
+              {:ok, updated_host} ->
+                case QuestApiV21.HostGuardian.regenerate_jwt_for_host(updated_host) do
+                  {:ok, token, _claims} ->
+                    conn
+                    |> put_status(:ok)
+                    |> json(%{
+                      message: "Current organization updated successfully",
+                      jwt_token: token
+                    })
+
+                  {:error, reason} ->
+                    conn
+                    |> put_status(:unprocessable_entity)
+                    |> json(%{error: "JWT token could not be regenerated: #{reason}"})
+                end
+
+              {:error, _reason} ->
+                conn
+                |> put_status(:unprocessable_entity)
+                |> json(%{error: "Could not update the current organization"})
+            end
+
+          false ->
+            conn
+            |> put_status(:unprocessable_entity)
+            |> json(%{error: "Invalid organization ID or not associated with the host"})
+        end
+    end
+  end
 end

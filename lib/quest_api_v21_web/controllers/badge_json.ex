@@ -33,6 +33,10 @@ defmodule QuestApiV21Web.BadgeJSON do
       badge_description: badge.badge_description,
       organization_id: badge.organization_id,
       quest_id: badge.quest_id,
+      badge_points: badge.badge_points,
+      cool_down_reset: badge.cool_down_reset,
+      share_location: badge.share_location,
+      hint: badge.hint,
       collector_id: badge.collector_id,
       badge_redirect: badge.badge_redirect,
       account_ids: accounts_data(accounts)

@@ -7,9 +7,51 @@ defmodule QuestApiV21.Accounts do
   alias QuestApiV21.Repo
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Quests.Quest
-  alias QuestApiV21.Accounts.Account
+  alias QuestApiV21.Rewards
+  alias QuestApiV21.Accounts.{Account, AccountToken, AccountNotifier}
   alias Bcrypt
   require Logger
+
+  ## Database getters
+
+  @doc """
+  Gets an account by email.
+
+  ## Examples
+
+      iex> get_account_by_email("foo@example.com")
+      %Account{}
+
+      iex> get_account_by_email("unknown@example.com")
+      nil
+
+  """
+  def get_account_by_email(email) when is_binary(email) do
+    Repo.get_by(Account, email: email)
+    |> Repo.preload([:quests, :badges])
+  end
+
+  def list_accounts(id) do
+    Repo.get(Account, id)
+  end
+
+  @doc """
+  Gets a account by email and password.
+
+  ## Examples
+
+      iex> get_account_by_email_and_password("foo@example.com", "correct_password")
+      %Account{}
+
+      iex> get_account_by_email_and_password("foo@example.com", "invalid_password")
+      nil
+
+  """
+  def get_account_by_email_and_password(email, password)
+    when is_binary(email) and is_binary(password) do
+    account = Repo.get_by(Account, email: email)
+    if Account.valid_password?(account, password), do: account
+  end
 
   @doc """
   Gets a single account.
@@ -25,17 +67,308 @@ defmodule QuestApiV21.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def list_accounts(id) do
-    Repo.get(Account, id)
-  end
-
   def get_account!(id) do
     Repo.get!(Account, id)
     |> Repo.preload([:quests, :badges])
   end
 
+  ## Account registration
+
   @doc """
-  Creates a account.
+  Registers a account.
+
+  ## Examples
+
+      iex> register_account(%{field: value})
+      {:ok, %Account{}}
+
+      iex> register_account(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def register_account(attrs) do
+    %Account{}
+    |> Account.registration_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking account changes.
+
+  ## Examples
+
+      iex> change_account_registration(account)
+      %Ecto.Changeset{data: %Account{}}
+
+  """
+  def change_account_registration(%Account{} = account, attrs \\ %{}) do
+    Account.registration_changeset(account, attrs, hash_password: false, validate_email: false)
+  end
+
+  ## Settings
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing the account email.
+
+  ## Examples
+
+      iex> change_account_email(account)
+      %Ecto.Changeset{data: %Account{}}
+
+  """
+  def change_account_email(account, attrs \\ %{}) do
+    Account.email_changeset(account, attrs, validate_email: false)
+  end
+
+
+  @doc """
+  Emulates that the email will change without actually changing
+  it in the database.
+
+  ## Examples
+
+      iex> apply_account_email(account, "valid password", %{email: ...})
+      {:ok, %Account{}}
+
+      iex> apply_account_email(account, "invalid password", %{email: ...})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def apply_account_email(account, password, attrs) do
+    account
+    |> Account.email_changeset(attrs)
+    |> Account.validate_current_password(password)
+    |> Ecto.Changeset.apply_action(:update)
+  end
+
+  @doc """
+  Updates the account email using the given token.
+
+  If the token matches, the account email is updated and the token is deleted.
+  The confirmed_at date is also updated to the current time.
+  """
+  def update_account_email(account, token) do
+    context = "change:#{account.email}"
+
+    with {:ok, query} <- AccountToken.verify_change_email_token_query(token, context),
+         %AccountToken{sent_to: email} <- Repo.one(query),
+         {:ok, _} <- Repo.transaction(account_email_multi(account, email, context)) do
+      :ok
+    else
+      _ -> :error
+    end
+  end
+
+  defp account_email_multi(account, email, context) do
+    changeset =
+      account
+      |> Account.email_changeset(%{email: email})
+      |> Account.confirm_changeset()
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:account, changeset)
+    |> Ecto.Multi.delete_all(:tokens, AccountToken.by_account_and_contexts_query(account, [context]))
+  end
+
+ @doc ~S"""
+  Delivers the update email instructions to the given account.
+
+  ## Examples
+
+      iex> deliver_account_update_email_instructions(account, current_email, &url(~p"/accounts/settings/confirm_email/#{&1})")
+      {:ok, %{to: ..., body: ...}}
+
+  """
+  def deliver_account_update_email_instructions(%Account{} = account, current_email, update_email_url_fun)
+    when is_function(update_email_url_fun, 1) do
+    {encoded_token, account_token} = AccountToken.build_email_token(account, "change:#{current_email}")
+
+    Repo.insert!(account_token)
+    AccountNotifier.deliver_update_email_instructions(account, update_email_url_fun.(encoded_token))
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing the account password.
+
+  ## Examples
+
+      iex> change_account_password(account)
+      %Ecto.Changeset{data: %Account{}}
+
+  """
+  def change_account_password(account, attrs \\ %{}) do
+    Account.password_changeset(account, attrs, hash_password: false)
+  end
+
+  @doc """
+  Updates the account password.
+
+  ## Examples
+
+      iex> update_account_password(account, "valid password", %{password: ...})
+      {:ok, %Account{}}
+
+      iex> update_account_password(account, "invalid password", %{password: ...})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_account_password(account, password, attrs) do
+    changeset =
+      account
+      |> Account.password_changeset(attrs)
+      |> Account.validate_current_password(password)
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:account, changeset)
+    |> Ecto.Multi.delete_all(:tokens, AccountToken.by_account_and_contexts_query(account, :all))
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{account: account}} -> {:ok, account}
+      {:error, :account, changeset, _} -> {:error, changeset}
+    end
+  end
+
+  ## Session
+
+  @doc """
+  Generates a session token.
+  """
+  def generate_account_session_token(account) do
+    {token, account_token} = AccountToken.build_session_token(account)
+    Repo.insert!(account_token)
+    token
+  end
+
+  @doc """
+  Gets the account with the given signed token.
+  """
+  def get_account_by_session_token(token) do
+    {:ok, query} = AccountToken.verify_session_token_query(token)
+    Repo.one(query)
+  end
+
+  @doc """
+  Deletes the signed token with the given context.
+  """
+  def delete_account_session_token(token) do
+    Repo.delete_all(AccountToken.by_token_and_context_query(token, "session"))
+    :ok
+  end
+
+  ## Confirmation
+
+  @doc ~S"""
+  Delivers the confirmation email instructions to the given account.
+
+  ## Examples
+
+      iex> deliver_account_confirmation_instructions(account, &url(~p"/accounts/confirm/#{&1}"))
+      {:ok, %{to: ..., body: ...}}
+
+      iex> deliver_account_confirmation_instructions(confirmed_account, &url(~p"/accounts/confirm/#{&1}"))
+      {:error, :already_confirmed}
+
+  """
+  def deliver_account_confirmation_instructions(%Account{} = account, confirmation_url_fun)
+    when is_function(confirmation_url_fun, 1) do
+    if account.confirmed_at do
+      {:error, :already_confirmed}
+    else
+      {encoded_token, account_token} = AccountToken.build_email_token(account, "confirm")
+      Repo.insert!(account_token)
+      AccountNotifier.deliver_confirmation_instructions(account, confirmation_url_fun.(encoded_token))
+    end
+  end
+
+  @doc """
+  Confirms a account by the given token.
+
+  If the token matches, the account account is marked as confirmed
+  and the token is deleted.
+  """
+  def confirm_account(token) do
+    with {:ok, query} <- AccountToken.verify_email_token_query(token, "confirm"),
+         %Account{} = account <- Repo.one(query),
+         {:ok, %{account: account}} <- Repo.transaction(confirm_account_multi(account)) do
+      {:ok, account}
+    else
+      _ -> :error
+    end
+  end
+
+  defp confirm_account_multi(account) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:account, Account.confirm_changeset(account))
+    |> Ecto.Multi.delete_all(:tokens, AccountToken.by_account_and_contexts_query(account, ["confirm"]))
+  end
+
+  ## Reset password
+
+  @doc ~S"""
+  Delivers the reset password email to the given account.
+
+  ## Examples
+
+      iex> deliver_account_reset_password_instructions(account, &url(~p"/accounts/reset_password/#{&1}"))
+      {:ok, %{to: ..., body: ...}}
+
+  """
+  def deliver_account_reset_password_instructions(%Account{} = account, reset_password_url_fun)
+    when is_function(reset_password_url_fun, 1) do
+    {encoded_token, account_token} = AccountToken.build_email_token(account, "reset_password")
+    Repo.insert!(account_token)
+    AccountNotifier.deliver_reset_password_instructions(account, reset_password_url_fun.(encoded_token))
+  end
+
+  @doc """
+  Gets the account by reset password token.
+
+  ## Examples
+
+      iex> get_account_by_reset_password_token("validtoken")
+      %Account{}
+
+      iex> get_account_by_reset_password_token("invalidtoken")
+      nil
+
+  """
+  def get_account_by_reset_password_token(token) do
+    with {:ok, query} <- AccountToken.verify_email_token_query(token, "reset_password"),
+         %Account{} = account <- Repo.one(query) do
+      account
+    else
+      _ -> nil
+    end
+  end
+
+  @doc """
+  Resets the account password.
+
+  ## Examples
+
+      iex> reset_account_password(account, %{password: "new long password", password_confirmation: "new long password"})
+      {:ok, %Account{}}
+
+      iex> reset_account_password(account, %{password: "valid", password_confirmation: "not the same"})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def reset_account_password(account, attrs) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:account, Account.password_changeset(account, attrs))
+    |> Ecto.Multi.delete_all(:tokens, AccountToken.by_account_and_contexts_query(account, :all))
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{account: account}} -> {:ok, account}
+      {:error, :account, changeset, _} -> {:error, changeset}
+    end
+  end
+
+
+  #================= OLD CONTEXT ===============
+
+  @doc """
+  Creates an account.
 
   ## Examples
 
@@ -88,14 +421,14 @@ defmodule QuestApiV21.Accounts do
   defp put_password_hash(attrs), do: attrs
 
   @doc """
-  Finds or creates a user based on email. If a user doesn't exist, creates a new user with the provided email and name.
+  Finds or creates a account based on email. If a account doesn't exist, creates a new account with the provided email and name.
 
   ## Examples
 
-      iex> find_or_create_user("new@example.com", "New User")
+      iex> find_or_create_account("new@example.com", "New Account")
       {:ok, %Account{}}
 
-      iex> find_or_create_user("existing@example.com", "Existing User")
+      iex> find_or_create_user("existing@example.com", "Existing Account")
       {:ok, %Account{}}
 
   """
@@ -152,10 +485,10 @@ defmodule QuestApiV21.Accounts do
 
   ## Examples
 
-      iex> handle_oauth_login("new@example.com", "New User")
+      iex> handle_oauth_login("new@example.com", "New Account")
       {:ok, %Account{}, :new}
 
-      iex> handle_oauth_login("existing@example.com", "Existing User")
+      iex> handle_oauth_login("existing@example.com", "Existing Account")
       {:ok, %Account{}, :existing}
   """
   def handle_oauth_login(email, name) do
@@ -243,7 +576,7 @@ defmodule QuestApiV21.Accounts do
 
   ## Examples
 
-      iex> get_user_by_identifier("user@example.com")
+      iex> get_user_by_identifier("account@example.com")
       %Account{}
 
       iex> get_user_by_identifier("nonexistent@example.com")
@@ -336,16 +669,16 @@ defmodule QuestApiV21.Accounts do
   defp maybe_add_badges(changeset, attrs) do
     case Map.get(attrs, "badge_ids") do
       nil ->
-        Logger.debug("No badge IDs provided in attributes")
+        #Logger.debug("No badge IDs provided in attributes")
         changeset
 
       badge_ids ->
-        Logger.debug("Badge IDs provided: #{inspect(badge_ids)}")
+        #Logger.debug("Badge IDs provided: #{inspect(badge_ids)}")
         badges = Repo.all(from b in Badge, where: b.id in ^badge_ids)
-        Logger.debug("Badges found: #{inspect(badges)}")
+        #Logger.debug("Badges found: #{inspect(badges)}")
 
         current_stats = changeset.data.badges_stats
-        Logger.debug("Current badge stats: #{inspect(current_stats)}")
+        #Logger.debug("Current badge stats: #{inspect(current_stats)}")
         badges_count = length(badge_ids)
 
         updated_changeset = Ecto.Changeset.put_assoc(changeset, :badges, badges)
@@ -357,7 +690,7 @@ defmodule QuestApiV21.Accounts do
             current_stats + badges_count
           )
 
-        Logger.debug("Updated changeset: #{inspect(updated_changeset_with_stats)}")
+        #Logger.debug("Updated changeset: #{inspect(updated_changeset_with_stats)}")
         updated_changeset_with_stats
     end
   end
@@ -397,6 +730,20 @@ defmodule QuestApiV21.Accounts do
     end
   end
 
+  @doc """
+
+  the function that handles adding a badge to a user
+
+  Example
+
+  alias QuestApiV21.Repo
+  alias QuestApiV21.Accounts.Account
+  alias QuestApiV21.Accounts
+  alias QuestApiV21.Badges.Badge
+
+  badge = Repo.get(Badge, "9b7015b1-c4bb-4323-b7d2-98f881036553")
+  {:ok, message, updated_account} = Accounts.add_badge_to_user("d26326d1-be5b-4a24-a82e-57d855f95b89", badge)
+  """
   def add_badge_to_user(user_id, badge) do
     account = Repo.get!(Account, user_id) |> Repo.preload([:badges])
 
@@ -414,41 +761,66 @@ defmodule QuestApiV21.Accounts do
         |> Ecto.Changeset.put_change(:badges_stats, account.badges_stats + 1)
 
       with {:ok, updated_account} <- Repo.update(changeset) do
-        if quest_completed?(updated_account, badge.quest_id) do
-          updated_account =
-            Ecto.Changeset.change(updated_account,
-              rewards_stats: updated_account.rewards_stats + 1
-            )
+      if quest_completed?(updated_account, badge.quest_id) do
+        IO.inspect("Completed Quest")
+        updated_account =
+          Ecto.Changeset.change(updated_account,
+            rewards_stats: updated_account.rewards_stats + 1
+          )
 
-          case Repo.update(updated_account) do
-            {:ok, updated_account} ->
-              {:ok, "Badge and reward added to the account", updated_account}
+        # Attempt to create a reward record
+        reward_attrs = %{
+          quest_id: badge.quest_id,
+          account_id: user_id,
+          # Include any other necessary attributes here
+        }
+        case Rewards.create_reward(reward_attrs) do
+          {:ok, _reward} ->
+            IO.inspect("Created reward")
+            # Proceed with updating the account to reflect the reward addition
+            case Repo.update(updated_account) do
+              {:ok, updated_account} ->
+                {:ok, "Badge and reward added to the account", updated_account}
 
-            {:error, reason} ->
-              {:error, reason}
-          end
-        else
-          {:ok, "Badge added to the account", updated_account}
+              {:error, reason} ->
+                {:error, reason}
+            end
+          {:error, reason} ->
+            {:error, reason}
         end
+      else
+        {:ok, "Badge added to the account", updated_account}
+      end
+
       end
     end
   end
 
+  # This function determines if the given account has any active (i.e., incomplete) quests.
   def has_active_quests?(account_id) do
+    # Fetch the account by its ID, raising an error if it's not found.
     account = Repo.get!(Account, account_id)
+
+    # Preload the associated badges and quests for the account to reduce database queries.
     user_with_badges_and_quests = Repo.preload(account, [:badges, :quests])
 
-    # Check if there's any quest that is not completed
+    # Iterate over the quests associated with the user to check for any that are not completed.
     Enum.any?(user_with_badges_and_quests.quests, fn quest ->
+      # If any quest is found to be incomplete (by calling `quest_completed?`), return true.
       not quest_completed?(user_with_badges_and_quests, quest.id)
     end)
   end
 
+  # A helper function to determine if a specific quest for an account is completed by checking associated badges.
   defp quest_completed?(account, quest_id) do
+    # Retrieve all badges associated with the quest_id from the database.
     quest_badges = Repo.all(from b in Badge, where: b.quest_id == ^quest_id, select: b.id)
 
+    # For the quest to be considered completed, the account must have all badges associated with the quest.
     Enum.all?(quest_badges, fn badge_id ->
+      # Check if the account possesses each badge required for the quest's completion.
       Enum.any?(account.badges, fn b -> b.id == badge_id end)
     end)
   end
+
 end

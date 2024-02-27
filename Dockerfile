@@ -1,5 +1,5 @@
 # Stage 1: Build the Elixir/Phoenix Application
-ARG RELEASE_VERSION=0.1.1`
+ARG RELEASE_VERSION=0.1.1
 ARG ELIXIR_VERSION=1.14.5
 ARG OTP_VERSION=25.3.2.5
 ARG DEBIAN_VERSION=bullseye-20230612-slim
@@ -10,8 +10,8 @@ ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-$
 FROM ${BUILDER_IMAGE} as builder
 
 # Install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
-    && apt-get clean && rm -f /var/lib/apt/lists/*_*
+RUN apt-get update -y && apt-get install -y build-essential git curl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*_*
 
 # Prepare build dir
 WORKDIR /app
@@ -25,6 +25,8 @@ ENV MIX_ENV="prod"
 
 # Install mix dependencies
 COPY mix.exs mix.lock ./
+ENV HEX_HTTP_CONCURRENCY=1 \
+    HEX_HTTP_TIMEOUT=120
 RUN mix deps.get --only $MIX_ENV
 RUN mkdir config
 
@@ -36,6 +38,23 @@ COPY priv priv
 COPY lib lib
 COPY assets assets
 COPY global-bundle.pem /app/bin/global-bundle.pem
+
+# Install Node.js and NPM
+RUN curl -o node.tar.gz https://nodejs.org/dist/v18.17.1/node-v18.17.1-linux-x64.tar.gz && \
+    tar -xzf node.tar.gz -C /usr/local --strip-components=1 && \
+    rm node.tar.gz
+
+# Verify Node.js and NPM installation
+RUN node -v
+RUN npm -v
+
+# Change to assets directory, install NPM dependencies, and build assets
+WORKDIR /app/assets
+RUN npm install
+
+
+# Change back to app directory
+WORKDIR /app
 
 # Compile assets
 RUN mix assets.deploy
@@ -53,7 +72,7 @@ RUN mix release
 FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && apt-get install -y libstdc++6 openssl imagemagick libncurses5 locales \
-  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+  && apt-get clean && rm -rf /var/lib/apt/lists/*_*
 
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen

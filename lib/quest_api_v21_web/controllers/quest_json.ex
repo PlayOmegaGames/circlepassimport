@@ -50,7 +50,9 @@ defmodule QuestApiV21Web.QuestJSON do
       discount_code: quest.discount_code,
       public: quest.public,
       quest_time: quest.quest_time,
-      name_id: quest.name <> " - " <> quest.id,
+      completion_score: quest.completion_score,
+      event_name: quest.event_name,
+      badge_count: quest.badge_count, 
       badges: badges_data(badges),
       collectors: collectors_data(collectors)
     }

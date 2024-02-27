@@ -94,6 +94,25 @@ defmodule QuestApiV21.Hosts do
     |> Repo.update()
   end
 
+  def update_current_org(%Host{} = host, org_id) when is_binary(org_id) do
+    if is_organization_associated_with_host?(host.id, org_id) do
+      host
+      |> Host.changeset(%{current_org_id: org_id})
+      |> Repo.update()
+    else
+      {:error, :organization_not_associated}
+    end
+  end
+
+  def list_hosts do
+    Repo.all(Host)
+  end
+
+  def is_organization_associated_with_host?(host_id, org_id) do
+    host = Repo.get!(Host, host_id) |> Repo.preload(:organizations)
+    Enum.any?(host.organizations, fn org -> org.id == org_id end)
+  end
+
   @doc """
   Deletes a host.
 

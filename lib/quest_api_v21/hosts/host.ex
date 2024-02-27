@@ -11,6 +11,7 @@ defmodule QuestApiV21.Hosts.Host do
     field :password, :string, virtual: true
     field :name, :string
     field :role, :string, default: "default"
+    belongs_to :current_org, QuestApiV21.Organizations.Organization
 
     many_to_many :organizations, QuestApiV21.Organizations.Organization,
       join_through: "hosts_organizations"
@@ -22,8 +23,23 @@ defmodule QuestApiV21.Hosts.Host do
   def changeset(host, attrs) do
     host
     # Include password and role in the cast
-    |> cast(attrs, [:name, :email, :hashed_password, :password, :role])
+    |> cast(attrs, [:name, :email, :hashed_password, :password, :role, :current_org_id])
     |> validate_required([:name, :email])
+    |> validate_email()
     |> cast_assoc(:organizations, with: &QuestApiV21.Organizations.Organization.changeset/2)
+  end
+
+  defp validate_email(changeset) do
+    changeset
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
+    |> validate_length(:email, max: 160)
+    |> maybe_validate_unique_email()
+  end
+
+  defp maybe_validate_unique_email(changeset) do
+    changeset
+    |> unsafe_validate_unique(:email, QuestApiV21.Repo)
+    |> unique_constraint(:email)
   end
 end

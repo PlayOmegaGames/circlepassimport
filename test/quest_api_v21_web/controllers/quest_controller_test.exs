@@ -12,7 +12,7 @@ defmodule QuestApiV21Web.QuestControllerTest do
     quest_type: "some quest-type",
     redemption: "some redemption",
     reward: "some reward",
-    scans: 42,
+    transactions: 42,
     start_date: ~D[2023-08-23]
   }
   @update_attrs %{
@@ -22,7 +22,7 @@ defmodule QuestApiV21Web.QuestControllerTest do
     quest_type: "some updated quest-type",
     redemption: "some updated redemption",
     reward: "some updated reward",
-    scans: 43,
+    transactions: 43,
     start_date: ~D[2023-08-24]
   }
   @invalid_attrs %{
@@ -32,7 +32,7 @@ defmodule QuestApiV21Web.QuestControllerTest do
     "quest-type": nil,
     redemption: nil,
     reward: nil,
-    scans: nil,
+    transactions: nil,
     "start-date": nil
   }
 
@@ -62,7 +62,7 @@ defmodule QuestApiV21Web.QuestControllerTest do
                "quest-type" => "some quest-type",
                "redemption" => "some redemption",
                "reward" => "some reward",
-               "scans" => 42,
+               "transactions" => 42,
                "start-date" => "2023-08-23"
              } = json_response(conn, 200)["data"]
     end
@@ -90,7 +90,7 @@ defmodule QuestApiV21Web.QuestControllerTest do
                "quest-type" => "some updated quest-type",
                "redemption" => "some updated redemption",
                "reward" => "some updated reward",
-               "scans" => 43,
+               "transactions" => 43,
                "start-date" => "2023-08-24"
              } = json_response(conn, 200)["data"]
     end

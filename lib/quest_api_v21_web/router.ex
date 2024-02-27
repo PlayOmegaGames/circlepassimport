@@ -1,6 +1,8 @@
 defmodule QuestApiV21Web.Router do
   use QuestApiV21Web, :router
 
+  import QuestApiV21Web.AccountAuth
+
   import QuestApiV21Web.SuperadminAuth
   import Phoenix.LiveView.Router
 
@@ -11,6 +13,7 @@ defmodule QuestApiV21Web.Router do
     plug :put_root_layout, html: {QuestApiV21Web.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_account
     plug :fetch_current_superadmin
   end
 
@@ -90,7 +93,8 @@ defmodule QuestApiV21Web.Router do
     pipe_through :authenticated_host_api
 
     resources "/organizations", OrganizationController
-    resources "/scans", ScanController
+    resources "/transactions", TransactionController
+    put "/hosts/change_org", HostController, :change_org
     resources "/hosts", HostController, except: [:index]
   end
 
@@ -100,6 +104,7 @@ defmodule QuestApiV21Web.Router do
     resources "/quests", QuestController
     resources "/badges", BadgeController
     resources "/collectors", CollectorController
+    post "/redeem", RewardController, :redeem
     resources "/accounts", AccountController, except: [:index]
     get "/*path", ErrorController, :not_found
   end
@@ -148,23 +153,24 @@ defmodule QuestApiV21Web.Router do
   # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
-  #if Application.compile_env(:quest_api_v21, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
+  # if Application.compile_env(:quest_api_v21, :dev_routes) do
+  # If you want to use the LiveDashboard in production, you should put
+  # it behind authentication and allow only admins to access it.
+  # If your application does not have an admins-only section yet,
+  # you can use Plug.BasicAuth to set up some basic authentication
+  # as long as you are also using SSL (which you should anyway).
+  import Phoenix.LiveDashboard.Router
 
-    scope "/dev" do
-      pipe_through [:browser, :require_authenticated_superadmin]
+  scope "/dev" do
+    pipe_through [:browser, :require_authenticated_superadmin]
 
-      live_dashboard "/dashboard", metrics: QuestApiV21Web.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
-  #end
+    live_dashboard "/dashboard", metrics: QuestApiV21Web.Telemetry
+    forward "/mailbox", Plug.Swoosh.MailboxPreview
+  end
 
-  ## Authentication routes
+  # end
+
+  ## Super admin Authentication routes
 
   scope "/", QuestApiV21Web do
     pipe_through [:browser, :redirect_if_superadmin_is_authenticated]
@@ -199,6 +205,44 @@ defmodule QuestApiV21Web.Router do
       on_mount: [{QuestApiV21Web.SuperadminAuth, :mount_current_superadmin}] do
       live "/superadmin/confirm/:token", SuperadminConfirmationLive, :edit
       live "/superadmin/confirm", SuperadminConfirmationInstructionsLive, :new
+    end
+  end
+
+  ## End-user account Authentication routes
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser, :redirect_if_account_is_authenticated]
+
+    live_session :redirect_if_account_is_authenticated,
+      on_mount: [{QuestApiV21Web.AccountAuth, :redirect_if_account_is_authenticated}] do
+      live "/accounts/register", AccountRegistrationLive, :new
+      live "/accounts/log_in", AccountLoginLive, :new
+      live "/accounts/reset_password", AccountForgotPasswordLive, :new
+      live "/accounts/reset_password/:token", AccountResetPasswordLive, :edit
+    end
+
+    post "/accounts/log_in", AccountSessionController, :create
+  end
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser, :require_authenticated_account]
+
+    live_session :require_authenticated_account,
+      on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}] do
+      live "/accounts/settings", AccountSettingsLive, :edit
+      live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash
+    end
+  end
+
+  scope "/", QuestApiV21Web do
+    pipe_through [:browser]
+
+    delete "/accounts/log_out", AccountSessionController, :delete
+
+    live_session :current_account,
+      on_mount: [{QuestApiV21Web.AccountAuth, :mount_current_account}] do
+      live "/accounts/confirm/:token", AccountConfirmationLive, :edit
+      live "/accounts/confirm", AccountConfirmationInstructionsLive, :new
     end
   end
 end

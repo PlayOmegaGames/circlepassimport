@@ -52,9 +52,9 @@ defmodule QuestApiV21.Quests do
       ** (Ecto.NoResultsError)
 
   """
-  def get_quest(id, organization_ids) do
+  def get_quest(id, organization_id) do
     preloads = [:organization, :badges, :collectors, :accounts]
-    OrganizationScopedQueries.get_item(Quest, id, organization_ids, preloads)
+    OrganizationScopedQueries.get_item(Quest, id, organization_id, preloads)
   end
 
   @doc """
@@ -104,8 +104,8 @@ defmodule QuestApiV21.Quests do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_quest(%Quest{} = quest, attrs, organization_ids) do
-    if quest.organization_id in organization_ids do
+  def update_quest(%Quest{} = quest, attrs, organization_id) do
+    if quest.organization_id == organization_id do
       updated_attrs = normalize_account_ids(attrs)
 
       quest

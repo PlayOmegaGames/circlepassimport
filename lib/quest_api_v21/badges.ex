@@ -7,7 +7,7 @@ defmodule QuestApiV21.Badges do
   alias QuestApiV21.Repo
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Collector
-
+  alias QuestApiV21.Quests
   alias QuestApiV21.Badges.Badge
 
   @doc """
@@ -63,18 +63,21 @@ defmodule QuestApiV21.Badges do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_badge(attrs \\ %{}) do
-    %Badge{}
-    |> Badge.changeset(attrs)
-    |> maybe_add_accounts(attrs)
-    |> Repo.insert()
-  end
 
   def create_badge_with_organization(badge_params, organization_id) do
     %Badge{}
     |> Badge.changeset(Map.put(badge_params, "organization_id", organization_id))
     |> maybe_add_accounts(badge_params)
     |> Repo.insert()
+    # Only updates the completion score if the record is successfully updated
+    |> case do
+      {:ok, badge} ->
+        badge |> update_quest_numbers()
+        {:ok, badge}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -89,14 +92,27 @@ defmodule QuestApiV21.Badges do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_badge(%Badge{} = badge, attrs) do
-    # Preload accounts before updating
-    badge = Repo.preload(badge, :accounts)
+  def update_badge(%Badge{} = badge, attrs, organization_ids) do
+    if badge.organization_id in organization_ids do
+      # Preload accounts before updating
+      badge = Repo.preload(badge, :accounts)
 
-    badge
-    |> Badge.changeset(attrs)
-    |> maybe_add_accounts(attrs)
-    |> Repo.update()
+      badge
+      |> Badge.changeset(attrs)
+      |> maybe_add_accounts(attrs)
+      |> Repo.update()
+      # Only updates the completion score if the record is successfully updated
+      |> case do
+        {:ok, badge} ->
+          badge |> update_quest_numbers()
+          {:ok, badge}
+
+        error ->
+          error
+      end
+    else
+      {:error, :unauthorized}
+    end
   end
 
   @doc """
@@ -126,6 +142,27 @@ defmodule QuestApiV21.Badges do
   """
   def change_badge(%Badge{} = badge, attrs \\ %{}) do
     Badge.changeset(badge, attrs)
+  end
+
+  # update the quest completion score when a badge is associated with a quest
+  defp update_quest_numbers(%Badge{
+         quest_id: quest_id,
+         badge_points: points,
+         organization_id: organization_id
+       }) do
+    if quest_id do
+      quest = Quests.get_quest(quest_id, organization_id)
+      # if it doesnt default to 0 we get an error adding to nil
+      score = quest.completion_score || 0
+
+      badge_count = quest.badge_count
+      # increase the points by the badge points of the badge
+      new_score = score + points
+      new_count = badge_count + 1
+      Quests.update_quest(quest, %{completion_score: new_score, badge_count: new_count}, organization_id)
+    else
+      :noop
+    end
   end
 
   @doc """

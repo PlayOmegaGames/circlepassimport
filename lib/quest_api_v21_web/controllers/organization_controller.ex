@@ -18,8 +18,8 @@ defmodule QuestApiV21Web.OrganizationController do
     case extract_host_id(conn) do
       nil ->
         conn
-        |> put_status(:unprocessable_entity)
-        |> json(%{error: "Unable to extract host ID from token"})
+        |> put_status(:not_found)
+        |> json(%{error: "Host not found"})
 
       host_id ->
         case Organizations.create_organization(organization_params, host_id) do

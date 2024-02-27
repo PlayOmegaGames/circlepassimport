@@ -36,9 +36,9 @@ defmodule QuestApiV21.OrganizationScopedQueries do
       iex> OrganizationScopedQueries.get_item(Quest, quest_id, [org_id])
       %Quest{}
   """
-  def get_item(queryable, id, organization_ids, preloads \\ []) do
+  def get_item(queryable, id, organization_id, preloads \\ []) do
     queryable
-    |> where([q], q.id == ^id and q.organization_id in ^organization_ids)
+    |> where([q], q.id == ^id and q.organization_id == ^organization_id)
     |> preload(^preloads)
     |> Repo.one()
   end
