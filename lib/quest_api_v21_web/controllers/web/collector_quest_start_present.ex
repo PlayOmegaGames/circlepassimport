@@ -48,6 +48,13 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
   defp add_quest_to_user(account, quest) do
     case Accounts.add_quest_to_user(account.id, quest) do
       {:ok, msg, _updated_account} ->
+        # Here, you update the selected_quest field for the user
+        case Accounts.update_selected_quest_for_user(account.id, quest.id) do
+          {:ok, _updated_account} ->
+            Logger.info("Selected quest updated for user.")
+          {:error, _reason} ->
+            Logger.error("Failed to update selected quest for user.")
+        end
         Logger.info(msg)
 
       {:error, reason} ->

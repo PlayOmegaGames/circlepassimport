@@ -7,6 +7,8 @@ defmodule QuestApiV21Web.Web.BadgeController do
   alias QuestApiV21.Repo
 
   def show_badge(conn, _params) do
+    IO.inspect(conn)
+
     current_user = conn.assigns[:current_user]
 
     if current_user do

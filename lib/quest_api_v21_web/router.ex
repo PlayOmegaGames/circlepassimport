@@ -133,10 +133,11 @@ defmodule QuestApiV21Web.Router do
 
     # camera page
     get "/camera", Web.PageController, :camera
-
-    live "/navbar", QuestApiV21Web.LiveComponents.Navbar, :index, as: :Navbar
-
-    live "/single_page", SinglePageLive
+    live_session :default do
+      live "/navbar", QuestApiV21Web.LiveComponents.Navbar, :index, as: :Navbar
+      live "/questbar", QuestBar
+      live "/single_page", SinglePageLive
+    end
   end
 
   # for SSO Oauth
