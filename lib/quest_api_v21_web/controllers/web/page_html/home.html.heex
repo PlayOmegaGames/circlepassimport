@@ -3,8 +3,8 @@
 <div class="px-4 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
   <div class="mx-auto max-w-xl lg:mx-0">
     <!-- Display User Email -->
-    <%= if @user_id do %>
-      <form action="/sign_out" method="post">
+    <%= if @conn.assigns[:current_account] do %>
+      <form action="accounts/sign_out" method="post">
         <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
         <input type="hidden" name="_method" value="delete" />
         <button

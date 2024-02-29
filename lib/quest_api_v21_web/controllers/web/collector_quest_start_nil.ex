@@ -6,7 +6,7 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartNil do
   require Logger
 
   def handle_nil_quest_start(conn, %Collector{id: collector_id} = collector) do
-    current_account = conn.assigns[:current_user]
+    current_account = conn.assigns[:current_account]
     account_id = current_account.id
 
     # Use Quests context to compare quests

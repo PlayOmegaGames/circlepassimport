@@ -5,7 +5,7 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
 
   def handle_present_quest_start(conn, collector) do
     # IO.inspect(collector, label: "handle_present_quest_start data")
-    account = Accounts.get_account!(conn.assigns.current_user.id)
+    account = Accounts.get_account!(conn.assigns.current_account.id)
     quest = Quests.get_quest(collector.quest_start)
     badge = find_associated_badge(collector, quest)
 

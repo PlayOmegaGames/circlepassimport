@@ -3,7 +3,8 @@ defmodule QuestApiV21Web.QuestBar do
   alias QuestApiV21Web.LiveComponents.CompTest
   alias QuestApiV21.Accounts
 
-  def mount(_session, params, socket) do
+  def mount(session, params, socket) do
+    IO.inspect(session)
     user_id = params["user_id"]
     account = Accounts.get_account!(user_id)
     socket =

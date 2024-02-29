@@ -30,6 +30,8 @@ defmodule QuestApiV21Web.AccountAuth do
     account_return_to = get_session(conn, :account_return_to)
 
     conn
+    |> put_session(:account_id, account.id) 
+    |> assign(:current_account, account)
     |> renew_session()
     |> put_token_in_session(token)
     |> maybe_write_remember_me_cookie(token, params)
