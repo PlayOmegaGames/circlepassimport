@@ -3,6 +3,7 @@ defmodule QuestApiV21Web.Web.PageController do
   require Logger
 
   def home(conn, _params) do
+    IO.inspect(conn)
     user_email = get_session(conn, :user_email)
     user_id = get_session(conn, :user_id)
 

@@ -12,7 +12,7 @@ defmodule QuestApiV21Web.Web.CollectorController do
   # It is triggered when a GET request is made to "/badge/:id".
 
   def show_collector(conn, %{"id" => id}) do
-    IO.inspect(conn)
+    #IO.inspect(conn)
 
     case Collectors.get_collector(id) do
       nil ->

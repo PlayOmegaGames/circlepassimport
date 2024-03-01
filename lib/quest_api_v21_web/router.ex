@@ -135,9 +135,9 @@ defmodule QuestApiV21Web.Router do
       live "/accounts/settings", AccountSettingsLive, :edit
       live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash
       live "/navbar", QuestApiV21Web.LiveComponents.Navbar, :index, as: :Navbar
-      live "/questbar", QuestBar
+      live "/questbar", QuestBarLive
       live "/single_page", SinglePageLive
-      delete "accounts/sign_out", AccountSessionController, :delete
+      delete "/accounts/sign_out", AccountSessionController, :delete
 
     end
   end
