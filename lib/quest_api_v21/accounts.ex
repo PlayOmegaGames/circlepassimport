@@ -708,6 +708,13 @@ defmodule QuestApiV21.Accounts do
     end
   end
 
+  # Function to update the selected_quest field for an account
+  def update_selected_quest_for_user(account_id, quest_id) do
+    account = Repo.get!(Account, account_id)
+    changeset = Ecto.Changeset.change(account, %{selected_quest_id: quest_id})
+    Repo.update(changeset)
+  end
+
   # for the show collector function
   def add_quest_to_user(user_id, quest) do
     account = Repo.get!(Account, user_id) |> Repo.preload(:quests)

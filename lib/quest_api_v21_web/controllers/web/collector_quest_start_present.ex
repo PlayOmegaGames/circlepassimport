@@ -5,7 +5,7 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
 
   def handle_present_quest_start(conn, collector) do
     # IO.inspect(collector, label: "handle_present_quest_start data")
-    account = Accounts.get_account!(conn.assigns.current_user.id)
+    account = Accounts.get_account!(conn.assigns.current_account.id)
     quest = Quests.get_quest(collector.quest_start)
     badge = find_associated_badge(collector, quest)
 
@@ -48,6 +48,13 @@ defmodule QuestApiV21Web.Web.CollectorQuestStartPresent do
   defp add_quest_to_user(account, quest) do
     case Accounts.add_quest_to_user(account.id, quest) do
       {:ok, msg, _updated_account} ->
+        # Here, you update the selected_quest field for the user
+        case Accounts.update_selected_quest_for_user(account.id, quest.id) do
+          {:ok, _updated_account} ->
+            Logger.info("Selected quest updated for user.")
+          {:error, _reason} ->
+            Logger.error("Failed to update selected quest for user.")
+        end
         Logger.info(msg)
 
       {:error, reason} ->

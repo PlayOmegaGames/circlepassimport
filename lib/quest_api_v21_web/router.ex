@@ -113,27 +113,36 @@ defmodule QuestApiV21Web.Router do
   # |         WEB ROUTES          |
   # |=============================|
 
-  # end-user authenticated
   scope "/", QuestApiV21Web do
-    # Use both browser and authenticated pipelines
-    pipe_through :authenticated
+    pipe_through [:browser, :require_authenticated_account]
 
-    # user settings page
-    get "/user-settings", Web.AccountController, :user_settings
-    post "/update_profile", Web.AccountController, :update_from_web
-    post "/update_email", Web.AccountController, :change_email
-    post "/change_password", Web.AccountController, :change_password
+    live_session :require_authenticated_account, on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}] do
+      # Move your routes here, adjusting paths as necessary
+      get "/user-settings", Web.AccountController, :user_settings
+      post "/update_profile", Web.AccountController, :update_from_web
+      post "/update_email", Web.AccountController, :change_email
+      post "/change_password", Web.AccountController, :change_password
 
-    # badge page
-    get "/badges", Web.BadgeController, :show_badge
-    get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
-    get "/badge/:id", Web.CollectorController, :show_collector
-    get "/new", Web.PageController, :new_page
-    get "/profile", Web.PageController, :profile
+      get "/badges", Web.BadgeController, :show_badge
+      get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
+      get "/badge/:id", Web.CollectorController, :show_collector
+      get "/new", Web.PageController, :new_page
+      get "/profile", Web.PageController, :profile
 
-    # camera page
-    get "/camera", Web.PageController, :camera
+      get "/camera", Web.PageController, :camera
+
+      # Assuming these live routes also require authentication
+      live "/accounts/settings", AccountSettingsLive, :edit
+      live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash
+      live "/navbar", QuestApiV21Web.LiveComponents.Navbar, :index, as: :Navbar
+      live "/questbar", QuestBarLive
+      live "/single_page", SinglePageLive
+      delete "/accounts/sign_out", AccountSessionController, :delete
+
+    end
   end
+
+
 
   # for SSO Oauth
   scope "/auth", QuestApiV21Web do
@@ -220,15 +229,7 @@ defmodule QuestApiV21Web.Router do
     post "/accounts/log_in", AccountSessionController, :create
   end
 
-  scope "/", QuestApiV21Web do
-    pipe_through [:browser, :require_authenticated_account]
 
-    live_session :require_authenticated_account,
-      on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}] do
-      live "/accounts/settings", AccountSettingsLive, :edit
-      live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash
-    end
-  end
 
   scope "/", QuestApiV21Web do
     pipe_through [:browser]

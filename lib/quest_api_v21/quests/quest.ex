@@ -22,6 +22,7 @@ defmodule QuestApiV21.Quests.Quest do
     field :event_name, :string
     field :badge_count, :integer
 
+
     belongs_to :organization, QuestApiV21.Organizations.Organization
     has_many :badges, QuestApiV21.Badges.Badge
     many_to_many :collectors, QuestApiV21.Collectors.Collector, join_through: "quests_collectors"

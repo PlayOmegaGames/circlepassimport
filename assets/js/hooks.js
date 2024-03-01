@@ -81,6 +81,21 @@ Hooks.FormSubmit = function(csrfToken) {
       }
     };
   };
+  //updates localstorage
+  Hooks.UpdateIndex = {
+    mounted() {
+      let index = localStorage.getItem("badgeIndex");
+      if (index !== null) {
+        this.pushEvent("initialize-index", { index: parseInt(index) });
+      }
+      // This is critical: Ensure `handleEvent` is directly within the hook object
+      this.handleEvent("update-local-storage", ({ index }) => {
+        console.log(index)
+        localStorage.setItem("badgeIndex", index.toString()); // Make sure to convert to string
+        console.log("LocalStorage updated with index:", index); // For debugging
+      });
+    }
+  };
   
   
 export default Hooks;

@@ -7,7 +7,9 @@ defmodule QuestApiV21Web.Web.BadgeController do
   alias QuestApiV21.Repo
 
   def show_badge(conn, _params) do
-    current_user = conn.assigns[:current_user]
+    IO.inspect(conn)
+
+    current_user = conn.assigns[:current_account]
 
     if current_user do
       # Preload badges and quests for the current user

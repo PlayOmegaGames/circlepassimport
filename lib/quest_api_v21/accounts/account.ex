@@ -17,6 +17,7 @@ defmodule QuestApiV21.Accounts.Account do
     field :rewards_stats, :integer, default: 0
     field :pfps, :string
     field :confirmed_at, :naive_datetime
+    belongs_to :selected_quest, QuestApiV21.Quests.Quest
 
 
     many_to_many :badges, QuestApiV21.Badges.Badge, join_through: "badges_accounts"
@@ -179,10 +180,10 @@ defmodule QuestApiV21.Accounts.Account do
   """
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:name, :role, :quests_stats, :badges_stats, :rewards_stats, :pfps])
+    |> cast(attrs, [:name, :role, :quests_stats, :badges_stats, :selected_quest_id, :rewards_stats, :pfps])
     |> validate_length(:name, max: 100)
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
-    |> cast_assoc(:quests, with: &QuestApiV21.Quests.Quest.changeset/2)
+    |> cast_assoc(:selected_quest, with: &QuestApiV21.Quests.Quest.changeset/2)
   end
 
 end

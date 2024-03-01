@@ -11,6 +11,10 @@ defmodule QuestApiV21Web.AccountSettingsLive do
     </.header>
 
     <div class="space-y-12 divide-y">
+
+    <div class="pt-4">
+      <button phx-click="sign_out" class="px-4 py-2 bg-red-500 text-white rounded">Sign Out</button>
+    </div>
       <div>
         <.simple_form
           for={@email_form}
@@ -164,4 +168,7 @@ defmodule QuestApiV21Web.AccountSettingsLive do
         {:noreply, assign(socket, password_form: to_form(changeset))}
     end
   end
+
+
+
 end
