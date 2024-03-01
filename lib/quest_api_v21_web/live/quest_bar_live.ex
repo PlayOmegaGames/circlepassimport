@@ -47,7 +47,7 @@ defmodule QuestApiV21Web.QuestBarLive do
 
   def render(assigns) do
     ~H"""
-    <div class="fixed bottom-1 border-2 border-gray-800">
+    <div phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-1 border-2 border-gray-800">
       <div class="flex row">
       <div>
         <%= if assigns.badge.collected do %>
@@ -78,26 +78,42 @@ defmodule QuestApiV21Web.QuestBarLive do
     """
   end
 
+  def handle_event("initialize-index", %{"index" => index}, socket) do
+    # Ensure the index is an integer
+    new_index = String.to_integer(to_string(index))
+
+    {:noreply,
+     socket
+     |> assign(:current_index, new_index)
+     |> update_current_badge()}
+  end
+
   def handle_event("next", _params, socket) do
     count = Enum.count(socket.assigns.all_badges)
     new_index = rem(socket.assigns.current_index + 1, count)
 
-    {:noreply,
+    # Notify the JS hook to log the index and update local storage
+    socket =
       socket
       |> assign(:current_index, new_index)
       |> update_current_badge()
-    }
+      |> push_event("update-local-storage", %{index: new_index})
+
+    {:noreply, socket}
   end
 
   def handle_event("previous", _params, socket) do
-      count = Enum.count(socket.assigns.all_badges)
-      new_index = rem(socket.assigns.current_index - 1 + count, count)
+    count = Enum.count(socket.assigns.all_badges)
+    new_index = rem(socket.assigns.current_index - 1 + count, count)
 
-      {:noreply,
-        socket
-        |> assign(:current_index, new_index)
-        |> update_current_badge()
-      }
+    # Notify the JS hook to log the index and update local storage
+    socket =
+      socket
+      |> assign(:current_index, new_index)
+      |> update_current_badge()
+      |> push_event("update-local-storage", %{index: new_index})
+
+    {:noreply, socket}
   end
 
 end
