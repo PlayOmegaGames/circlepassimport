@@ -81,6 +81,7 @@ defmodule QuestApiV21Web.Router do
     get "/host/sign_up", HostAuthController, :new_host
     post "/host/sign_up", HostAuthController, :sign_up_host
     post "/host/sign_in", HostAuthController, :sign_in_host
+    get "/host/:id", HostController, :show
 
     # token exchange for partner
     post "/token_exchange", AuthController, :token_exchange

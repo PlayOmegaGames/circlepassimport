@@ -4,6 +4,7 @@ defmodule QuestApiV21.Organizations do
   """
 
   import Ecto.Query, warn: false
+  alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Repo
 
   alias QuestApiV21.Organizations.Organization
@@ -20,6 +21,19 @@ defmodule QuestApiV21.Organizations do
   """
   def list_organizations do
     Repo.all(Organization)
+  end
+
+
+  @doc"""
+
+    alias QuestApiV21.Organizations
+    Organizations.list_organizations_by_organization_id("8cb1399f-e077-41ff-93cd-ce7bc3a21c98")
+
+  nowork
+  """
+  def list_organizations_by_organization_id(organization_id) do
+    preloads = [:hosts]
+    OrganizationScopedQueries.scope_query(Organization, organization_id, preloads)
   end
 
   @doc """
