@@ -4,6 +4,7 @@ defmodule QuestApiV21.Badges do
   """
 
   import Ecto.Query, warn: false
+  alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Repo
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Collector
@@ -48,8 +49,16 @@ defmodule QuestApiV21.Badges do
       iex> get_badge!(456)
       ** (Ecto.NoResultsError)
 
+    alias QuestApiV21.Badges
+
+
   """
   def get_badge!(id), do: Repo.get!(Badge, id)
+
+  def list_badges_by_organization_id(organization_id) do
+    preloads = [:organization, :accounts]
+    OrganizationScopedQueries.scope_query(Badge, organization_id, preloads)
+  end
 
   @doc """
   Creates a badge.

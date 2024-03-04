@@ -1,22 +1,28 @@
 defmodule QuestApiV21Web.BadgeController do
   use QuestApiV21Web, :controller
-
+  alias QuestApiV21.Repo
   alias QuestApiV21.Badges
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21Web.JWTUtility
-  # alias QuestApiV21.Accounts
-  # alias QuestApiV21.Repo
+
   require Logger
   plug :put_layout, html: {QuestApiV21Web.Layouts, :logged_in}
 
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-    badge =
-      Badges.list_badge()
-      |> QuestApiV21.Repo.preload([:organization, :accounts])
 
-    render(conn, :index, badge: badge)
+    organization_id = JWTUtility.get_organization_id_from_jwt(conn)
+
+    case Badges.list_badges_by_organization_id(organization_id) do
+
+      badges ->
+        badges
+          |> Repo.preload([:organization, :accounts])
+
+        render(conn, :index, badges: badges)
+
+    end
   end
 
   def create(conn, %{"badge" => badge_params}) do
