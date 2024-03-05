@@ -19,8 +19,7 @@ defmodule QuestApiV21Web.OrganizationController do
     organization_id = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Organizations.associate_host_with_organization(host_email, organization_id) do
-      {:ok, organization} ->
-        organization = QuestApiV21.Repo.preload(organization, [:hosts])
+      {:ok, _organization} ->
         conn
         |> put_status(:ok)
         |> json(%{success: "account added to organization"})
