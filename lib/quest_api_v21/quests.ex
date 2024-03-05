@@ -33,6 +33,17 @@ defmodule QuestApiV21.Quests do
 
   # only returns the quests that are associated to that record
 
+
+  @doc """
+
+    Testing:
+
+    alias QuestApiV21.Quests
+    Quests.list_quests_by_organization_ids("8cb1399f-e077-41ff-93cd-ce7bc3a21c98")
+
+
+  """
+
   def list_quests_by_organization_ids(organization_ids) do
     preloads = [:organization, :badges, :collectors, :accounts]
     OrganizationScopedQueries.scope_query(Quest, organization_ids, preloads)

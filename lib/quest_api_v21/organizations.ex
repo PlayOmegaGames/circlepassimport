@@ -4,6 +4,7 @@ defmodule QuestApiV21.Organizations do
   """
 
   import Ecto.Query, warn: false
+  alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Repo
 
   alias QuestApiV21.Organizations.Organization
@@ -20,6 +21,68 @@ defmodule QuestApiV21.Organizations do
   """
   def list_organizations do
     Repo.all(Organization)
+  end
+
+    @doc """
+  Associates a host found by email with the provided organization ID.
+
+  ## Parameters
+
+  - email: The email of the host to find.
+  - organization_id: The ID of the organization to associate with the host.
+
+  ## Examples
+
+      iex> associate_host_with_organization("host@example.com", "org_id")
+      {:ok, %Organization{}}
+
+      iex> associate_host_with_organization("nonexistent@example.com", "org_id")
+      {:error, :host_not_found}
+
+      iex> associate_host_with_organization("host@example.com", "nonexistent_org_id")
+      {:error, :organization_not_found}
+
+      alias QuestApiV21.Organizations
+      Organizations.associate_host_with_organization("jay@yptocnge.consulting","8cb1399f-e077-41ff-93cd-ce7bc3a21c98")
+  """
+  def associate_host_with_organization(email, organization_id) do
+    case QuestApiV21.Hosts.get_host_by_email(email) do
+      nil ->
+        {:error, :host_not_found}
+
+      %Host{} = host ->
+        # Preload the hosts association on the organization before attempting to update it.
+        organization = Repo.get(Organization, organization_id) |> Repo.preload(:hosts)
+
+        if organization do
+          update_organization_hosts(organization, host)
+        else
+          {:error, :organization_not_found}
+        end
+    end
+  end
+
+  defp update_organization_hosts(%Organization{} = organization, %Host{} = host) do
+    updated_hosts = [host | organization.hosts]
+
+    changeset =
+      organization
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:hosts, updated_hosts)
+
+    Repo.update(changeset)
+  end
+
+  @doc"""
+
+    alias QuestApiV21.Organizations
+    Organizations.list_organizations_by_organization_id("8cb1399f-e077-41ff-93cd-ce7bc3a21c98")
+
+  nowork
+  """
+  def list_organizations_by_organization_id(organization_id) do
+    preloads = [:hosts]
+    OrganizationScopedQueries.scope_query(Organization, organization_id, preloads)
   end
 
   @doc """

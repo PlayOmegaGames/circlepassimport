@@ -52,7 +52,7 @@ defmodule QuestApiV21Web.QuestJSON do
       quest_time: quest.quest_time,
       completion_score: quest.completion_score,
       event_name: quest.event_name,
-      badge_count: quest.badge_count, 
+      badge_count: quest.badge_count,
       badges: badges_data(badges),
       collectors: collectors_data(collectors)
     }
@@ -67,10 +67,11 @@ defmodule QuestApiV21Web.QuestJSON do
   end
 
   defp badges_data(badges) do
-    Enum.map(badges, fn %Badge{id: id, name: name} ->
+    Enum.map(badges, fn %Badge{id: id, name: name, badge_image: badge_image} ->
       %{
         id: id,
-        name: name
+        name: name,
+        badge_image: badge_image
       }
     end)
   end

@@ -81,6 +81,7 @@ defmodule QuestApiV21Web.Router do
     get "/host/sign_up", HostAuthController, :new_host
     post "/host/sign_up", HostAuthController, :sign_up_host
     post "/host/sign_in", HostAuthController, :sign_in_host
+    get "/host/:id", HostController, :show
 
     # token exchange for partner
     post "/token_exchange", AuthController, :token_exchange
@@ -94,7 +95,8 @@ defmodule QuestApiV21Web.Router do
 
     resources "/organizations", OrganizationController
     resources "/transactions", TransactionController
-    put "/hosts/change_org", HostController, :change_org
+    put "/host/change_org", HostController, :change_org
+    put "/organization/add_host", OrganizationController, :add_host
     resources "/hosts", HostController, except: [:index]
   end
 
@@ -117,7 +119,8 @@ defmodule QuestApiV21Web.Router do
     pipe_through [:browser, :require_authenticated_account]
 
     live_session :require_authenticated_account, on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}] do
-      # Move your routes here, adjusting paths as necessary
+      # Move your routes here, adjusting paths as necessary        |> render(:index, conn: conn)
+
       get "/user-settings", Web.AccountController, :user_settings
       post "/update_profile", Web.AccountController, :update_from_web
       post "/update_email", Web.AccountController, :change_email

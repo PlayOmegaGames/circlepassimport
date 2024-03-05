@@ -3,17 +3,17 @@ defmodule QuestApiV21Web.BadgeJSON do
   alias QuestApiV21.Accounts.Account
 
   @doc """
-  Renders a list of badge.
+  Renders a list of badges.
   """
-  def index(%{badge: badge}) do
-    %{data: for(badge <- badge, do: data(badge))}
+  def index(%{badges: badges}) do
+    %{data: for(badges <- badges, do: data(badges))}
   end
 
   @doc """
-  Renders a single badge.
+  Renders a single badges.
   """
-  def show(%{badge: badge}) do
-    %{data: data(badge)}
+  def show(%{badges: badges}) do
+    %{data: data(badges)}
   end
 
   @doc """
@@ -23,22 +23,22 @@ defmodule QuestApiV21Web.BadgeJSON do
     %{errors: %{detail: message}}
   end
 
-  defp data(%Badge{accounts: accounts} = badge) do
+  defp data(%Badge{accounts: accounts} = badges) do
     %{
-      id: badge.id,
-      name: badge.name,
-      badge_image: badge.badge_image,
-      scans: badge.scans,
-      badge_details_image: badge.badge_details_image,
-      badge_description: badge.badge_description,
-      organization_id: badge.organization_id,
-      quest_id: badge.quest_id,
-      badge_points: badge.badge_points,
-      cool_down_reset: badge.cool_down_reset,
-      share_location: badge.share_location,
-      hint: badge.hint,
-      collector_id: badge.collector_id,
-      badge_redirect: badge.badge_redirect,
+      id: badges.id,
+      name: badges.name,
+      badge_image: badges.badge_image,
+      scans: badges.scans,
+      badge_details_image: badges.badge_details_image,
+      badge_description: badges.badge_description,
+      organization_id: badges.organization_id,
+      quest_id: badges.quest_id,
+      badge_points: badges.badge_points,
+      cool_down_reset: badges.cool_down_reset,
+      share_location: badges.share_location,
+      hint: badges.hint,
+      collector_id: badges.collector_id,
+      badge_redirect: badges.badge_redirect,
       account_ids: accounts_data(accounts)
     }
   end

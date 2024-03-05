@@ -10,15 +10,19 @@ defmodule QuestApiV21Web.QuestController do
 
   def index(conn, _params) do
     # passes org id onto context file for filtering
+
     organization_id = JWTUtility.get_organization_id_from_jwt(conn)
 
-    quests =
-      Quests.list_quests_by_organization_ids(organization_id)
-      # Preload accounts here
-      |> Repo.preload([:organization, :badges, :collectors, :accounts])
+    case Quests.list_quests_by_organization_ids(organization_id) do
 
-    render(conn, :index, quests: quests)
+      quests ->
+        quests
+        |> Repo.preload([:organization, :badges, :collectors, :accounts])
+
+      render(conn, :index, quests: quests)
+    end
   end
+
 
   def create(conn, %{"quest" => quest_params}) do
     organization_id = JWTUtility.extract_organization_id_from_jwt(conn)
