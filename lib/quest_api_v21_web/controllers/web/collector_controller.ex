@@ -17,7 +17,6 @@ defmodule QuestApiV21Web.Web.CollectorController do
     case Collectors.get_collector(id) do
       nil ->
         Logger.error("Collector not found for ID: #{id}")
-
         conn
         |> put_status(:not_found)
         |> render("error.json", message: "Collector not found")
