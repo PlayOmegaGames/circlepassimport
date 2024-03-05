@@ -38,6 +38,10 @@ defmodule QuestApiV21.Hosts do
   """
   def get_host!(id), do: Repo.get!(Host, id)
 
+  def get_host_by_email(email) do
+    Repo.get_by(Host, email: email)
+  end
+
   @doc """
   Creates a host.
 
@@ -63,10 +67,6 @@ defmodule QuestApiV21.Hosts do
       _existing_host ->
         {:error, "A host with this email already exists"}
     end
-  end
-
-  defp get_host_by_email(email) when is_binary(email) do
-    Repo.get_by(Host, email: email)
   end
 
   defp put_password_hash(%{"password" => password} = attrs) do

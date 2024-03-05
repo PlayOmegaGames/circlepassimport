@@ -95,7 +95,8 @@ defmodule QuestApiV21Web.Router do
 
     resources "/organizations", OrganizationController
     resources "/transactions", TransactionController
-    put "/hosts/change_org", HostController, :change_org
+    put "/host/change_org", HostController, :change_org
+    put "/organization/add_host", OrganizationController, :add_host
     resources "/hosts", HostController, except: [:index]
   end
 

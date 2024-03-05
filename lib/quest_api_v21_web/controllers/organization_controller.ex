@@ -3,6 +3,7 @@ defmodule QuestApiV21Web.OrganizationController do
 
   alias QuestApiV21.Organizations
   alias QuestApiV21.Organizations.Organization
+  alias QuestApiV21Web.JWTUtility
 
   action_fallback QuestApiV21Web.FallbackController
 
@@ -12,6 +13,33 @@ defmodule QuestApiV21Web.OrganizationController do
       |> QuestApiV21.Repo.preload([:hosts, :quests, :badges, :collectors])
 
     render(conn, :index, organizations: organizations)
+  end
+
+  def add_host(conn, %{"email" => host_email}) do
+    organization_id = JWTUtility.get_organization_id_from_jwt(conn)
+
+    case Organizations.associate_host_with_organization(host_email, organization_id) do
+      {:ok, organization} ->
+        organization = QuestApiV21.Repo.preload(organization, [:hosts])
+        conn
+        |> put_status(:ok)
+        |> json(%{success: "account added to organization"})
+
+      {:error, :host_not_found} ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Host not found"})
+
+      {:error, :organization_not_found} ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Organization not found"})
+
+      {:error, _changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Failed to add host to organization"})
+    end
   end
 
   def create(conn, %{"organization" => organization_params}) do
