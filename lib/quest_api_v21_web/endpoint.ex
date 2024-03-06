@@ -40,7 +40,6 @@ defmodule QuestApiV21Web.Endpoint do
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
-  plug CORSPlug, origins: ["*"], allow_headers: ["authorization"], max_age: 600
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],

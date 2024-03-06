@@ -18,7 +18,8 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   check_origin: [
     "http://localhost:4000",
     "https://staging.questapp.io",
-    "https://questapp.io/  "
+    "https://questapp.io/",
+    "https://gitpod.io."
   ],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: System.get_env("SECRET_KEY_BASE")
