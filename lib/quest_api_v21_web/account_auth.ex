@@ -214,6 +214,10 @@ defmodule QuestApiV21Web.AccountAuth do
     end
   end
 
+  def get_current_account(conn) do
+    conn.assigns.current_account
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:account_token, token)

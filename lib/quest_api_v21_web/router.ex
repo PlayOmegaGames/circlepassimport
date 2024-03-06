@@ -118,8 +118,9 @@ defmodule QuestApiV21Web.Router do
   scope "/", QuestApiV21Web do
     pipe_through [:browser, :require_authenticated_account]
 
-    live_session :require_authenticated_account, on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}] do
-      # Move your routes here, adjusting paths as necessary        |> render(:index, conn: conn)
+    live_session :require_authenticated_account,
+      on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}],
+      layout: {QuestApiV21Web.Layouts, :authenticated} do
 
       get "/user-settings", Web.AccountController, :user_settings
       post "/update_profile", Web.AccountController, :update_from_web

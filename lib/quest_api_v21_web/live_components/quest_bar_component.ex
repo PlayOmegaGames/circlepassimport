@@ -1,12 +1,8 @@
-defmodule QuestApiV21Web.QuestBarLive do
-  use QuestApiV21Web, :live_view
-
-  on_mount {QuestApiV21Web.AccountAuth, :mount_current_account}
+defmodule QuestApiV21Web.QuestBarComponent do
+  use Phoenix.LiveComponent
 
   def mount(_session, _params, socket) do
     account = socket.assigns.current_account
-
-    #IO.inspect(account)
 
     selected_quest = QuestApiV21.Repo.preload(account, [:selected_quest])
 
@@ -35,7 +31,6 @@ defmodule QuestApiV21Web.QuestBarLive do
       |> assign(:current_index, 0) # Initialize current index
       |> assign(:socketid, socket.id)
 
-
     {:ok, socket |> update_current_badge()}
   end
 
@@ -52,12 +47,9 @@ defmodule QuestApiV21Web.QuestBarLive do
   def render(assigns) do
     ~H"""
     <div>
-
-
-
-    <div phx-hook="UpdateIndex" id="UpdateIndex" class="flex justify-between fixed bottom-20 border-t-2 w-full border-gray-800">
+    <div phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-1 border-2 border-gray-800">
       <div class="flex row">
-      <div class="mr-4">
+      <div>
         <%= if assigns.badge.collected do %>
           <img class="w-12 h-auto rounded-full" src={assigns.badge.badge_image} />
         <% else %>
@@ -69,24 +61,16 @@ defmodule QuestApiV21Web.QuestBarLive do
 
 
 
-        <p class="text-light truncate" ><%= assigns.quest.name %> </p>
-        <p class="text-light truncate" ><%= assigns.badge.name %> </p>
+        <p class="text-light" ><%= assigns.quest.name %> </p>
+        <p class="text-light" ><%= assigns.badge.name %> </p>
       </div>
 
-
-
     </div>
-      <div>
-        <button phx-click="previous" class="border-2 m-2">
-          <span class="hero-chevron-double-left" />
-        </button>
-        <button phx-click="next" class="border-2 m-2">
-          <span class="hero-chevron-double-right" />
-        </button>
-      </div>
-    </div>
+      <button phx-click="previous" class="border-2 m-8">Previous</button>
+      <button phx-click="next" class="border-2 m-8">Next</button>
     </div>
 
+    </div>
     """
   end
 

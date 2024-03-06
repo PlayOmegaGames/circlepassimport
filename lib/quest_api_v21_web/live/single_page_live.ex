@@ -1,12 +1,16 @@
 defmodule QuestApiV21Web.SinglePageLive do
   use QuestApiV21Web, :live_view
 
+
   def mount(_params, _session, socket) do
     socket = assign(socket, page: "home")
+
+
     {:ok, socket}
   end
 
 
+  @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <!-- page content -->

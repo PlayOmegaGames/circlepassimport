@@ -1,13 +1,16 @@
-defmodule QuestApiV21Web.LiveComponents.CompTest do
-  # In Phoenix apps, the line is typically: use MyAppWeb, :html
+defmodule QuestApiV21Web.CompTest do
   use Phoenix.LiveComponent
 
+
+  on_mount {QuestApiV21Web.AccountAuth, :mount_current_account}
+
   def render(assigns) do
+
+
     ~H"""
-    <div>
-    <p>Hello, <%= @name %>!</p>
-    <p>Your user ID </p>
-    </div>
+
+      <div class="mt-40">
+      </div>
     """
   end
 end
