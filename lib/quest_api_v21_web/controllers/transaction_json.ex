@@ -1,6 +1,7 @@
 defmodule QuestApiV21Web.TransactionJSON do
   alias QuestApiV21.Transactions.Transaction
 
+
   @doc """
   Renders a list of transactions.
   """
@@ -22,12 +23,15 @@ defmodule QuestApiV21Web.TransactionJSON do
     %{errors: %{detail: message}}
   end
 
-  defp data(%Transaction{} = transaction) do
+  defp data(%Transaction{account: account, badge: badge} = transaction) do
     %{
-      id: transaction.id,
-      organization_id: transaction.organization_id,
-      account_id: transaction.account_id,
-      badge_id: transaction.badge_id
+      account_email: account.email,
+      account_name: account.name,
+      badge_name: badge.name,
+      badge_id: badge.id,
+      quest_id: badge.quest_id,
+      time: transaction.inserted_at
     }
   end
+
 end

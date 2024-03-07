@@ -4,6 +4,7 @@ defmodule QuestApiV21.Transactions do
   """
 
   import Ecto.Query, warn: false
+  alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Repo
 
   alias QuestApiV21.Transactions.Transaction
@@ -19,6 +20,11 @@ defmodule QuestApiV21.Transactions do
   """
   def list_transactions do
     Repo.all(Transaction)
+  end
+
+  def list_transactions_bg_organization_id(organization_id) do
+    preloads = [:account, :badge]
+    OrganizationScopedQueries.scope_query(Transaction, organization_id, preloads)
   end
 
   @doc """
