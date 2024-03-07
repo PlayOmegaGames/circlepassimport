@@ -17,13 +17,14 @@ defmodule QuestApiV21Web.QuestBarLive do
 
 
     all_badges = quest_with_badges.badges
+
+
     quest = selected_quest.selected_quest
     collected_badges = collected_badges_list.badges
     # Calculate uncollected badges
     collected_badges_ids = Enum.map(collected_badges, & &1.id)
     uncollected_badges = Enum.reject(all_badges, fn badge -> badge.id in collected_badges_ids end)
 
-    comp_percent = trunc(Enum.count(collected_badges) / Enum.count(all_badges) * 100)
 
     # Mark badges with their collection status
     marked_collected_badges = Enum.map(collected_badges, &Map.put(&1, :collected, true))
@@ -31,6 +32,7 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     # Combine badges into a single list, with collected badges first
     all_marked_badges = marked_collected_badges ++ marked_uncollected_badges
+    comp_percent = trunc(Enum.count(collected_badges) / Enum.count(all_marked_badges) * 100)
 
 
     socket =
@@ -66,12 +68,11 @@ defmodule QuestApiV21Web.QuestBarLive do
     show: @show_modal,
     on_confirm: :confirm_action,
     on_cancel: :cancel_action,
-    title: "Confirm Action",
     confirm: "Proceed",
     badge: @badge,
+    quest: @quest,
+    comp_percent: @comp_percent,
     cancel: "Cancel" %>
-
-
 
 
 
@@ -104,7 +105,6 @@ defmodule QuestApiV21Web.QuestBarLive do
 
         </div>
         <div class="h-1 bg-brand" style={"width:#{@comp_percent}%"} ></div>
-
       </div>
 
     </div>

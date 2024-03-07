@@ -97,5 +97,17 @@ Hooks.FormSubmit = function(csrfToken) {
     }
   };
   
+  Hooks.ModalAnimation = {
+    updated() {
+      let modal = this.el;
+      if (this.el.dataset.animationState === "closing") {
+        // Listen for the end of the slide out animation
+        this.el.addEventListener('animationend', () => {
+          this.pushEventTo(modal, "hide_modal", {});
+        }, { once: true });
+      }
+    }
+  };
+  
   
 export default Hooks;
