@@ -17,18 +17,32 @@ defmodule QuestApiV21.OrganizationScopedQueries do
       iex> OrganizationScopedQueries.scope_query(Quest, org_id)
       [%Quest{}, ...]
   """
-  def scope_query(queryable, organization_id, preloads \\ []) do
-    query =
+    def scope_query(queryable, organization_id, preloads \\ []) do
       if is_nil(organization_id) do
-        queryable
+        []
       else
-        queryable |> where([q], q.organization_id == ^organization_id)
-      end
+        query =
+          queryable
+          |> where([q], q.organization_id == ^organization_id)
+          |> preload(^preloads)
+          |> Repo.all()
 
-    query
-    |> preload(^preloads)
-    |> Repo.all()
-  end
+        query
+      end
+    end
+
+    def org_scope_query(queryable, host_id, preloads \\ []) do
+      # Query the Organization schema
+      query =
+        from(o in queryable,
+          join: ho in "hosts_organizations", on: ho.organization_id == o.id,
+          join: h in QuestApiV21.Hosts.Host, on: h.id == ho.host_id and h.id == ^host_id,
+          preload: ^preloads
+        )
+
+      Repo.all(query)
+    end
+
 
 
   @doc """

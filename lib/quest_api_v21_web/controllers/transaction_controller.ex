@@ -3,13 +3,24 @@ defmodule QuestApiV21Web.TransactionController do
 
   alias QuestApiV21.Transactions
   alias QuestApiV21.Transactions.Transaction
+  alias QuestApiV21Web.JWTUtility
+  alias QuestApiV21.Repo
 
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-    transactions = Transactions.list_transactions()
 
-    render(conn, :index, transactions: transactions)
+    organization_id = JWTUtility.get_organization_id_from_jwt(conn)
+
+    case Transactions.list_transactions_bg_organization_id(organization_id) do
+
+      transactions ->
+        transactions
+        |> Repo.preload([:account, :badge])
+
+      render(conn, :index, transactions: transactions)
+
+    end
   end
 
   def create(conn, %{"transaction" => transaction_params}) do
