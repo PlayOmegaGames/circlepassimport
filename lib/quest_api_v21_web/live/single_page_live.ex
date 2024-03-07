@@ -8,22 +8,42 @@ defmodule QuestApiV21Web.SinglePageLive do
     account_email = socket.assigns.current_account.email
     account_struct = Accounts.get_account_by_email(account_email)
 
-    #IO.inspect(socket.assigns)
-    IO.inspect(account_struct.badges)
+    badge_image =
+    case Enum.at(account_struct.badges, 0) do
+      nil -> nil
+      badge -> badge.badge_image
+    end
 
-    socket = assign(socket, page: "home")
+    badge_name =
+      case Enum.at(account_struct.badges, 0) do
+        nil -> nil
+        badge -> badge.name
+      end
+
+    #IO.inspect(socket.assigns)
+    IO.inspect(account_struct)
+
+    badge_component = live_component(Badge, id: :badge, img: badge_image, name: badge_name)
+
+    socket = assign(socket, page: "home", content: badge_component)
     {:ok, socket}
   end
 
 
   def render(assigns) do
+
     ~H"""
     <!-- page content -->
       <%= @page %>
 
 
+      <div class="grid grid-cols-3 gap-4 justify-items-between my-4 mx-1">
 
-      <%= live_component Badge, id: :badge %>
+        <div>
+          <%= @content%>
+        </div>
+
+      </div>
       <!-- Navbar Component -->
       <%= live_component Navbar, id: :navbar %>
 
