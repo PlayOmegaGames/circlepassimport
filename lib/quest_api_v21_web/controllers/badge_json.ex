@@ -12,7 +12,7 @@ defmodule QuestApiV21Web.BadgeJSON do
   @doc """
   Renders a single badges.
   """
-  def show(%{badges: badges}) do
+  def show(%{badge: badges}) do
     %{data: data(badges)}
   end
 
