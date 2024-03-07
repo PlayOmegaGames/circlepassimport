@@ -74,7 +74,7 @@ defmodule QuestApiV21Web.HostController do
                     |> put_status(:ok)
                     |> json(%{
                       message: "Current organization updated successfully",
-                      jwt_token: token
+                      jwt: token
                     })
 
                   {:error, reason} ->
