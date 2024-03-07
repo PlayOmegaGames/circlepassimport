@@ -1,6 +1,7 @@
 defmodule QuestApiV21Web.OrganizationController do
   use QuestApiV21Web, :controller
 
+  alias QuestApiV21.Repo
   alias QuestApiV21.Organizations
   alias QuestApiV21.Organizations.Organization
   alias QuestApiV21Web.JWTUtility
@@ -8,11 +9,17 @@ defmodule QuestApiV21Web.OrganizationController do
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-    organizations =
-      Organizations.list_organizations()
-      |> QuestApiV21.Repo.preload([:hosts, :quests, :badges, :collectors])
 
-    render(conn, :index, organizations: organizations)
+    host_id = JWTUtility.get_host_id_from_jwt(conn)
+
+    case Organizations.list_organizations_by_host_id(host_id) do
+
+      organizations ->
+        organizations
+        |> Repo.preload([:hosts, :quests, :badges, :collectors])
+
+      render(conn, :index, organizations: organizations)
+    end
   end
 
   def add_host(conn, %{"email" => host_email}) do

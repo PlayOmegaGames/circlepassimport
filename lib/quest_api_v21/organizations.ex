@@ -23,6 +23,10 @@ defmodule QuestApiV21.Organizations do
     Repo.all(Organization)
   end
 
+  def list_organizations_by_host_id(host_id) do
+    preloads = [:hosts]
+    OrganizationScopedQueries.org_scope_query(Organization, host_id, preloads)
+  end
     @doc """
   Associates a host found by email with the provided organization ID.
 

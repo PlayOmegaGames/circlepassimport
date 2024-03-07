@@ -18,6 +18,11 @@ defmodule QuestApiV21Web.JWTUtility do
     claims["organization_id"]
   end
 
+  def get_host_id_from_jwt(conn) do
+    claims = decode_jwt(conn)
+    claims["sub"]
+  end
+
   # Extracts the primary organization ID for associating with a new record
   def extract_organization_id_from_jwt(conn) do
     organization_id = get_organization_id_from_jwt(conn)
