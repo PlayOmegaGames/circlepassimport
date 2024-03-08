@@ -38,6 +38,7 @@ defmodule QuestApiV21Web.QuestBarLive do
     socket =
       socket
       |> assign(:show_modal, false)
+      |> assign(:show_camera, false)
       |> assign(:my_target, self())
       |> assign(:quest, quest)
       |> assign(:all_badges, all_marked_badges) # Combined list with marked badges
@@ -75,6 +76,14 @@ defmodule QuestApiV21Web.QuestBarLive do
     cancel: "Cancel" %>
 
 
+    <%= live_component QuestApiV21Web.LiveComponents.Camera,
+    id: "camera_modal",
+    show: @show_camera,
+    on_confirm: :confirm_action,
+    on_cancel: :cancel_action,
+    confirm: "Proceed",
+    cancel: "close-camera" %>
+
 
     <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-20 border-t-2 w-full border-gray-800">
 
@@ -100,6 +109,10 @@ defmodule QuestApiV21Web.QuestBarLive do
         </button>
         <button phx-click="next" class="border-2 m-2">
           <span class="hero-chevron-double-right" />
+        </button>
+
+        <button phx-click="camera" class="border-2 m-2 bg-brand text-white w-10 h-10 rounded-full">
+          <span class="hero-qr-code w-6 h-6" />
         </button>
       </div>
 
@@ -157,10 +170,32 @@ defmodule QuestApiV21Web.QuestBarLive do
     {:noreply, assign(socket, :show_modal, new_visibility)}
   end
 
+  def handle_event("camera", _params, socket) do
+    new_visibility = not socket.assigns.show_camera
+    {:noreply, assign(socket, :show_camera, new_visibility)}
+  end
+
   def handle_event("cancel", _params, socket) do
-    # This will set the :show_modal assign to false, hiding the modal
     {:noreply, assign(socket, :show_modal, false)}
   end
 
+  def handle_event("close-camera", _params, socket) do
+    {:noreply, assign(socket, :show_camera, false)}
+  end
 
+  def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
+    uri = URI.parse(qr_data)
+    IO.inspect(uri.host)
+    # Check if the URI's host matches one of the allowed domains
+    cond do
+      uri.host in ["questapp.io", "4000-circlepassio-questapiv2-nqb4a6c031c.ws-us108.gitpod.io", "staging.questapp.io"] ->
+        # If the domain is valid, redirect to the path in the QR code
+        # Ensure the path is a valid route in your Phoenix app
+
+        {:noreply, push_patch(socket, to: uri.path)}
+      true ->
+        # Handle the case where the domain does not match
+        {:noreply, socket}
+    end
+  end
 end
