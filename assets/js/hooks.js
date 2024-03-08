@@ -108,6 +108,50 @@ Hooks.FormSubmit = function(csrfToken) {
       }
     }
   };
+
+  Hooks.QrScanner = {
+  mounted() {
+    console.log("test")
+    this.handleUserMedia();
+  },
+
+  handleUserMedia() {
+    var video = document.getElementById("videoElement");
+
+    if (navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(stream => {
+          video.srcObject = stream;
+          video.addEventListener("loadeddata", () => {
+            this.scanQRCode(video);
+          });
+        })
+        .catch(error => {
+          console.error("Something went wrong with accessing the camera", error);
+        });
+    }
+  },
+
+  scanQRCode(video) {
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    setInterval(() => {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Assuming you have the jsQR library available
+      var code = jsQR(imageData.data, canvas.width, canvas.height);
+      if (code) {
+        console.log("QR Code detected:", code.data);
+        // Here, you'd use `this.pushEvent` to communicate with the server
+        this.pushEvent("qr-code-scanned", {data: code.data});
+      }
+    }, 100);
+  }
+};
   
   
 export default Hooks;

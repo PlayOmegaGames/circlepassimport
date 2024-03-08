@@ -52,7 +52,9 @@
 </div>
 <!-- Content -->
 <main class="md:px-8 py-8 sm:px-6 lg:px-8 min-h-screen">
+  <%= if @current_account.selected_quest_id do %>
     <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar", session: %{}, sticky: true) %>
+  <% end %>
         <div class="mx-auto max-w-2xl">
           <.flash_group flash={@flash} />
           <%= @inner_content %>
