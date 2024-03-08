@@ -20,17 +20,32 @@ defmodule QuestApiV21Web.SinglePageLive do
         badge -> badge.name
       end
 
+      badge_components =
+        account_struct.badges
+        |> Enum.map(&badge_to_component/1)
+
+
+
     #IO.inspect(socket.assigns)
-    IO.inspect(account_struct)
+    IO.inspect(badge_components)
 
     badge_component = live_component(Badge, id: :badge, img: badge_image, name: badge_name)
 
-    socket = assign(socket, page: "home", content: badge_component)
+    socket = assign(socket, page: "home", content: badge_components)
     {:ok, socket}
   end
 
+  defp badge_to_component(badge) do
+    %{
+      id: badge.id,
+      component: Badge,
+      assigns: %{id: badge.id, img: badge.badge_image, name: badge.name}
+    }
+  end
 
   def render(assigns) do
+
+
 
     ~H"""
     <!-- page content -->
@@ -40,7 +55,14 @@ defmodule QuestApiV21Web.SinglePageLive do
       <div class="grid grid-cols-3 gap-4 justify-items-between my-4 mx-1">
 
         <div>
-          <%= @content%>
+          <!-- content here -->
+          <%= Enum.each(@content, fn %{component: component, assigns: assigns} ->
+            IO.puts("Processing component with ID #{assigns.id}")
+            # Do something with the component, e.g., render it
+            # You can use live_render/3 or any other function related to the component here
+
+
+          end) %>
         </div>
 
       </div>

@@ -18,4 +18,8 @@ defmodule QuestApiV21Web.LiveComponents.Badge do
     """
   end
 
+  def live_render(assigns, _context) do
+    render(assigns)
+  end
+
 end
