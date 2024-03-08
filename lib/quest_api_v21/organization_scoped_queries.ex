@@ -61,23 +61,31 @@ defmodule QuestApiV21.OrganizationScopedQueries do
       iex> OrganizationScopedQueries.get_item(Quest, quest_id, org_id)
       %Quest{}
   """
-  def get_item(queryable, id, organization_id, preloads \\ []) do
-      IO.inspect(queryable)
-    _query =
-      queryable
-      |> where([q], q.id == ^id)
+def get_item(queryable, id, organization_id, preloads \\ []) do
 
-    query =
-      if is_nil(organization_id) do
-        queryable
-      else
-        queryable |> where([q], q.organization_id == ^organization_id)
-      end
+  query =
+    queryable
+    |> where([q], q.id == ^id)
 
+  query =
+    if is_nil(organization_id) do
+      query
+    else
+      query |> where([q], q.organization_id == ^organization_id)
+    end
+
+  results =
     query
     |> preload(^preloads)
-    |> Repo.one()
+    |> Repo.all() # Temporarily switch to all to inspect the results
+
+
+  case results do
+    [single_result] -> single_result
+    _ -> raise "Expected a single result, but got multiple"
   end
+end
+
 
   @doc """
   Updates a record if it belongs to the given organization ID.
