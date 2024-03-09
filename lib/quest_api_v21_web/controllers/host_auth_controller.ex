@@ -37,12 +37,17 @@ defmodule QuestApiV21Web.HostAuthController do
   defp render_jwt_and_host(conn, host) do
     case HostGuardian.encode_and_sign(host) do
       {:ok, jwt, _full_claims} ->
+
+        host = QuestApiV21.Repo.preload(host, [:current_org])
+
+        org_name = if host.current_org, do: host.current_org.name, else: ""
+
         conn
         |> put_status(:ok)
         |> put_resp_header("authorization", "Bearer #{jwt}")
         |> json(%{
           jwt: jwt,
-          host: %{email: host.email, name: host.name, id: host.id}
+          host: %{email: host.email, name: host.name, id: host.id, org_name: org_name}
         })
 
       {:error, reason} ->

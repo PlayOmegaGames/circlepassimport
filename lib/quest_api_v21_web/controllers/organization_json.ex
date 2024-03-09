@@ -15,7 +15,7 @@ defmodule QuestApiV21Web.OrganizationJSON do
   def show(%{organization: organization, jwt: jwt}) do
     %{data: data(organization), jwt: jwt}
   end
-  
+
 
   # Adjusted data function to include only id, name, and hosts for an organization
   defp data(%Organization{hosts: hosts} = organization) do
@@ -31,7 +31,7 @@ defmodule QuestApiV21Web.OrganizationJSON do
     Enum.map(hosts, fn %Host{id: id, name: name} ->
       %{
         id: id,
-        name: name
+        org_name: name
       }
     end)
   end
