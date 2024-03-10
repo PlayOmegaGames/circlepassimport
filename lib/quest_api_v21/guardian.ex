@@ -8,7 +8,7 @@ defmodule QuestApiV21.Guardian do
   alias QuestApiV21.Guardian
 
   def subject_for_token(resource, _claims) do
-    IO.inspect(resource, label: "Resource in subject_for_token")
+    #IO.inspect(resource, label: "Resource in subject_for_token")
     {:ok, to_string(resource.id)}
   end
 
@@ -42,7 +42,7 @@ defmodule QuestApiV21.Guardian do
   end
 
   def resource_from_claims(claims) do
-    IO.inspect(claims, label: "Decoded JWT Claims")
+    #IO.inspect(claims, label: "Decoded JWT Claims")
 
     case QuestApiV21.Accounts.list_accounts(claims["sub"]) do
       nil -> {:error, :account_not_found}

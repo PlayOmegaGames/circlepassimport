@@ -152,7 +152,7 @@ defmodule QuestApiV21.Collectors do
 
   """
   def update_collector(%Collector{} = collector, attrs, organization_ids) do
-    if collector.organization_id in organization_ids do
+    if collector.organization_id == organization_ids do
       collector
       |> Collector.changeset(attrs)
       |> maybe_add_quests(attrs)
@@ -196,21 +196,31 @@ defmodule QuestApiV21.Collectors do
   end
 
   defp maybe_add_quests(changeset, attrs) do
-    # Retrieve existing quest_ids, default to an empty list if not present
     quest_ids = Map.get(attrs, "quest_ids", [])
 
-    # Check and add quest_start if it's a valid quest ID
-    with {:ok, quest_ids} <- add_quest_start_if_valid(quest_ids, attrs) do
-      # Fetch quests from the database based on quest_ids
-      quests = Repo.all(from q in Quest, where: q.id in ^quest_ids)
-      # Associate quests with the collector
-      Ecto.Changeset.put_assoc(changeset, :quests, quests)
-    else
-      # Handle invalid quest_start ID
-      {:error, _} ->
-        Ecto.Changeset.add_error(changeset, :quest_start, "Invalid quest start ID.")
+    case quest_ids do
+      [] ->
+        # If no quest_ids are provided, do not attempt to update the quests association.
+        changeset
+
+      _ ->
+        # Proceed only if quest_ids are provided
+        with {:ok, quest_ids} <- add_quest_start_if_valid(quest_ids, attrs) do
+          quests = Repo.all(from q in Quest, where: q.id in ^quest_ids)
+
+          # Only update the association if quests are found; otherwise, leave it unchanged.
+          if Enum.empty?(quests) do
+            changeset
+          else
+            Ecto.Changeset.put_assoc(changeset, :quests, quests)
+          end
+        else
+          # Handle invalid quest_start ID by adding an error, or you might choose to ignore it
+          {:error, _} -> Ecto.Changeset.add_error(changeset, :quest_start, "Invalid quest start ID.")
+        end
     end
   end
+
 
   defp add_quest_start_if_valid(quest_ids, attrs) do
     case Map.get(attrs, "quest_start") do

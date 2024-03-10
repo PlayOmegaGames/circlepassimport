@@ -102,7 +102,7 @@ defmodule QuestApiV21.Badges do
 
   """
   def update_badge(%Badge{} = badge, attrs, organization_ids) do
-    if badge.organization_id in organization_ids do
+    if badge.organization_id == organization_ids do
       # Preload accounts before updating
       badge = Repo.preload(badge, :accounts)
 
