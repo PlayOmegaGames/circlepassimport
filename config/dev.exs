@@ -4,7 +4,7 @@ import Config
 config :quest_api_v21, QuestApiV21.Repo,
   username: "QuestPostUser",
   password: "sIicd8dCd3ZrFjfcijd1EokuV97BUR",
-  hostname: "questdb.cj9dqvip3fe8.us-east-1.rds.amazonaws.com",
+  hostname: "quest-api-dev.cj9dqvip3fe8.us-east-1.rds.amazonaws.com",
   database: "quest_api_v21_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
