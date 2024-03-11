@@ -19,7 +19,8 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
     "http://localhost:4000",
     "https://staging.questapp.io",
     "https://questapp.io/",
-    "https://gitpod.io."
+    "https://gitpod.io.",
+    "https://client-dashboard-v2-zeta.vercel.app",
   ],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: System.get_env("SECRET_KEY_BASE")
