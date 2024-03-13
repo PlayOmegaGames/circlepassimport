@@ -1,10 +1,12 @@
 defmodule QuestApiV21Web.QuestBarLive do
   use QuestApiV21Web, :live_view
-
+  require Logger
   on_mount {QuestApiV21Web.AccountAuth, :mount_current_account}
 
   def mount(_session, _params, socket) do
     account = socket.assigns.current_account
+
+    Phoenix.PubSub.subscribe(QuestApiV21.PubSub, "accounts:#{account.id}")
 
     #IO.inspect(account)
 
@@ -85,34 +87,34 @@ defmodule QuestApiV21Web.QuestBarLive do
     cancel: "close-camera" %>
 
 
-    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-20 border-t-2 w-full border-gray-800">
+    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-20 w-full border-t-2 border-gray-800">
 
-    <div class="flex justify-between ">
+    <div class="flex justify-between">
       <div class="flex row">
         <div class="mr-4">
           <%= if assigns.badge.collected do %>
             <img class="w-12 h-auto rounded-full" src={assigns.badge.badge_image} />
           <% else %>
-          <img class="grayscale w-12 h-auto rounded-full" src={assigns.badge.badge_image} />
+          <img class="w-12 h-auto rounded-full grayscale" src={assigns.badge.badge_image} />
           <% end %>
 
         </div>
         <div>
 
-          <p class="text-light truncate" ><%= assigns.quest.name %> </p>
-          <p class="text-light truncate" ><%= assigns.badge.name %> </p>
+          <p class="truncate text-light" ><%= assigns.quest.name %> </p>
+          <p class="truncate text-light" ><%= assigns.badge.name %> </p>
         </div>
       </div>
       <div>
-        <button phx-click="previous" class="border-2 m-2">
+        <button phx-click="previous" class="m-2 border-2">
           <span class="hero-chevron-double-left"/>
         </button>
-        <button phx-click="next" class="border-2 m-2">
+        <button phx-click="next" class="m-2 border-2">
           <span class="hero-chevron-double-right" />
         </button>
 
-        <button phx-click="camera" class="border-2 m-2 bg-brand text-white w-10 h-10 rounded-full">
-          <span class="hero-qr-code w-6 h-6" />
+        <button phx-click="camera" class="m-2 w-10 h-10 text-white rounded-full border-2 bg-brand">
+          <span class="w-6 h-6 hero-qr-code" />
         </button>
       </div>
 
@@ -124,6 +126,7 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     """
   end
+  
 
   def handle_event("initialize-index", %{"index" => index}, socket) do
     # Ensure the index is an integer
@@ -184,18 +187,24 @@ defmodule QuestApiV21Web.QuestBarLive do
   end
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
-    uri = URI.parse(qr_data)
-    IO.inspect(uri.host)
-    # Check if the URI's host matches one of the allowed domains
-    cond do
-      uri.host in ["questapp.io", "4000-circlepassio-questapiv2-nqb4a6c031c.ws-us108.gitpod.io", "staging.questapp.io"] ->
-        # If the domain is valid, redirect to the path in the QR code
-        # Ensure the path is a valid route in your Phoenix app
+    # Split the path to extract the domain and the actual path
+    [domain | rest_of_path] = String.split(qr_data, "/", parts: 2)
+    actual_path = Enum.join(rest_of_path, "/") # Rejoin the rest of the path
 
-        {:noreply, push_patch(socket, to: uri.path)}
+    # Check if the extracted domain is in the list of allowed domains
+    cond do
+      domain in ["questapp.io", "4000-circlepassio-questapiv2-nqb4a6c031c.ws-us108.gitpod.io", "staging.questapp.io"] ->
+        # Since the domain is valid, construct the full path for redirection
+        full_path = "/" <> actual_path
+        Logger.info("Redirecting to: #{full_path}")
+        {:noreply, push_redirect(socket, to: full_path)}
       true ->
-        # Handle the case where the domain does not match
+        # Log and handle the case where the domain does not match the allowed list
+        Logger.error("Invalid domain in scanned QR code: #{domain}")
         {:noreply, socket}
     end
   end
+
+
+
 end

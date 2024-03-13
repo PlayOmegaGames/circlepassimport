@@ -122,6 +122,8 @@ defmodule QuestApiV21Web.Router do
       on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}],
       layout: {QuestApiV21Web.Layouts, :authenticated} do
 
+
+      #Legeacy routes
       get "/user-settings", Web.AccountController, :user_settings
       post "/update_profile", Web.AccountController, :update_from_web
       post "/update_email", Web.AccountController, :change_email
@@ -129,13 +131,14 @@ defmodule QuestApiV21Web.Router do
 
       get "/badges", Web.BadgeController, :show_badge
       get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
-      get "/badge/:id", Web.CollectorController, :show_collector
+      #get "/badge/:id", Web.CollectorController, :show_collector
       get "/new", Web.PageController, :new_page
       get "/profile", Web.PageController, :profile
 
       get "/camera", Web.PageController, :camera
 
-      # Assuming these live routes also require authentication
+      # Live views
+      live "/badge/:id", CollectorLive
       live "/accounts/settings", AccountSettingsLive, :edit
       live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash
       live "/navbar", QuestApiV21Web.LiveComponents.Navbar, :index, as: :Navbar
