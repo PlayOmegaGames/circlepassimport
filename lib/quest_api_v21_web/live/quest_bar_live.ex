@@ -8,34 +8,21 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     Phoenix.PubSub.subscribe(QuestApiV21.PubSub, "accounts:#{account.id}")
 
-    #IO.inspect(account)
-
-    selected_quest = QuestApiV21.Repo.preload(account, [:selected_quest])
-
-    #IO.inspect(selected_quest.selected_quest.badge_count)
-
-    collected_badges_list = QuestApiV21.Repo.preload(selected_quest, [:badges])
-    quest_with_badges = QuestApiV21.Repo.preload(selected_quest.selected_quest, [:badges])
-
-
-    all_badges = quest_with_badges.badges
-
-
+    selected_quest = QuestApiV21.Repo.preload(account, selected_quest: [:badges])
     quest = selected_quest.selected_quest
-    collected_badges = collected_badges_list.badges
-    # Calculate uncollected badges
-    collected_badges_ids = Enum.map(collected_badges, & &1.id)
-    uncollected_badges = Enum.reject(all_badges, fn badge -> badge.id in collected_badges_ids end)
+    all_badges = quest.badges
 
+    # Assuming there's a way to directly get IDs of all badges collected by the user for this quest.
+    # This step may require adjusting your data model or query approach.
+    collected_badges_ids = QuestApiV21.Quests.get_collected_badges_ids_for_quest(account.id, quest.id)
 
-    # Mark badges with their collection status
-    marked_collected_badges = Enum.map(collected_badges, &Map.put(&1, :collected, true))
-    marked_uncollected_badges = Enum.map(uncollected_badges, &Map.put(&1, :collected, false))
+    # Mark all badges with their collection status in one pass.
+    marked_badges = Enum.map(all_badges, fn badge ->
+      collected = badge.id in collected_badges_ids
+      Map.put(badge, :collected, collected)
+    end)
 
-    # Combine badges into a single list, with collected badges first
-    all_marked_badges = marked_collected_badges ++ marked_uncollected_badges
-    comp_percent = trunc(Enum.count(collected_badges) / Enum.count(all_marked_badges) * 100)
-
+    comp_percent = trunc(Enum.count(marked_badges, &(&1.collected)) / Enum.count(marked_badges) * 100)
 
     socket =
       socket
@@ -43,21 +30,22 @@ defmodule QuestApiV21Web.QuestBarLive do
       |> assign(:show_camera, false)
       |> assign(:my_target, self())
       |> assign(:quest, quest)
-      |> assign(:all_badges, all_marked_badges) # Combined list with marked badges
-      |> assign(:current_index, 0) # Initialize current index
+      |> assign(:all_badges, marked_badges) # Updated logic here
+      |> assign(:current_index, 0)
       |> assign(:socketid, socket.id)
       |> assign(:comp_percent, comp_percent)
 
-
-    {:ok, socket |> update_current_badge()}
+    {:ok, update_current_badge(socket)}
   end
+
 
   # Helper function to update the current badge based on the collected badges list and current index
   defp update_current_badge(socket) do
     all_badges = socket.assigns.all_badges
     current_index = socket.assigns.current_index
 
-    current_badge = Enum.at(all_badges, current_index, %{})
+    # Ensure the default map includes :collected to prevent KeyError
+    current_badge = Enum.at(all_badges, current_index, %{:collected => false})
 
     assign(socket, :badge, current_badge)
   end
@@ -87,7 +75,7 @@ defmodule QuestApiV21Web.QuestBarLive do
     cancel: "close-camera" %>
 
 
-    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-20 w-full border-t-2 border-gray-800">
+    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-14 z-10 w-full bg-white border-t border-gray-800 -2">
 
     <div class="flex justify-between">
       <div class="flex row">
@@ -126,7 +114,16 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     """
   end
-  
+
+  def handle_info(message, socket) do
+    # Log the message received from PubSub
+    Logger.info("Received PubSub Message: #{inspect(message)}")
+
+    # Here, you might want to update the socket based on the message content
+    # For demonstration, we're just returning the unchanged socket
+    {:noreply, socket}
+  end
+
 
   def handle_event("initialize-index", %{"index" => index}, socket) do
     # Ensure the index is an integer

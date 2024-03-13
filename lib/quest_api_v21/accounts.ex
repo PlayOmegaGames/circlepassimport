@@ -603,73 +603,62 @@ defmodule QuestApiV21.Accounts do
 
   # In QuestApiV21.Accounts context
 
-  def add_badges_to_account(account_id, badge_ids) when is_list(badge_ids) do
-    Logger.info("Starting to add badges to account #{account_id}")
+  def add_badge_to_account(account_id, badge_id) do
+    Logger.info("Starting to add badge to account #{account_id}")
 
     account = Repo.get!(Account, account_id) |> Repo.preload([:badges, :quests])
     Logger.info("Fetched account and preloaded badges and quests")
 
-    existing_badge_ids = Enum.map(account.badges, & &1.id)
-    new_badge_ids = badge_ids -- existing_badge_ids
-    Logger.info("Calculated new badge IDs to add")
-
-    if Enum.empty?(new_badge_ids) do
-      Logger.info("No new badges to add")
-      {:ok, "No new badges to add"}
+    if Enum.any?(account.badges, &(&1.id == badge_id)) do
+      Logger.info("Badge #{badge_id} already associated with account #{account_id}")
+      {:ok, "Badge already associated with the account"}
     else
-      new_badges = Repo.all(from b in Badge, where: b.id in ^new_badge_ids, preload: [:quest])
-      Logger.info("Fetched new badges to add")
+      badge = Repo.get!(Badge, badge_id, preload: [:quest])
+      Logger.info("Fetched new badge to add")
 
-      if Enum.empty?(new_badges) do
-        Logger.error("No badges found for given badge IDs")
-        {:error, :no_badges_found}
-      else
-        updated_badges = account.badges ++ new_badges
-        Logger.info("Updated badges list for account")
+      updated_badges = [badge | account.badges]
+      Logger.info("Updated badges list for account")
 
-        with {:ok, _account} <- Repo.update(
-                                 Ecto.Changeset.change(account)
-                                 |> Ecto.Changeset.put_assoc(:badges, updated_badges)
-                               ) do
-          Logger.info("Successfully added new badges to account")
-          quest_ids = Enum.map(new_badges, & &1.quest_id)
-          check_and_update_quest_association(account, quest_ids)
-        else
-          {:error, reason} ->
-            Logger.error("Failed to update account with new badges")
-            {:error, reason}
-        end
+      case Repo.update(
+        Ecto.Changeset.change(account)
+        |> Ecto.Changeset.put_assoc(:badges, updated_badges)
+      ) do
+        {:ok, _account} ->
+          Logger.info("Successfully added new badge to account")
+          # Directly call the updated quest association function for a single quest ID
+          check_and_update_quest_association(account, badge.quest_id)
+
+        {:error, reason} ->
+          Logger.error("Failed to update account with new badge")
+          {:error, reason}
       end
     end
   end
 
-  defp check_and_update_quest_association(account, quest_ids) do
-    current_quest_id = account.selected_quest_id
-    Logger.info("Checking if newly added badges are associated with the current quest or need to add new quest")
 
-    # Find if any of the badge's quests are not already associated with the account
-    new_quest_ids = Enum.reject(quest_ids, fn id -> Enum.any?(account.quests, &(&1.id == id)) end)
+  defp check_and_update_quest_association(account, quest_id) do
+    Logger.info("Checking if newly added badge's quest needs to be associated or selected")
 
-    # If new quests are found, associate them with the account and set the first as the selected quest
-    case new_quest_ids do
-      [] ->
-        Logger.info("No new quests to add from badges")
-        if current_quest_id in quest_ids do
-          Logger.info("Newly added badge is associated with the current quest")
-          {:ok, "Badge associated with current quest"}
-        else
-          # If the current quest is not among the badge's quests, but no new quests need to be added
-          Logger.info("Badge not associated with the current selected quest and no new quest to add")
-          {:ok, "Badge not associated with current quest, no action needed"}
-        end
+    quest_already_associated = Enum.any?(account.quests, &(&1.id == quest_id))
+    quest_selected = account.selected_quest_id == quest_id
 
-      [first_new_quest_id | _] ->
-        # Add new quest(s) to the account and set the first new quest as the selected quest
-        Logger.info("Adding new quest(s) to the account and updating selected quest")
-        add_quest_to_user(account.id, first_new_quest_id)
-        update_selected_quest_for_user(account.id, first_new_quest_id)
+    case {quest_already_associated, quest_selected} do
+      {true, false} ->
+        Logger.info("Quest is associated but not selected. Updating selected quest.")
+        update_selected_quest_for_user(account.id, quest_id)
+
+      {false, _} ->
+        Logger.info("Quest is not associated. Adding quest and updating selected quest.")
+        add_quest_to_account(account.id, quest_id)
+
+      {true, true} ->
+        Logger.info("Quest is already associated and selected.")
+        {:ok, "Quest is already associated and selected"}
     end
   end
+
+
+
 
   def authenticate_user(email, password) do
     case find_account_by_email(email) do
@@ -764,6 +753,7 @@ defmodule QuestApiV21.Accounts do
             # Include any other details here as necessary
           }
         )
+        Logger.info("Broadcasting quest update for account #{account_id}")
 
         {:ok, account}
 
@@ -774,9 +764,36 @@ defmodule QuestApiV21.Accounts do
 
 
   # for the show collector function
-  def add_quest_to_user(user_id, quest_id) when is_binary(quest_id) do
-    quest = Repo.get!(Quest, quest_id)
-    add_quest_to_user(user_id, quest)
+  def add_quest_to_account(user_id, quest_id) do
+    account = Repo.get!(Account, user_id) |> Repo.preload(:quests)
+
+    # Check if the quest is already associated with the account
+    if Enum.any?(account.quests, &(&1.id == quest_id)) do
+      Logger.info("Quest #{quest_id} is already associated with account #{user_id}. Updating selected quest.")
+      update_selected_quest_for_user(account.id, quest_id)
+    else
+      Logger.info("Adding new quest #{quest_id} to account #{user_id} and updating selected quest.")
+      quest = Repo.get!(Quest, quest_id)
+
+      updated_quests = [quest | account.quests]
+
+      case Repo.transaction(fn ->
+        Repo.update!(
+          Ecto.Changeset.change(account)
+          |> Ecto.Changeset.put_assoc(:quests, updated_quests)
+        )
+        # Now explicitly update the selected_quest_id
+        update_selected_quest_for_user(account.id, quest_id)
+      end) do
+        {:ok, _result} ->
+          Logger.info("Successfully added quest #{quest_id} and updated selected quest for account #{user_id}")
+          {:ok, "Quest added and selected quest updated"}
+
+        {:error, _reason} ->
+          Logger.error("Failed to add quest #{quest_id} or update selected quest for account #{user_id}")
+          {:error, "Failed to add quest or update selected quest"}
+      end
+    end
   end
   @doc """
 

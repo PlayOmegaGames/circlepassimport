@@ -1,20 +1,14 @@
 <header class="fixed top-0 px-4 w-full sm:px-6 lg:px-8 frosted-glass-b">
 </header>
-
-<div>
-</div>
-<!-- Content -->
-       <%= if @current_account.selected_quest_id do %>
+          <%= if @current_account.selected_quest_id do %>
             <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar", session: %{}, sticky: true) %>
-          <% end %>
-<main class="py-8 md:px-8 sm:px-6 lg:px-8">
+          <%  else %>
+            <%= live_render(@socket, QuestApiV21Web.CameraLive, id: "camera-live", session: %{}, sticky: true) %>
+          
+          <% end %> 
+<!-- Content -->
+        <div class="fixed bottom-0 w-full border-t-2 frosted-glass border-slate-300">
 
-        <div class="mx-auto max-w-2xl">
-          <.flash_group flash={@flash} />
-          <%= @inner_content %>
-          <!-- Bottom Nav -->
-        <div class="fixed bottom-0 w-full h-16 border-t-2 frosted-glass border-slate-300">
-   
         <div class="grid grid-cols-3 justify-items-center text-slate-700">
           <a
             href="/badges"
@@ -52,7 +46,17 @@
           </a>
       </div>
       </div>
-        </div>
+        
+  
+<main class="py-8 md:px-8 sm:px-6 lg:px-8">
+
+        <div class="mx-auto max-w-2xl">
+          <.flash_group flash={@flash} />
+          <%= @inner_content %>
+          <!-- Bottom Nav -->
+
+      </div>
+
       </main>
 <script>
   function goBack() {

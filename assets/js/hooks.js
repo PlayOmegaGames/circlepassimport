@@ -108,50 +108,68 @@ Hooks.FormSubmit = function(csrfToken) {
       }
     }
   };
-
   Hooks.QrScanner = {
-  mounted() {
-    console.log("test")
-    this.handleUserMedia();
-  },
-
-  handleUserMedia() {
-    var video = document.getElementById("videoElement");
-
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-        .then(stream => {
-          video.srcObject = stream;
-          video.addEventListener("loadeddata", () => {
-            this.scanQRCode(video);
+    mounted() {
+      this.handleUserMedia();
+      this.scanning = true; // Start scanning by default
+      this.scanQRCode(); // Call scanQRCode without passing video as it'll be set after getUserMedia promise resolves
+    },
+    updated() {
+      // This lifecycle hook gets called when LiveView pushes updates that might affect the component.
+      // Use it to sync the scanning state with the server.
+      this.syncScanningState();
+    },
+    destroyed() {
+      this.stopUserMedia();
+      clearInterval(this.scanningInterval); // Ensure to clear interval on destroy
+    },
+    handleUserMedia() {
+      var video = document.getElementById("videoElement");
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+          .then(stream => {
+            this.stream = stream;
+            video.srcObject = stream;
+            video.play(); // Ensure video plays
+            this.videoElement = video; // Store video element reference for later
+          })
+          .catch(error => {
+            console.error("Error accessing the camera", error);
           });
-        })
-        .catch(error => {
-          console.error("Something went wrong with accessing the camera", error);
-        });
-    }
-  },
-
-  scanQRCode(video) {
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    setInterval(() => {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-      // Assuming you have the jsQR library available
-      var code = jsQR(imageData.data, canvas.width, canvas.height);
-      if (code) {
-        console.log("QR Code detected:", code.data);
-        // Here, you'd use `this.pushEvent` to communicate with the server
-        this.pushEvent("qr-code-scanned", {data: code.data});
       }
-    }, 100);
-  }
-};
+    },
+    scanQRCode() {
+      const video = this.videoElement;
+      if (!video) return; // Guard clause if videoElement is not ready
+  
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
+  
+      this.scanningInterval = setInterval(() => {
+        if (this.scanning) { // Check if scanning is enabled
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          var code = jsQR(imageData.data, canvas.width, canvas.height);
+          if (code) {
+            console.log("QR Code detected:", code.data);
+            this.pushEvent("qr-code-scanned", {data: code.data});
+          }
+        }
+      }, 100);
+    },
+    syncScanningState() {
+      // Implement logic to sync scanning state based on the modal visibility.
+      // This might involve checking a data attribute on the modal element to see if it's visible.
+      const container = document.getElementById("container");
+      this.scanning = !container.classList.contains("hidden");
+    },
+    stopUserMedia() {
+      if (this.stream) {
+        this.stream.getTracks().forEach(track => track.stop());
+      }
+    },
+  };
+  
   
   
 export default Hooks;

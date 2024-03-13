@@ -8,6 +8,8 @@ defmodule QuestApiV21.Quests do
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Collectors.Collector
   alias QuestApiV21.Accounts.Account
+  alias QuestApiV21.Badges.Badge
+
   alias QuestApiV21.Repo
 
   @doc """
@@ -28,6 +30,18 @@ defmodule QuestApiV21.Quests do
       from q in Quest,
         where: q.public == true,
         preload: [:badges]
+    )
+  end
+
+    @doc """
+  Retrieves IDs of badges collected by an account for a specific quest.
+  """
+  def get_collected_badges_ids_for_quest(account_id, quest_id) do
+    Repo.all(
+      from b in Badge,
+      join: a in assoc(b, :accounts),
+      where: a.id == ^account_id and b.quest_id == ^quest_id,
+      select: b.id
     )
   end
 

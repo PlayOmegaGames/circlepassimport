@@ -15,30 +15,20 @@ defmodule QuestApiV21Web.CollectorLive do
              {:ok, account} <- fetch_account(socket.assigns.account),
              {:ok, badge} <- fetch_last_badge(collector.badges) do
 
-          case QuestApiV21.Accounts.add_badges_to_account(account.id, [badge.id]) do
-            {:ok, :badges_already_added} ->
+          case QuestApiV21.Accounts.add_badge_to_account(account.id, badge.id) do
+            {:ok, "Badge already associated with the account"} ->
               Logger.info("Badge was already collected")
               {:noreply, assign(socket, :badge, badge)}
 
-            {:ok, _new_badges, maybe_updated_quest} ->
-              # Handle the case where a quest might have been updated
+            {:ok, _account} ->
               Logger.info("Badge added to account successfully.")
-              updated_socket =
-                socket
-                |> assign(:badge, badge)
-                |> (fn s -> case maybe_updated_quest do
-                              nil -> s
-                              quest -> assign(s, :quest, quest)
-                            end end).()
+              # Here, update the socket with any necessary information. If the quest was updated as a result,
+              # you might need to re-fetch the account or quest information to reflect the changes.
+              # This example just assigns the badge. You might need to adjust based on your app's logic.
+              {:noreply, assign(socket, :badge, badge)}
 
-              {:noreply, updated_socket}
-
-              {:ok, "No new badges to add"} ->
-                Logger.info("No new badges were added to the account.")
-                {:noreply, assign(socket, :badge, badge)}
-
-            {:error, _reason} ->
-              log_error("Failed to add badge to account.")
+            {:error, reason} ->
+              log_error("Failed to add badge to account: #{reason}")
               {:noreply, assign(socket, :error, true)}
           end
         else
