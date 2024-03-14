@@ -16,7 +16,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        transparent: 'transparent',
         brand: "#6a43b8",
+        background: "#0700",
+        accent: "#200e46",
+        highlight: "#6944b8",
+        contrast: "#d6c3ff",
+        gold: {100: '#bf9936',
+        200: '#f7ef8a',
+        300: '#d0aa45',
+        400: '#ebc766',},
       }
     },
   },

@@ -6,9 +6,13 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm bg-indigo-500">
+    hello
+    </div>
+    <body class="h-screen bg-indigo-500">
+    <div class="mx-auto max-w-sm bg-indigo-500">
       <.header class="text-center">
-        Register for an account
+        Sign Up
         <:subtitle>
           Already registered?
           <.link navigate={~p"/accounts/log_in"} class="font-semibold text-brand hover:underline">
@@ -38,6 +42,10 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
           <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
         </:actions>
       </.simple_form>
+    </div>
+    </body>
+    <div class="bg-indigo-500">
+    hello
     </div>
     """
   end
