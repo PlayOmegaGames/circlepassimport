@@ -6,6 +6,7 @@ defmodule QuestApiV21.Rewards do
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
   alias QuestApiV21.Quests
+  alias QuestApiV21.Accounts.Account
 
   alias QuestApiV21.Rewards.Reward
 
@@ -66,9 +67,9 @@ defmodule QuestApiV21.Rewards do
     case Quests.get_quest(quest_id) do
       %Quests.Quest{} = quest ->
         organization_id = quest.organization_id
-        quest_name = quest.name
+        reward_name = quest.reward
 
-        updated_attrs = Map.put(attrs, :reward_name, quest_name)
+        updated_attrs = Map.put(attrs, :reward_name, reward_name)
         updated_attrs = Map.put(updated_attrs, :organization_id, organization_id)
 
         %Reward{}
@@ -96,7 +97,17 @@ defmodule QuestApiV21.Rewards do
     )
   end
 
+  # Function for displaying rewards on home
+  def get_rewards_for_account(account_id) do
+    account_query = from(a in Account, where: a.id == ^account_id, preload: [:rewards])
 
+    case Repo.one(account_query) do
+      nil ->
+        {:error, :not_found}
+      account ->
+        {:ok, account.rewards}
+    end
+  end
   @doc """
   Redeems a reward based on the organization ID and slug by setting its redeemed field to true.
 

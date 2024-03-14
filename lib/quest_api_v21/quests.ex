@@ -82,6 +82,15 @@ defmodule QuestApiV21.Quests do
     OrganizationScopedQueries.get_item(Quest, id, organization_id, preloads)
   end
 
+  def get_quests_for_account(account_id) do
+    case Repo.get(Account, account_id) do
+      nil ->
+        {:error, :not_found}
+      account ->
+        account_with_quests = Repo.preload(account, :quests)
+        {:ok, account_with_quests.quests}
+    end
+  end
   @doc """
   Fetches a single quest by its ID.
 

@@ -81,9 +81,9 @@ defmodule QuestApiV21Web.QuestBarLive do
       <div class="flex row">
         <div class="mr-4">
           <%= if assigns.badge.collected do %>
-            <img class="w-12 h-auto rounded-full" src={assigns.badge.badge_image} />
+            <img class="object-cover w-12 h-12 rounded-full" src={assigns.badge.badge_image} />
           <% else %>
-          <img class="w-12 h-auto rounded-full grayscale" src={assigns.badge.badge_image} />
+          <img class="object-cover w-12 h-12 rounded-full grayscale" src={assigns.badge.badge_image} />
           <% end %>
 
         </div>

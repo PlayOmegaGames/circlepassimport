@@ -615,6 +615,7 @@ defmodule QuestApiV21.Accounts do
     else
       badge = Repo.get!(Badge, badge_id, preload: [:quest])
       Logger.info("Fetched new badge to add")
+      quest_id = badge.quest_id
 
       updated_badges = [badge | account.badges]
       Logger.info("Updated badges list for account")
@@ -625,39 +626,151 @@ defmodule QuestApiV21.Accounts do
       ) do
         {:ok, _account} ->
           Logger.info("Successfully added new badge to account")
-          # Directly call the updated quest association function for a single quest ID
-          check_and_update_quest_association(account, badge.quest_id)
+
+          # Check if the quest associated with the badge is already associated with the account
+          add_quest_to_account_if_needed(account.id, quest_id)
+
+          # It's crucial to check quest completion after adding a new badge.
+          check_quest_completion_and_create_reward(account.id, quest_id)
+
+          {:ok, "Badge added and quest completion checked"}
 
         {:error, reason} ->
-          Logger.error("Failed to update account with new badge")
+          Logger.error("Failed to update account with new badge: #{reason}")
           {:error, reason}
       end
     end
   end
 
+  defp add_quest_to_account_if_needed(account_id, quest_id) do
+    account = Repo.get!(Account, account_id) |> Repo.preload(:quests)
 
-  defp check_and_update_quest_association(account, quest_id) do
-    Logger.info("Checking if newly added badge's quest needs to be associated or selected")
+    unless Enum.any?(account.quests, &(&1.id == quest_id)) do
+      Logger.info("Quest #{quest_id} is not associated with account #{account_id}. Associating and updating selected quest.")
+      # Associate the quest with the account if it's not already associated
+      result = add_quest_to_account(account_id, quest_id)
 
-    quest_already_associated = Enum.any?(account.quests, &(&1.id == quest_id))
-    quest_selected = account.selected_quest_id == quest_id
-
-    case {quest_already_associated, quest_selected} do
-      {true, false} ->
-        Logger.info("Quest is associated but not selected. Updating selected quest.")
-        update_selected_quest_for_user(account.id, quest_id)
-
-      {false, _} ->
-        Logger.info("Quest is not associated. Adding quest and updating selected quest.")
-        add_quest_to_account(account.id, quest_id)
-
-      {true, true} ->
-        Logger.info("Quest is already associated and selected.")
-        {:ok, "Quest is already associated and selected"}
+      case result do
+        {:ok, _message} ->
+          # If the quest was successfully added, update the selected quest
+          update_selected_quest_for_user(account_id, quest_id)
+        {:error, _reason} ->
+          # Handle error appropriately if needed
+          Logger.error("Failed to associate quest #{quest_id} with account #{account_id}.")
+      end
+    else
+      Logger.info("Quest #{quest_id} is already associated with account #{account_id}. Updating selected quest.")
+      # If the quest is already associated but not selected, update the selected quest
+      update_selected_quest_for_user(account_id, quest_id)
     end
   end
 
+  def check_quest_completion_and_create_reward(account_id, quest_id) do
+    # Ensure to preload the :badges association directly before checking quest completion
+    account = Repo.get!(Account, account_id)
+              |> Repo.preload(:badges)
 
+    if quest_completed?(account, quest_id) do
+      Logger.info("Quest #{quest_id} completed. Creating reward.")
+
+      # Assuming create_reward function takes a map with :account_id and :quest_id
+      case Rewards.create_reward(%{account_id: account.id, quest_id: quest_id}) do
+        {:ok, reward} ->
+          Logger.info("Reward created successfully: #{inspect(reward)}")
+          {:ok, reward}
+
+        {:error, _error} ->
+          Logger.error("Failed to create reward for account #{account_id} and quest #{quest_id}")
+          {:error, :failed_to_create_reward}
+      end
+    else
+      Logger.info("Quest #{quest_id} not completed for account #{account_id}. No reward created.")
+      {:ok, "Quest not completed"}
+    end
+  end
+
+  def quest_completed?(account, quest_id) do
+    quest = Repo.get!(Quest, quest_id)
+    number_of_required_badges = quest.badge_count
+
+    # Fetching the count of unique badges collected by the account for this specific quest
+    number_of_collected_badges =
+      Enum.filter(account.badges, fn badge -> badge.quest_id == quest_id end)
+      |> Enum.count()
+
+    # Logging for debugging purposes
+    Logger.info("Required number of badges for quest completion: #{number_of_required_badges}")
+    Logger.info("Number of badges collected by account #{account.id} for quest #{quest_id}: #{number_of_collected_badges}")
+
+    # The quest is considered completed if the number of collected badges matches the required count
+    number_of_collected_badges == number_of_required_badges
+  end
+
+
+
+
+  def add_quest_to_account(user_id, quest_id) do
+    account = Repo.get!(Account, user_id) |> Repo.preload(:quests)
+
+    # Check if the quest is already associated with the account
+    if Enum.any?(account.quests, &(&1.id == quest_id)) do
+      Logger.info("Quest #{quest_id} is already associated with account #{user_id}. Updating selected quest.")
+      update_selected_quest_for_user(account.id, quest_id)
+    else
+      Logger.info("Adding new quest #{quest_id} to account #{user_id} and updating selected quest.")
+      quest = Repo.get!(Quest, quest_id)
+
+      updated_quests = [quest | account.quests]
+
+      case Repo.transaction(fn ->
+        Repo.update!(
+          Ecto.Changeset.change(account)
+          |> Ecto.Changeset.put_assoc(:quests, updated_quests)
+        )
+        # Now explicitly update the selected_quest_id
+        Logger.info("updating selected quests")
+        update_selected_quest_for_user(account.id, quest_id)
+      end) do
+        {:ok, _result} ->
+          Logger.info("Successfully added quest #{quest_id} and updated selected quest for account #{user_id}")
+          {:ok, "Quest added and selected quest updated"}
+
+        {:error, _reason} ->
+          Logger.error("Failed to add quest #{quest_id} or update selected quest for account #{user_id}")
+          {:error, "Failed to add quest or update selected quest"}
+      end
+    end
+  end
+
+  # Function to update the selected_quest field for an account
+  def update_selected_quest_for_user(account_id, quest_id) do
+    account = Repo.get!(Account, account_id)
+    changeset = Ecto.Changeset.change(account, %{selected_quest_id: quest_id})
+
+    case Repo.update(changeset) do
+      {:ok, _account} ->
+        # Assuming you have a way to fetch the quest name efficiently
+        quest_name = Repo.get!(Quest, quest_id) |> Map.get(:name)
+
+        # Broadcast the update along with additional details
+        Phoenix.PubSub.broadcast(
+          QuestApiV21.PubSub,
+          "accounts:#{account_id}",
+          %{
+            event: "selected_quest_updated",
+            quest_id: quest_id,
+            quest_name: quest_name
+            # Include any other details here as necessary
+          }
+        )
+        Logger.info("Broadcasting quest update for account #{account_id}")
+
+        {:ok, account}
+
+      {:error, _changeset} = error ->
+        error
+    end
+  end
 
 
   def authenticate_user(email, password) do
@@ -732,69 +845,11 @@ defmodule QuestApiV21.Accounts do
     end
   end
 
-  # Function to update the selected_quest field for an account
-  def update_selected_quest_for_user(account_id, quest_id) do
-    account = Repo.get!(Account, account_id)
-    changeset = Ecto.Changeset.change(account, %{selected_quest_id: quest_id})
 
-    case Repo.update(changeset) do
-      {:ok, _account} ->
-        # Assuming you have a way to fetch the quest name efficiently
-        quest_name = Repo.get!(Quest, quest_id) |> Map.get(:name)
-
-        # Broadcast the update along with additional details
-        Phoenix.PubSub.broadcast(
-          QuestApiV21.PubSub,
-          "accounts:#{account_id}",
-          %{
-            event: "selected_quest_updated",
-            quest_id: quest_id,
-            quest_name: quest_name
-            # Include any other details here as necessary
-          }
-        )
-        Logger.info("Broadcasting quest update for account #{account_id}")
-
-        {:ok, account}
-
-      {:error, _changeset} = error ->
-        error
-    end
-  end
 
 
   # for the show collector function
-  def add_quest_to_account(user_id, quest_id) do
-    account = Repo.get!(Account, user_id) |> Repo.preload(:quests)
 
-    # Check if the quest is already associated with the account
-    if Enum.any?(account.quests, &(&1.id == quest_id)) do
-      Logger.info("Quest #{quest_id} is already associated with account #{user_id}. Updating selected quest.")
-      update_selected_quest_for_user(account.id, quest_id)
-    else
-      Logger.info("Adding new quest #{quest_id} to account #{user_id} and updating selected quest.")
-      quest = Repo.get!(Quest, quest_id)
-
-      updated_quests = [quest | account.quests]
-
-      case Repo.transaction(fn ->
-        Repo.update!(
-          Ecto.Changeset.change(account)
-          |> Ecto.Changeset.put_assoc(:quests, updated_quests)
-        )
-        # Now explicitly update the selected_quest_id
-        update_selected_quest_for_user(account.id, quest_id)
-      end) do
-        {:ok, _result} ->
-          Logger.info("Successfully added quest #{quest_id} and updated selected quest for account #{user_id}")
-          {:ok, "Quest added and selected quest updated"}
-
-        {:error, _reason} ->
-          Logger.error("Failed to add quest #{quest_id} or update selected quest for account #{user_id}")
-          {:error, "Failed to add quest or update selected quest"}
-      end
-    end
-  end
   @doc """
 
   the function that handles adding a badge to a user
@@ -809,57 +864,8 @@ defmodule QuestApiV21.Accounts do
   badge = Repo.get(Badge, "9b7015b1-c4bb-4323-b7d2-98f881036553")
   {:ok, message, updated_account} = Accounts.add_badge_to_user("d26326d1-be5b-4a24-a82e-57d855f95b89", badge)
   """
-  def add_badge_to_user(user_id, badge) do
-    account = Repo.get!(Account, user_id) |> Repo.preload([:badges])
 
-    if Enum.any?(account.badges, fn b -> b.id == badge.id end) do
-      Logger.info("Badge ID: #{badge.id} already associated with Account ID: #{account.id}")
-      {:ok, "Badge already associated with the account", account}
-    else
-      Logger.info("Adding Badge ID: #{badge.id} to Account ID: #{account.id}")
-      updated_badges = [badge | account.badges]
 
-      changeset =
-        account
-        |> Ecto.Changeset.change()
-        |> Ecto.Changeset.put_assoc(:badges, updated_badges)
-        |> Ecto.Changeset.put_change(:badges_stats, account.badges_stats + 1)
-
-      with {:ok, updated_account} <- Repo.update(changeset) do
-      if quest_completed?(updated_account, badge.quest_id) do
-        IO.inspect("Completed Quest")
-        updated_account =
-          Ecto.Changeset.change(updated_account,
-            rewards_stats: updated_account.rewards_stats + 1
-          )
-
-        # Attempt to create a reward record
-        reward_attrs = %{
-          quest_id: badge.quest_id,
-          account_id: user_id,
-          # Include any other necessary attributes here
-        }
-        case Rewards.create_reward(reward_attrs) do
-          {:ok, _reward} ->
-            IO.inspect("Created reward")
-            # Proceed with updating the account to reflect the reward addition
-            case Repo.update(updated_account) do
-              {:ok, updated_account} ->
-                {:ok, "Badge and reward added to the account", updated_account}
-
-              {:error, reason} ->
-                {:error, reason}
-            end
-          {:error, reason} ->
-            {:error, reason}
-        end
-      else
-        {:ok, "Badge added to the account", updated_account}
-      end
-
-      end
-    end
-  end
 
   # This function determines if the given account has any active (i.e., incomplete) quests.
   def has_active_quests?(account_id) do
@@ -876,16 +882,6 @@ defmodule QuestApiV21.Accounts do
     end)
   end
 
-  # A helper function to determine if a specific quest for an account is completed by checking associated badges.
-  defp quest_completed?(account, quest_id) do
-    # Retrieve all badges associated with the quest_id from the database.
-    quest_badges = Repo.all(from b in Badge, where: b.quest_id == ^quest_id, select: b.id)
 
-    # For the quest to be considered completed, the account must have all badges associated with the quest.
-    Enum.all?(quest_badges, fn badge_id ->
-      # Check if the account possesses each badge required for the quest's completion.
-      Enum.any?(account.badges, fn b -> b.id == badge_id end)
-    end)
-  end
 
 end

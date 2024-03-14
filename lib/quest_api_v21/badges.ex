@@ -60,6 +60,27 @@ defmodule QuestApiV21.Badges do
     OrganizationScopedQueries.scope_query(Badge, organization_id, preloads)
   end
 
+    @doc """
+  Fetches all badges associated with a given account ID.
+
+  ## Examples
+
+      iex> get_badges_for_account("account_id")
+      {:ok, [%Badge{}, ...]}
+
+      iex> get_badges_for_account("nonexistent_account_id")
+      {:error, :not_found}
+  """
+  def get_badges_for_account(account_id) do
+    case Repo.get(Account, account_id) do
+      nil ->
+        {:error, :not_found}
+      account ->
+        # Preload badges for the found account
+        account_with_badges = Repo.preload(account, :badges)
+        {:ok, account_with_badges.badges}
+    end
+  end
   @doc """
   Creates a badge.
 

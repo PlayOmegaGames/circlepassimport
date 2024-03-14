@@ -129,7 +129,7 @@ defmodule QuestApiV21Web.Router do
       post "/update_email", Web.AccountController, :change_email
       post "/change_password", Web.AccountController, :change_password
 
-      get "/badges", Web.BadgeController, :show_badge
+      #get "/badges", Web.BadgeController, :show_badge
       get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
       #get "/badge/:id", Web.CollectorController, :show_collector
       get "/new", Web.PageController, :new_page
@@ -138,6 +138,7 @@ defmodule QuestApiV21Web.Router do
       get "/camera", Web.PageController, :camera
 
       # Live views
+      live "/home", HomeLive
       live "/badge/:id", CollectorLive
       live "/accounts/settings", AccountSettingsLive, :edit
       live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash

@@ -18,6 +18,8 @@ defmodule QuestApiV21.Accounts.Account do
     field :pfps, :string
     field :confirmed_at, :naive_datetime
     belongs_to :selected_quest, QuestApiV21.Quests.Quest
+    has_many :rewards, QuestApiV21.Rewards.Reward
+
 
 
     many_to_many :badges, QuestApiV21.Badges.Badge, join_through: "badges_accounts"
