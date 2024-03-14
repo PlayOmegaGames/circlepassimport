@@ -40,7 +40,7 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
       </.simple_form>
     </div>
     <!-- add footer here -->
-    <!--<img class="w-full" src="/images/dk-purple-footer.svg" alt="Footer" />-->
+    <img class="w-full" src="/images/dk-purple-footer.svg" alt="Footer" />
     """
   end
 
