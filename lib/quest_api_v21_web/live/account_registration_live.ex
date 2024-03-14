@@ -6,11 +6,7 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm bg-indigo-500">
-    hello
-    </div>
-    <body class="h-screen bg-indigo-500">
-    <div class="mx-auto max-w-sm bg-indigo-500">
+    <div class="mx-auto max-w-sm bg-contrast">
       <.header class="text-center">
         Sign Up
         <:subtitle>
@@ -43,10 +39,8 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
         </:actions>
       </.simple_form>
     </div>
-    </body>
-    <div class="bg-indigo-500">
-    hello
-    </div>
+    <!-- add footer here -->
+    <!--<img class="w-full" src="/images/dk-purple-footer.svg" alt="Footer" />-->
     """
   end
 
