@@ -122,7 +122,7 @@ defmodule QuestApiV21Web.Router do
       {QuestApiV21Web.AccountAuth, :ensure_authenticated},
       QuestApiV21Web.Nav
       ],
-      layout: {QuestApiV21Web.Layouts, :auth_dark} do
+      layout: {QuestApiV21Web.Layouts, :authenticated} do
 
 
       #Legeacy routes
