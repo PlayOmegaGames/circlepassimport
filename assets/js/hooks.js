@@ -169,6 +169,23 @@ Hooks.FormSubmit = function(csrfToken) {
       }
     },
   };
+  Hooks.UpdateTab = {
+    mounted() {
+      this.el.addEventListener("click", e => {
+        let target = e.target.closest('[data-tab]'); // Find the closest ancestor with a `data-tab` attribute
+        if (target) {
+          const tab = target.getAttribute("data-tab");
+          this.pushEvent("switch-tab", {tab: tab});
+          
+          // More dynamic URL update, consider using a data attribute for the URL if different from "/home/"
+          const newPath = target.getAttribute("data-url") || ("/home/" + tab);
+          history.pushState({}, "", newPath);
+          
+          e.preventDefault(); // Prevent the default anchor behavior
+        }
+      });
+    }
+  }
   
   
   

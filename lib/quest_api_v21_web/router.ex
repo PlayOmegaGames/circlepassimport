@@ -140,10 +140,10 @@ defmodule QuestApiV21Web.Router do
       get "/camera", Web.PageController, :camera
 
       # Live views
-      live "/home", MainLive
-      live "/home/badges", MainLive, :home
-      live "/home/myquests", MainLive, :home
-      live "/home/rewards", MainLive, :home
+      live "/home", MainLive, :home
+      live "/home/badges", MainLive, :badges
+      live "/home/myquests", MainLive, :myquests
+      live "/home/rewards", MainLive, :rewards
       live "/quests", MainLive, :quests
       live "/profile", MainLive, :profile
       live "/badge/:id", CollectorLive

@@ -4,6 +4,9 @@ defmodule QuestApiV21Web.MainLive do
   alias QuestApiV21Web.CoreComponents
 
   def mount(_params, _session, socket) do
+
+    #IO.inspect(socket.assigns.live_action, label: "mount live_action")
+
     account_id = socket.assigns.current_account.id
 
     {:ok, badges} = Badges.get_badges_for_account(account_id)
@@ -26,10 +29,10 @@ defmodule QuestApiV21Web.MainLive do
       |> assign(
         badges: badges,
         quests: quests,
-        tab: "badges",
         rewards: rewards,
         account: account,
         current_view: "home",
+        tab: "badges",
         available_quests: available_quests_with_badge_count,
         future_quests: future_quests_with_badge_count
       )
@@ -43,11 +46,7 @@ defmodule QuestApiV21Web.MainLive do
     socket =
       socket
       |> assign(tab: tab)
-      |> case do
-        # Optionally, perform additional actions based on the tab, like setting `live_action`
-        ^socket -> assign(socket, live_action: :home)
-        _ -> socket
-      end
+
 
     {:noreply, socket}
   end
@@ -61,6 +60,7 @@ defmodule QuestApiV21Web.MainLive do
   end
 
   def handle_event("show-content", %{"type" => type}, socket) do
+    IO.inspect(type, label: "Show Content Type")
     {:noreply, assign(socket, tab: type)}
   end
 
@@ -69,13 +69,13 @@ defmodule QuestApiV21Web.MainLive do
   def render(assigns) do
     ~H"""
       <div>
-        <%= navbar(assigns) %>
-        <%= case @current_view do %>
-          <% "home" -> %>
+        <%= case @live_action do %>
+          <% :home -> %>
+
             <%= home(assigns) %>
-          <% "quests" -> %>
+          <% :quests -> %>
             <%= quests(assigns) %>
-          <% "profile" -> %>
+          <% :profile -> %>
             <%= profile(assigns) %>
         <% end %>
       </div>
@@ -83,47 +83,14 @@ defmodule QuestApiV21Web.MainLive do
   end
 
 
-  defp navbar(assigns) do
-    current_view = assigns.current_view
-    ~H"""
-      <!-- Bottom Nav -->
-      <div class="fixed bottom-0 w-full bg-gradient-to-b from-indigo-100 to-contrast">
-        <div class="grid grid-cols-3 justify-items-center">
-          <.link patch={"/home"} class={" #{if @current_view == "home", do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
-            <div>
-              <!-- Home Icon HTML -->
-              <span class={"ml-4 w-6 h-6 hero-home#{if current_view == "home", do: "-solid"}"}></span>
-              <p class={"text-center #{if current_view == "home", do: "font-bold", else: "font-base"}"}>Home</p>
-            </div>
-          </.link>
-
-          <.link patch="/quests" class={" #{if @current_view == "quests", do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
-            <div>
-              <!-- Quests Icon HTML -->
-              <!-- SVG or other icon for Quests -->
-              <p class={"text-center #{if current_view == "quests", do: "font-bold", else: "font-base"}"}>Quests</p>
-            </div>
-          </.link>
-
-          <.link patch="/profile" class={" #{if @current_view == "profile", do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
-            <div>
-              <!-- Profile Icon HTML -->
-              <span class={"ml-4 w-6 h-6 hero-user#{if current_view == "profile", do: "-solid"}"}></span>
-              <p class={"text-center #{if current_view == "profile", do: "font-bold", else: "font-base"}"}>Profile</p>
-            </div>
-          </.link>
-        </div>
-      </div>
-    """
-  end
-
-
-  defp home(assigns) do
+  def home(assigns) do
+    IO.inspect(assigns.tab, label: "Current tab")
     ~H"""
     <div class="px-2">
+
       <.live_component module={QuestApiV21Web.LiveComponents.HomeNav} id="home-nav" />
 
-      <%= case @tab do %>
+      <%= case assigns.tab do %>
         <% "badges" -> %>
           <.live_component module={QuestApiV21Web.LiveComponents.BadgesLive} id="badges" badges={@badges}/>
         <% "myquests" -> %>
@@ -136,7 +103,7 @@ defmodule QuestApiV21Web.MainLive do
   end
 
 
-  defp profile(assigns) do
+  def profile(assigns) do
     ~H"""
       <div class="pb-8 mt-12 bg-white border-b-2 border-slate-200">
         <div class="flex justify-center">

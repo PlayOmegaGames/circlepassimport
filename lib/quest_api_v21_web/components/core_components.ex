@@ -46,7 +46,7 @@ defmodule QuestApiV21Web.CoreComponents do
           <div class="fixed bottom-0 w-full bg-gradient-to-b from-indigo-100 to-contrast">
 
           <div class="grid grid-cols-3 justify-items-center">
-          <.link patch="/home" class={" #{if @current_path == :home, do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
+          <.link patch={"/home"} class={" #{if @current_path == :home, do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
 
               <div>
                 <!-- Replace with the appropriate icon HTML -->
@@ -56,7 +56,7 @@ defmodule QuestApiV21Web.CoreComponents do
             </div>
             </.link>
 
-            <.link patch="/quests" class={" #{if @current_path == :quest, do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
+            <.link patch={"/quests"} class={" #{if @current_path == :quests, do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
 
             <div>
               <!-- Replace with the appropriate icon HTML -->
