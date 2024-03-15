@@ -3,8 +3,13 @@
 
 
 
-<div class="fixed bottom-14 w-full">
-<img src="/images/haunted.png" />
+<div class="fixed top-0 w-full h-20 bg-gradient-to-b rounded-bl-3xl border-b-2 border-gold-300 from-highlight to-accent">
+
+    <h1 class="my-auto mt-5 text-2xl text-center text-white">Find A Quest</h1>
+    
+  </div>
+<div class="fixed bottom-14 w-full border-t-3 border-gold-300">
+
   <%= if @current_account.selected_quest_id do %>
     <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar") %>
   <%  else %>
@@ -15,10 +20,9 @@
 <!-- Content -->
 <.navbar current_path={@active_tab} />
 
-<main class="py-8 min-h-screen bg-gradient-to-t from-violet-100 md:px-8 sm:px-6 lg:px-8">
+<main class="py-8 pt-24 min-h-screen bg-background-800 md:px-8 sm:px-6 lg:px-8">
   <div class="mx-auto mb-40 max-w-2xl">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
   </div>
 </main>
-

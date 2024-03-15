@@ -15,7 +15,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgesLive do
         <%= for badge <- @badges do %>
           <div class="m-4">
             <img
-              class="object-cover w-24 h-24 rounded-full ring-2"
+              class="object-cover w-20 h-20 rounded-full ring-2 ring-gray-200 shadow-md shadow-gray-500"
               src={badge.badge_image}
               alt="Badge image"
             />

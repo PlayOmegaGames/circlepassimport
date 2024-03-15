@@ -17,6 +17,19 @@ module.exports = {
     extend: {
       colors: {
         brand: "#6a43b8",
+        background: {
+          100: "#0700", 
+          800: "#0E0327"
+        },
+        accent: "#200e46",
+        highlight: "#6944b8",
+        contrast: "#d6c3ff",
+        gold: {
+          100: '#bf9936',
+          200: '#f7ef8a',
+          300: '#d0aa45',
+          400: '#ebc766',
+        },
       }
     },
   },

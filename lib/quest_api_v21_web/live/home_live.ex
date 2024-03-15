@@ -31,7 +31,7 @@ defmodule QuestApiV21Web.HomeLive do
   def render(assigns) do
 
     ~H"""
-      <div class="">
+      <div class="px-2">
         <%= live_component QuestApiV21Web.LiveComponents.HomeNav, id: "home-nav" %>
 
         <%= if @current_view == "badges" do %>
