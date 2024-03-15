@@ -118,8 +118,10 @@ defmodule QuestApiV21Web.Router do
   scope "/", QuestApiV21Web do
     pipe_through [:browser, :require_authenticated_account]
 
-    live_session :require_authenticated_account,
-      on_mount: [{QuestApiV21Web.AccountAuth, :ensure_authenticated}],
+    live_session :require_authenticated_account, on_mount: [
+      {QuestApiV21Web.AccountAuth, :ensure_authenticated},
+      QuestApiV21Web.Nav
+      ],
       layout: {QuestApiV21Web.Layouts, :authenticated} do
 
 
@@ -133,12 +135,14 @@ defmodule QuestApiV21Web.Router do
       get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
       #get "/badge/:id", Web.CollectorController, :show_collector
       get "/new", Web.PageController, :new_page
-      get "/profile", Web.PageController, :profile
+      #get "/profile", Web.PageController, :profile
 
       get "/camera", Web.PageController, :camera
 
       # Live views
       live "/home", HomeLive
+      live "/quests", QuestsLive
+      live "/profile", ProfileLive
       live "/badge/:id", CollectorLive
       live "/accounts/settings", AccountSettingsLive, :edit
       live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash

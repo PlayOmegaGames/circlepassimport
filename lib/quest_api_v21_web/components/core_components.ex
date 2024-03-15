@@ -30,11 +30,59 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def title(assigns) do
     ~H"""
-    <h1 class="text-center text-2xl text-gray-600 font-medium my-4">
+    <h1 class="my-4 text-2xl font-medium text-center text-gray-600">
       <%= @text %>
     </h1>
     """
   end
+
+
+  attr :current_path, :string, required: true
+
+  def navbar(assigns) do
+    ~H"""
+
+        <!-- Bottom Nav -->
+          <div class="fixed bottom-0 w-full border-t-2 frosted-glass border-slate-300">
+
+          <div class="grid grid-cols-3 justify-items-center">
+          <.link patch="/home" class={" #{if @current_path == :home, do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
+
+              <div>
+                <!-- Replace with the appropriate icon HTML -->
+                <span class={"ml-4 w-6 h-6 hero-home#{if @current_path == :home, do: "-solid"}"}>
+                </span>
+                <p class={"text-center #{if @current_path == :home, do: "font-bold", else: "font-base"}"}>Home</p>
+            </div>
+            </.link>
+
+            <.link patch="/quests" class={" #{if @current_path == :quest, do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
+
+            <div>
+              <!-- Replace with the appropriate icon HTML -->
+              <svg class="ml-4 w-6 h-6" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 6484 5810">
+                <g><path fill="currentColor" d="M 2846.5,-0.5 C 2884.17,-0.5 2921.83,-0.5 2959.5,-0.5C 3454.78,24.2205 3917.78,158.721 4348.5,403C 4557.06,523.481 4749.39,666.147 4925.5,831C 5028.97,934.361 5123.8,1044.53 5210,1161.5C 5520.98,1585.81 5712.32,2060.15 5784,2584.5C 5798.26,2689.87 5806.09,2795.7 5807.5,2902C 5796.64,3331.25 5700.14,3740.09 5518,4128.5C 5473.13,4222.91 5424.13,4314.91 5371,4404.5C 5370.33,4461.83 5370.33,4519.17 5371,4576.5C 5741.7,4947.37 6112.53,5318.03 6483.5,5688.5C 6483.5,5715.5 6483.5,5742.5 6483.5,5769.5C 6469.83,5782.5 6456.5,5795.83 6443.5,5809.5C 6259.17,5809.5 6074.83,5809.5 5890.5,5809.5C 5486.84,5405.01 5082.67,5001.01 4678,4597.5C 4677.33,4570.5 4677.33,4543.5 4678,4516.5C 4958.51,4220.25 5144.51,3871.58 5236,3470.5C 5266.62,3332.15 5283.95,3192.15 5288,3050.5C 5288.67,2952.5 5288.67,2854.5 5288,2756.5C 5274.03,2327.96 5148.7,1935.96 4912,1580.5C 4840.97,1476.43 4761.97,1378.43 4675,1286.5C 4614.44,1225.28 4553.28,1164.78 4491.5,1105C 4183.56,822.983 3823.22,640.649 3410.5,558C 3280.35,533.017 3149.02,519.684 3016.5,518C 2926.49,517.13 2836.49,517.463 2746.5,519C 2322.84,534.563 1935.17,659.23 1583.5,893C 1477.81,964.652 1378.47,1044.65 1285.5,1133C 1231.31,1186.86 1177.47,1241.03 1124,1295.5C 833.472,1604.5 645.472,1968.5 560,2387.5C 536.384,2508.05 522.717,2629.71 519,2752.5C 516.521,2869.52 517.188,2986.52 521,3103.5C 546.733,3545.78 689.066,3945.11 948,4301.5C 1002.24,4373.76 1060.24,4443.09 1122,4509.5C 1179.17,4568 1237,4625.83 1295.5,4683C 1613.47,4981.5 1988.47,5171.5 2420.5,5253C 2533.95,5273.31 2648.28,5284.98 2763.5,5288C 2856.17,5288.67 2948.83,5288.67 3041.5,5288C 3194.84,5284.25 3346.17,5264.92 3495.5,5230C 3523.83,5229.33 3552.17,5229.33 3580.5,5230C 3677.31,5325.81 3773.81,5421.97 3870,5518.5C 3870.67,5545.5 3870.67,5572.5 3870,5599.5C 3856.83,5612.67 3843.67,5625.83 3830.5,5639C 3548.25,5736.52 3257.92,5792.18 2959.5,5806C 2834.27,5807.82 2709.6,5800.15 2585.5,5783C 2047.38,5710.14 1562.72,5511.47 1131.5,5187C 1025.72,5106.92 925.548,5019.76 831,4925.5C 501.241,4573.58 265.908,4164.91 125,3699.5C 52.9929,3455.79 11.1596,3207.12 -0.5,2953.5C -0.5,2920.17 -0.5,2886.83 -0.5,2853.5C 23.7186,2342.55 164.552,1866.55 422,1425.5C 539.673,1227.78 677.339,1044.78 835,876.5C 894.77,816.716 956.936,759.883 1021.5,706C 1436.34,363.31 1910.34,142.977 2443.5,45C 2577.03,21.3673 2711.36,6.20066 2846.5,-0.5 Z"/></g>
+                <g><path fill="currentColor" d="M 2859.5,1544.5 C 2888.84,1544.33 2918.17,1544.5 2947.5,1545C 3284.07,1575.86 3578.74,1701.52 3831.5,1922C 3884.23,1972.7 3931.73,2027.53 3974,2086.5C 4140.43,2317.37 4236.1,2575.37 4261,2860.5C 4261.67,2889.17 4261.67,2917.83 4261,2946.5C 4235.49,3233.44 4138.49,3492.77 3970,3724.5C 3956.17,3738.33 3942.33,3752.17 3928.5,3766C 3901.5,3766.67 3874.5,3766.67 3847.5,3766C 3760.33,3678.83 3673.17,3591.67 3586,3504.5C 3585.33,3477.17 3585.33,3449.83 3586,3422.5C 3679.8,3310.89 3732.46,3181.89 3744,3035.5C 3745.62,2952.85 3745.95,2870.18 3745,2787.5C 3735.97,2626.53 3678.3,2486.2 3572,2366.5C 3524.44,2316.94 3475.61,2268.77 3425.5,2222C 3306.83,2122.3 3169.49,2068.63 3013.5,2061C 2933.49,2060.06 2853.49,2060.39 2773.5,2062C 2614.29,2074.63 2476.29,2134.63 2359.5,2242C 2320.67,2280.83 2281.83,2319.67 2243,2358.5C 2129.19,2482.14 2068.52,2628.47 2061,2797.5C 2060.07,2875.18 2060.4,2952.84 2062,3030.5C 2072.45,3179.29 2125.45,3310.29 2221,3423.5C 2221.67,3450.5 2221.67,3477.5 2221,3504.5C 2133.5,3592 2046,3679.5 1958.5,3767C 1931.5,3767.67 1904.5,3767.67 1877.5,3767C 1864,3753.5 1850.5,3740 1837,3726.5C 1667.44,3494.17 1570.11,3233.84 1545,2945.5C 1544.33,2917.5 1544.33,2889.5 1545,2861.5C 1575.84,2521.99 1702.84,2224.99 1926,1970.5C 1963.11,1932.04 2002.61,1896.54 2044.5,1864C 2284.37,1678.81 2556.04,1572.31 2859.5,1544.5 Z"/></g>
+              </svg>
+              <p class={"text-center #{if @current_path == :quests, do: "font-bold", else: "font-base"}"}>Quests</p>
+          </div>
+          </.link>
+
+          <.link patch="/profile" class={" #{if @current_path == :profile, do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
+
+          <div>
+            <!-- Replace with the appropriate icon HTML -->
+            <span class={"ml-4 w-6 h-6 hero-user#{if @current_path == :profile, do: "-solid"}"}>
+            </span>
+            <p class={"text-center #{if @current_path == :profile, do: "font-bold", else: "font-base"}"}>Profile</p>
+        </div>
+        </.link>
+        </div>
+        </div>
+
+    """
+  end
+
 
   @doc """
     List badges
@@ -68,7 +116,7 @@ defmodule QuestApiV21Web.CoreComponents do
     >
       <!-- Badge image and name -->
       <img src={assigns[:image]} alt={assigns[:name]} class="rounded-full badge-neo" />
-      <p class="text-center mt-2 text-xs text-slate-700"><%= assigns[:name] %></p>
+      <p class="mt-2 text-xs text-center text-slate-700"><%= assigns[:name] %></p>
     </div>
     """
   end
@@ -79,14 +127,14 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def find_quests(assigns) do
     ~H"""
-    <a class=" flex bg-white rounded-lg w-10/12 mx-auto text-slate-600 shadow-md" href="/new">
-      <img class="w-10 h-10 ml-2 my-auto" src="/images/PurpleQuestLogo.svg" />
+    <a class="flex mx-auto w-10/12 bg-white rounded-lg shadow-md text-slate-600" href="/new">
+      <img class="my-auto ml-2 w-10 h-10" src="/images/PurpleQuestLogo.svg" />
 
-      <p class="flex-grow text-xl text-center py-4">
+      <p class="flex-grow py-4 text-xl text-center">
         Find a Quest
       </p>
 
-      <span class="animate-pulse my-auto hero-chevron-right mr-2" />
+      <span class="my-auto mr-2 animate-pulse hero-chevron-right" />
     </a>
     """
   end
@@ -102,12 +150,12 @@ defmodule QuestApiV21Web.CoreComponents do
     ~H"""
     <div class="">
       <div class={"mx-auto bg-#{@color}-200 border-2 shadow-lg border-#{@color}-500 flex justify-center items-center rounded-full h-14 w-14"}>
-        <p class="text-slate-700 font-semibold">
+        <p class="font-semibold text-slate-700">
           <%= @number %>
         </p>
       </div>
 
-      <p class="text-center mt-2 text-sm font-light text-slate-700">
+      <p class="mt-2 text-sm font-light text-center text-slate-700">
         <%= @text %>
       </p>
     </div>
@@ -121,7 +169,7 @@ defmodule QuestApiV21Web.CoreComponents do
   def google(assigns) do
     ~H"""
     <a href="/auth/google">
-      <div class="gsi-material-button mx-auto">
+      <div class="mx-auto gsi-material-button">
         <div class="gsi-material-button-state"></div>
         <div class="gsi-material-button-content-wrapper">
           <div class="gsi-material-button-icon">
@@ -207,7 +255,7 @@ defmodule QuestApiV21Web.CoreComponents do
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="ml-2 my-auto w-4 h-full"
+        class="my-auto ml-2 w-4 h-full"
       >
         <path
           stroke-linecap="round"
@@ -234,14 +282,14 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def location(assigns) do
     ~H"""
-    <a class=" text-slate-500 my-2" href={@url}>
+    <a class="my-2 text-slate-500" href={@url}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         stroke-width="1"
         stroke="currentColor"
-        class="w-4 h-4 inline"
+        class="inline w-4 h-4"
       >
         <path
           stroke-linecap="round"
@@ -290,34 +338,34 @@ defmodule QuestApiV21Web.CoreComponents do
       phx-mounted={@show && show_modal(@id)}
       phx-remove={hide_modal(@id)}
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
-      class="relative z-50 hidden"
+      class="hidden relative z-50"
     >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+      <div id={"#{@id}-bg"} class="fixed inset-0 transition-opacity bg-zinc-50/90" aria-hidden="true" />
       <div
-        class="fixed inset-0 overflow-y-auto"
+        class="overflow-y-auto fixed inset-0"
         aria-labelledby={"#{@id}-title"}
         aria-describedby={"#{@id}-description"}
         role="dialog"
         aria-modal="true"
         tabindex="0"
       >
-        <div class="flex min-h-full items-center justify-center">
-          <div class="w-full max-w-3xl p-4 sm:p-6 lg:py-8">
+        <div class="flex justify-center items-center min-h-full">
+          <div class="p-4 w-full max-w-3xl sm:p-6 lg:py-8">
             <.focus_wrap
               id={"#{@id}-container"}
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white p-14 shadow-lg ring-1 transition"
+              class="hidden relative p-14 bg-white rounded-2xl ring-1 shadow-lg transition shadow-zinc-700/10 ring-zinc-700/10"
             >
-              <div class="absolute top-6 right-5">
+              <div class="absolute right-5 top-6">
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
+                  class="flex-none p-3 -m-3 opacity-20 hover:opacity-40"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5" />
+                  <.icon name="hero-x-mark-solid" class="w-5 h-5" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
@@ -361,14 +409,14 @@ defmodule QuestApiV21Web.CoreComponents do
       ]}
       {@rest}
     >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
+      <p :if={@title} class="flex gap-1.5 items-center text-sm font-semibold leading-6">
+        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="w-4 h-4" />
+        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" />
         <%= @title %>
       </p>
       <p class="mt-2 text-sm leading-5"><%= msg %></p>
-      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+      <button type="button" class="absolute top-1 right-1 p-2 group" aria-label={gettext("close")}>
+        <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
     """
@@ -395,7 +443,7 @@ defmodule QuestApiV21Web.CoreComponents do
       phx-connected={hide("#client-error")}
       hidden
     >
-      Attempting to reconnect <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      Attempting to reconnect <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
     </.flash>
 
     <.flash
@@ -407,7 +455,7 @@ defmodule QuestApiV21Web.CoreComponents do
       hidden
     >
       Hang in there while we get back on track
-      <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
     </.flash>
     """
   end
@@ -440,7 +488,7 @@ defmodule QuestApiV21Web.CoreComponents do
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div class="mt-10 space-y-8 bg-white">
         <%= render_slot(@inner_block, f) %>
-        <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
+        <div :for={action <- @actions} class="flex gap-6 justify-between items-center mt-2">
           <%= render_slot(action, f) %>
         </div>
       </div>
@@ -543,7 +591,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
     ~H"""
     <div phx-feedback-for={@name}>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+      <label class="flex gap-4 items-center text-sm leading-6 text-zinc-600">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -568,7 +616,7 @@ defmodule QuestApiV21Web.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+        class="block mt-2 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
         multiple={@multiple}
         {@rest}
       >
@@ -644,8 +692,8 @@ defmodule QuestApiV21Web.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
+    <p class="flex gap-3 mt-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
+      <.icon name="hero-exclamation-circle-mini" class="flex-none mt-0.5 w-5 h-5" />
       <%= render_slot(@inner_block) %>
     </p>
     """
@@ -710,7 +758,7 @@ defmodule QuestApiV21Web.CoreComponents do
     ~H"""
     <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
       <table class="w-[40rem] mt-11 sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
+        <thead class="text-sm leading-6 text-left text-zinc-500">
           <tr>
             <th :for={col <- @col} class="p-0 pr-6 pb-4 font-normal"><%= col[:label] %></th>
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
@@ -719,7 +767,7 @@ defmodule QuestApiV21Web.CoreComponents do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
+          class="relative text-sm leading-6 border-t divide-y divide-zinc-100 border-zinc-200 text-zinc-700"
         >
           <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
             <td
@@ -728,15 +776,15 @@ defmodule QuestApiV21Web.CoreComponents do
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+                <span class="absolute right-0 -inset-y-px -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
             </td>
-            <td :if={@action != []} class="relative w-14 p-0">
-              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+            <td :if={@action != []} class="relative p-0 w-14">
+              <div class="relative py-4 text-sm font-medium text-right whitespace-nowrap">
+                <span class="absolute left-0 -inset-y-px -right-4 group-hover:bg-zinc-50 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
                   class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
@@ -771,7 +819,7 @@ defmodule QuestApiV21Web.CoreComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
+          <dt class="flex-none w-1/4 text-zinc-500"><%= item.title %></dt>
           <dd class="text-zinc-700"><%= render_slot(item) %></dd>
         </div>
       </dl>
@@ -796,7 +844,7 @@ defmodule QuestApiV21Web.CoreComponents do
         navigate={@navigate}
         class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
       >
-        <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
+        <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
         <%= render_slot(@inner_block) %>
       </.link>
     </div>
@@ -944,7 +992,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
     ~H"""
     <div
-      class="inline-flex shadow-xl items-center justify-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full"
+      class="inline-flex justify-center items-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full shadow-xl"
       style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;"
     >
       <%= for name <- @initialsList do %>
@@ -989,7 +1037,7 @@ defmodule QuestApiV21Web.CoreComponents do
       onclick={"toggleAccordion('accordionContent#{assigns.contentID}', 'accordionChevron#{assigns.contentID}')"}
     >
       <button
-        class="justify-between relative flex items-center w-full p-4 font-semibold text-left transition-all ease-in border-b border-solid cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
+        class="flex relative justify-between items-center p-4 w-full font-semibold text-left border-b border-solid transition-all ease-in cursor-pointer border-slate-100 text-slate-700 rounded-t-1 group text-dark-500"
         data-collapse-target="animated-collapse-1"
       >
         <span><%= assigns.buttonTitle %></span>
@@ -999,7 +1047,7 @@ defmodule QuestApiV21Web.CoreComponents do
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-6 h-6 right-0 text-base transition-transform fa fa-chevron-down group-open:rotate-90"
+          class="right-0 w-6 h-6 text-base transition-transform fa fa-chevron-down group-open:rotate-90"
           id={"accordionChevron#{assigns.contentID}"}
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
