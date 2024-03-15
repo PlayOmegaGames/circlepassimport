@@ -75,7 +75,7 @@ defmodule QuestApiV21Web.QuestBarLive do
     cancel: "close-camera" %>
 
 
-    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 w-full bg-violet-100 border-t-2 border-gray-900/[.20]">
+    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 w-full bg-violet-100 border-t-2">
 
     <div class="flex justify-between">
       <div class="flex row">

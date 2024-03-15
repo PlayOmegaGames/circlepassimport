@@ -43,7 +43,7 @@ defmodule QuestApiV21Web.CoreComponents do
     ~H"""
 
         <!-- Bottom Nav -->
-          <div class="fixed bottom-0 w-full border-t-2 frosted-glass border-slate-300">
+          <div class="fixed bottom-0 w-full bg-gradient-to-b from-indigo-100 to-contrast">
 
           <div class="grid grid-cols-3 justify-items-center">
           <.link patch="/home" class={" #{if @current_path == :home, do: "text-gray-900"} py-2 w-14 h-14 text-xs"}>
