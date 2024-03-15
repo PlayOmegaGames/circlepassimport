@@ -4,7 +4,7 @@ defmodule QuestApiV21Web.TestLive do
 
   @impl true
   def render(assigns) do
-    ~L"""
+    ~H"""
     <div>
       <button phx-click="emit_event">Emit Event</button>
     </div>

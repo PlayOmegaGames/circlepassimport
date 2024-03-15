@@ -18,7 +18,7 @@ defmodule QuestApiV21Web.LiveComponents.HomeNav do
       <button
         class="bg-gradient-to-r from-cyan-200 rounded-full ring-1 ring-slate-400"
         phx-click="show-content"
-        phx-value-type="quests">
+        phx-value-type="myquests">
         Quests
       </button>
 

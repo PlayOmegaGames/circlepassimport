@@ -122,7 +122,7 @@ defmodule QuestApiV21Web.Router do
       {QuestApiV21Web.AccountAuth, :ensure_authenticated},
       QuestApiV21Web.Nav
       ],
-      layout: {QuestApiV21Web.Layouts, :authenticated} do
+      layout: {QuestApiV21Web.Layouts, :auth_dark} do
 
 
       #Legeacy routes
@@ -140,9 +140,12 @@ defmodule QuestApiV21Web.Router do
       get "/camera", Web.PageController, :camera
 
       # Live views
-      live "/home", HomeLive
-      live "/quests", QuestsLive
-      live "/profile", ProfileLive
+      live "/home", MainLive
+      live "/home/badges", MainLive, :home
+      live "/home/myquests", MainLive, :home
+      live "/home/rewards", MainLive, :home
+      live "/quests", MainLive, :quests
+      live "/profile", MainLive, :profile
       live "/badge/:id", CollectorLive
       live "/accounts/settings", AccountSettingsLive, :edit
       live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash

@@ -54,25 +54,28 @@ defmodule QuestApiV21Web.QuestBarLive do
     ~H"""
     <div>
 
-    <%= live_component QuestApiV21Web.LiveComponents.BadgeDetails,
-    id: "example-modal",
-    show: @show_modal,
-    on_confirm: :confirm_action,
-    on_cancel: :cancel_action,
-    confirm: "Proceed",
-    badge: @badge,
-    quest: @quest,
-    comp_percent: @comp_percent,
-    cancel: "Cancel" %>
+    <.live_component
+      module={QuestApiV21Web.LiveComponents.BadgeDetails}
+      id="example-modal"
+      show={@show_modal}
+      on_confirm={:confirm_action}
+      on_cancel={:cancel_action}
+      confirm={"Proceed"}
+      badge={@badge}
+      quest={@quest}
+      comp_percent={@comp_percent}
+      cancel={"Cancel"}
+    />
 
-
-    <%= live_component QuestApiV21Web.LiveComponents.Camera,
-    id: "camera_modal",
-    show: @show_camera,
-    on_confirm: :confirm_action,
-    on_cancel: :cancel_action,
-    confirm: "Proceed",
-    cancel: "close-camera" %>
+    <.live_component
+      module={QuestApiV21Web.LiveComponents.Camera}
+      id="camera_modal"
+      show={@show_camera}
+      on_confirm={:confirm_action}
+      on_cancel={:cancel_action}
+      confirm={"Proceed"}
+      cancel={"close-camera"}
+    />
 
 
     <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 w-full bg-violet-100 border-t-2">

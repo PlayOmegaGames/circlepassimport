@@ -2,30 +2,30 @@ defmodule QuestApiV21Web.LiveComponents.Navbar do
   use Phoenix.LiveComponent
 
   def render(assigns) do
-    ~L"""
+    ~H"""
 
       <!-- Bottom Nav -->
-        <div class="frosted-glass fixed w-full bottom-0 h-16 border-t-2 border-slate-300">
+        <div class="fixed bottom-0 w-full h-16 border-t-2 frosted-glass border-slate-300">
         <div class="grid grid-cols-3 justify-items-center text-slate-700">
           <a
             href="/badges"
-            class={"text-xs py-2 w-14 h-14  #{calculate_class(@conn.request_path, "/badges")}"}
+            class={"text-xs py-2 w-14 h-14  #{QuestApiV21Web.Layouts.calculate_class(@conn.request_path, "/badges")}"}
           >
             <div>
               <!-- Replace with the appropriate icon HTML -->
-              <span class={"ml-4 w-6 h-6 hero-home#{calculate_icon(@conn.request_path, "/badges")} "}>
+              <span class={"ml-4 w-6 h-6 hero-home#{QuestApiV21Web.Layouts.calculate_icon(@conn.request_path, "/badges")} "}>
               </span>
-              <p class=" text-center">Home</p>
+              <p class="text-center">Home</p>
           </div>
           </a>
 
           <a
           href="/new"
-          class={"text-xs py-2 w-14 h-14 #{calculate_class(@conn.request_path, "/new")}"}
+          class={"text-xs py-2 w-14 h-14 #{QuestApiV21Web.Layouts.calculate_class(@conn.request_path, "/new")}"}
         >
           <div>
             <!-- Replace with the appropriate icon HTML -->
-              <span class={"ml-4 w-6 h-6 hero-globe-americas#{calculate_icon(@conn.request_path, "/new")}"}>
+              <span class={"ml-4 w-6 h-6 hero-globe-americas#{QuestApiV21Web.Layouts.calculate_icon(@conn.request_path, "/new")}"}>
               </span>
               <p class="text-center">New</p>
           </div>
@@ -33,11 +33,11 @@ defmodule QuestApiV21Web.LiveComponents.Navbar do
 
           <a
             href="/profile"
-            class={"text-xs py-2 w-14 h-14 #{calculate_class(@conn.request_path, "/profile")}"}
+            class={"text-xs py-2 w-14 h-14 #{QuestApiV21Web.Layouts.calculate_class(@conn.request_path, "/profile")}"}
         >
             <div>
               <!-- Replace with the appropriate icon HTML -->
-              <span class={"ml-4 w-6 h-6 hero-user#{calculate_icon(@conn.request_path, "/profile")}"}>
+              <span class={"ml-4 w-6 h-6 hero-user#{QuestApiV21Web.Layouts.calculate_icon(@conn.request_path, "/profile")}"}>
               </span>
             <p class="text-center">Profile</p>
             </div>
@@ -47,4 +47,7 @@ defmodule QuestApiV21Web.LiveComponents.Navbar do
 
     """
   end
+
+
+
 end

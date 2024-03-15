@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.LiveComponents.QuestLive do
+defmodule QuestApiV21Web.LiveComponents.MyQuestsLive do
   use Phoenix.LiveComponent
 
   def mount(assigns) do
