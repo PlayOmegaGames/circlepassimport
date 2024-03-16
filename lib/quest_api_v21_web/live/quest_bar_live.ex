@@ -78,7 +78,7 @@ defmodule QuestApiV21Web.QuestBarLive do
     />
 
 
-    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 w-full bg-violet-100 border-t-2">
+    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 w-full bg-gradient-to-r from-gray-300 bviolet-100 z-">
 
     <div class="flex justify-between">
       <div class="flex row">

@@ -1,10 +1,11 @@
-<header class="fixed top-0 px-4 w-full sm:px-6 lg:px-8 frosted-glass-b">
+<header class="fixed top-0 px-4 w-full sm:px-6 lg:px-8">
 </header>
 
 
 
-<div class="fixed bottom-14 w-full">
+<div class="fixed bottom-0 w-full min-h-fit">
 <img src="/images/haunted.png" />
+
 
   <%= if @current_account.selected_quest_id do %>
     <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar") %>
@@ -12,10 +13,10 @@
     <%= live_render(@socket, QuestApiV21Web.CameraLive, id: "camera-live") %>
 
   <% end %> 
-</div>
+
 <!-- Bottom Nav -->
 <!-- Live action: <%= @live_action %> -->
-<div class="fixed bottom-0 w-full bg-gradient-to-b from-indigo-100 to-contrast">
+<div class="w-full bg-gradient-to-b from-indigo-100 to-contrast">
 
   <!-- Home -->
   <div class="grid grid-cols-3 justify-items-center">
@@ -49,6 +50,7 @@
     </div>
     </.link>
   </div>
+</div>
 </div>
 <main class="py-8 min-h-screen bg-gradient-to-t from-violet-100 md:px-8 sm:px-6 lg:px-8">
   <div class="mx-auto mb-40 max-w-2xl">

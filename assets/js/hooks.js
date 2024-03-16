@@ -132,12 +132,14 @@ Hooks.FormSubmit = function(csrfToken) {
             video.srcObject = stream;
             video.play(); // Ensure video plays
             this.videoElement = video; // Store video element reference for later
+            console.log("Camera stream started"); // Log message indicating the stream has started
           })
           .catch(error => {
             console.error("Error accessing the camera", error);
           });
       }
     },
+    
     scanQRCode() {
       const video = this.videoElement;
       if (!video) return; // Guard clause if videoElement is not ready
@@ -158,17 +160,30 @@ Hooks.FormSubmit = function(csrfToken) {
       }, 100);
     },
     syncScanningState() {
-      // Implement logic to sync scanning state based on the modal visibility.
-      // This might involve checking a data attribute on the modal element to see if it's visible.
-      const container = document.getElementById("container");
-      this.scanning = !container.classList.contains("hidden");
+      const container = document.getElementById("camera");
+      const shouldScan = !container.classList.contains("hidden");
+      if (this.scanning !== shouldScan) {
+        this.scanning = shouldScan;
+        if (this.scanning) {
+          if (!this.stream) { // Only start the camera if it's not already started
+            this.handleUserMedia();
+          }
+        } else {
+          this.stopUserMedia(); // Stop the camera
+        }
+      }
     },
     stopUserMedia() {
       if (this.stream) {
-        this.stream.getTracks().forEach(track => track.stop());
+        this.stream.getTracks().forEach(track => {
+          track.stop();
+        });
+        console.log("Camera stream stopped"); // Log message indicating the stream has stopped
+        this.stream = null; // Clear the stream reference
       }
     },
   };
+  
   Hooks.UpdateTab = {
     mounted() {
       this.el.addEventListener("click", e => {
