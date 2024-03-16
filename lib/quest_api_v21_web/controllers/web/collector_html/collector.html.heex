@@ -1,31 +1,29 @@
-<script src={~p"/assets/confetti.js"}>
-</script>
 
 <div class="confetti-overlay" id="confetti"></div>
 <div class="flex justify-center">
   <div style="animation: growAndShrink 2s infinite;">
-    <p class="text-3xl text-center mb-5 font-bold text-slate-700">
+    <p class="mb-5 text-3xl font-bold text-center text-slate-700">
       <%= @badge.name %>
     </p>
 
-    <div class="image-container rounded-md mx-auto">
+    <div class="mx-auto rounded-md image-container">
       <img
         src={"#{@badge.badge_image}"}
         alt={"#{@badge.name}"}
         loading="lazy"
-        class="mx-auto rounded-md badge-image shadow-2xl"
+        class="mx-auto rounded-md shadow-2xl badge-image"
       />
       <!-- Circular Collect Badge Button -->
     </div>
   </div>
 </div>
 
-<div class="my-9 flex justify-center">
+<div class="flex justify-center my-9">
   <%= if @badge.badge_description do %>
     <!-- Pill button for badge description -->
     <button
       id="badgeDescriptionButton"
-      class="border-2 border-gray-300 text-gray-700 rounded-full py-2 px-4 flex"
+      class="flex px-4 py-2 text-gray-700 rounded-full border-2 border-gray-300"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +31,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="w-5 h-5 mr-1"
+        class="mr-1 w-5 h-5"
       >
         <path
           stroke-linecap="round"
@@ -48,13 +46,13 @@
   <% end %>
 </div>
 
-<div class="flex justify-center bottom-0 items-center">
+<div class="flex bottom-0 justify-center items-center">
   <!-- Full screen height and center alignment -->
-  <div class="text-center mt-12 fixed bottom-12">
+  <div class="fixed bottom-12 mt-12 text-center">
     <!-- Inner concentric circles -->
-    <a href="/badges" class="p-4 rounded-full mx-auto">
+    <a href="/badges" class="p-4 mx-auto rounded-full">
       <svg
-        class="w-24 h-24 mx-auto rounded-full glow-button"
+        class="mx-auto w-24 h-24 rounded-full glow-button"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         zoomAndPan="magnify"
@@ -97,7 +95,7 @@
         </g>
       </svg>
     </a>
-    <h3 class="text-center mt-6 text-lg text-slate-700">Save to Collection</h3>
+    <h3 class="mt-6 text-lg text-center text-slate-700">Save to Collection</h3>
   </div>
 </div>
 
@@ -105,21 +103,21 @@
   <!-- Modal Backdrop -->
   <div
     id="modalBackdrop"
-    class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+    class="hidden overflow-y-auto fixed inset-0 w-full h-full bg-gray-600 bg-opacity-50"
   >
   </div>
   <!-- Modal -->
-  <div id="modal" class="hidden fixed inset-0 flex items-center justify-center">
-    <div class="modal-content bg-white p-6 rounded shadow-lg max-w-xs mx-auto">
+  <div id="modal" class="flex hidden fixed inset-0 justify-center items-center">
+    <div class="p-6 mx-auto max-w-xs bg-white rounded shadow-lg modal-content">
       <!-- Close Button -->
       <div class="flex justify-end mb-4">
-        <p class="text-normal mr-12 text-gray-700 text-lg">
+        <p class="mr-12 text-lg text-gray-700 text-normal">
           <%= @badge.badge_description %>
         </p>
         <button id="closeModalButton" class="text-gray-400 hover:text-gray-500">
           <span class="sr-only">Close</span>
           <svg
-            class="h-6 w-6"
+            class="w-6 h-6"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

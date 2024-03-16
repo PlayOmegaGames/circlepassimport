@@ -61,7 +61,6 @@ config :esbuild,
   default: [
     args: [
       "js/app.js",
-      "js/confetti.js",
       "--bundle",
       "--minify",
       "--target=es2017",
