@@ -5,13 +5,13 @@ defmodule QuestApiV21Web.AccountLoginLive do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
-        Sign in to account
+        Sign In
         <:subtitle>
           Don't have an account?
           <.link navigate={~p"/accounts/register"} class="font-semibold text-brand hover:underline">
             Sign up
           </.link>
-          for an account now.
+          now.
         </:subtitle>
       </.header>
 
@@ -26,12 +26,19 @@ defmodule QuestApiV21Web.AccountLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Signing in..." class="w-full">
+          <.button phx-disable-with="Signing in..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">
             Sign in <span aria-hidden="true">→</span>
           </.button>
         </:actions>
       </.simple_form>
     </div>
+    <p class="text-center text-black my-4">or</p>
+      <div class="mb-4 flex justify-center">
+        <a href="/auth/google">
+          <.google />
+        </a>
+      </div>
+    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle.svg" alt="Footer" />
     """
   end
 

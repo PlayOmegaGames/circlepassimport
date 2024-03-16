@@ -26,7 +26,7 @@ defmodule QuestApiV21Web.AccountResetPasswordLive do
           required
         />
         <:actions>
-          <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
+          <.button phx-disable-with="Resetting..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">Reset Password</.button>
         </:actions>
       </.simple_form>
 
@@ -35,6 +35,7 @@ defmodule QuestApiV21Web.AccountResetPasswordLive do
         | <.link href={~p"/accounts/log_in"}>Log in</.link>
       </p>
     </div>
+    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle.svg" alt="Footer" />
     """
   end
 

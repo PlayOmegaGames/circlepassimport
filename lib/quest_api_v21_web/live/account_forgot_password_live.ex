@@ -14,7 +14,7 @@ defmodule QuestApiV21Web.AccountForgotPasswordLive do
       <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
         <.input field={@form[:email]} type="email" placeholder="Email" required />
         <:actions>
-          <.button phx-disable-with="Sending..." class="w-full">
+          <.button phx-disable-with="Sending..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">
             Send password reset instructions
           </.button>
         </:actions>
@@ -24,6 +24,7 @@ defmodule QuestApiV21Web.AccountForgotPasswordLive do
         | <.link href={~p"/accounts/log_in"}>Log in</.link>
       </p>
     </div>
+    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle.svg" alt="Footer" />
     """
   end
 
