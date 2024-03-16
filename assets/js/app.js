@@ -24,7 +24,6 @@
   import Hooks from "./hooks"
   import 'animate.css';
 
-  import 'animate.css';
 
   // Show progress bar on live navigation and form submits
   topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
