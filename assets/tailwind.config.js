@@ -30,6 +30,11 @@ module.exports = {
           300: '#d0aa45',
           400: '#ebc766',
         },
+        background_gradient: {
+          100: "#EEE6FF",
+          200: "#E8DDFF",
+          300: "#BDA2F8",
+        }
       }
     },
   },

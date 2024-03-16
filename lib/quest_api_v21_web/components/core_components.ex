@@ -486,7 +486,7 @@ defmodule QuestApiV21Web.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="mt-10 space-y-8 bg-transparent">
         <%= render_slot(@inner_block, f) %>
         <div :for={action <- @actions} class="flex gap-6 justify-between items-center mt-2">
           <%= render_slot(action, f) %>
