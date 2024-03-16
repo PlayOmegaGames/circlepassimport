@@ -6,7 +6,7 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm bg-transparent">
       <.header class="text-center">
         Register for an account
         <:subtitle>
