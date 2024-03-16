@@ -15,6 +15,8 @@ defmodule QuestApiV21Web.Router do
     plug :put_secure_browser_headers
     plug :fetch_current_account
     plug :fetch_current_superadmin
+    plug Ueberauth
+
   end
 
   pipeline :register do
@@ -26,6 +28,7 @@ defmodule QuestApiV21Web.Router do
     plug :put_secure_browser_headers
     plug :fetch_current_account
     plug :fetch_current_superadmin
+
   end
 
   pipeline :api do
@@ -175,8 +178,8 @@ defmodule QuestApiV21Web.Router do
   scope "/auth", QuestApiV21Web do
     pipe_through :browser
 
-    get "/:provider", AuthController, :request
-    get "/:provider/callback", AuthController, :callback
+    get "/:provider", OauthController, :request
+    get "/:provider/callback", OauthController, :callback
   end
 
   # Other scopes may use custom stacks.

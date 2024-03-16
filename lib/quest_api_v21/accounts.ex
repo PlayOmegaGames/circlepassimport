@@ -492,33 +492,29 @@ defmodule QuestApiV21.Accounts do
       {:ok, %Account{}, :existing}
   """
   def handle_oauth_login(email, name) do
-    Logger.debug("handle_oauth_login called with email: #{email} and name: #{name}")
+    Logger.debug("Handling OAuth login for email: #{email} and name: #{name}")
 
-    case find_account_by_email(email) do
-      nil ->
-        create_oauth_account(email, name)
-        |> case do
-          {:ok, account} -> {:ok, account, :new}
-          {:error, reason} -> {:error, reason}
-        end
-
-      account ->
-        {:ok, account, :existing}
+    find_account_by_email(email)
+    |> case do
+      nil -> create_oauth_account(email, name)
+      account -> {:ok, account, :existing}
     end
   end
 
   def create_oauth_account(email, name) do
-    Logger.debug("create_oauth_account called with email: #{email}")
+    Logger.debug("Creating OAuth account for email: #{email}")
 
     user_attrs = %{
       email: email,
       name: name,
-      is_passwordless: true
+      is_passwordless: true,
+      verified: true # Assuming OAuth users are verified by the provider
     }
 
-    Logger.debug("user_attrs for account creation: #{inspect(user_attrs)}")
+    Logger.debug("Attributes for OAuth account creation: #{inspect(user_attrs)}")
     create_account(user_attrs)
   end
+
 
   @doc """
   Deletes a account.

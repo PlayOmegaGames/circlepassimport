@@ -3,7 +3,7 @@ defmodule QuestApiV21Web.AccountAuth do
 
   import Plug.Conn
   import Phoenix.Controller
-
+  require Logger
   alias QuestApiV21.Accounts
 
   # Make the remember me cookie valid for 60 days.
@@ -195,6 +195,8 @@ defmodule QuestApiV21Web.AccountAuth do
     end
   end
 
+
+
   @doc """
   Used for routes that require the account to be authenticated.
 
@@ -230,4 +232,7 @@ defmodule QuestApiV21Web.AccountAuth do
   defp maybe_store_return_to(conn), do: conn
 
   defp signed_in_path(_conn), do: ~p"/"
+
+
+
 end
