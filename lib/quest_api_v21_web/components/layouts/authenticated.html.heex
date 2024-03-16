@@ -3,9 +3,10 @@
 
 
 
-<div class="fixed bottom-0 w-full min-h-fit">
-<img src="/images/haunted.png" />
-
+<div class="fixed bottom-0 z-50 w-full min-h-fit">
+<%= if @background_color == "false" do %>
+    <img src="/images/haunted.png" />
+  <% end %>
 
   <%= if @current_account.selected_quest_id do %>
     <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar") %>
@@ -52,7 +53,7 @@
   </div>
 </div>
 </div>
-<main class="py-8 min-h-screen bg-gradient-to-t from-violet-100 md:px-8 sm:px-6 lg:px-8">
+<main class={"min-h-screen #{ if @background_color == "false", do: "bg-gradient-to-t from-violet-100", else: @background_color} md:px-8 sm:px-6 lg:px-8"}>
   <div class="mx-auto mb-40 max-w-2xl">
     <.flash_group flash={@flash} />
     <%= @inner_content %>

@@ -20,6 +20,7 @@ defmodule QuestApiV21Web.MainLive do
       quest.start_date == nil or (quest.start_date && Date.compare(quest.start_date, current_date) != :gt)
     end)
 
+
     available_quests_with_badge_count = calculate_badge_count(available_quests)
     future_quests_with_badge_count = calculate_badge_count(future_quests)
 
@@ -43,9 +44,15 @@ defmodule QuestApiV21Web.MainLive do
   def handle_params(params, _uri, socket) do
     tab = params["tab"] || "badges" # Default to "badges" tab if none specified
 
+    background_color = case socket.assigns.live_action do
+      :quests -> "bg-background-800"
+      _ -> "false"
+    end
+    IO.inspect(background_color)
     socket =
       socket
       |> assign(tab: tab)
+      |> assign(:background_color, background_color)
 
 
     {:noreply, socket}
@@ -102,6 +109,44 @@ defmodule QuestApiV21Web.MainLive do
     """
   end
 
+  def quests(assigns) do
+    ~H"""
+      <div class="pb-36 text-white">
+      <div class="w-full h-20 bg-gradient-to-b rounded-bl-3xl border-b-2 border-l-2 border-gold-300 from-highlight to-accent">
+        <h1 class="pt-4 m-auto text-2xl w-fit">Find A Quest</h1>
+      </div>
+            <div class="px-2 pt-8">
+              <div class="flex flex-col space-y-8">
+
+                <%= for quest <- @available_quests do %>
+
+
+                <div class="overflow-hidden bg-accent h-48 rounded-xl ring-1 ring-white/[0.40] border-gold-300">
+                <div class="flex-col justify-center py-4 pl-4">
+                  <div class="flex justify-between">
+                    <div class="flex pt-4 -space-x-8">
+                      <img class="inline-block relative z-20 w-16 h-16 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                      <img class="inline-block relative z-10 w-16 h-16 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                      <img class="inline-block relative z-0 w-16 h-16 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="">
+                      <div class="pl-8 text-xs text-gold-200">+<%= quest.badge_count %></div>
+                    </div>
+
+                    <div class="overflow-hidden ml-2 w-full">
+                      <h3 class="mb-4 font-light text-center truncate ... text-md"><%= quest.name %></h3>
+                      <h4 class="px-1 w-full text-center uppercase truncate bg-highlight"><%= quest.reward %></h4>
+                    </div>
+                  </div>
+                  <p class="overflow-hidden px-4 pt-4 text-xs font-light"><%= quest.description %></p>
+                  </div>
+                </div>
+                <% end %>
+
+              </div>
+            </div>
+      </div>
+    """
+  end
+
 
   def profile(assigns) do
     ~H"""
@@ -128,27 +173,6 @@ defmodule QuestApiV21Web.MainLive do
         <div class="mb-20 w-full">
         <CoreComponents.find_quests />
         </div>
-      </div>
-    """
-  end
-
-  def quests(assigns) do
-    ~H"""
-      <div class="px-2">
-            <div>
-              <div class="available-quests">
-                <h2>Available Quests</h2>
-                <%= for quest <- @available_quests do %>
-                  <p><%= quest.name %> - Badges: <%= quest.badge_count %></p>
-                <% end %>
-              </div>
-              <div class="future-quests">
-                <h2>Future Quests</h2>
-                <%= for quest <- @future_quests do %>
-                  <p><%= quest.name %> - Badges: <%= quest.badge_count %></p>
-                <% end %>
-              </div>
-            </div>
       </div>
     """
   end
