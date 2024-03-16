@@ -22,7 +22,6 @@
   import {LiveSocket} from "phoenix_live_view"
   import topbar from "../vendor/topbar"
   import Hooks from "./hooks"
-  import 'animate.css';
 
 
   // Show progress bar on live navigation and form submits
