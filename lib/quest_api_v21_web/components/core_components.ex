@@ -149,13 +149,13 @@ defmodule QuestApiV21Web.CoreComponents do
   def stats_bubble(assigns) do
     ~H"""
     <div class="">
-      <div class={"mx-auto bg-#{@color}-200 border-2 shadow-lg border-#{@color}-500 flex justify-center items-center rounded-full h-14 w-14"}>
-        <p class="font-semibold text-slate-700">
+      <div class={"mx-auto bg-gold-300 shadow-inner flex justify-center items-center rounded-full h-10 w-10"}>
+        <p class="font-semibold text-lg text-white">
           <%= @number %>
         </p>
       </div>
 
-      <p class="mt-2 text-sm font-light text-center text-slate-700">
+      <p class="text-sm font-light text-gray-600 mt-2 uppercase text-center">
         <%= @text %>
       </p>
     </div>
@@ -950,6 +950,7 @@ defmodule QuestApiV21Web.CoreComponents do
     |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
+
   end
 
   @doc """
@@ -992,12 +993,13 @@ defmodule QuestApiV21Web.CoreComponents do
 
     ~H"""
     <div
-      class="inline-flex justify-center items-center w-24 h-24 font-sans text-5xl text-black bg-purple-500 rounded-full shadow-xl"
-      style="border:1px solid black; border-radius: 50%; overflow: hidden; text-overflow: ellipsis;"
+      class="inline-flex justify-center w-48 h-48 font-sans text-5xl text-gray-800 rounded-full ring-2 shadow-600 bg-background-100 ring-gold-300"
     >
+      <div class="my-auto">
       <%= for name <- @initialsList do %>
         <%= String.first(name) %>
       <% end %>
+    </div>
     </div>
     """
   end
