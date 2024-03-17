@@ -10,17 +10,15 @@ defmodule QuestApiV21Web.LiveComponents.MyQuestsLive do
 
     ~H"""
 
-      <div>
+      <div class="px-4 pb-52 mt-6 space-y-8">
+        <h1 class="text-xl text-center">Active Quests</h1>
         <%= for quest <- @quests do %>
-        <div class="p-6 m-4 mx-auto w-3/4 rounded-md ring-1 ring-slate-700">
-
-          <h1 class="font-bold font-regular">
-          <%= quest.name %>
-          </h1>
-          <p class="text-sm font-sm">
-            <%= quest.reward %>
-          </p>
-        </div>
+        <.live_component
+          class="shadow-xl h-fit"
+          module={QuestApiV21Web.LiveComponents.QuestCard}
+          id={"quests-card-#{quest.id}"}
+          completion = "test"
+          quest= {quest} />
       <% end %>
     </div>
 

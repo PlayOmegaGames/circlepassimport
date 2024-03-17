@@ -15,10 +15,18 @@ defmodule QuestApiV21Web.MainLive do
     account = socket.assigns.current_account
     quests_list = Quests.list_public_quests()
 
+    quests_with_completion = calculate_completion(quests_list, badges)
+
+    # Split quests into completed and incomplete
+    {completed_quests, incomplete_quests} = Enum.split_with(quests_with_completion, fn quest ->
+      quest.completion_percentage == 100
+    end)
+
     current_date = Date.utc_today()
     {available_quests, future_quests} = Enum.split_with(quests_list, fn quest ->
       quest.start_date == nil or (quest.start_date && Date.compare(quest.start_date, current_date) != :gt)
     end)
+
 
 
     available_quests_with_badge_count = calculate_badge_count(available_quests)
@@ -32,13 +40,27 @@ defmodule QuestApiV21Web.MainLive do
         quests: quests,
         rewards: rewards,
         account: account,
+        show_single_badge_details: false,
         current_view: "home",
         tab: "badges",
+        completed_quests: completed_quests,
+        incomplete_quests: incomplete_quests,
         available_quests: available_quests_with_badge_count,
         future_quests: future_quests_with_badge_count
       )
 
     {:ok, socket}
+  end
+
+  defp calculate_completion(quests, badges) do
+    Enum.map(quests, fn quest ->
+      quest_badges = Enum.filter(badges, fn badge -> badge.quest_id == quest.id end)
+      total_quest_badges = Enum.count(quest.badges)
+      user_quest_badges = Enum.count(quest_badges)
+
+      completion_percentage = if total_quest_badges > 0, do: (user_quest_badges / total_quest_badges) * 100, else: 0
+      Map.put(quest, :completion_percentage, completion_percentage)
+    end)
   end
 
   def handle_params(params, _uri, socket) do
@@ -71,7 +93,14 @@ defmodule QuestApiV21Web.MainLive do
     {:noreply, assign(socket, tab: type)}
   end
 
+  def handle_event("show_single_badge_details", %{"id" => badge_id}, socket) do
+    badge_detail = Badges.get_badge!(badge_id) # Fetch the badge details based on the ID
+    {:noreply, assign(socket, badge_detail: badge_detail, show_single_badge_details: true)}
+  end
 
+  def handle_event("cancel", _, socket) do
+    {:noreply, assign(socket, show_single_badge_details: false)}
+  end
 
   def render(assigns) do
     ~H"""
@@ -91,15 +120,15 @@ defmodule QuestApiV21Web.MainLive do
 
 
   def home(assigns) do
-    IO.inspect(assigns.tab, label: "Current tab")
     ~H"""
     <div class="px-2">
+
 
       <.live_component module={QuestApiV21Web.LiveComponents.HomeNav} id="home-nav" />
 
       <%= case assigns.tab do %>
         <% "badges" -> %>
-          <.live_component module={QuestApiV21Web.LiveComponents.BadgesLive} id="badges" badges={@badges}/>
+          <.live_component module={QuestApiV21Web.LiveComponents.BadgesLive} id="badges" badges={@badges} show_single_badge_details={@show_single_badge_details}/>
         <% "myquests" -> %>
         <.live_component module={QuestApiV21Web.LiveComponents.MyQuestsLive} id="quests" quests={@quests}/>
         <% "rewards" -> %>
@@ -115,12 +144,18 @@ defmodule QuestApiV21Web.MainLive do
       <div class="w-full h-20 bg-gradient-to-b rounded-bl-3xl border-b-2 border-l-2 border-gold-300 from-highlight to-accent">
         <h1 class="pt-4 m-auto text-2xl w-fit">Find A Quest</h1>
       </div>
+
             <div class="px-2 pt-8">
               <div class="flex flex-col space-y-8">
 
                 <%= for quest <- @available_quests do %>
 
-                <.live_component module={QuestApiV21Web.LiveComponents.QuestCard} id={"quests-card-#{quest.id}"} quest= {quest} />
+                <.live_component
+                  module={QuestApiV21Web.LiveComponents.QuestCard}
+                  id={"quests-card-#{quest.id}"}
+                  completion = {nil}
+                  class={nil}
+                  quest= {quest} />
 
                 <% end %>
 

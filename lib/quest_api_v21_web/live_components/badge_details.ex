@@ -2,6 +2,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
   use Phoenix.LiveComponent
 
   def mount(assigns) do
+
     {:ok, assigns}
   end
 
@@ -12,31 +13,29 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
     ~H"""
     <div
       id={@id}
-      class={"animate__animated  inset-0 h-screen fixed w-full overflow-y-auto z-40 
+      class={"animate__animated  inset-0 h-screen fixed w-full overflow-y-auto z-40
       #{if @show, do: "animate__slideInUp animate__faster ", else: "animate__slideOutDown" }"}>
 
         <div
-          class={"#{if @show, do: "fade-in-scale", else: "hidden animate__slideOutDown"}  animate__animated w-full h-screen bg-white text-left overflow-hidden shadow-xl transform transition-all"}
+          class={"#{if @show, do: "fade-in-scale", else: "hidden animate__slideOutDown"}  animate__animated w-full h-screen bg-accent text-left overflow-hidden shadow-xl transform transition-all"}
           role="dialog"
           aria-modal="true"
           tabindex="-1"
         >
-        <div class="mx-auto w-10/12">
-        <button type="button" class="mt-6" phx-click="cancel">
-          <span class="hero-chevron-down"> </span>
-        </button>
 
-        <div class="z-40 px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-            <div class="sm:flex sm:items-start">
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">
-                  <%= @badge.name %>
-                </h3>
-              </div>
+
+        <div class="mx-auto w-10/12 text-white">
+          <div class="flex py-6">
+            <button type="button" class="" phx-click="cancel">
+              <span class="w-6 h-6 hero-chevron-down"> </span>
+            </button>
+            <h3 class="overflow-hidden mr-8 w-full text-lg font-medium text-center uppercase truncate" id="modal-title">
+              <%= @badge.name %>
+            </h3>
             </div>
-          </div>
 
-          <div class="overflow-hidden relative w-full h-96 rounded-lg border-2 border-slate-700 max-w-96">
+
+          <div class="overflow-hidden relative mx-auto w-80 h-96 rounded-lg ring-1 ring-gold-200 object-fit">
             <%= if @badge.collected do %>
               <img src={@badge.badge_details_image} alt="Badge Image" class="object-cover w-full h-full">
             <% else %>
@@ -44,20 +43,31 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
                 <h1 class="my-auto text-lg text-white"><%= @badge.hint %></h1>
               </div>
             <% end %>
+          </div>
 
-            </div>
-            <h1 class="mt-12"><%= @quest.name %></h1>
-            <div class="h-1 bg-brand" style={"width:#{@comp_percent}%"} ></div>
+          <div class="mt-6 mb-4">
+            <h1 class="text-xs font-thin uppercase">Reward</h1>
+            <h1 class="font-bold"><%= @quest.reward %></h1>
+          </div>
 
-            <div class="flex justify-center">
-              <button phx-click="previous" class="m-2 border-2">
-              <span class="hero-chevron-double-left"/>
+          <div class="rounded-full mb-2 bg-indigo-300/[0.30]">
+            <div style={"width: #{@comp_percent}%;"} class="z-10 h-1 rounded-full bg-gold-300"></div>
+          </div>
+
+          <h1 class="mb-2 text-center"><%= @quest.name %></h1>
+
+          <div class="flex justify-between mx-auto w-8/12">
+            <button phx-click="previous" class="my-auto">
+              <span class="w-12 h-12 hero-chevron-left"/>
             </button>
 
-            <button phx-click="next" class="m-2 border-2">
-              <span class="hero-chevron-double-right" />
+            <.live_component module={QuestApiV21Web.LiveComponents.CameraButton} id="camera-button" size="12" />
+
+            <button phx-click="next" class="my-auto">
+              <span class="w-12 h-12 hero-chevron-right" />
             </button>
           </div>
+
 
           </div>
         </div>

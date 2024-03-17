@@ -6,20 +6,27 @@ defmodule QuestApiV21Web.LiveComponents.BadgesLive do
     {:ok, assigns}
   end
 
+
   def render(assigns) do
 
     ~H"""
 
     <div>
+
+
       <div class="grid grid-cols-3">
         <%= for badge <- @badges do %>
-          <div class="m-4">
-            <img
-              class="object-cover w-20 h-20 rounded-full ring-2 ring-gray-200 shadow-md shadow-gray-500"
+
+
+        <.live_component module={QuestApiV21Web.LiveComponents.BadgeTabDetails} id={"badge-details-#{badge.id}"} show={@show_single_badge_details} badge={badge} />
+
+        <div class="m-4 w-20 h-20" phx-click="show_single_badge_details" phx-value-id={badge.id}>
+        <img
+              class="object-cover w-full h-full rounded-full ring-2 shadow-lg ring-gold-100"
               src={badge.badge_image}
               alt="Badge image"
             />
-            <p class="w-24 text-center truncate">
+            <p class="mt-2 w-24 text-xs text-center truncate">
               <%= badge.name %>
             </p>
           </div>

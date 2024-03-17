@@ -26,7 +26,7 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     socket =
       socket
-      |> assign(:show_modal, false)
+      |> assign(:show_badge_details, false)
       |> assign(:show_camera, false)
       |> assign(:my_target, self())
       |> assign(:quest, quest)
@@ -57,7 +57,7 @@ defmodule QuestApiV21Web.QuestBarLive do
     <.live_component
       module={QuestApiV21Web.LiveComponents.BadgeDetails}
       id="example-modal"
-      show={@show_modal}
+      show={@show_badge_details}
       on_confirm={:confirm_action}
       on_cancel={:cancel_action}
       confirm={"Proceed"}
@@ -78,7 +78,7 @@ defmodule QuestApiV21Web.QuestBarLive do
     />
 
 
-    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 z-50 w-full bg-gradient-to-r from-gray-300 to-violet-100">
+    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 z-50 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
 
     <div class="flex justify-between">
       <div class="flex row">
@@ -96,20 +96,24 @@ defmodule QuestApiV21Web.QuestBarLive do
           <p class="truncate text-light" ><%= assigns.badge.name %> </p>
         </div>
       </div>
-      <div>
-        <button phx-click="previous" class="m-2 border-2">
-          <span class="hero-chevron-double-left"/>
-        </button>
-        <button phx-click="next" class="m-2 border-2">
-          <span class="hero-chevron-double-right" />
-        </button>
 
-        <button phx-click="camera" class="m-2 w-10 h-10 text-white rounded-full border-2 bg-brand">
-          <span class="w-6 h-6 hero-qr-code" />
-        </button>
+        <div class="flex justify-between">
+        <div class="flex justify-between">
+          <button phx-click="previous" class="m-2 border-2">
+            <span class="hero-chevron-double-left"/>
+          </button>
+
+          <button phx-click="next" class="m-2 border-2">
+            <span class="hero-chevron-double-right" />
+          </button>
+        </div>
+          <div class="my-auto mr-4">
+          <.live_component module={QuestApiV21Web.LiveComponents.CameraButton} id="quest-bar-camera" size="10" />
+          </div>
+        </div>
+
       </div>
 
-        </div>
         <div class="h-1 bg-gold-300" style={"width:#{@comp_percent}%"} ></div>
       </div>
 
@@ -169,8 +173,8 @@ defmodule QuestApiV21Web.QuestBarLive do
   #badge details modal
 
   def handle_event("toggle_badge_details_modal", _params, socket) do
-    new_visibility = not socket.assigns.show_modal
-    {:noreply, assign(socket, :show_modal, new_visibility)}
+    new_visibility = not socket.assigns.show_badge_details
+    {:noreply, assign(socket, :show_badge_details, new_visibility)}
   end
 
   def handle_event("camera", _params, socket) do
@@ -179,7 +183,7 @@ defmodule QuestApiV21Web.QuestBarLive do
   end
 
   def handle_event("cancel", _params, socket) do
-    {:noreply, assign(socket, :show_modal, false)}
+    {:noreply, assign(socket, :show_badge_details, false)}
   end
 
   def handle_event("close-camera", _params, socket) do
