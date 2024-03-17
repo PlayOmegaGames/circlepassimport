@@ -12,13 +12,12 @@ defmodule QuestApiV21Web.LiveComponents.RewardsLive do
 
       <div>
         <%= for reward <- @rewards do %>
-        <div class="p-6 m-4 mx-auto w-3/4 rounded-md ring-1 ring-slate-700">
+        <div
+          class={"m-4 p-4 mx-auto w-3/4 rounded-md bg-accent ring-2 ring-gold-200 shadow-xl shadow-white"}>
 
-          <h1 class="font-bold font-regular">
+          <h1 class="font-bold text-white text-center">
           <%= reward.reward_name %>
           </h1>
-          <p class="text-sm font-sm">TEST
-          </p>
         </div>
       <% end %>
     </div>

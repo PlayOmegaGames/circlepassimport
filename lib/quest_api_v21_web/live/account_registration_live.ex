@@ -31,22 +31,21 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <.input field={@form[:name]} type="text" label="Name" required />
+        <.input field={@form[:name]}  type="text" label="Name" required />
         <.input field={@form[:email]} type="email" label="Email" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">Create an account</.button>
+          <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
         </:actions>
       </.simple_form>
-      <p class="text-center text-black my-4">or</p>
-      <div class="mb-4 flex justify-center">
+      <p class="text-center text-black my-2">or</p>
+      <div class="flex justify-center">
         <a href="/auth/google">
           <.google />
         </a>
       </div>
     </div>
-    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle.svg" alt="Footer" />
     """
   end
 
@@ -67,11 +66,11 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
       {:ok, account} ->
         # This block is executed when the user is successfully registered.
         # Deliver account confirmation instructions via email or other means.
-        {:ok, _} =
-          Accounts.deliver_account_confirmation_instructions(
-            account,
-            &url(~p"/accounts/confirm/#{&1}")
-          )
+        #{:ok, _} =
+        #  Accounts.deliver_account_confirmation_instructions(
+        #    account,
+         #   &url(~p"/accounts/confirm/#{&1}")
+         # )
 
         # Prepare a new changeset for the registered account, typically for updating UI or redirecting.
         changeset = Accounts.change_account_registration(account)

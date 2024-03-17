@@ -10,8 +10,8 @@ defmodule QuestApiV21Web.LiveComponents.MyQuestsLive do
 
     ~H"""
 
-      <div class="px-4 pb-52 mt-6 space-y-8">
-        <h1 class="text-xl text-center">Active Quests</h1>
+      <div class="px-4 pb-52 space-y-8">
+        <h1 class="text-xl text-center">My Quests</h1>
         <%= for quest <- @quests do %>
         <.live_component
           class="shadow-xl h-fit"

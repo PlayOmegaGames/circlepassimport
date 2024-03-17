@@ -38,7 +38,6 @@ defmodule QuestApiV21Web.AccountLoginLive do
           <.google />
         </a>
       </div>
-    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle.svg" alt="Footer" />
     """
   end
 
