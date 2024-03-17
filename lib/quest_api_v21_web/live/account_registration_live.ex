@@ -8,13 +8,13 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
     ~H"""
     <div class="mx-auto max-w-sm bg-transparent">
       <.header class="text-center">
-        Register for an account
+        Sign Up
         <:subtitle>
-          Already registered?
+          Already have an account?
           <.link navigate={~p"/accounts/log_in"} class="font-semibold text-brand hover:underline">
             Sign in
           </.link>
-          to your account now.
+          now.
         </:subtitle>
       </.header>
 
@@ -31,14 +31,22 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
+        <.input field={@form[:name]} type="text" label="Name" required />
         <.input field={@form[:email]} type="email" label="Email" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+          <.button phx-disable-with="Creating account..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">Create an account</.button>
         </:actions>
       </.simple_form>
+      <p class="text-center text-black my-4">or</p>
+      <div class="mb-4 flex justify-center">
+        <a href="/auth/google">
+          <.google />
+        </a>
+      </div>
     </div>
+    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle.svg" alt="Footer" />
     """
   end
 
