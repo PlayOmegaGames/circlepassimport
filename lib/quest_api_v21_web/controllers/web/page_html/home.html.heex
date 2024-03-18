@@ -87,37 +87,21 @@
             }
         
 resize() {
-    // Use the viewport width and height as reference
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    // Assuming a 16:9 aspect ratio
+    const aspectRatio = 16 / 9;
 
-    // Desired aspect ratio, change these values based on your preferred aspect ratio
-    let aspectRatioWidth = 16;
-    let aspectRatioHeight = 9;
+    // Set the canvas width to the viewport width
+    this.width = window.innerWidth;
+    // Calculate the height based on the aspect ratio
+    this.height = this.width / aspectRatio;
 
-    // Calculate the aspect ratio
-    let canvasWidth, canvasHeight;
-    
-    // Adjust these calculations if you prefer a different approach based on your content's primary orientation
-    if (viewportWidth / viewportHeight > aspectRatioWidth / aspectRatioHeight) {
-        // If the window is wider than our desired aspect ratio, fix height to a fraction of the viewport and adjust width based on aspect ratio
-        canvasHeight = Math.min(96, viewportHeight * 0.8); // Keeping the height similar but adaptable
-        canvasWidth = canvasHeight * (aspectRatioWidth / aspectRatioHeight);
-    } else {
-        // If the window is taller, we fix width to a fraction of the viewport width and calculate height accordingly
-        canvasWidth = viewportWidth * 0.8; // Use a fraction of the viewport width to ensure it fits comfortably
-        canvasHeight = canvasWidth / (aspectRatioWidth / aspectRatioHeight);
-    }
-
-    this.width = canvasWidth;
-    this.height = canvasHeight;
-
+    // Set the canvas element's width and height attributes to the calculated values
     this.canvas.width = this.width;
     this.canvas.height = this.height;
 
-    // Optionally adjust CSS size if you want to scale the canvas on the screen without affecting the drawing buffer
-    this.canvas.style.width = `${this.width}px`;
-    this.canvas.style.height = `${this.height}px`;
+    // Optionally, if you want to explicitly set the CSS size (useful if your canvas size is controlled via CSS)
+    this.canvas.style.width = '100%'; // This makes the canvas width responsive to the screen width
+    this.canvas.style.height = `${this.height}px`; // This sets the canvas height to maintain the aspect ratio
 }
 
             buildTextMask(texts) {
