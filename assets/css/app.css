@@ -356,3 +356,41 @@ main {
   opacity: 8%;
 }
 
+
+/* Hero */
+
+
+  .bg-charcol {
+
+    background-color: #101110;
+  }
+  .pulse-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(163, 163, 163, 0.349);
+  animation: pulse 3s infinite;
+  }
+  
+  .pulse-circle:nth-child(2) {
+  animation-delay: 1.5s; 
+  }
+  
+  @keyframes pulse {
+  0% {
+    transform: scale(0.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0; /* Fade away */
+  }
+  }
+
+  .center-horizontal {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  

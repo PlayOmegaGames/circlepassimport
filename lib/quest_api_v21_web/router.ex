@@ -19,18 +19,6 @@ defmodule QuestApiV21Web.Router do
 
   end
 
-  pipeline :register do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {QuestApiV21Web.Layouts, :register}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug :fetch_current_account
-    plug :fetch_current_superadmin
-
-  end
-
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -246,10 +234,12 @@ defmodule QuestApiV21Web.Router do
   ## End-user account Authentication routes
 
   scope "/", QuestApiV21Web do
-    pipe_through [:register, :redirect_if_account_is_authenticated]
+    pipe_through [:browser, :redirect_if_account_is_authenticated]
 
     live_session :redirect_if_account_is_authenticated,
-      on_mount: [{QuestApiV21Web.AccountAuth, :redirect_if_account_is_authenticated}] do
+      on_mount: [{QuestApiV21Web.AccountAuth, :redirect_if_account_is_authenticated}],
+        layout: {QuestApiV21Web.Layouts, :registration} do
+
       live "/accounts/register", AccountRegistrationLive, :new
       live "/accounts/log_in", AccountLoginLive, :new
       live "/accounts/reset_password", AccountForgotPasswordLive, :new
