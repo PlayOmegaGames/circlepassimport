@@ -11,7 +11,7 @@
   <%= if @current_account.selected_quest_id do %>
     <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar") %>
   <%  else %>
-    <%= live_render(@socket, QuestApiV21Web.CameraLive, id: "camera-live") %>
+    <%= live_render(@socket, QuestApiV21Web.NoQuest, id: "no-quest") %>
 
   <% end %> 
 

@@ -46,7 +46,8 @@ defmodule QuestApiV21Web.MainLive do
         completed_quests: completed_quests,
         incomplete_quests: incomplete_quests,
         available_quests: available_quests_with_badge_count,
-        future_quests: future_quests_with_badge_count
+        future_quests: future_quests_with_badge_count,
+        badge_detail: nil
       )
 
     {:ok, socket}
@@ -102,6 +103,19 @@ defmodule QuestApiV21Web.MainLive do
     {:noreply, assign(socket, show_single_badge_details: false)}
   end
 
+  def handle_event("select-quest", %{"id" => quest_id}, socket) do
+    account_id = socket.assigns.current_account.id
+
+    case QuestApiV21.Accounts.update_selected_quest_for_user(account_id, quest_id) do
+      {:ok, _account} ->
+        # Optionally, fetch updated quest info to refresh the live view or navigate the user
+        {:noreply, socket}
+      {:error, _reason} ->
+        # Handle error, maybe log it or show a message to the user
+        {:noreply, socket}
+    end
+  end
+
   def render(assigns) do
     ~H"""
       <div>
@@ -128,7 +142,7 @@ defmodule QuestApiV21Web.MainLive do
 
       <%= case assigns.tab do %>
         <% "badges" -> %>
-          <.live_component module={QuestApiV21Web.LiveComponents.BadgesLive} id="badges" badges={@badges} show_single_badge_details={@show_single_badge_details}/>
+          <.live_component module={QuestApiV21Web.LiveComponents.BadgesLive} id="badges" badge_detail={@badge_detail} badges={@badges} show_single_badge_details={@show_single_badge_details}/>
         <% "myquests" -> %>
         <.live_component module={QuestApiV21Web.LiveComponents.MyQuestsLive} id="quests" quests={@quests}/>
         <% "rewards" -> %>

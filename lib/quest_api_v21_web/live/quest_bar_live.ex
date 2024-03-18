@@ -78,22 +78,21 @@ defmodule QuestApiV21Web.QuestBarLive do
     />
 
 
-    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 z-50 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
+    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
 
-    <div class="flex justify-between">
+    <div class="flex justify-between py-1">
       <div class="flex row">
-        <div class="mr-4">
+        <div class="mr-4 ml-1">
           <%= if assigns.badge.collected do %>
-            <img class="object-cover w-12 h-12 rounded-full" src={assigns.badge.badge_image} />
+            <img class="object-cover w-12 h-12 ring-2 ring-highlight rounded-full" src={assigns.badge.badge_image} />
           <% else %>
-          <img class="object-cover w-12 h-12 rounded-full grayscale" src={assigns.badge.badge_image} />
+          <img class="object-cover w-12 h-12 rounded-full ring-1 ring-slate-600 grayscale" src={assigns.badge.badge_image} />
           <% end %>
 
         </div>
         <div>
-
-          <p class="truncate text-light" ><%= assigns.quest.name %> </p>
-          <p class="truncate text-light" ><%= assigns.badge.name %> </p>
+        <p class="truncate font-medium" ><%= assigns.badge.name %> </p>
+          <p class="truncate text-xs font-light" ><%= assigns.quest.name %> </p>
         </div>
       </div>
 
@@ -108,7 +107,9 @@ defmodule QuestApiV21Web.QuestBarLive do
           </button>
         </div>
           <div class="my-auto mr-4">
-          <.live_component module={QuestApiV21Web.LiveComponents.CameraButton} id="quest-bar-camera" size="10" />
+            <button phx-click="camera" class="ring-1 p-1 ring-gray-300 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg">
+              <span class="hero-qr-code w-8 h-8"></span>
+            </button>
           </div>
         </div>
 
@@ -122,14 +123,46 @@ defmodule QuestApiV21Web.QuestBarLive do
     """
   end
 
-  def handle_info(message, socket) do
-    # Log the message received from PubSub
-    Logger.info("Received PubSub Message: #{inspect(message)}")
+  def handle_info(%{event: "selected_quest_updated", quest_id: quest_id}, socket) do
+    Logger.info("Selected quest updated to #{quest_id}")
 
-    # Here, you might want to update the socket based on the message content
-    # For demonstration, we're just returning the unchanged socket
+    # Assuming you have a way to fetch the complete quest object along with its badges
+    # and the current account's collected badges for this quest.
+    account_id = socket.assigns.current_account.id
+
+    # Fetch the updated quest information based on the new quest_id
+    quest = QuestApiV21.Quests.get_quest(quest_id)
+            |> QuestApiV21.Repo.preload([:badges])
+
+    # Calculate the completion percentage and other related information again
+    collected_badges_ids = QuestApiV21.Quests.get_collected_badges_ids_for_quest(account_id, quest_id)
+    marked_badges = Enum.map(quest.badges, fn badge ->
+      collected = badge.id in collected_badges_ids
+      Map.put(badge, :collected, collected)
+    end)
+
+    comp_percent = trunc(Enum.count(marked_badges, &(&1.collected)) / Enum.count(marked_badges) * 100)
+
+    # Update the socket with the new quest information and reassign other necessary details
+    socket =
+      socket
+      |> assign(:quest, quest)
+      |> assign(:all_badges, marked_badges)
+      |> assign(:comp_percent, comp_percent)
+      |> assign(:animate_out, true)
+      |> update_current_badge()
+
+
+
+      # Schedule the in-animation to start shortly after the out-animation completes
+      Process.send_after(self(), {:start_in_animation, quest_id}, 1_000)
     {:noreply, socket}
+  rescue
+    _ ->
+      # Log or handle error
+      {:noreply, socket}
   end
+
 
 
   def handle_event("initialize-index", %{"index" => index}, socket) do

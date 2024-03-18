@@ -5,7 +5,6 @@ defmodule QuestApiV21Web.CollectorLive do
   require Logger
 
 
-
   def handle_params(_unsigned_params, uri, socket) do
     pattern = ~r/badge\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/
 
@@ -15,18 +14,32 @@ defmodule QuestApiV21Web.CollectorLive do
              {:ok, account} <- fetch_account(socket.assigns.account),
              {:ok, badge} <- fetch_last_badge(collector.badges) do
 
+          quest = badge.quest
+          quest_badges = Repo.preload(quest, :badges) |> Map.get(:badges)
+          total_badges_in_quest = length(quest_badges)
 
           case QuestApiV21.Accounts.add_badge_to_account(account.id, badge.id) do
             {:ok, "Badge already associated with the account"} ->
               Logger.info("Badge was already collected")
-              {:noreply, assign(socket, :badge, badge) |> assign(:quest, badge.quest)}
+              # Refetch account to update badges list
+              {:ok, updated_account} = fetch_account(account.id)
+              shared_badges_count = count_shared_badges(updated_account.badges, quest_badges)
+              badges_left = total_badges_in_quest - shared_badges_count
+              {:noreply, assign(socket, :badge, badge)
+               |> assign(:quest, badge.quest)
+               |> assign(:badges_left, badges_left)
+               |> assign(:total_badges_in_quest, total_badges_in_quest)}
 
             {:ok, _account} ->
               Logger.info("Badge added to account successfully.")
-              # Here, update the socket with any necessary information. If the quest was updated as a result,
-              # you might need to re-fetch the account or quest information to reflect the changes.
-              # This example just assigns the badge. You might need to adjust based on your app's logic.
-              {:noreply, assign(socket, :badge, badge) |> assign(:quest, badge.quest)}
+              # Refetch account to update badges list
+              {:ok, updated_account} = fetch_account(account.id)
+              shared_badges_count = count_shared_badges(updated_account.badges, quest_badges)
+              badges_left = total_badges_in_quest - shared_badges_count
+              {:noreply, assign(socket, :badge, badge)
+               |> assign(:quest, badge.quest)
+               |> assign(:badges_left, badges_left)
+               |> assign(:total_badges_in_quest, total_badges_in_quest)}
 
             {:error, reason} ->
               log_error("Failed to add badge to account: #{reason}")
@@ -44,6 +57,20 @@ defmodule QuestApiV21Web.CollectorLive do
   end
 
 
+  defp count_shared_badges(account_badges, quest_badges) do
+    account_badge_ids = Enum.map(account_badges, & &1.id)
+    quest_badge_ids = Enum.map(quest_badges, & &1.id)
+
+    shared_badges = Enum.filter(account_badge_ids, fn badge_id ->
+      badge_id in quest_badge_ids
+    end)
+
+    length(shared_badges)
+
+  end
+
+
+
   defp fetch_collector(uuid) do
     case Collectors.get_collector(uuid) |> Repo.preload([:quests, :badges]) do
       nil -> {:error, "Collector not found."}
@@ -52,9 +79,9 @@ defmodule QuestApiV21Web.CollectorLive do
   end
 
   defp fetch_account(account_id) do
-    case Repo.get!(QuestApiV21.Accounts.Account, account_id) |> Repo.preload(:quests) do
+    case Repo.get(QuestApiV21.Accounts.Account, account_id) do
       nil -> {:error, "Account not found."}
-      account -> {:ok, account}
+      account -> {:ok, Repo.preload(account, :badges)}
     end
   end
 
@@ -73,7 +100,7 @@ defmodule QuestApiV21Web.CollectorLive do
 
   def mount(_params, _session, socket) do
     current_account = socket.assigns.current_account.id
-    
+
     socket =
       socket
       |> assign(error: false)
@@ -89,22 +116,11 @@ defmodule QuestApiV21Web.CollectorLive do
 
   ~H"""
     <div>
-
-      <%= if @error do %>
-
-       <h1 class="text-white text-center text-xl"> Badge Not Found </h1>
-      <% else %>
-
-      <h3 class="overflow-hidden mr-8 w-full py-4 text-white text-lg font-medium text-center uppercase truncate">
-        <%= @badge.name %>
-      </h3>
-          <img class="w-72 h-80 object-cover ring-2 ring-gold-200 rounded-xl mx-auto" src={@badge.badge_image} />
-
-          <div class="w-3/4 mx-auto mt-6 ring-1 ring-slate-700 p-2 text-white truncate rounded-lg">
-          <p><span class="font-thin mr-2">Quest:</span><%= @quest.name %></p>
-          <p><span class="font-thin mr-2">Reward:</span><%= @quest.reward %></p>
-          </div>
-        <% end %>
+      <.live_component module={QuestApiV21Web.BadgeDisplayComponent} id="collected-badge-details"
+          badge={@badge} quest={@quest} error={@error} />
+      <%= unless @error do %>
+        <p class="text-gold-100 mt-2 text-center"><%= @badges_left %> more left in the quest!</p>
+      <% end %>
     </div>
   """
   end

@@ -18,7 +18,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgesLive do
         <%= for badge <- @badges do %>
 
 
-        <.live_component module={QuestApiV21Web.LiveComponents.BadgeTabDetails} id={"badge-details-#{badge.id}"} show={@show_single_badge_details} badge={badge} />
+        <.live_component module={QuestApiV21Web.LiveComponents.BadgeTabDetails} id={"badge-details-#{badge.id}"} show={@show_single_badge_details} badge={@badge_detail} />
 
         <div class="m-4 w-20 h-20" phx-click="show_single_badge_details" phx-value-id={badge.id}>
         <img
