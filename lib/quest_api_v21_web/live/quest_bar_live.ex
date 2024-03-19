@@ -163,6 +163,19 @@ defmodule QuestApiV21Web.QuestBarLive do
       {:noreply, socket}
   end
 
+  def handle_info({:start_in_animation, quest_id}, socket) do
+    # Assuming you want to perform some action when the animation starts, such as updating the socket assigns
+    # or logging the event. Adjust this part according to your actual needs.
+    Logger.info("Starting in-animation for quest #{quest_id}")
+
+    # For example, if you want to reset `animate_out` to false to indicate the animation has completed,
+    # and potentially show something else or update any related state, you can do so here.
+    new_socket = assign(socket, animate_out: false)
+
+    # Return the updated socket. No changes are necessary if you're only logging.
+    {:noreply, new_socket}
+  end
+
 
 
   def handle_event("initialize-index", %{"index" => index}, socket) do

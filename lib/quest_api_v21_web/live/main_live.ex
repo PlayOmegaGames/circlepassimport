@@ -15,17 +15,15 @@ defmodule QuestApiV21Web.MainLive do
     account = socket.assigns.current_account
     quests_list = Quests.list_public_quests()
 
-    quests_with_completion = calculate_completion(quests_list, badges)
-
-    # Split quests into completed and incomplete
-    {completed_quests, incomplete_quests} = Enum.split_with(quests_with_completion, fn quest ->
-      quest.completion_percentage == 100
-    end)
 
     current_date = Date.utc_today()
     {available_quests, future_quests} = Enum.split_with(quests_list, fn quest ->
       quest.start_date == nil or (quest.start_date && Date.compare(quest.start_date, current_date) != :gt)
     end)
+
+    quests_with_completion = calculate_completion_percentage(quests, account_id)
+
+    socket = assign(socket, quests: quests_with_completion)
 
 
 
@@ -43,26 +41,14 @@ defmodule QuestApiV21Web.MainLive do
         show_single_badge_details: false,
         current_view: "home",
         tab: "badges",
-        completed_quests: completed_quests,
-        incomplete_quests: incomplete_quests,
         available_quests: available_quests_with_badge_count,
         future_quests: future_quests_with_badge_count,
-        badge_detail: nil
+        badge_detail: nil,
+        quests_with_completion: quests_with_completion
       )
 
     {:ok, socket}
   end
-
-  defp calculate_completion(quests, badges) do
-    Enum.map(quests, fn quest ->
-      quest_badges = Enum.filter(badges, fn badge -> badge.quest_id == quest.id end)
-      total_quest_badges = Enum.count(quest.badges)
-      user_quest_badges = Enum.count(quest_badges)
-      completion_percentage = if total_quest_badges > 0, do: (user_quest_badges / total_quest_badges) * 100, else: 0
-      Map.put(quest, :completion_percentage, completion_percentage)
-    end)
-  end
-
 
   def handle_params(params, _uri, socket) do
     tab = params["tab"] || "badges" # Default to "badges" tab if none specified
@@ -79,6 +65,21 @@ defmodule QuestApiV21Web.MainLive do
 
 
     {:noreply, socket}
+  end
+
+  defp calculate_completion_percentage(quests, account_id) do
+    Enum.map(quests, fn quest ->
+      total_badges = length(quest.badges)
+
+      case QuestApiV21.Quests.get_earned_badges_for_quest_and_account(account_id, quest.id) do
+        {:ok, earned_badges} ->
+          completion_percentage = if total_badges > 0,
+          do: round((earned_badges / total_badges) * 100),
+          else: 0
+          # Return the quest map with the completion percentage added
+          Map.put(quest, :completion_percentage, completion_percentage)
+      end
+    end)
   end
 
 
@@ -144,8 +145,20 @@ defmodule QuestApiV21Web.MainLive do
         <% "badges" -> %>
           <.live_component module={QuestApiV21Web.LiveComponents.BadgesLive} id="badges" badge_detail={@badge_detail} badges={@badges} show_single_badge_details={@show_single_badge_details}/>
         <% "myquests" -> %>
-        <.live_component module={QuestApiV21Web.LiveComponents.MyQuestsLive} id="quests" quests={@quests}/>
-
+            <div class="px-2 space-y-4 mb-12">
+            <%= for quest <- @quests_with_completion do %>
+              <button phx-click="select-quest" phx-value-id={quest.id} class="focus:outline-4 focus:outline-double focus:shadow-lg focus:shadow-white transition-all ease-in-out duration-400 rounded-xl w-full">
+                <.live_component
+                  class="shadow-xl h-fit"
+                  module={QuestApiV21Web.LiveComponents.QuestCard}
+                  id={"quests-card-#{quest.id}"}
+                  completion_bar={true}
+                  quest={quest}
+                  percentage={quest.completion_percentage}
+                  />
+              </button>
+            <% end %>
+          </div>
         <% "rewards" -> %>
           <.live_component module={QuestApiV21Web.LiveComponents.RewardsLive} id="rewards" rewards={@rewards}/>
       <% end %>
@@ -160,8 +173,7 @@ defmodule QuestApiV21Web.MainLive do
         <h1 class="pt-4 m-auto text-2xl w-fit">Find A Quest</h1>
       </div>
 
-            <div class="px-2 pt-8">
-              <div class="flex flex-col">
+              <div class="flex flex-col px-2 space-y-4 mb-12 pt-8">
 
                 <%= for quest <- @available_quests do %>
 
@@ -176,7 +188,6 @@ defmodule QuestApiV21Web.MainLive do
                 <% end %>
 
               </div>
-            </div>
       </div>
     """
   end

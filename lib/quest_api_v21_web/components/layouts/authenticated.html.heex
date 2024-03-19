@@ -1,5 +1,3 @@
-<header class="fixed top-0 px-4 w-full sm:px-6 lg:px-8">
-</header>
 
 
 
@@ -54,7 +52,7 @@
 </div>
 </div>
 <main class={"min-h-screen #{ if @background_color == "false", do: "bg-gradient-to-t from-violet-300 to-violet-100", else: @background_color} md:px-8 sm:px-6 lg:px-8"}>
-  <div class="mx-auto mb-40 max-w-2xl">
+  <div class="mx-auto pb-40 max-w-2xl">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
   </div>

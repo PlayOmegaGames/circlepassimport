@@ -4,7 +4,7 @@ defmodule QuestApiV21Web.LiveComponents.QuestCard do
   def render(assigns) do
 
     ~H"""
-    <div class={"#{@class} overflow-hidden bg-accent h-48 rounded-xl ring-1 ring-white/[0.40] mb-12 text-white"}>
+    <div class={"#{@class} overflow-hidden bg-accent h-48 rounded-xl ring-1 ring-white/[0.40] text-white"}>
       <div class="flex-col justify-center py-4 pl-4">
         <div class="flex justify-between">
           <div class="flex pt-4 -space-x-8">
@@ -23,10 +23,11 @@ defmodule QuestApiV21Web.LiveComponents.QuestCard do
         <%= if @completion_bar do %>
           <div class="pt-4 mx-auto w-3/4">
               <div class="rounded-full bg-indigo-300/[0.30]">
-            <%= @percentage %>
                 <div style={"width: #{@percentage}%;"} class="z-10 h-1 bg-gold-300"></div>
               </div>
-          </div>
+              <span class="text-xs "><%= @percentage %>%</span>
+
+            </div>
         <% else %>
         <p class="overflow-hidden px-4 pt-4 text-xs font-light"><%= @quest.description %></p>
         <% end %>

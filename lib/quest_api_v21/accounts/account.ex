@@ -148,6 +148,7 @@ defmodule QuestApiV21.Accounts.Account do
     change(account, confirmed_at: now)
   end
 
+  @spec valid_password?(any(), any()) :: boolean()
   @doc """
   Verifies the password.
 

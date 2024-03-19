@@ -100,6 +100,45 @@ defmodule QuestApiV21.Quests do
         {:ok, account_with_quests_and_badges.quests}
     end
   end
+
+  def get_earned_badges_for_quest_and_account(account_id, quest_id) do
+    # Attempt to retrieve the quest without raising an error if not found
+    quest = Repo.get(QuestApiV21.Quests.Quest, quest_id)
+
+    # Handle the case where the quest is not found gracefully
+    if quest == nil do
+      #IO.puts("Quest not found")
+      {:error, "Quest not found"}
+    end
+
+    # Attempt to retrieve the account without raising an error if not found
+    account = Repo.get(QuestApiV21.Accounts.Account, account_id)
+
+    # Handle the case where the account is not found gracefully
+    if account == nil do
+      #IO.puts("Account not found")
+      {:error, "Account not found"}
+    end
+
+    # Preload badges for the found quest and account if both exist
+    quest = Repo.preload(quest, :badges)
+    account = Repo.preload(account, :badges)
+
+    # Find shared badges by comparing the preloaded badges lists
+    shared_badges = Enum.filter(quest.badges, fn badge ->
+      Enum.any?(account.badges, &(&1.id == badge.id))
+    end)
+
+    # Count the shared badges
+    shared_badges_count = length(shared_badges)
+
+    #IO.inspect(shared_badges_count, label: "Shared Badges Count")
+
+    {:ok, shared_badges_count}
+  end
+
+
+
   @doc """
   Fetches a single quest by its ID.
 
