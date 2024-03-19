@@ -54,7 +54,7 @@ defmodule QuestApiV21.Accounts.Account do
 
   def registration_changeset(account, attrs, opts \\ []) do
     account
-    |> cast(attrs, [:password, :email])
+    |> cast(attrs, [:password, :email, :name])
     |> validate_email(opts)
     |> validate_password(opts)
 

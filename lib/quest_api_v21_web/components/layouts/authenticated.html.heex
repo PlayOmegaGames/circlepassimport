@@ -21,7 +21,7 @@
 
   <!-- Home -->
   <div class="grid grid-cols-3 justify-items-center">
-    <.link patch={"/home"} replace={true} class={" #{if @live_action == :home, do: "text-gray-900"} text-gray-800 py-2 w-14 h-14 text-xs"}>
+    <.link patch={"/home"} replace={true} class={" #{if @live_action == :home, do: "text-gray-900"} text-gray-800 py-2 w-14 h-14 transition-all ease-in-out text-xs"}>
 
       <div>
         <span class={"ml-4 w-6 h-6 hero-home#{if @live_action == :home, do: "-solid"}"}>
@@ -30,7 +30,7 @@
     </div>
     </.link>
       <!-- Quests -->
-      <.link patch={"/quests"} replace={true} class={" #{if @live_action == :quests, do: "text-gray-900"} text-gray-800 py-2 w-14 h-14 text-xs"}>
+      <.link patch={"/quests"} replace={true} class={" #{if @live_action == :quests, do: "text-gray-900"} text-gray-800 py-2 w-14 h-14 transition-all ease-in-out text-xs"}>
 
       <div>
         <svg class="ml-4 w-6 h-6" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 6484 5810">
@@ -42,7 +42,7 @@
     </.link>
   <!-- Profile -->
 
-    <.link patch={"/profile"} replace={true} class={" #{if @live_action == :profile, do: "text-gray-900"} text-gray-800 py-2 w-14 h-14 text-xs"}>
+    <.link patch={"/profile"} replace={true} class={" #{if @live_action == :profile, do: "text-gray-900"} text-gray-800 py-2 w-14 h-14 transition-all ease-in-out text-xs"}>
 
     <div>
       <span class={"ml-4 w-6 h-6 hero-user#{if @live_action == :profile, do: "-solid"}"}>

@@ -602,40 +602,64 @@ defmodule QuestApiV21.Accounts do
   def add_badge_to_account(account_id, badge_id) do
     Logger.info("Starting to add badge to account #{account_id}")
 
-    account = Repo.get!(Account, account_id) |> Repo.preload([:badges, :quests])
-    Logger.info("Fetched account and preloaded badges and quests")
+    Repo.transaction(fn ->
+      account = Repo.get!(Account, account_id) |> Repo.preload([:badges, :quests])
+      Logger.info("Fetched account and preloaded badges and quests")
 
-    if Enum.any?(account.badges, &(&1.id == badge_id)) do
-      Logger.info("Badge #{badge_id} already associated with account #{account_id}")
-      {:ok, "Badge already associated with the account"}
-    else
-      badge = Repo.get!(Badge, badge_id, preload: [:quest])
-      Logger.info("Fetched new badge to add")
-      quest_id = badge.quest_id
+      if Enum.any?(account.badges, &(&1.id == badge_id)) do
+        Logger.info("Badge #{badge_id} already associated with account #{account_id}")
+        {:error, :badge_already_associated}
+      else
+        badge = Repo.get!(Badge, badge_id, preload: [:quest])
+        Logger.info("Fetched new badge to add")
+        quest_id = badge.quest_id
 
-      updated_badges = [badge | account.badges]
-      Logger.info("Updated badges list for account")
+        updated_badges = [badge | account.badges]
+        Logger.info("Updated badges list for account")
 
-      case Repo.update(
-        Ecto.Changeset.change(account)
-        |> Ecto.Changeset.put_assoc(:badges, updated_badges)
-      ) do
-        {:ok, _account} ->
-          Logger.info("Successfully added new badge to account")
+        account = Ecto.Changeset.change(account)
+                  |> Ecto.Changeset.put_assoc(:badges, updated_badges)
+                  |> Ecto.Changeset.change(%{badges_stats: length(updated_badges)})
+                  |> Repo.update!()
 
-          # Check if the quest associated with the badge is already associated with the account
-          add_quest_to_account_if_needed(account.id, quest_id)
+        Logger.info("Successfully added new badge to account")
 
-          # It's crucial to check quest completion after adding a new badge.
-          check_quest_completion_and_create_reward(account.id, quest_id)
+        # Dynamically update quest_stats and reward_stats within the transaction
+        update_quest_stats(account, quest_id)
 
-          {:ok, "Badge added and quest completion checked"}
-
-        {:error, reason} ->
-          Logger.error("Failed to update account with new badge: #{reason}")
-          {:error, reason}
+        {:ok, "Badge added and quest completion checked"}
       end
+    end)
+    |> handle_transaction_result()
+  end
+
+  defp update_quest_stats(account, quest_id) do
+    add_quest_to_account_if_needed(account.id, quest_id)
+    |> case do
+      :ok -> increment_quests_stats(account)
+      _ -> :noop
     end
+
+    check_quest_completion_and_create_reward(account.id, quest_id)
+    |> case do
+      {:ok, _reward} -> increment_rewards_stats(account)
+      _ -> :noop
+    end
+  end
+
+
+  defp increment_rewards_stats(account) do
+    new_rewards_stats = account.rewards_stats + 1
+    Ecto.Changeset.change(account, rewards_stats: new_rewards_stats)
+    |> Repo.update!()
+  end
+
+  defp handle_transaction_result({:ok, _result}) do
+    {:ok, "Operation successfully completed"}
+  end
+
+  defp handle_transaction_result({:error, reason}) do
+    {:error, reason}
   end
 
   defp add_quest_to_account_if_needed(account_id, quest_id) do
@@ -704,7 +728,6 @@ defmodule QuestApiV21.Accounts do
 
 
 
-
   def add_quest_to_account(user_id, quest_id) do
     account = Repo.get!(Account, user_id) |> Repo.preload(:quests)
 
@@ -712,6 +735,7 @@ defmodule QuestApiV21.Accounts do
     if Enum.any?(account.quests, &(&1.id == quest_id)) do
       Logger.info("Quest #{quest_id} is already associated with account #{user_id}. Updating selected quest.")
       update_selected_quest_for_user(account.id, quest_id)
+      {:ok, :already_associated}
     else
       Logger.info("Adding new quest #{quest_id} to account #{user_id} and updating selected quest.")
       quest = Repo.get!(Quest, quest_id)
@@ -719,22 +743,41 @@ defmodule QuestApiV21.Accounts do
       updated_quests = [quest | account.quests]
 
       case Repo.transaction(fn ->
+        # Update the account with the new list of quests
         Repo.update!(
           Ecto.Changeset.change(account)
           |> Ecto.Changeset.put_assoc(:quests, updated_quests)
         )
+        # Increment quest stats
+        increment_quests_stats(account.id)
         # Now explicitly update the selected_quest_id
-        Logger.info("updating selected quests")
         update_selected_quest_for_user(account.id, quest_id)
       end) do
-        {:ok, _result} ->
-          Logger.info("Successfully added quest #{quest_id} and updated selected quest for account #{user_id}")
-          {:ok, "Quest added and selected quest updated"}
+        {:ok, _} ->
+          Logger.info("Successfully added quest #{quest_id} and updated selected quest for account #{user_id}. Quest stats incremented.")
+          {:ok, "Quest added and selected quest updated, quest stats incremented"}
 
-        {:error, _reason} ->
-          Logger.error("Failed to add quest #{quest_id} or update selected quest for account #{user_id}")
+        {:error, reason} ->
+          Logger.error("Failed to add quest #{quest_id} or update selected quest for account #{user_id}: #{inspect(reason)}")
           {:error, "Failed to add quest or update selected quest"}
       end
+    end
+  end
+
+  defp increment_quests_stats(account_id) do
+    account = Repo.get!(Account, account_id)
+    new_quests_stats = account.quests_stats + 1
+
+    Logger.info("Incrementing quest stats for account #{account_id} to #{new_quests_stats}.")
+
+    case Ecto.Changeset.change(account, quests_stats: new_quests_stats) |> Repo.update() do
+      {:ok, _account} ->
+        Logger.info("Quest stats successfully incremented for account #{account_id}.")
+        {:ok}
+
+      {:error, _changeset} ->
+        Logger.error("Failed to increment quest stats for account #{account_id}.")
+        {:error, "Failed to update quest stats"}
     end
   end
 

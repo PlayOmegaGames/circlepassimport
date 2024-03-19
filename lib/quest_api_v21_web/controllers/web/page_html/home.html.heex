@@ -86,23 +86,23 @@
         
             }
         
-resize() {
-    // Assuming a 16:9 aspect ratio
-    const aspectRatio = 16 / 9;
+            resize() {
+                // Assuming a 16:9 aspect ratio
+                const aspectRatio = 16 / 9;
 
-    // Set the canvas width to the viewport width
-    this.width = window.innerWidth;
-    // Calculate the height based on the aspect ratio
-    this.height = this.width / aspectRatio;
+                // Set the canvas width to the viewport width
+                this.width = window.innerWidth;
+                // Calculate the height based on the aspect ratio
+                this.height = this.width / aspectRatio;
 
-    // Set the canvas element's width and height attributes to the calculated values
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
+                // Set the canvas element's width and height attributes to the calculated values
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
 
-    // Optionally, if you want to explicitly set the CSS size (useful if your canvas size is controlled via CSS)
-    this.canvas.style.width = '100%'; // This makes the canvas width responsive to the screen width
-    this.canvas.style.height = `${this.height}px`; // This sets the canvas height to maintain the aspect ratio
-}
+                // Optionally, if you want to explicitly set the CSS size (useful if your canvas size is controlled via CSS)
+                this.canvas.style.width = '100%'; // This makes the canvas width responsive to the screen width
+                this.canvas.style.height = `${this.height}px`; // This sets the canvas height to maintain the aspect ratio
+            }
 
             buildTextMask(texts) {
         

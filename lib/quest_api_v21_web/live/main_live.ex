@@ -58,11 +58,11 @@ defmodule QuestApiV21Web.MainLive do
       quest_badges = Enum.filter(badges, fn badge -> badge.quest_id == quest.id end)
       total_quest_badges = Enum.count(quest.badges)
       user_quest_badges = Enum.count(quest_badges)
-
       completion_percentage = if total_quest_badges > 0, do: (user_quest_badges / total_quest_badges) * 100, else: 0
       Map.put(quest, :completion_percentage, completion_percentage)
     end)
   end
+
 
   def handle_params(params, _uri, socket) do
     tab = params["tab"] || "badges" # Default to "badges" tab if none specified
@@ -138,13 +138,14 @@ defmodule QuestApiV21Web.MainLive do
     <div class="px-2">
 
 
-      <.live_component module={QuestApiV21Web.LiveComponents.HomeNav} id="home-nav" />
+      <.live_component module={QuestApiV21Web.LiveComponents.HomeNav} active_tab={@tab} id="home-nav" />
 
       <%= case assigns.tab do %>
         <% "badges" -> %>
           <.live_component module={QuestApiV21Web.LiveComponents.BadgesLive} id="badges" badge_detail={@badge_detail} badges={@badges} show_single_badge_details={@show_single_badge_details}/>
         <% "myquests" -> %>
         <.live_component module={QuestApiV21Web.LiveComponents.MyQuestsLive} id="quests" quests={@quests}/>
+
         <% "rewards" -> %>
           <.live_component module={QuestApiV21Web.LiveComponents.RewardsLive} id="rewards" rewards={@rewards}/>
       <% end %>
@@ -154,22 +155,23 @@ defmodule QuestApiV21Web.MainLive do
 
   def quests(assigns) do
     ~H"""
-      <div class="pb-36 text-white">
+      <div class="pb-12 pb-8 text-white">
       <div class="w-full h-20 bg-gradient-to-b rounded-bl-3xl border-b-2 border-l-2 border-gold-300 from-highlight to-accent">
         <h1 class="pt-4 m-auto text-2xl w-fit">Find A Quest</h1>
       </div>
 
             <div class="px-2 pt-8">
-              <div class="flex flex-col space-y-8">
+              <div class="flex flex-col">
 
                 <%= for quest <- @available_quests do %>
 
                 <.live_component
                   module={QuestApiV21Web.LiveComponents.QuestCard}
                   id={"quests-card-#{quest.id}"}
-                  completion = {nil}
+                  completion_bar = {nil}
                   class={nil}
-                  quest= {quest} />
+                  quest= {quest}
+                  />
 
                 <% end %>
 

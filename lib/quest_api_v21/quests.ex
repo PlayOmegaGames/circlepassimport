@@ -63,6 +63,14 @@ defmodule QuestApiV21.Quests do
     OrganizationScopedQueries.scope_query(Quest, organization_ids, preloads)
   end
 
+
+  def get_badges_for_quest(quest_id) do
+    Quest
+    |> Repo.get!(quest_id)
+    |> Repo.preload(:badges)
+    |> Map.get(:badges)
+  end
+
   @doc """
   Gets a single quest.
 
@@ -87,8 +95,9 @@ defmodule QuestApiV21.Quests do
       nil ->
         {:error, :not_found}
       account ->
-        account_with_quests = Repo.preload(account, :quests)
-        {:ok, account_with_quests.quests}
+        # Preload quests and their associated badges
+        account_with_quests_and_badges = Repo.preload(account, quests: [:badges])
+        {:ok, account_with_quests_and_badges.quests}
     end
   end
   @doc """
