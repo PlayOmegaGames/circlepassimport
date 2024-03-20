@@ -184,6 +184,9 @@ defmodule QuestApiV21Web.MainLive do
 
   def profile(assigns) do
     ~H"""
+      <div>
+        <a href="/accounts/settings" class="button"><span class="hero-cog-6-tooth w-8 h-8 absolute top-0 right-0 m-4"></span></a>
+      </div>
       <div class="pt-12 pb-8">
         <div class="flex justify-center">
         <CoreComponents.avatar name={@account.name || "Nameless"} />
