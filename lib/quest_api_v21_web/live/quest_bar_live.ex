@@ -83,9 +83,12 @@ defmodule QuestApiV21Web.QuestBarLive do
       <.live_component module={QuestApiV21Web.LiveComponents.QrSuccess} id="qr-success" show={@show_qr_success} />
 
 
-    <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
-    <div class="flex justify-between py-1">
-      <div class="flex row">
+    <div phx-click="toggle_badge_details_modal"
+         phx-hook="SwipeAndIndex"
+         id="quest-bar-container"
+         class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
+    <div class="flex py-1">
+      <div class="flex row transition-all ease-in-out quest-bar-content grow z-20">
         <div class="mr-4 ml-1">
           <%= if assigns.badge.collected do %>
             <img class="object-cover w-12 h-12 ring-2 ring-highlight rounded-full" src={assigns.badge.badge_image} />
@@ -101,17 +104,8 @@ defmodule QuestApiV21Web.QuestBarLive do
       </div>
 
         <div class="flex justify-between">
-        <div class="flex justify-between">
-          <button phx-click="previous" class="m-2 border-2">
-            <span class="hero-chevron-double-left"/>
-          </button>
-
-          <button phx-click="next" class="m-2 border-2">
-            <span class="hero-chevron-double-right" />
-          </button>
-        </div>
           <div class="my-auto mr-4">
-            <button phx-click="camera" class="ring-1 p-1 ring-gray-300 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg">
+            <button phx-click="camera" class="ring-1 p-1 ring-gray-300 z-30 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg">
               <span class="hero-qr-code w-8 h-8"></span>
             </button>
           </div>
@@ -126,6 +120,7 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     """
   end
+
 
   def handle_info(%{event: "selected_quest_updated", quest_id: quest_id}, socket) do
     Logger.info("Selected quest updated to #{quest_id}")

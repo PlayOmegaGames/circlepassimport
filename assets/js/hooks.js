@@ -81,21 +81,7 @@ Hooks.FormSubmit = function(csrfToken) {
       }
     };
   };
-  //updates localstorage
-  Hooks.UpdateIndex = {
-    mounted() {
-      let index = localStorage.getItem("badgeIndex");
-      if (index !== null) {
-        this.pushEvent("initialize-index", { index: parseInt(index) });
-      }
-      // This is critical: Ensure `handleEvent` is directly within the hook object
-      this.handleEvent("update-local-storage", ({ index }) => {
-        console.log(index)
-        localStorage.setItem("badgeIndex", index.toString()); // Make sure to convert to string
-        console.log("LocalStorage updated with index:", index); // For debugging
-      });
-    }
-  };
+
   
   Hooks.ModalAnimation = {
     updated() {
@@ -169,6 +155,92 @@ Hooks.FormSubmit = function(csrfToken) {
       });
     }
   }
+  
+  Hooks.SwipeAndIndex = {
+    mounted() {
+      console.log("SwipeAndIndex hook mounted");
+      this.initializeIndex();
+      this.handlePan();
+    },
+    destroyed() {
+      if (this.hammerManager) {
+        this.hammerManager.destroy();
+      }
+    },
+    initializeIndex() {
+      let index = localStorage.getItem("badgeIndex");
+      if (index !== null) {
+        this.pushEvent("initialize-index", { index: parseInt(index, 10) });
+      }
+      // Listening for an event to update local storage, assuming you have such an event.
+      this.handleEvent("update-local-storage", ({ index }) => {
+        console.log("Updating local storage with index:", index);
+        localStorage.setItem("badgeIndex", index.toString());
+      });
+    },
+    handlePan() {
+      const el = this.el;
+      const contentContainer = this.el.querySelector('.quest-bar-content');
+      // Assume there's a data attribute on the container specifying the number of badges
+      const totalBadges = parseInt(contentContainer.dataset.totalBadges, 10);
+    
+      this.hammerManager = new Hammer.Manager(el);
+      this.hammerManager.add(new Hammer.Pan({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 1 }));
+    
+      let initialX = 0;
+      let deltaX = 0;
+    
+      this.hammerManager.on('panstart', (ev) => {
+        deltaX = 0;
+        if (totalBadges <= 1) {
+          // Early return or modify behavior for single badge case
+          initialX = 0; // Keeps the badge centered
+          return;
+        }
+    
+        // For multiple badges, continue with existing logic
+        const transformMatrix = window.getComputedStyle(contentContainer).transform;
+        if (transformMatrix !== 'none') {
+          const matrixValues = transformMatrix.split('(')[1].split(')')[0].split(',');
+          initialX = parseFloat(matrixValues[4]);
+        } else {
+          initialX = 0;
+        }
+      });
+    
+      this.hammerManager.on('panmove', (ev) => {
+        if (totalBadges <= 1) {
+          // Allow slight movement but ensure it snaps back
+          deltaX = Math.max(Math.min(ev.deltaX, 50), -50); // Restricts movement to +/- 50px
+        } else {
+          deltaX = ev.deltaX;
+        }
+        contentContainer.style.transform = `translateX(${initialX + deltaX}px)`;
+      });
+    
+      this.hammerManager.on('panend', (ev) => {
+        // Snap back logic applies to both single and multiple badge scenarios
+        contentContainer.style.transform = `translateX(${initialX}px)`;
+        if (totalBadges > 1) {
+          // Trigger next or previous only if there are multiple badges
+          if (ev.velocityX > 0.5) {
+            this.pushEvent('previous');
+          } else if (ev.velocityX < -0.5) {
+            this.pushEvent('next');
+          }
+        }
+        // Regardless of badge count, reset the initial position based on movement threshold
+        if (Math.abs(deltaX) < 100) {
+          contentContainer.style.transform = `translateX(${initialX}px)`;
+        } else {
+          initialX += deltaX;
+        }
+      });
+    }
+    
+    
+    
+  };
   
   
   
