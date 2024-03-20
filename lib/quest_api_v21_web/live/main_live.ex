@@ -44,7 +44,9 @@ defmodule QuestApiV21Web.MainLive do
         available_quests: available_quests_with_badge_count,
         future_quests: future_quests_with_badge_count,
         badge_detail: nil,
-        quests_with_completion: quests_with_completion
+        quests_with_completion: quests_with_completion,
+        show_single_badge_details: false,
+        show_reward_details: false
       )
 
     {:ok, socket}
@@ -117,6 +119,22 @@ defmodule QuestApiV21Web.MainLive do
     end
   end
 
+  def handle_event("show-reward-details", %{"id" => reward_id}, socket) do
+    reward = QuestApiV21.Rewards.get_reward!(reward_id) # Assuming this function exists to fetch reward details
+
+    {:noreply, assign(socket, reward_detail: reward, show_reward_details: true)}
+  end
+
+  def handle_event("close-popup", _, socket) do
+    {:noreply, assign(socket, show_reward_details: false)}
+  end
+
+  def handle_event("close-code-popup", _, socket) do
+    {:noreply, assign(socket, show_reward_details: false)}
+  end
+
+
+
   def render(assigns) do
     ~H"""
       <div>
@@ -160,7 +178,47 @@ defmodule QuestApiV21Web.MainLive do
             <% end %>
           </div>
         <% "rewards" -> %>
-          <.live_component module={QuestApiV21Web.LiveComponents.RewardsLive} id="rewards" rewards={@rewards}/>
+        <%= if @show_reward_details do %>
+        <.live_component module={QuestApiV21Web.LiveComponents.RedemptionCode} id={@reward_detail.id} reward={@reward_detail} />
+        <% end %>
+
+        <%= for reward <- @rewards do %>
+
+        <%= if reward.redeemed do %>
+          <div
+            phx-value-id={reward.id}
+            class={"m-8 mx-auto w-10/12 rounded-md bg-gray-700 text-white ring-2 ring-gray-500 opacity-80"}>
+
+          <div class="flex p-2">
+          <img src="/images/present.png" class="grayscale w-12 h-12 flex-shrink mr-2" />
+            <div>
+              <h1 class="font-regular text-white text-center text-sm flex truncate">
+              <%= reward.reward_name %>
+              </h1>
+                <p class="text-xs font-light truncate"><%= reward.organization.name %></p>
+            </div>
+          </div>
+            <div class="w-full bg-gray-600 text-sm rounded-b-lg text-center py-1">Claimed</div>
+            </div>
+        <% else %>
+          <div
+            phx-click="show-reward-details"
+            phx-value-id={reward.id}
+            class={"m-8 mx-auto w-10/12 rounded-md bg-accent text-white ring-2 ring-gold-300 shadow-xl shadow-white"}>
+
+          <div class="flex p-2">
+          <img src="/images/present.png" class="w-12 h-12 flex-shrink mr-2" />
+            <div>
+              <h1 class="font-regular text-white text-center text-sm flex truncate">
+              <%= reward.reward_name %>
+              </h1>
+                <p class="text-xs font-light truncate"><%= reward.organization.name %></p>
+            </div>
+          </div>
+            <div class="w-full bg-highlight text-sm rounded-b-lg text-center py-1">Claim Reward</div>
+            </div>
+          <% end %>
+        <% end %>
       <% end %>
     </div>
     """

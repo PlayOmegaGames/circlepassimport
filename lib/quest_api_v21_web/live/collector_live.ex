@@ -106,6 +106,7 @@ defmodule QuestApiV21Web.CollectorLive do
       |> assign(error: false)
       |> assign(:background_color, "bg-background-800")
       |> assign(account: current_account)
+      |> assign(qr_loading: false)
 
     {:ok, socket}
   end

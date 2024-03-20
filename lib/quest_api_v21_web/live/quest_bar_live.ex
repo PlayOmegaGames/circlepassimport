@@ -34,6 +34,8 @@ defmodule QuestApiV21Web.QuestBarLive do
       |> assign(:current_index, 0)
       |> assign(:socketid, socket.id)
       |> assign(:comp_percent, comp_percent)
+      |> assign(:qr_loading, false)
+      |> assign(:show_qr_success, false)
 
     {:ok, update_current_badge(socket)}
   end
@@ -75,11 +77,13 @@ defmodule QuestApiV21Web.QuestBarLive do
       on_cancel={:cancel_action}
       confirm={"Proceed"}
       cancel={"close-camera"}
-    />
+
+      />
+
+      <.live_component module={QuestApiV21Web.LiveComponents.QrSuccess} id="qr-success" show={@show_qr_success} />
 
 
     <div phx-click="toggle_badge_details_modal" phx-hook="UpdateIndex" id="UpdateIndex" class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
-
     <div class="flex justify-between py-1">
       <div class="flex row">
         <div class="mr-4 ml-1">
@@ -150,6 +154,7 @@ defmodule QuestApiV21Web.QuestBarLive do
       |> assign(:all_badges, marked_badges)
       |> assign(:comp_percent, comp_percent)
       |> assign(:animate_out, true)
+      |> assign(:qr_loading, false)
       |> update_current_badge()
 
 
@@ -237,17 +242,21 @@ defmodule QuestApiV21Web.QuestBarLive do
   end
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
+
     # Split the path to extract the domain and the actual path
     [domain | rest_of_path] = String.split(qr_data, "/", parts: 2)
     actual_path = Enum.join(rest_of_path, "/") # Rejoin the rest of the path
-
     # Check if the extracted domain is in the list of allowed domains
     cond do
-      domain in ["questapp.io", "4000-circlepassio-questapiv2-nqb4a6c031c.ws-us108.gitpod.io", "staging.questapp.io"] ->
+      domain in ["questapp.io", "staging.questapp.io"] ->
         # Since the domain is valid, construct the full path for redirection
         full_path = "/" <> actual_path
         Logger.info("Redirecting to: #{full_path}")
+        socket = assign(socket, :show_qr_success, true)
+
         {:noreply, push_redirect(socket, to: full_path)}
+
+
       true ->
         # Log and handle the case where the domain does not match the allowed list
         Logger.error("Invalid domain in scanned QR code: #{domain}")

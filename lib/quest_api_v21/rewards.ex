@@ -99,7 +99,9 @@ defmodule QuestApiV21.Rewards do
 
   # Function for displaying rewards on home
   def get_rewards_for_account(account_id) do
-    account_query = from(a in Account, where: a.id == ^account_id, preload: [:rewards])
+    account_query = from(a in Account,
+                         where: a.id == ^account_id,
+                         preload: [rewards: [:organization]])
 
     case Repo.one(account_query) do
       nil ->
@@ -108,6 +110,7 @@ defmodule QuestApiV21.Rewards do
         {:ok, account.rewards}
     end
   end
+
   @doc """
   Redeems a reward based on the organization ID and slug by setting its redeemed field to true.
 

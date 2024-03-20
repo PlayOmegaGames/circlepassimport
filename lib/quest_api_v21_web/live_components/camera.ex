@@ -11,16 +11,12 @@ defmodule QuestApiV21Web.LiveComponents.Camera do
       id={@id}
       class=
         {"animate__animated  inset-0 z-40 h-screen fixed w-full overflow-y-auto
-      #{if @show, do: "animate__slideInDown animate__faster", else: "animate__slideOutDown" }"}
-    >
+      #{if @show, do: "animate__slideInDown animate__faster", else: "animate__slideOutDown" }"}>
       <div id="camera" class={"#{if @show, do: "fade-in-scale", else: "hidden animate__slideOutDown"}  animate__animated w-full h-screen bg-gradient-to-b from-white to-indigo-100 text-left overflow-hidden shadow-xl transform transition-all"}>
 
-      <h3 class="my-6 w-full text-lg font-medium text-center text-gray-600" >
-        CAMERA
-      </h3>
 
       <video
-          class="mx-auto w-10/12 rounded-lg ring-2 h-10/12 max-w- ring-gold-200"
+          class="mx-auto w-10/12 rounded-lg mt-12 ring-2 h-10/12 max-w- ring-gold-200"
           id="videoElement"
           autoplay="true"
           playsInline="true"
@@ -28,7 +24,6 @@ defmodule QuestApiV21Web.LiveComponents.Camera do
           phx-hook="QrScanner">
 
         </video>
-
         <h1 class="mt-6 text-center">[ Scanning for a Quest QR code... ]</h1>
 
         <div class="flex justify-center w-full">
@@ -43,5 +38,4 @@ defmodule QuestApiV21Web.LiveComponents.Camera do
     </div>
     """
   end
-
 end
