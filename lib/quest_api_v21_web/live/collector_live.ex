@@ -41,6 +41,7 @@ defmodule QuestApiV21Web.CollectorLive do
                |> assign(:badges_left, badges_left)
                |> assign(:total_badges_in_quest, total_badges_in_quest)}
 
+
             {:error, reason} ->
               log_error("Failed to add badge to account: #{reason}")
               {:noreply, assign(socket, :error, true)}
@@ -107,6 +108,7 @@ defmodule QuestApiV21Web.CollectorLive do
       |> assign(:background_color, "bg-background-800")
       |> assign(account: current_account)
       |> assign(qr_loading: false)
+      |> assign(collector: true)
 
     {:ok, socket}
   end
@@ -120,8 +122,15 @@ defmodule QuestApiV21Web.CollectorLive do
       <.live_component module={QuestApiV21Web.BadgeDisplayComponent} id="collected-badge-details"
           badge={@badge} quest={@quest} error={@error} />
       <%= unless @error do %>
-        <p class="text-gold-100 mt-2 text-center"><%= @badges_left %> more left in the quest!</p>
+        <p class="text-gold-100 mt-2 text-center ml-1">
+          <%= if @badges_left > 0 do %>
+            <%= @badges_left %> more left in the quest!
+          <% else %>
+            You completed the quest!
+          <% end %>
+          </p>
       <% end %>
+      <.live_component module={QuestApiV21Web.LiveComponents.CollectorBar} badge={@badge} badges_left={@badges_left} id="collector-bar"/>
     </div>
   """
   end

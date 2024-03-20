@@ -181,63 +181,52 @@ Hooks.FormSubmit = function(csrfToken) {
     handlePan() {
       const el = this.el;
       const contentContainer = this.el.querySelector('.quest-bar-content');
-      // Assume there's a data attribute on the container specifying the number of badges
-      const totalBadges = parseInt(contentContainer.dataset.totalBadges, 10);
-    
       this.hammerManager = new Hammer.Manager(el);
+    
       this.hammerManager.add(new Hammer.Pan({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 1 }));
     
+      // Track the initial position of the content container
       let initialX = 0;
-      let deltaX = 0;
+      let deltaX = 0; // The change in X since the start of the pan
     
       this.hammerManager.on('panstart', (ev) => {
+        // Reset deltaX at the start of a pan
         deltaX = 0;
-        if (totalBadges <= 1) {
-          // Early return or modify behavior for single badge case
-          initialX = 0; // Keeps the badge centered
-          return;
-        }
-    
-        // For multiple badges, continue with existing logic
+        // Optionally, parse the current transform to get the initial X if you're maintaining the position between pans
         const transformMatrix = window.getComputedStyle(contentContainer).transform;
         if (transformMatrix !== 'none') {
           const matrixValues = transformMatrix.split('(')[1].split(')')[0].split(',');
-          initialX = parseFloat(matrixValues[4]);
+          initialX = parseFloat(matrixValues[4]); // 4th index in matrix is translateX value
         } else {
           initialX = 0;
         }
       });
     
       this.hammerManager.on('panmove', (ev) => {
-        if (totalBadges <= 1) {
-          // Allow slight movement but ensure it snaps back
-          deltaX = Math.max(Math.min(ev.deltaX, 50), -50); // Restricts movement to +/- 50px
-        } else {
-          deltaX = ev.deltaX;
-        }
+        deltaX = ev.deltaX;
+        // Apply the ongoing pan translation to the container
         contentContainer.style.transform = `translateX(${initialX + deltaX}px)`;
       });
     
       this.hammerManager.on('panend', (ev) => {
-        // Snap back logic applies to both single and multiple badge scenarios
-        contentContainer.style.transform = `translateX(${initialX}px)`;
-        if (totalBadges > 1) {
-          // Trigger next or previous only if there are multiple badges
-          if (ev.velocityX > 0.5) {
-            this.pushEvent('previous');
-          } else if (ev.velocityX < -0.5) {
-            this.pushEvent('next');
-          }
+        // Now, panend only decides if we trigger next or previous, but does not move the content itself
+        if (ev.velocityX > 0.5) {
+          this.pushEvent('previous');
+        } else if (ev.velocityX < -0.5) {
+          this.pushEvent('next');
         }
-        // Regardless of badge count, reset the initial position based on movement threshold
-        if (Math.abs(deltaX) < 100) {
+        // You could use deltaX to determine if we've moved enough to consider this a next/previous action
+        // and reset to initial position if not.
+        // Reset the initial position to where we left off, or snap back based on deltaX
+        if (Math.abs(deltaX) < 100) { // Example threshold, adjust based on your needs
+          // Snap back if the movement wasn't enough to trigger a next/previous
           contentContainer.style.transform = `translateX(${initialX}px)`;
         } else {
+          // Update initialX to new position, or handle snapping to next/previous badge
           initialX += deltaX;
         }
       });
     }
-    
     
     
   };

@@ -6,10 +6,14 @@
     <img src="/images/haunted.png" />
   <% end %>
 
-  <%= if @current_account.selected_quest_id do %>
+<%= if @current_account.selected_quest_id != nil and @collector == false do %>
     <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar") %>
-  <%  else %>
-    <%= live_render(@socket, QuestApiV21Web.NoQuest, id: "no-quest") %>
+  <% else  %>
+    <%= if @collector == true do %>
+
+    <% else  %>
+      <%= live_render(@socket, QuestApiV21Web.NoQuest, id: "no-quest") %>
+  <% end %>
 
   <% end %> 
 

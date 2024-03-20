@@ -46,7 +46,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
           </div>
 
           <div class="mt-6 mb-4">
-            <h1 class="text-xs font-thin uppercase">Reward</h1>
+            <h1 class="text-xs font-thin uppercase">Quest Reward</h1>
             <h1 class="font-bold"><%= @quest.reward %></h1>
           </div>
 
