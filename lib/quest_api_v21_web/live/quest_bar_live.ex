@@ -103,10 +103,6 @@ defmodule QuestApiV21Web.QuestBarLive do
             <p class="truncate text-xs font-light" ><%= assigns.quest.name %> </p>
           </div>
         </div>
-        <div class="my-auto text-gray-400 z-10 mr-4">
-          <span class="hero-chevron-double-left mr-4 w-6 h-6"></span>
-          <span class="hero-chevron-double-right w-6 h-6"></span>
-        </div>
       </div>
 
 
