@@ -88,7 +88,11 @@ defmodule QuestApiV21Web.QuestBarLive do
          id="quest-bar-container"
          class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
     <div class="flex py-1">
-      <div class="flex justify-between row transition-all ease-in-out quest-bar-content grow z-20">
+
+      <div class="flex row transition-all ease-in-out quest-bar-content grow z-20">
+
+      <span class="hero-chevron-double-left text-gray-400/50 my-auto w-6 h-6"></span>
+
         <div class="flex">
           <div class="mr-4 ml-1">
             <%= if assigns.badge.collected do %>
@@ -104,8 +108,7 @@ defmodule QuestApiV21Web.QuestBarLive do
           </div>
         </div>
         <div class="my-auto text-gray-400 z-10 mr-4">
-          <span class="hero-chevron-double-left mr-4 w-6 h-6"></span>
-          <span class="hero-chevron-double-right w-6 h-6"></span>
+        <span class="hero-chevron-double-right text-gray-400/50 my-auto w-6 h-6"></span>
         </div>
       </div>
 
@@ -114,7 +117,7 @@ defmodule QuestApiV21Web.QuestBarLive do
 
 
         <div class="my-auto mr-4 z-20">
-            <button phx-click="camera" class="ring-1 p-1 ring-gray-300 z-30 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg">
+            <button phx-click="camera" class="ring-1 p-1 ring-gray-400 z-30 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg">
               <span class="hero-qr-code w-8 h-8"></span>
             </button>
           </div>
@@ -123,7 +126,8 @@ defmodule QuestApiV21Web.QuestBarLive do
       </div>
 
         <div class="h-1 bg-gold-300" style={"width:#{@comp_percent}%"} ></div>
-      </div>
+
+        </div>
 
     </div>
 

@@ -7,7 +7,7 @@ defmodule QuestApiV21Web.AccountSettingsLive do
   def render(assigns) do
     ~H"""
     <div class="ml-4 mr-4 scroll-mb-4 pb-60">
-      
+
 
       <.header class="text-center">
         Account Settings
@@ -43,7 +43,9 @@ defmodule QuestApiV21Web.AccountSettingsLive do
               required
             />
             <:actions>
+
               <.button phx-disable-with="Changing...">Change Email</.button>
+
             </:actions>
           </.simple_form>
         </div>
@@ -117,6 +119,8 @@ defmodule QuestApiV21Web.AccountSettingsLive do
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
+      |> assign(:background_color, "bg-gradient-to-t from-violet-300 to-violet-100")
+
 
     {:ok, socket}
   end
