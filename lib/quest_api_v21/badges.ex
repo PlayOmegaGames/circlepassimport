@@ -55,6 +55,25 @@ defmodule QuestApiV21.Badges do
   """
   def get_badge!(id), do: Repo.get!(Badge, id)
 
+  @doc """
+  Gets a single badge and preloads its associated quest.
+
+  Raises `Ecto.NoResultsError` if the badge does not exist.
+
+  ## Examples
+
+      iex> get_badge_with_quest!(123)
+      %Badge{}
+
+      iex> get_badge_with_quest!(456)
+      ** (Ecto.NoResultsError)
+  """
+  def get_badge_with_quest!(badge_id) do
+    Repo.get!(Badge, badge_id)
+    |> Repo.preload(:quest)
+  end
+
+
   def list_badges_by_organization_id(organization_id) do
     preloads = [:organization, :accounts]
     OrganizationScopedQueries.scope_query(Badge, organization_id, preloads)

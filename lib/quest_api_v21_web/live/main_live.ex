@@ -98,7 +98,7 @@ defmodule QuestApiV21Web.MainLive do
   end
 
   def handle_event("show_single_badge_details", %{"id" => badge_id}, socket) do
-    badge_detail = Badges.get_badge!(badge_id) # Fetch the badge details based on the ID
+    badge_detail = Badges.get_badge_with_quest!(badge_id) # Fetch the badge details based on the ID
     {:noreply, assign(socket, badge_detail: badge_detail, show_single_badge_details: true)}
   end
 
@@ -201,10 +201,12 @@ defmodule QuestApiV21Web.MainLive do
             <div class="w-full bg-gray-600 text-sm rounded-b-lg text-center py-1">Claimed</div>
             </div>
         <% else %>
+        <p class="text-xs font-light ml-8 mb-1 truncate"><%= reward.quest.name %></p>
+
           <div
             phx-click="show-reward-details"
             phx-value-id={reward.id}
-            class={"m-8 mx-auto w-10/12 rounded-md bg-accent text-white ring-2 ring-gold-300 shadow-xl shadow-white"}>
+            class={"mx-8 mb-8 mx-auto w-10/12 rounded-md bg-accent text-white ring-2 ring-gold-300 shadow-xl shadow-white"}>
 
           <div class="flex p-2">
           <img src="/images/present.png" class="w-12 h-12 flex-shrink mr-2" />

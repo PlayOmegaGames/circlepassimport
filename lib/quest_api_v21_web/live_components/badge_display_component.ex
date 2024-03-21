@@ -20,9 +20,14 @@ defmodule QuestApiV21Web.BadgeDisplayComponent do
 
         <div class="w-3/4 mx-auto mt-6 ring-1 flex justify-between ring-slate-700 p-2 truncate rounded-lg">
           <%= if @quest do %>
-            <div>
+            <div class="text-sm my-auto">
               <p><span class="font-thin mr-2">Quest:</span><%= @quest.name %></p>
               <p><span class="font-thin mr-2">Reward:</span><%= @quest.reward %></p>
+            </div>
+          <% else %>
+            <div class="text-sm my-auto">
+              <p><span class="font-thin truncate mr-2">Quest:</span><%= @badge.quest.name %></p>
+              <p><span class="font-thin truncate mr-2">Reward:</span><%= @badge.quest.reward %></p>
             </div>
           <% end %>
 

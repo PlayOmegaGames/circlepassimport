@@ -183,7 +183,7 @@ Hooks.FormSubmit = function(csrfToken) {
       const contentContainer = this.el.querySelector('.quest-bar-content');
       this.hammerManager = new Hammer.Manager(el);
     
-      this.hammerManager.add(new Hammer.Pan({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 1 }));
+      this.hammerManager.add(new Hammer.Pan({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 0.5 }));
     
       // Track the initial position of the content container
       let initialX = 0;
@@ -210,9 +210,9 @@ Hooks.FormSubmit = function(csrfToken) {
     
       this.hammerManager.on('panend', (ev) => {
         // Now, panend only decides if we trigger next or previous, but does not move the content itself
-        if (ev.velocityX > 0.5) {
+        if (ev.velocityX > 0.3) {
           this.pushEvent('previous');
-        } else if (ev.velocityX < -0.5) {
+        } else if (ev.velocityX < -0.3) {
           this.pushEvent('next');
         }
         // You could use deltaX to determine if we've moved enough to consider this a next/previous action
