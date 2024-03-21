@@ -35,7 +35,7 @@ defmodule QuestApiV21Web.AccountResetPasswordLive do
         | <.link href={~p"/accounts/log_in"}>Log in</.link>
       </p>
     </div>
-    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle.svg" alt="Footer" />
+    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle-cropped.svg" alt="Footer" />
     """
   end
 

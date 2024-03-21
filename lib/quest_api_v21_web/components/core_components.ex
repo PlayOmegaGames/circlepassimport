@@ -1004,6 +1004,26 @@ defmodule QuestApiV21Web.CoreComponents do
     """
   end
 
+  attr :name, :string, required: true
+  attr :class, :string, default: nil
+
+  def small_avatar(assigns) do
+    initialsList = String.split(assigns.name)
+    assigns = assign(assigns, :initialsList, initialsList)
+
+    ~H"""
+    <div
+      class="inline-flex justify-center w-24 h-24 font-sans text-2.5xl text-gray-800 rounded-full ring-2 shadow-600 bg-background-100 ring-gold-300"
+    >
+      <div class="my-auto">
+      <%= for name <- @initialsList do %>
+        <%= String.first(name) %>
+      <% end %>
+    </div>
+    </div>
+    """
+  end
+
   attr :buttonTitle, :string, required: true
   attr :contentID, :string, required: true
   slot :inner_block, required: true
