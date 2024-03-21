@@ -86,7 +86,16 @@ defmodule QuestApiV21Web.AccountSettingsLive do
           </.simple_form>
         </div>
         <div class="my-8 mb-4 scroll-mb-4 flex flex-col items-center justify-center">
-        <button phx-click="sign_out" class="my-8 px-4 py-2 bg-red-500 text-white rounded items-center">Sign Out</button>
+            <form action="/accounts/sign_out" method="post">
+            <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+            <input type="hidden" name="_method" value="delete" />
+            <button
+              type="submit"
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Sign Out
+            </button>
+          </form>
         </div>
       </div>
     </div>

@@ -45,14 +45,20 @@ config :ueberauth, Ueberauth,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :quest_api_v21, QuestApiV21.Mailer, adapter: Swoosh.Adapters.Local
-
 config :ex_aws,
   access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],
   secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role]
 
+config :quest_api_v21, QuestApiV21.Mailer,
+  adapter: Swoosh.Adapters.AmazonSES,
+  region: "us-east-1",
+  access_key: System.get_env("AWS_ACCESS_KEY_ID"),
+  secret: System.get_env("AWS_SECRET_ACCESS_KEY")
+
+
+
 config :swoosh, :mailers, %{
-  default: {Swoosh.Adapters.AWSSES, []}
+  default: {Swoosh.Adapters.AmazonSES, []}
 }
 
 # Configure esbuild (the version is required)

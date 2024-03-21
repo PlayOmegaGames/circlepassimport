@@ -8,7 +8,7 @@ defmodule QuestApiV21.Accounts.AccountNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"QuestApiV21", "contact@example.com"})
+      |> from({"Quest", "support@staging.questapp.io"})
       |> subject(subject)
       |> text_body(body)
 

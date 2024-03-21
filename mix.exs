@@ -65,6 +65,7 @@ defmodule QuestApiV21.MixProject do
       {:mail, ">= 0.0.0"},
       {:httpoison, "~> 2.0"},
       {:heroicons_liveview, "~> 0.3.0"},
+      {:gen_smtp, "~> 1.0"},
       {:slugy, "~> 4.1"}
     ]
   end
