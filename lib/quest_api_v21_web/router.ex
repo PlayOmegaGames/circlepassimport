@@ -200,7 +200,7 @@ defmodule QuestApiV21Web.Router do
 
     live_session :redirect_if_superadmin_is_authenticated,
       on_mount: [{QuestApiV21Web.SuperadminAuth, :redirect_if_superadmin_is_authenticated}] do
-      live "/superadmin/register", SuperadminRegistrationLive, :new
+      #live "/superadmin/register", SuperadminRegistrationLive, :new
       live "/superadmin/log_in", SuperadminLoginLive, :new
       live "/superadmin/reset_password", SuperadminForgotPasswordLive, :new
       live "/superadmin/reset_password/:token", SuperadminResetPasswordLive, :edit
