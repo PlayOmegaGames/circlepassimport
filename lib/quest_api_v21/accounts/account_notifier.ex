@@ -8,7 +8,7 @@ defmodule QuestApiV21.Accounts.AccountNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Quest", "support@staging.questapp.io"})
+      |> from({"Quest", "support@questapp.io"})
       |> subject(subject)
       |> text_body(body)
 
@@ -23,7 +23,7 @@ defmodule QuestApiV21.Accounts.AccountNotifier do
   def deliver_confirmation_instructions(account, url) do
     deliver(account.email, "Confirmation instructions", """
 
-    
+
     ==============================
 
     Hi #{account.email},

@@ -56,11 +56,7 @@ defmodule QuestApiV21Web.SuperadminRegistrationLive do
   def handle_event("save", %{"superadmin" => superadmin_params}, socket) do
     case Admin.register_superadmin(superadmin_params) do
       {:ok, superadmin} ->
-        {:ok, _} =
-          Admin.deliver_superadmin_confirmation_instructions(
-            superadmin,
-            &url(~p"/superadmin/confirm/#{&1}")
-          )
+
 
         changeset = Admin.change_superadmin_registration(superadmin)
         {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
