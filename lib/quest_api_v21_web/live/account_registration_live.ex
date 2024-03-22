@@ -66,11 +66,11 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
       {:ok, account} ->
         # This block is executed when the user is successfully registered.
         # Deliver account confirmation instructions via email or other means.
-        {:ok, _} =
-          Accounts.deliver_account_confirmation_instructions(
-            account,
-            &url(~p"/accounts/confirm/#{&1}")
-         )
+        #{:ok, _} =
+        #  Accounts.deliver_account_confirmation_instructions(
+        #    account,
+        #    &url(~p"/accounts/confirm/#{&1}")
+         #)
 
         # Prepare a new changeset for the registered account, typically for updating UI or redirecting.
         changeset = Accounts.change_account_registration(account)
