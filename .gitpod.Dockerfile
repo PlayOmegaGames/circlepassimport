@@ -6,9 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Git, Inotify-tools, Fish, ImageMagick, and other dependencies
 RUN apt-get update && \
-    apt-get install -y git inotify-tools tzdata fish curl zip imagemagick && \
+    apt-get install -y git inotify-tools tzdata fish curl zip imagemagick build-essential && \
     ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt-get clean
-
-
