@@ -26,7 +26,7 @@ defmodule QuestApiV21Web.QrGenerator do
   defp unique_identifier(url), do: "#{url}-#{:erlang.unique_integer([:positive])}"
 
   def request_qrcode(url) do
-    api_url = "https://qrcode-monkey.p.rapidapi.com/qr/custom"
+    api_url = "https://api.qrcode-monkey.com//qr/custom"
 
     headers = [
       {"Content-Type", "application/json"},

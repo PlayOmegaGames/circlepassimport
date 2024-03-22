@@ -2,7 +2,7 @@ defmodule QuestApiV21.Repo.Migrations.TransactionsToTransactions do
   use Ecto.Migration
 
   def change do
-    rename table("transactions"), to: table("transactions")
+    rename table("scans"), to: table("transactions")
 
     alter table("transactions") do
       add :quest_id, references(:quests, type: :binary_id)
