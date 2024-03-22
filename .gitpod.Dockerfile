@@ -11,17 +11,4 @@ RUN apt-get update && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt-get clean
 
-# Download and install Node.js from pre-built binaries
-RUN curl -fsSL https://nodejs.org/dist/v18.17.1/node-v18.17.1-linux-x64.tar.gz | tar -xz -C /usr/local --strip-components=1 && \
-    ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-# Add Node.js to the PATH (This might be redundant as it's already in /usr/local/bin which is typically in the PATH)
-ENV PATH="/usr/local/bin:${PATH}"
-
-# Verify Node.js and npm installations
-RUN node --version && npm --version
-
-WORKDIR /app/assets
-RUN npm install -g npm@10.4.0
-RUN npm install && npm run deploy
 
