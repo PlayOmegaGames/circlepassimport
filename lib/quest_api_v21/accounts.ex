@@ -380,11 +380,7 @@ defmodule QuestApiV21.Accounts do
 
   """
   def create_account(attrs \\ %{}) do
-    email =
-      case Map.fetch(attrs, "email") do
-        {:ok, email} -> email
-        :error -> Map.get(attrs, :email)
-      end
+    email = Map.get(attrs, :email) # Use atom key directly
 
     Logger.debug("create_account called with attrs: #{inspect(attrs)}")
 
@@ -395,7 +391,7 @@ defmodule QuestApiV21.Accounts do
         )
 
         updated_attrs =
-          if Map.get(attrs, "is_passwordless", false) do
+          if Map.get(attrs, :is_passwordless, false) do
             # Skip password hashing for passwordless accounts
             attrs
           else
@@ -412,6 +408,7 @@ defmodule QuestApiV21.Accounts do
         {:error, :email_taken}
     end
   end
+
 
   defp put_password_hash(%{"password" => password} = attrs) do
     Map.put(attrs, "hashed_password", Bcrypt.hash_pwd_salt(password))
@@ -512,7 +509,11 @@ defmodule QuestApiV21.Accounts do
     }
 
     Logger.debug("Attributes for OAuth account creation: #{inspect(user_attrs)}")
-    create_account(user_attrs)
+
+    case create_account(user_attrs) do
+      {:ok, account} -> {:ok, account, :new}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
 

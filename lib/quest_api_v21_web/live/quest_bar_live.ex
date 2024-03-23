@@ -84,12 +84,12 @@ defmodule QuestApiV21Web.QuestBarLive do
 
 
     <div phx-click="toggle_badge_details_modal"
-         phx-hook="SwipeAndIndex"
          id="quest-bar-container"
          class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
     <div class="flex py-1">
 
       <div class="flex row transition-all ease-in-out quest-bar-content grow z-20">
+      <span phx-click="next" class="hero-chevron-double-left text-gray-400/50 px-2 my-auto w-6 h-6"></span>
 
         <div class="flex">
           <div class="mr-4 ml-1">
@@ -106,6 +106,7 @@ defmodule QuestApiV21Web.QuestBarLive do
           </div>
         </div>
         <div class="my-auto text-gray-400 z-10 mr-4">
+          <span phx-click="next" class="hero-chevron-double-right text-gray-400/50 px-2 my-auto w-6 h-6"></span>
         </div>
       </div>
 
@@ -119,7 +120,6 @@ defmodule QuestApiV21Web.QuestBarLive do
             </button>
           </div>
         </div>
-
       </div>
 
         <div class="h-1 bg-gold-300" style={"width:#{@comp_percent}%"} ></div>
