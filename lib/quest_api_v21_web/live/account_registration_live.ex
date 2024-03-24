@@ -69,8 +69,8 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
         {:ok, _} =
           Accounts.deliver_account_confirmation_instructions(
             account,
-            &url(~p"/accounts/confirm/#{&1}")
-         )
+            fn token -> "https://questapp.io/accounts/confirm/#{token}" end
+            )
 
         # Prepare a new changeset for the registered account, typically for updating UI or redirecting.
         changeset = Accounts.change_account_registration(account)
