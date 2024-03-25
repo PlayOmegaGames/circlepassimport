@@ -75,7 +75,7 @@ if config_env() == :prod do
       secret: secret_key
 
     # Ensure the Swoosh API client is configured for your choice of HTTP client, if necessary
-    config :swoosh, :api_client, Swoosh.ApiClient.Finch
+    #config :swoosh, :api_client, Swoosh.ApiClient.Finch
 
 
   # ## SSL Support
