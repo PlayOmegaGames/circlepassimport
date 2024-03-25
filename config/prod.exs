@@ -34,7 +34,20 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Configures Swoosh API Client
-config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: QuestApiV21.Finch
+config :swoosh, :mailers, %{
+  default: {Swoosh.Adapters.AmazonSES, []}
+}
+
+
+config :quest_api_v21, QuestApiV21.Mailer,
+  adapter: Swoosh.Adapters.AmazonSES,
+  region: "us-east-1",
+  access_key: System.get_env("AWS_ACCESS_KEY_ID"),
+  secret: System.get_env("AWS_SECRET_ACCESS_KEY")
+
+
+
+
 
 # Disable Swoosh Local Memory Storage
 config :swoosh, local: false
