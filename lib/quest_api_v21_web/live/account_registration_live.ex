@@ -72,6 +72,7 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
             fn token -> "https://questapp.io/accounts/confirm/#{token}" end
             )
 
+
         # Prepare a new changeset for the registered account, typically for updating UI or redirecting.
         changeset = Accounts.change_account_registration(account)
         # Update the socket to trigger the form submission process and assign the updated form changeset.
