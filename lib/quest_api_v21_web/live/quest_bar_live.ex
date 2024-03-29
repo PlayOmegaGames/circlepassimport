@@ -84,14 +84,12 @@ defmodule QuestApiV21Web.QuestBarLive do
 
 
     <div phx-click="toggle_badge_details_modal"
-         phx-hook="SwipeAndIndex"
          id="quest-bar-container"
          class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
     <div class="flex py-1">
 
       <div class="flex row transition-all ease-in-out quest-bar-content grow z-20">
-
-      <span class="hero-chevron-double-left text-gray-400/50 my-auto w-6 h-6"></span>
+      <span phx-click="next" class="hero-chevron-double-left text-gray-400/50 px-2 my-auto w-6 h-6"></span>
 
         <div class="flex">
           <div class="mr-4 ml-1">
@@ -108,7 +106,7 @@ defmodule QuestApiV21Web.QuestBarLive do
           </div>
         </div>
         <div class="my-auto text-gray-400 z-10 mr-4">
-        <span class="hero-chevron-double-right text-gray-400/50 my-auto w-6 h-6"></span>
+          <span phx-click="next" class="hero-chevron-double-right text-gray-400/50 px-2 my-auto w-6 h-6"></span>
         </div>
       </div>
 
@@ -122,7 +120,6 @@ defmodule QuestApiV21Web.QuestBarLive do
             </button>
           </div>
         </div>
-
       </div>
 
         <div class="h-1 bg-gold-300" style={"width:#{@comp_percent}%"} ></div>
@@ -250,24 +247,22 @@ defmodule QuestApiV21Web.QuestBarLive do
   end
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
+    # Parse the QR data as a URL
+    uri = URI.parse(qr_data)
 
-    # Split the path to extract the domain and the actual path
-    [domain | rest_of_path] = String.split(qr_data, "/", parts: 2)
-    actual_path = Enum.join(rest_of_path, "/") # Rejoin the rest of the path
-    # Check if the extracted domain is in the list of allowed domains
+    # Check if the parsed URL's host is in the list of allowed domains
     cond do
-      domain in ["questapp.io", "staging.questapp.io"] ->
-        # Since the domain is valid, construct the full path for redirection
-        full_path = "/" <> actual_path
+      uri.host in ["questapp.io", "staging.questapp.io"] ->
+        # Since the domain is valid, reconstruct the path for redirection
+        full_path = uri.path
         Logger.info("Redirecting to: #{full_path}")
         socket = assign(socket, :show_qr_success, true)
 
         {:noreply, push_redirect(socket, to: full_path)}
 
-
       true ->
         # Log and handle the case where the domain does not match the allowed list
-        Logger.error("Invalid domain in scanned QR code: #{domain}")
+        Logger.error("Invalid domain in scanned QR code: #{uri.host}")
         {:noreply, socket}
     end
   end

@@ -43,20 +43,27 @@ defmodule QuestApiV21Web.NoQuest do
     {:noreply, assign(socket, :show_camera, false)}
   end
 
-  def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
-    [domain | rest_of_path] = String.split(qr_data, "/", parts: 2)
-    actual_path = Enum.join(rest_of_path, "/")
 
+  def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
+    # Parse the QR data as a URL
+    uri = URI.parse(qr_data)
+
+    # Check if the parsed URL's host is in the list of allowed domains
     cond do
-      domain in ["questapp.io", "4000-circlepassio-questapiv2-nqb4a6c031c.ws-us108.gitpod.io", "staging.questapp.io"] ->
-        full_path = "/" <> actual_path
+      uri.host in ["questapp.io", "staging.questapp.io"] ->
+        # Since the domain is valid, reconstruct the path for redirection
+        full_path = uri.path
         Logger.info("Redirecting to: #{full_path}")
+        socket = assign(socket, :show_qr_success, true)
+
         {:noreply, push_redirect(socket, to: full_path)}
+
       true ->
-        Logger.error("Invalid domain in scanned QR code: #{domain}")
+        # Log and handle the case where the domain does not match the allowed list
+        Logger.error("Invalid domain in scanned QR code: #{uri.host}")
         {:noreply, socket}
     end
   end
 
-  # Implement additional handlers for :confirm_action and :cancel_action if needed.
+
 end

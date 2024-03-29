@@ -28,24 +28,22 @@ defmodule QuestApiV21Web.OauthController do
   defp handle_user_auth(conn, %{email: email, name: name}) do
     case Accounts.handle_oauth_login(email, name) do
       {:ok, account, :new} ->
-        # Handle the case where a new account is created
         AccountAuth.log_in_account(conn, account)
         |> put_flash(:info, "Successfully signed up and logged in.")
         |> redirect(to: "/home")
 
       {:ok, account, :existing} ->
-        # Handle the case where an existing account is found
         AccountAuth.log_in_account(conn, account)
         |> put_flash(:info, "Successfully logged in.")
         |> redirect(to: "/home")
 
       {:error, _reason} ->
-        # Handle any errors that occur during account creation or retrieval
         conn
         |> put_flash(:error, "Account creation or retrieval failed.")
         |> redirect(to: "/accounts/register")
     end
   end
+
 
 
   def request(_conn, _params) do

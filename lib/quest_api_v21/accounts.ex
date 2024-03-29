@@ -8,6 +8,7 @@ defmodule QuestApiV21.Accounts do
   alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Rewards
+  alias QuestApiV21.Rewards.Reward
   alias QuestApiV21.Accounts.{Account, AccountToken, AccountNotifier}
   alias Bcrypt
   require Logger
@@ -380,11 +381,7 @@ defmodule QuestApiV21.Accounts do
 
   """
   def create_account(attrs \\ %{}) do
-    email =
-      case Map.fetch(attrs, "email") do
-        {:ok, email} -> email
-        :error -> Map.get(attrs, :email)
-      end
+    email = Map.get(attrs, :email) # Use atom key directly
 
     Logger.debug("create_account called with attrs: #{inspect(attrs)}")
 
@@ -395,7 +392,7 @@ defmodule QuestApiV21.Accounts do
         )
 
         updated_attrs =
-          if Map.get(attrs, "is_passwordless", false) do
+          if Map.get(attrs, :is_passwordless, false) do
             # Skip password hashing for passwordless accounts
             attrs
           else
@@ -412,6 +409,7 @@ defmodule QuestApiV21.Accounts do
         {:error, :email_taken}
     end
   end
+
 
   defp put_password_hash(%{"password" => password} = attrs) do
     Map.put(attrs, "hashed_password", Bcrypt.hash_pwd_salt(password))
@@ -512,7 +510,11 @@ defmodule QuestApiV21.Accounts do
     }
 
     Logger.debug("Attributes for OAuth account creation: #{inspect(user_attrs)}")
-    create_account(user_attrs)
+
+    case create_account(user_attrs) do
+      {:ok, account} -> {:ok, account, :new}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
 
@@ -600,57 +602,82 @@ defmodule QuestApiV21.Accounts do
   # In QuestApiV21.Accounts context
 
   def add_badge_to_account(account_id, badge_id) do
+    # Log the initiation of the badge addition process for an account
     Logger.info("Starting to add badge to account #{account_id}")
 
+    # Start a database transaction to ensure all or none of the operations are completed
     Repo.transaction(fn ->
+      # Fetch the account by ID and preload its badges and quests for later checks and updates
       account = Repo.get!(Account, account_id) |> Repo.preload([:badges, :quests])
       Logger.info("Fetched account and preloaded badges and quests")
 
+      # Check if the badge is already associated with the account to prevent duplicates
       if Enum.any?(account.badges, &(&1.id == badge_id)) do
         Logger.info("Badge #{badge_id} already associated with account #{account_id}")
         {:error, :badge_already_associated}
       else
+        # If not already associated, fetch the badge to be added, including its associated quest
         badge = Repo.get!(Badge, badge_id, preload: [:quest])
         Logger.info("Fetched new badge to add")
+        # Extract the quest ID from the badge for later use
         quest_id = badge.quest_id
 
+        # Add the new badge to the account's list of badges
         updated_badges = [badge | account.badges]
         Logger.info("Updated badges list for account")
 
+        # Update the account with the new badges list and update the badges stats (count)
         account = Ecto.Changeset.change(account)
                   |> Ecto.Changeset.put_assoc(:badges, updated_badges)
                   |> Ecto.Changeset.change(%{badges_stats: length(updated_badges)})
                   |> Repo.update!()
-
         Logger.info("Successfully added new badge to account")
 
-        # Dynamically update quest_stats and reward_stats within the transaction
+        # After adding the badge, check if any quests are completed and update quest stats and potentially reward stats
+        # This operation is also part of the transaction, ensuring consistency
         update_quest_stats(account, quest_id)
 
+        # Return a success message indicating the badge was added and any related quest completion was checked
         {:ok, "Badge added and quest completion checked"}
       end
     end)
+    # Handle the result of the transaction, logging success or error accordingly
     |> handle_transaction_result()
   end
 
+  # Private function to update quest stats and handle reward generation for an account and quest
   defp update_quest_stats(account, quest_id) do
+    # Attempt to add the quest to the account if it's not already associated.
+    # This could be part of ensuring that the quest is tracked once a related badge is added.
     add_quest_to_account_if_needed(account.id, quest_id)
     |> case do
+      # If the quest was successfully added or already exists, increment the account's quest stats.
+      # This likely increases a counter of quests that the account is participating in or has completed.
       :ok -> increment_quests_stats(account)
+      # If adding the quest was not necessary (e.g., already associated), do nothing (:noop).
       _ -> :noop
     end
 
+    # Check if the addition of a badge has completed the quest and, if so, create a reward.
     check_quest_completion_and_create_reward(account.id, quest_id)
     |> case do
+      # If a reward was successfully created (indicating the quest was completed), increment the rewards stats.
+      # This adjusts a counter indicating how many rewards the account has received.
       {:ok, _reward} -> increment_rewards_stats(account)
+      # If no reward was created (quest not completed or other failure), do nothing (:noop).
       _ -> :noop
     end
   end
 
 
+
   defp increment_rewards_stats(account) do
-    new_rewards_stats = account.rewards_stats + 1
-    Ecto.Changeset.change(account, rewards_stats: new_rewards_stats)
+    # Query the count of rewards associated with the account
+    rewards_count = Repo.aggregate(from(r in Reward, where: r.account_id == ^account.id), :count, :id)
+
+    # Update the account's rewards_stats with the actual count of associated rewards
+    account
+    |> Ecto.Changeset.change(rewards_stats: rewards_count)
     |> Repo.update!()
   end
 

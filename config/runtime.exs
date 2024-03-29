@@ -63,6 +63,21 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+
+    # Configure Swoosh with Amazon SES for production
+    access_key = System.get_env("AWS_ACCESS_KEY_ID") || raise "AWS_ACCESS_KEY_ID is missing."
+    secret_key = System.get_env("AWS_SECRET_ACCESS_KEY") || raise "AWS_SECRET_ACCESS_KEY is missing."
+
+    config :quest_api_v21, QuestApiV21.Mailer,
+      adapter: Swoosh.Adapters.AmazonSES,
+      region: "us-east-1",
+      access_key: access_key,
+      secret: secret_key
+
+    # Ensure the Swoosh API client is configured for your choice of HTTP client, if necessary
+    #config :swoosh, :api_client, Swoosh.ApiClient.Finch
+
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

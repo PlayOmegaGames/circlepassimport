@@ -33,8 +33,8 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
 config :quest_api_v21, QuestApiV21Web.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
-# Configures Swoosh API Client
-config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: QuestApiV21.Finch
+# Ensure the Swoosh API client is configured for your choice of HTTP client, if necessary
+#config :swoosh, :api_client, Swoosh.ApiClient.Finch
 
 # Disable Swoosh Local Memory Storage
 config :swoosh, local: false

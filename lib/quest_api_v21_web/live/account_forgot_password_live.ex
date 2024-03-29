@@ -36,7 +36,8 @@ defmodule QuestApiV21Web.AccountForgotPasswordLive do
     if account = Accounts.get_account_by_email(email) do
       Accounts.deliver_account_reset_password_instructions(
         account,
-        &url(~p"/accounts/reset_password/#{&1}")
+        fn token -> "https://questapp.io/accounts/reset_password/#{token}" end
+
       )
     end
 
