@@ -14,6 +14,13 @@ defmodule QuestApiV21Web.LiveComponents.CollectorBar do
         <.link patch={"/home"} replace={true} class="focus:outline-double text-gray-500  my-auto p-1 h-fit ring-1 p-2 ring-gray-300 z-30 shadow-md shadow-highlight/[0.50] bg-gray-100 rounded-lg">
           <span class="hero-check-circle w-5 h-5"></span> Collect Badge
         </.link>
+
+        <%= if @badge.badge_redirect && @badge.quest do %>
+          <a href={@badge.badge_redirect} replace={true} class="focus:outline-double text-gray-500 ml-2 my-auto p-1 h-fit ring-1 p-2 ring-gray-300 z-30 shadow-md shadow-highlight/[0.50] bg-gray-100 rounded-lg">
+            <span class="hero-link w-4 h-4"></span> Visit Link
+          </a>
+        <% end %>
+
         <span class="absolute -right-1 -top-1 flex h-3 w-3">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-highlight opacity-75"></span>
           <span class="relative inline-flex rounded-full h-3 w-3 bg-highlight"></span>

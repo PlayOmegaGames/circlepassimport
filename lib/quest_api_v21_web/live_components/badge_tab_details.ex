@@ -23,7 +23,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgeTabDetails do
           <span class="w-6 h-6 mt-4 ml-4 text-white hero-x-mark"> </span>
         </button>
         <.live_component module={QuestApiV21Web.BadgeDisplayComponent} id={"single-badge-#{@id}"}
-        badge={@badge} quest={nil} error={nil} />
+        badge={@badge} quest={nil} error={nil} collector={nil}/>
 
 
         </div>

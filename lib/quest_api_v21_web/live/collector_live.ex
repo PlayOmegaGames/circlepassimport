@@ -120,7 +120,7 @@ defmodule QuestApiV21Web.CollectorLive do
   ~H"""
     <div>
       <.live_component module={QuestApiV21Web.BadgeDisplayComponent} id="collected-badge-details"
-          badge={@badge} quest={@quest} error={@error} />
+          badge={@badge} quest={@quest} error={@error} collector={@collector} />
       <%= unless @error do %>
         <p class="text-gold-100 mt-2 text-center ml-1">
           <%= if @badges_left > 0 do %>
