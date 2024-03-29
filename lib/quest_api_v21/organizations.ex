@@ -129,19 +129,22 @@ defmodule QuestApiV21.Organizations do
       {:ok, organization} ->
         # Now, update the host's current_org_id
         case QuestApiV21.Hosts.update_current_org(host, organization.id) do
-          {:ok, _updated_host} ->
-            new_jwt = generate_new_jwt_for_host(host)
+          {:ok, updated_host} ->
+            # Fetch the updated host record to ensure it includes the new current_org_id
+            refreshed_host = Repo.get!(Host, updated_host.id)
+            new_jwt = generate_new_jwt_for_host(refreshed_host)
             {:ok, organization, new_jwt}
 
           {:error, _reason} ->
-            # Handle the error appropriately
             {:error, :failed_to_update_host}
         end
+
 
       {:error, changeset} ->
         {:error, changeset}
     end
   end
+
 
   @doc """
   Updates a organization.
