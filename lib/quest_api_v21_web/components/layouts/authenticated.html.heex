@@ -2,9 +2,6 @@
 
 
 <div class="fixed bottom-0 z-50 w-full min-h-fit">
-<%= if @background_color == "false" do %>
-    <img src="/images/haunted.png" />
-  <% end %>
 
 <%= if @current_account.selected_quest_id != nil and @collector == false do %>
     <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar") %>

@@ -150,13 +150,12 @@ defmodule QuestApiV21Web.Router do
       live "/quests", MainLive, :quests
       live "/profile", MainLive, :profile
       live "/badge/:id", CollectorLive
-      live "/accounts/settings", AccountSettingsLive, :edit
-      live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_emailauth_splash
+      live "/accounts/settings", Account.AccountSettingsLive, :edit
+      live "/accounts/settings/confirm_email/:token", Account.AccountSettingsLive, :confirm_emailauth_splash
       live "/navbar", QuestApiV21Web.LiveComponents.Navbar, :index, as: :Navbar
       live "/questbar", QuestBarLive
       live "/single_page", SinglePageLive
       delete "/accounts/sign_out", AccountSessionController, :delete
-
     end
   end
 
@@ -200,10 +199,10 @@ defmodule QuestApiV21Web.Router do
 
     live_session :redirect_if_superadmin_is_authenticated,
       on_mount: [{QuestApiV21Web.SuperadminAuth, :redirect_if_superadmin_is_authenticated}] do
-      #live "/superadmin/register", SuperadminRegistrationLive, :new
-      live "/superadmin/log_in", SuperadminLoginLive, :new
-      live "/superadmin/reset_password", SuperadminForgotPasswordLive, :new
-      live "/superadmin/reset_password/:token", SuperadminResetPasswordLive, :edit
+      #live "/superadmin/register", Superadmin.SuperadminRegistrationLive, :new
+      live "/superadmin/log_in", Superadmin.SuperadminLoginLive, :new
+      live "/superadmin/reset_password", Superadmin.SuperadminForgotPasswordLive, :new
+      live "/superadmin/reset_password/:token", Superadmin.SuperadminResetPasswordLive, :edit
     end
 
     post "/superadmin/log_in", SuperadminSessionController, :create
@@ -214,8 +213,8 @@ defmodule QuestApiV21Web.Router do
 
     live_session :require_authenticated_superadmin,
       on_mount: [{QuestApiV21Web.SuperadminAuth, :ensure_authenticated}] do
-      live "/superadmin/settings", SuperadminSettingsLive, :edit
-      live "/superadmin/settings/confirm_email/:token", SuperadminSettingsLive, :confirm_email
+      live "/superadmin/settings", Superadmin.SuperadminSettingsLive, :edit
+      live "/superadmin/settings/confirm_email/:token", Superadmin.SuperadminSettingsLive, :confirm_email
     end
   end
 
@@ -226,8 +225,8 @@ defmodule QuestApiV21Web.Router do
 
     live_session :current_superadmin,
       on_mount: [{QuestApiV21Web.SuperadminAuth, :mount_current_superadmin}] do
-      live "/superadmin/confirm/:token", SuperadminConfirmationLive, :edit
-      live "/superadmin/confirm", SuperadminConfirmationInstructionsLive, :new
+      live "/superadmin/confirm/:token", Superadmin.SuperadminConfirmationLive, :edit
+      live "/superadmin/confirm", Superadmin.SuperadminConfirmationInstructionsLive, :new
     end
   end
 
@@ -240,10 +239,10 @@ defmodule QuestApiV21Web.Router do
       on_mount: [{QuestApiV21Web.AccountAuth, :redirect_if_account_is_authenticated}],
         layout: {QuestApiV21Web.Layouts, :registration} do
 
-      live "/accounts/register", AccountRegistrationLive, :new
-      live "/accounts/log_in", AccountLoginLive, :new
-      live "/accounts/reset_password", AccountForgotPasswordLive, :new
-      live "/accounts/reset_password/:token", AccountResetPasswordLive, :edit
+      live "/accounts/register", Account.AccountRegistrationLive, :new
+      live "/accounts/log_in", Account.AccountLoginLive, :new
+      live "/accounts/reset_password", Account.AccountForgotPasswordLive, :new
+      live "/accounts/reset_password/:token", Account.AccountResetPasswordLive, :edit
 
     end
 

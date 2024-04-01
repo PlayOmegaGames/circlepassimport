@@ -8,9 +8,9 @@ defmodule QuestApiV21Web.SuperadminLoginLive do
         Sign in to account
         <:subtitle>
           Don't have an account?
-          <.link navigate={~p"/superadmin/register"} class="font-semibold text-brand hover:underline">
+          <!--<.link navigate={~p"/superadmin/register"} class="font-semibold text-brand hover:underline">
             Sign up
-          </.link>
+          </.link>-->
           for an account now.
         </:subtitle>
       </.header>

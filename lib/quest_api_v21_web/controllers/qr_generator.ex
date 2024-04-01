@@ -54,7 +54,7 @@ defmodule QuestApiV21Web.QrGenerator do
           "https://quest-optimized-images.s3.amazonaws.com/optimized-images/webapp-images/QuestLogo.png",
         logoMode: "clean"
       },
-      size: 300,
+      size: 400,
       download: false,
       file: "png"
     }

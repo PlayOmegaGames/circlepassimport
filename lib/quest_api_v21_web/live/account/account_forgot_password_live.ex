@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.AccountForgotPasswordLive do
+defmodule QuestApiV21Web.Account.AccountForgotPasswordLive do
   use QuestApiV21Web, :live_view
 
   alias QuestApiV21.Accounts

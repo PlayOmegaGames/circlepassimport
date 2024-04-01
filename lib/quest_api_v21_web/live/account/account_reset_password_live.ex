@@ -1,7 +1,7 @@
-defmodule QuestApiV21Web.SuperadminResetPasswordLive do
+defmodule QuestApiV21Web.Account.AccountResetPasswordLive do
   use QuestApiV21Web, :live_view
 
-  alias QuestApiV21.Admin
+  alias QuestApiV21.Accounts
 
   def render(assigns) do
     ~H"""
@@ -26,25 +26,26 @@ defmodule QuestApiV21Web.SuperadminResetPasswordLive do
           required
         />
         <:actions>
-          <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
+          <.button phx-disable-with="Resetting..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">Reset Password</.button>
         </:actions>
       </.simple_form>
 
       <p class="text-center text-sm mt-4">
-        <.link href={~p"/superadmin/register"}>Register</.link>
-        | <.link href={~p"/superadmin/log_in"}>Log in</.link>
+        <.link href={~p"/accounts/register"}>Register</.link>
+        | <.link href={~p"/accounts/log_in"}>Log in</.link>
       </p>
     </div>
+    <img class="fixed bottom-0 left-0 w-full" src="/images/squiggle-cropped.svg" alt="Footer" />
     """
   end
 
   def mount(params, _session, socket) do
-    socket = assign_superadmin_and_token(socket, params)
+    socket = assign_account_and_token(socket, params)
 
     form_source =
       case socket.assigns do
-        %{superadmin: superadmin} ->
-          Admin.change_superadmin_password(superadmin)
+        %{account: account} ->
+          Accounts.change_account_password(account)
 
         _ ->
           %{}
@@ -53,29 +54,29 @@ defmodule QuestApiV21Web.SuperadminResetPasswordLive do
     {:ok, assign_form(socket, form_source), temporary_assigns: [form: nil]}
   end
 
-  # Do not log in the superadmin after reset password to avoid a
-  # leaked token giving the superadmin access to the account.
-  def handle_event("reset_password", %{"superadmin" => superadmin_params}, socket) do
-    case Admin.reset_superadmin_password(socket.assigns.superadmin, superadmin_params) do
+  # Do not log in the account after reset password to avoid a
+  # leaked token giving the account access to the account.
+  def handle_event("reset_password", %{"account" => account_params}, socket) do
+    case Accounts.reset_account_password(socket.assigns.account, account_params) do
       {:ok, _} ->
         {:noreply,
          socket
          |> put_flash(:info, "Password reset successfully.")
-         |> redirect(to: ~p"/superadmin/log_in")}
+         |> redirect(to: ~p"/accounts/log_in")}
 
       {:error, changeset} ->
         {:noreply, assign_form(socket, Map.put(changeset, :action, :insert))}
     end
   end
 
-  def handle_event("validate", %{"superadmin" => superadmin_params}, socket) do
-    changeset = Admin.change_superadmin_password(socket.assigns.superadmin, superadmin_params)
+  def handle_event("validate", %{"account" => account_params}, socket) do
+    changeset = Accounts.change_account_password(socket.assigns.account, account_params)
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 
-  defp assign_superadmin_and_token(socket, %{"token" => token}) do
-    if superadmin = Admin.get_superadmin_by_reset_password_token(token) do
-      assign(socket, superadmin: superadmin, token: token)
+  defp assign_account_and_token(socket, %{"token" => token}) do
+    if account = Accounts.get_account_by_reset_password_token(token) do
+      assign(socket, account: account, token: token)
     else
       socket
       |> put_flash(:error, "Reset password link is invalid or it has expired.")
@@ -84,6 +85,6 @@ defmodule QuestApiV21Web.SuperadminResetPasswordLive do
   end
 
   defp assign_form(socket, %{} = source) do
-    assign(socket, :form, to_form(source, as: "superadmin"))
+    assign(socket, :form, to_form(source, as: "account"))
   end
 end

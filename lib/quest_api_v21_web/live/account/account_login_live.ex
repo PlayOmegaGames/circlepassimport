@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.AccountLoginLive do
+defmodule QuestApiV21Web.Account.AccountLoginLive do
   use QuestApiV21Web, :live_view
 
   def render(assigns) do

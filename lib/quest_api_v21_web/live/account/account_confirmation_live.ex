@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.AccountConfirmationLive do
+defmodule QuestApiV21Web.Account.AccountConfirmationLive do
   use QuestApiV21Web, :live_view
 
   alias QuestApiV21.Accounts
