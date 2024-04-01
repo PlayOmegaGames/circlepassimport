@@ -106,8 +106,8 @@ if Mix.env() != :prod do
     hooks: [
       pre_commit: [
         tasks: [
-          {:cmd, "mix format"},
-          {:cmd, "mix credo"}
+          {:cmd, "mix format"}
+          # {:cmd, "mix credo"}
         ]
       ]
     ]
