@@ -195,8 +195,6 @@ defmodule QuestApiV21Web.AccountAuth do
     end
   end
 
-
-
   @doc """
   Used for routes that require the account to be authenticated.
 
@@ -232,7 +230,4 @@ defmodule QuestApiV21Web.AccountAuth do
   defp maybe_store_return_to(conn), do: conn
 
   defp signed_in_path(_conn), do: ~p"/home"
-
-
-
 end

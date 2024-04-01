@@ -23,7 +23,9 @@ defmodule QuestApiV21.AccountquestsTest do
     test "create_account_quest/1 with valid data creates a account_quest" do
       valid_attrs = %{badge_count: 42, loyalty_points: 42}
 
-      assert {:ok, %AccountQuest{} = account_quest} = Accountquests.create_account_quest(valid_attrs)
+      assert {:ok, %AccountQuest{} = account_quest} =
+               Accountquests.create_account_quest(valid_attrs)
+
       assert account_quest.badge_count == 42
       assert account_quest.loyalty_points == 42
     end
@@ -36,21 +38,29 @@ defmodule QuestApiV21.AccountquestsTest do
       account_quest = account_quest_fixture()
       update_attrs = %{badge_count: 43, loyalty_points: 43}
 
-      assert {:ok, %AccountQuest{} = account_quest} = Accountquests.update_account_quest(account_quest, update_attrs)
+      assert {:ok, %AccountQuest{} = account_quest} =
+               Accountquests.update_account_quest(account_quest, update_attrs)
+
       assert account_quest.badge_count == 43
       assert account_quest.loyalty_points == 43
     end
 
     test "update_account_quest/2 with invalid data returns error changeset" do
       account_quest = account_quest_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accountquests.update_account_quest(account_quest, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Accountquests.update_account_quest(account_quest, @invalid_attrs)
+
       assert account_quest == Accountquests.get_account_quest!(account_quest.id)
     end
 
     test "delete_account_quest/1 deletes the account_quest" do
       account_quest = account_quest_fixture()
       assert {:ok, %AccountQuest{}} = Accountquests.delete_account_quest(account_quest)
-      assert_raise Ecto.NoResultsError, fn -> Accountquests.get_account_quest!(account_quest.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Accountquests.get_account_quest!(account_quest.id)
+      end
     end
 
     test "change_account_quest/1 returns a account_quest changeset" do

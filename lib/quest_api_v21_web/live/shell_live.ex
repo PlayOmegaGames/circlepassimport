@@ -1,28 +1,23 @@
 defmodule QuestApiV21Web.ShellLive do
+  use QuestApiV21Web, :live_view
 
-use QuestApiV21Web, :live_view
+  def mount(_session, _params, socket) do
+    # Set a default value for @inner_content
+    # You can adjust this to load initial content as needed
+    socket = assign(socket, :inner_content, "")
 
-def mount(_session, _params, socket) do
-  # Set a default value for @inner_content
-  # You can adjust this to load initial content as needed
-  socket = assign(socket, :inner_content, "")
-
-    #IO.inspect(socket)
+    # IO.inspect(socket)
     {:ok, socket}
   end
 
   def render(assigns) do
     ~H"""
-
     <div class="text-4xl">
       Test
-
       <main>
-      <%= @inner_content %>
-    </main>
-
+        <%= @inner_content %>
+      </main>
     </div>
-
     """
   end
 

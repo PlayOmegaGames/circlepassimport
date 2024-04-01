@@ -9,17 +9,14 @@ defmodule QuestApiV21Web.TransactionController do
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-
     organization_id = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Transactions.list_transactions_bg_organization_id(organization_id) do
-
       transactions ->
         transactions
         |> Repo.preload([:account, :badge])
 
-      render(conn, :index, transactions: transactions)
-
+        render(conn, :index, transactions: transactions)
     end
   end
 

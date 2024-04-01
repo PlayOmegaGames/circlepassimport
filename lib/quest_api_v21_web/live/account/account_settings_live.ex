@@ -7,21 +7,18 @@ defmodule QuestApiV21Web.Account.AccountSettingsLive do
   def render(assigns) do
     ~H"""
     <div class="ml-4 mr-4 scroll-mb-4 pb-60">
-
-
       <.header class="text-center">
         Account Settings
       </.header>
 
       <div class="pt-12">
         <div class="flex justify-center">
-        <CoreComponents.small_avatar name={assigns.current_account.name || "Nameless"} />
+          <CoreComponents.small_avatar name={assigns.current_account.name || "Nameless"} />
         </div>
 
-          <h1 class="text-center text-1.5xl font-medium my-4">
-            <%= assigns.current_account.name || "Nameless" %>
-          </h1>
-
+        <h1 class="text-center text-1.5xl font-medium my-4">
+          <%= assigns.current_account.name || "Nameless" %>
+        </h1>
       </div>
 
       <div class="space-y-12 divide-y">
@@ -43,9 +40,7 @@ defmodule QuestApiV21Web.Account.AccountSettingsLive do
               required
             />
             <:actions>
-
               <.button phx-disable-with="Changing...">Change Email</.button>
-
             </:actions>
           </.simple_form>
         </div>
@@ -86,7 +81,7 @@ defmodule QuestApiV21Web.Account.AccountSettingsLive do
           </.simple_form>
         </div>
         <div class="my-8 mb-4 scroll-mb-4 flex flex-col items-center justify-center">
-            <form action="/accounts/sign_out" method="post">
+          <form action="/accounts/sign_out" method="post">
             <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
             <input type="hidden" name="_method" value="delete" />
             <button
@@ -129,7 +124,6 @@ defmodule QuestApiV21Web.Account.AccountSettingsLive do
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
       |> assign(:background_color, "bg-gradient-to-t from-violet-300 to-violet-100")
-
 
     {:ok, socket}
   end
@@ -195,7 +189,4 @@ defmodule QuestApiV21Web.Account.AccountSettingsLive do
         {:noreply, assign(socket, password_form: to_form(changeset))}
     end
   end
-
-
-
 end

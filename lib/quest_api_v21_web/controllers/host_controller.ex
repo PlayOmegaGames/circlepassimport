@@ -68,8 +68,9 @@ defmodule QuestApiV21Web.HostController do
           true ->
             case QuestApiV21.Hosts.update_current_org(host, org_id) do
               {:ok, updated_host} ->
-                #Preloads the host so we can display org name for client dashboard
+                # Preloads the host so we can display org name for client dashboard
                 host = QuestApiV21.Repo.preload(updated_host, [:current_org])
+
                 case QuestApiV21.HostGuardian.regenerate_jwt_for_host(updated_host) do
                   {:ok, token, _claims} ->
                     conn

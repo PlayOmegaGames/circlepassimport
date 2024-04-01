@@ -14,15 +14,18 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     # Assuming there's a way to directly get IDs of all badges collected by the user for this quest.
     # This step may require adjusting your data model or query approach.
-    collected_badges_ids = QuestApiV21.Quests.get_collected_badges_ids_for_quest(account.id, quest.id)
+    collected_badges_ids =
+      QuestApiV21.Quests.get_collected_badges_ids_for_quest(account.id, quest.id)
 
     # Mark all badges with their collection status in one pass.
-    marked_badges = Enum.map(all_badges, fn badge ->
-      collected = badge.id in collected_badges_ids
-      Map.put(badge, :collected, collected)
-    end)
+    marked_badges =
+      Enum.map(all_badges, fn badge ->
+        collected = badge.id in collected_badges_ids
+        Map.put(badge, :collected, collected)
+      end)
 
-    comp_percent = trunc(Enum.count(marked_badges, &(&1.collected)) / Enum.count(marked_badges) * 100)
+    comp_percent =
+      trunc(Enum.count(marked_badges, & &1.collected) / Enum.count(marked_badges) * 100)
 
     socket =
       socket
@@ -30,7 +33,8 @@ defmodule QuestApiV21Web.QuestBarLive do
       |> assign(:show_camera, false)
       |> assign(:my_target, self())
       |> assign(:quest, quest)
-      |> assign(:all_badges, marked_badges) # Updated logic here
+      # Updated logic here
+      |> assign(:all_badges, marked_badges)
       |> assign(:current_index, 0)
       |> assign(:socketid, socket.id)
       |> assign(:comp_percent, comp_percent)
@@ -39,7 +43,6 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     {:ok, update_current_badge(socket)}
   end
-
 
   # Helper function to update the current badge based on the collected badges list and current index
   defp update_current_badge(socket) do
@@ -55,82 +58,93 @@ defmodule QuestApiV21Web.QuestBarLive do
   def render(assigns) do
     ~H"""
     <div>
-
-    <.live_component
-      module={QuestApiV21Web.LiveComponents.BadgeDetails}
-      id="example-modal"
-      show={@show_badge_details}
-      on_confirm={:confirm_action}
-      on_cancel={:cancel_action}
-      confirm={"Proceed"}
-      badge={@badge}
-      quest={@quest}
-      comp_percent={@comp_percent}
-      cancel={"Cancel"}
-    />
-
-    <.live_component
-      module={QuestApiV21Web.LiveComponents.Camera}
-      id="camera_modal"
-      show={@show_camera}
-      on_confirm={:confirm_action}
-      on_cancel={:cancel_action}
-      confirm={"Proceed"}
-      cancel={"close-camera"}
-
+      <.live_component
+        module={QuestApiV21Web.LiveComponents.BadgeDetails}
+        id="example-modal"
+        show={@show_badge_details}
+        on_confirm={:confirm_action}
+        on_cancel={:cancel_action}
+        confirm="Proceed"
+        badge={@badge}
+        quest={@quest}
+        comp_percent={@comp_percent}
+        cancel="Cancel"
       />
 
-      <.live_component module={QuestApiV21Web.LiveComponents.QrSuccess} id="qr-success" show={@show_qr_success} />
+      <.live_component
+        module={QuestApiV21Web.LiveComponents.Camera}
+        id="camera_modal"
+        show={@show_camera}
+        on_confirm={:confirm_action}
+        on_cancel={:cancel_action}
+        confirm="Proceed"
+        cancel="close-camera"
+      />
 
+      <.live_component
+        module={QuestApiV21Web.LiveComponents.QrSuccess}
+        id="qr-success"
+        show={@show_qr_success}
+      />
 
-    <div phx-click="toggle_badge_details_modal"
-         id="quest-bar-container"
-         class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast">
-    <div class="flex py-1">
+      <div
+        phx-click="toggle_badge_details_modal"
+        id="quest-bar-container"
+        class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast"
+      >
+        <div class="flex py-1">
+          <div class="flex row transition-all ease-in-out quest-bar-content grow z-20">
+            <span
+              phx-click="next"
+              class="hero-chevron-double-left text-gray-400/50 px-2 my-auto w-6 h-6"
+            >
+            </span>
 
-      <div class="flex row transition-all ease-in-out quest-bar-content grow z-20">
-      <span phx-click="next" class="hero-chevron-double-left text-gray-400/50 px-2 my-auto w-6 h-6"></span>
-
-        <div class="flex">
-          <div class="mr-4 ml-1">
-            <%= if assigns.badge.collected do %>
-              <img class="object-cover w-12 h-12 ring-2 ring-highlight rounded-full" src={assigns.badge.badge_image} />
-            <% else %>
-            <img class="object-cover w-12 h-12 rounded-full ring-1 ring-slate-600 grayscale" src={assigns.badge.badge_image} />
-            <% end %>
-
+            <div class="flex">
+              <div class="mr-4 ml-1">
+                <%= if assigns.badge.collected do %>
+                  <img
+                    class="object-cover w-12 h-12 ring-2 ring-highlight rounded-full"
+                    src={assigns.badge.badge_image}
+                  />
+                <% else %>
+                  <img
+                    class="object-cover w-12 h-12 rounded-full ring-1 ring-slate-600 grayscale"
+                    src={assigns.badge.badge_image}
+                  />
+                <% end %>
+              </div>
+              <div>
+                <p class="truncate font-medium"><%= assigns.badge.name %></p>
+                <p class="truncate text-xs font-light"><%= assigns.quest.name %></p>
+              </div>
+            </div>
+            <div class="my-auto text-gray-400 z-10 mr-4">
+              <span
+                phx-click="next"
+                class="hero-chevron-double-right text-gray-400/50 px-2 my-auto w-6 h-6"
+              >
+              </span>
+            </div>
           </div>
-          <div>
-            <p class="truncate font-medium" ><%= assigns.badge.name %> </p>
-            <p class="truncate text-xs font-light" ><%= assigns.quest.name %> </p>
+
+          <div class="flex justify-between">
+            <div class="my-auto mr-4 z-20">
+              <button
+                phx-click="camera"
+                class="ring-1 p-1 ring-gray-400 z-30 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg"
+              >
+                <span class="hero-qr-code w-8 h-8"></span>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="my-auto text-gray-400 z-10 mr-4">
-          <span phx-click="next" class="hero-chevron-double-right text-gray-400/50 px-2 my-auto w-6 h-6"></span>
-        </div>
+
+        <div class="h-1 bg-gold-300" style={"width:#{@comp_percent}%"}></div>
       </div>
-
-
-        <div class="flex justify-between">
-
-
-        <div class="my-auto mr-4 z-20">
-            <button phx-click="camera" class="ring-1 p-1 ring-gray-400 z-30 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg">
-              <span class="hero-qr-code w-8 h-8"></span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-        <div class="h-1 bg-gold-300" style={"width:#{@comp_percent}%"} ></div>
-
-        </div>
-
     </div>
-
     """
   end
-
 
   def handle_info(%{event: "selected_quest_updated", quest_id: quest_id}, socket) do
     Logger.info("Selected quest updated to #{quest_id}")
@@ -140,17 +154,22 @@ defmodule QuestApiV21Web.QuestBarLive do
     account_id = socket.assigns.current_account.id
 
     # Fetch the updated quest information based on the new quest_id
-    quest = QuestApiV21.Quests.get_quest(quest_id)
-            |> QuestApiV21.Repo.preload([:badges])
+    quest =
+      QuestApiV21.Quests.get_quest(quest_id)
+      |> QuestApiV21.Repo.preload([:badges])
 
     # Calculate the completion percentage and other related information again
-    collected_badges_ids = QuestApiV21.Quests.get_collected_badges_ids_for_quest(account_id, quest_id)
-    marked_badges = Enum.map(quest.badges, fn badge ->
-      collected = badge.id in collected_badges_ids
-      Map.put(badge, :collected, collected)
-    end)
+    collected_badges_ids =
+      QuestApiV21.Quests.get_collected_badges_ids_for_quest(account_id, quest_id)
 
-    comp_percent = trunc(Enum.count(marked_badges, &(&1.collected)) / Enum.count(marked_badges) * 100)
+    marked_badges =
+      Enum.map(quest.badges, fn badge ->
+        collected = badge.id in collected_badges_ids
+        Map.put(badge, :collected, collected)
+      end)
+
+    comp_percent =
+      trunc(Enum.count(marked_badges, & &1.collected) / Enum.count(marked_badges) * 100)
 
     # Update the socket with the new quest information and reassign other necessary details
     socket =
@@ -162,10 +181,8 @@ defmodule QuestApiV21Web.QuestBarLive do
       |> assign(:qr_loading, false)
       |> update_current_badge()
 
-
-
-      # Schedule the in-animation to start shortly after the out-animation completes
-      Process.send_after(self(), {:start_in_animation, quest_id}, 1_000)
+    # Schedule the in-animation to start shortly after the out-animation completes
+    Process.send_after(self(), {:start_in_animation, quest_id}, 1_000)
     {:noreply, socket}
   rescue
     _ ->
@@ -185,8 +202,6 @@ defmodule QuestApiV21Web.QuestBarLive do
     # Return the updated socket. No changes are necessary if you're only logging.
     {:noreply, new_socket}
   end
-
-
 
   def handle_event("initialize-index", %{"index" => index}, socket) do
     # Ensure the index is an integer
@@ -226,7 +241,7 @@ defmodule QuestApiV21Web.QuestBarLive do
     {:noreply, socket}
   end
 
-  #badge details modal
+  # badge details modal
 
   def handle_event("toggle_badge_details_modal", _params, socket) do
     new_visibility = not socket.assigns.show_badge_details
@@ -266,7 +281,4 @@ defmodule QuestApiV21Web.QuestBarLive do
         {:noreply, socket}
     end
   end
-
-
-
 end

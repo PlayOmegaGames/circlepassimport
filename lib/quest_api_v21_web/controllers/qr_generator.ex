@@ -30,7 +30,7 @@ defmodule QuestApiV21Web.QrGenerator do
 
     headers = [
       {"Content-Type", "application/json"},
-      {"X-RapidAPI-Key",  System.get_env("QR_CODE_MONKEY")},
+      {"X-RapidAPI-Key", System.get_env("QR_CODE_MONKEY")},
       {"X-RapidAPI-Host", "qrcode-monkey.p.rapidapi.com"}
     ]
 

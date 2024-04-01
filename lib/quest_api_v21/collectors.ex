@@ -216,11 +216,11 @@ defmodule QuestApiV21.Collectors do
           end
         else
           # Handle invalid quest_start ID by adding an error, or you might choose to ignore it
-          {:error, _} -> Ecto.Changeset.add_error(changeset, :quest_start, "Invalid quest start ID.")
+          {:error, _} ->
+            Ecto.Changeset.add_error(changeset, :quest_start, "Invalid quest start ID.")
         end
     end
   end
-
 
   defp add_quest_start_if_valid(quest_ids, attrs) do
     case Map.get(attrs, "quest_start") do

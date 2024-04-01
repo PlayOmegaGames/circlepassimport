@@ -32,7 +32,8 @@ defmodule QuestApiV21Web.SuperadminResetPasswordLive do
 
       <p class="text-center text-sm mt-4">
         <!--<.link href={~p"/superadmin/register"}>Register</.link>-->
-        | <.link href={~p"/superadmin/log_in"}>Log in</.link>
+        |
+        <.link href={~p"/superadmin/log_in"}>Log in</.link>
       </p>
     </div>
     """

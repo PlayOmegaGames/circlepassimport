@@ -4,8 +4,7 @@ defmodule QuestApiV21Web.MainLive do
   alias QuestApiV21Web.CoreComponents
 
   def mount(_params, _session, socket) do
-
-    #IO.inspect(socket.assigns.live_action, label: "mount live_action")
+    # IO.inspect(socket.assigns.live_action, label: "mount live_action")
 
     account_id = socket.assigns.current_account.id
 
@@ -15,21 +14,20 @@ defmodule QuestApiV21Web.MainLive do
     account = socket.assigns.current_account
     quests_list = Quests.list_public_quests()
 
-
     current_date = Date.utc_today()
-    {available_quests, future_quests} = Enum.split_with(quests_list, fn quest ->
-      quest.start_date == nil or (quest.start_date && Date.compare(quest.start_date, current_date) != :gt)
-    end)
+
+    {available_quests, future_quests} =
+      Enum.split_with(quests_list, fn quest ->
+        quest.start_date == nil or
+          (quest.start_date && Date.compare(quest.start_date, current_date) != :gt)
+      end)
 
     quests_with_completion = calculate_completion_percentage(quests, account_id)
 
     socket = assign(socket, quests: quests_with_completion)
 
-
-
     available_quests_with_badge_count = calculate_badge_count(available_quests)
     future_quests_with_badge_count = calculate_badge_count(future_quests)
-
 
     socket =
       socket
@@ -53,18 +51,21 @@ defmodule QuestApiV21Web.MainLive do
   end
 
   def handle_params(params, _uri, socket) do
-    tab = params["tab"] || "badges" # Default to "badges" tab if none specified
+    # Default to "badges" tab if none specified
+    tab = params["tab"] || "badges"
 
-    background_color = case socket.assigns.live_action do
-      :quests -> "bg-background-800"
-      _ -> "false"
-    end
+    background_color =
+      case socket.assigns.live_action do
+        :quests -> "bg-background-800"
+        _ -> "false"
+      end
+
     IO.inspect(background_color)
+
     socket =
       socket
       |> assign(tab: tab)
       |> assign(:background_color, background_color)
-
 
     {:noreply, socket}
   end
@@ -75,15 +76,16 @@ defmodule QuestApiV21Web.MainLive do
 
       case QuestApiV21.Quests.get_earned_badges_for_quest_and_account(account_id, quest.id) do
         {:ok, earned_badges} ->
-          completion_percentage = if total_badges > 0,
-          do: round((earned_badges / total_badges) * 100),
-          else: 0
+          completion_percentage =
+            if total_badges > 0,
+              do: round(earned_badges / total_badges * 100),
+              else: 0
+
           # Return the quest map with the completion percentage added
           Map.put(quest, :completion_percentage, completion_percentage)
       end
     end)
   end
-
 
   defp calculate_badge_count(quests) do
     Enum.map(quests, fn quest ->
@@ -98,7 +100,8 @@ defmodule QuestApiV21Web.MainLive do
   end
 
   def handle_event("show_single_badge_details", %{"id" => badge_id}, socket) do
-    badge_detail = Badges.get_badge_with_quest!(badge_id) # Fetch the badge details based on the ID
+    # Fetch the badge details based on the ID
+    badge_detail = Badges.get_badge_with_quest!(badge_id)
     {:noreply, assign(socket, badge_detail: badge_detail, show_single_badge_details: true)}
   end
 
@@ -113,6 +116,7 @@ defmodule QuestApiV21Web.MainLive do
       {:ok, _account} ->
         # Optionally, fetch updated quest info to refresh the live view or navigate the user
         {:noreply, socket}
+
       {:error, _reason} ->
         # Handle error, maybe log it or show a message to the user
         {:noreply, socket}
@@ -120,7 +124,8 @@ defmodule QuestApiV21Web.MainLive do
   end
 
   def handle_event("show-reward-details", %{"id" => reward_id}, socket) do
-    reward = QuestApiV21.Rewards.get_reward!(reward_id) # Assuming this function exists to fetch reward details
+    # Assuming this function exists to fetch reward details
+    reward = QuestApiV21.Rewards.get_reward!(reward_id)
 
     {:noreply, assign(socket, reward_detail: reward, show_reward_details: true)}
   end
@@ -133,39 +138,43 @@ defmodule QuestApiV21Web.MainLive do
     {:noreply, assign(socket, show_reward_details: false)}
   end
 
-
-
   def render(assigns) do
     ~H"""
-      <div>
-        <%= case @live_action do %>
-          <% :home -> %>
-
-            <%= home(assigns) %>
-          <% :quests -> %>
-            <%= quests(assigns) %>
-          <% :profile -> %>
-            <%= profile(assigns) %>
-        <% end %>
-      </div>
+    <div>
+      <%= case @live_action do %>
+        <% :home -> %>
+          <%= home(assigns) %>
+        <% :quests -> %>
+          <%= quests(assigns) %>
+        <% :profile -> %>
+          <%= profile(assigns) %>
+      <% end %>
+    </div>
     """
   end
-
 
   def home(assigns) do
     ~H"""
     <div class="px-2">
-
-
       <.live_component module={QuestApiV21Web.LiveComponents.HomeNav} active_tab={@tab} id="home-nav" />
 
       <%= case assigns.tab do %>
         <% "badges" -> %>
-          <.live_component module={QuestApiV21Web.LiveComponents.BadgesLive} id="badges" badge_detail={@badge_detail} badges={@badges} show_single_badge_details={@show_single_badge_details}/>
+          <.live_component
+            module={QuestApiV21Web.LiveComponents.BadgesLive}
+            id="badges"
+            badge_detail={@badge_detail}
+            badges={@badges}
+            show_single_badge_details={@show_single_badge_details}
+          />
         <% "myquests" -> %>
-            <div class="px-2 space-y-4 mb-12">
+          <div class="px-2 space-y-4 mb-12">
             <%= for quest <- @quests_with_completion do %>
-              <button phx-click="select-quest" phx-value-id={quest.id} class="focus:outline-4 focus:outline-double focus:shadow-lg focus:shadow-white transition-all ease-in-out duration-400 rounded-xl w-full">
+              <button
+                phx-click="select-quest"
+                phx-value-id={quest.id}
+                class="focus:outline-4 focus:outline-double focus:shadow-lg focus:shadow-white transition-all ease-in-out duration-400 rounded-xl w-full"
+              >
                 <.live_component
                   class="shadow-xl h-fit"
                   module={QuestApiV21Web.LiveComponents.QuestCard}
@@ -173,54 +182,59 @@ defmodule QuestApiV21Web.MainLive do
                   completion_bar={true}
                   quest={quest}
                   percentage={quest.completion_percentage}
-                  />
+                />
               </button>
             <% end %>
           </div>
         <% "rewards" -> %>
-        <%= if @show_reward_details do %>
-        <.live_component module={QuestApiV21Web.LiveComponents.RedemptionCode} id={@reward_detail.id} reward={@reward_detail} />
-        <% end %>
-
-        <%= for reward <- @rewards do %>
-
-        <%= if reward.redeemed do %>
-          <div
-            phx-value-id={reward.id}
-            class={"m-8 mx-auto w-10/12 rounded-md bg-gray-700 text-white ring-2 ring-gray-500 opacity-80"}>
-
-          <div class="flex p-2">
-          <img src="/images/present.png" class="grayscale w-12 h-12 flex-shrink mr-2" />
-            <div>
-              <h1 class="font-regular text-white text-center text-sm flex truncate">
-              <%= reward.reward_name %>
-              </h1>
-                <p class="text-xs font-light truncate"><%= reward.organization.name %></p>
-            </div>
-          </div>
-            <div class="w-full bg-gray-600 text-sm rounded-b-lg text-center py-1">Claimed</div>
-            </div>
-        <% else %>
-        <p class="text-xs font-light ml-8 mb-1 truncate"><%= reward.quest.name %></p>
-
-          <div
-            phx-click="show-reward-details"
-            phx-value-id={reward.id}
-            class={"mx-8 mb-8 mx-auto w-10/12 rounded-md bg-accent text-white ring-2 ring-gold-300 shadow-xl shadow-white"}>
-
-          <div class="flex p-2">
-          <img src="/images/present.png" class="w-12 h-12 flex-shrink mr-2" />
-            <div>
-              <h1 class="font-regular text-white text-center text-sm flex truncate">
-              <%= reward.reward_name %>
-              </h1>
-                <p class="text-xs font-light truncate"><%= reward.organization.name %></p>
-            </div>
-          </div>
-            <div class="w-full bg-highlight text-sm rounded-b-lg text-center py-1">Claim Reward</div>
-            </div>
+          <%= if @show_reward_details do %>
+            <.live_component
+              module={QuestApiV21Web.LiveComponents.RedemptionCode}
+              id={@reward_detail.id}
+              reward={@reward_detail}
+            />
           <% end %>
-        <% end %>
+
+          <%= for reward <- @rewards do %>
+            <%= if reward.redeemed do %>
+              <div
+                phx-value-id={reward.id}
+                class="m-8 mx-auto w-10/12 rounded-md bg-gray-700 text-white ring-2 ring-gray-500 opacity-80"
+              >
+                <div class="flex p-2">
+                  <img src="/images/present.png" class="grayscale w-12 h-12 flex-shrink mr-2" />
+                  <div>
+                    <h1 class="font-regular text-white text-center text-sm flex truncate">
+                      <%= reward.reward_name %>
+                    </h1>
+                    <p class="text-xs font-light truncate"><%= reward.organization.name %></p>
+                  </div>
+                </div>
+                <div class="w-full bg-gray-600 text-sm rounded-b-lg text-center py-1">Claimed</div>
+              </div>
+            <% else %>
+              <p class="text-xs font-light ml-8 mb-1 truncate"><%= reward.quest.name %></p>
+
+              <div
+                phx-click="show-reward-details"
+                phx-value-id={reward.id}
+                class="mx-8 mb-8 mx-auto w-10/12 rounded-md bg-accent text-white ring-2 ring-gold-300 shadow-xl shadow-white"
+              >
+                <div class="flex p-2">
+                  <img src="/images/present.png" class="w-12 h-12 flex-shrink mr-2" />
+                  <div>
+                    <h1 class="font-regular text-white text-center text-sm flex truncate">
+                      <%= reward.reward_name %>
+                    </h1>
+                    <p class="text-xs font-light truncate"><%= reward.organization.name %></p>
+                  </div>
+                </div>
+                <div class="w-full bg-highlight text-sm rounded-b-lg text-center py-1">
+                  Claim Reward
+                </div>
+              </div>
+            <% end %>
+          <% end %>
       <% end %>
     </div>
     """
@@ -228,59 +242,54 @@ defmodule QuestApiV21Web.MainLive do
 
   def quests(assigns) do
     ~H"""
-      <div class="pb-12 pb-8 text-white">
+    <div class="pb-12 pb-8 text-white">
       <div class="w-full h-20 bg-gradient-to-b rounded-bl-3xl border-b-2 border-l-2 border-gold-300 from-highlight to-accent">
         <h1 class="pt-4 m-auto text-2xl w-fit">Find A Quest</h1>
       </div>
 
-              <div class="flex flex-col px-2 space-y-4 mb-12 pt-8">
-
-                <%= for quest <- @available_quests do %>
-
-                <.live_component
-                  module={QuestApiV21Web.LiveComponents.QuestCard}
-                  id={"quests-card-#{quest.id}"}
-                  completion_bar = {nil}
-                  class={nil}
-                  quest= {quest}
-                  />
-
-                <% end %>
-
-              </div>
+      <div class="flex flex-col px-2 space-y-4 mb-12 pt-8">
+        <%= for quest <- @available_quests do %>
+          <.live_component
+            module={QuestApiV21Web.LiveComponents.QuestCard}
+            id={"quests-card-#{quest.id}"}
+            completion_bar={nil}
+            class={nil}
+            quest={quest}
+          />
+        <% end %>
       </div>
+    </div>
     """
   end
-
 
   def profile(assigns) do
     ~H"""
-      <div>
-        <a href="/accounts/settings" class="button"><span class="hero-cog-6-tooth w-8 h-8 absolute top-0 right-0 m-4"></span></a>
-      </div>
-      <div class="pt-12 pb-8">
-        <div class="flex justify-center">
+    <div>
+      <a href="/accounts/settings" class="button">
+        <span class="hero-cog-6-tooth w-8 h-8 absolute top-0 right-0 m-4"></span>
+      </a>
+    </div>
+    <div class="pt-12 pb-8">
+      <div class="flex justify-center">
         <CoreComponents.avatar name={@account.name || "Nameless"} />
-        </div>
-
-          <h1 class="text-center text-3xl font-medium my-4">
-            <%= @account.name || "Nameless" %>
-          </h1>
-          <div
-            class="grid grid-cols-3 place-content-center mx-auto h-32 w-72 p-2 bg-cover"
-            style="background-image: url(/images/profilegold.png)"
-            >
-            <CoreComponents.stats_bubble number={@account.quests_stats} color="violet" text="Quests" />
-
-          <div class="border-x-2 border-gold-300">
-            <CoreComponents.stats_bubble number={@account.badges_stats} color="lime" text="Badges" />
-          </div>
-
-            <CoreComponents.stats_bubble number={@account.rewards_stats} color="amber" text="Rewards" />
-        </div>
       </div>
 
+      <h1 class="text-center text-3xl font-medium my-4">
+        <%= @account.name || "Nameless" %>
+      </h1>
+      <div
+        class="grid grid-cols-3 place-content-center mx-auto h-32 w-72 p-2 bg-cover"
+        style="background-image: url(/images/profilegold.png)"
+      >
+        <CoreComponents.stats_bubble number={@account.quests_stats} color="violet" text="Quests" />
+
+        <div class="border-x-2 border-gold-300">
+          <CoreComponents.stats_bubble number={@account.badges_stats} color="lime" text="Badges" />
+        </div>
+
+        <CoreComponents.stats_bubble number={@account.rewards_stats} color="amber" text="Rewards" />
+      </div>
+    </div>
     """
   end
-
 end

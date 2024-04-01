@@ -17,33 +17,33 @@ defmodule QuestApiV21.OrganizationScopedQueries do
       iex> OrganizationScopedQueries.scope_query(Quest, org_id)
       [%Quest{}, ...]
   """
-    def scope_query(queryable, organization_id, preloads \\ []) do
-      if is_nil(organization_id) do
-        []
-      else
-        query =
-          queryable
-          |> where([q], q.organization_id == ^organization_id)
-          |> preload(^preloads)
-          |> Repo.all()
-
-        query
-      end
-    end
-
-    def org_scope_query(queryable, host_id, preloads \\ []) do
-      # Query the Organization schema
+  def scope_query(queryable, organization_id, preloads \\ []) do
+    if is_nil(organization_id) do
+      []
+    else
       query =
-        from(o in queryable,
-          join: ho in "hosts_organizations", on: ho.organization_id == o.id,
-          join: h in QuestApiV21.Hosts.Host, on: h.id == ho.host_id and h.id == ^host_id,
-          preload: ^preloads
-        )
+        queryable
+        |> where([q], q.organization_id == ^organization_id)
+        |> preload(^preloads)
+        |> Repo.all()
 
-      Repo.all(query)
+      query
     end
+  end
 
+  def org_scope_query(queryable, host_id, preloads \\ []) do
+    # Query the Organization schema
+    query =
+      from(o in queryable,
+        join: ho in "hosts_organizations",
+        on: ho.organization_id == o.id,
+        join: h in QuestApiV21.Hosts.Host,
+        on: h.id == ho.host_id and h.id == ^host_id,
+        preload: ^preloads
+      )
 
+    Repo.all(query)
+  end
 
   @doc """
   Retrieves a single item by its ID, scoped to the given organization ID.
@@ -61,31 +61,29 @@ defmodule QuestApiV21.OrganizationScopedQueries do
       iex> OrganizationScopedQueries.get_item(Quest, quest_id, org_id)
       %Quest{}
   """
-def get_item(queryable, id, organization_id, preloads \\ []) do
+  def get_item(queryable, id, organization_id, preloads \\ []) do
+    query =
+      queryable
+      |> where([q], q.id == ^id)
 
-  query =
-    queryable
-    |> where([q], q.id == ^id)
+    query =
+      if is_nil(organization_id) do
+        query
+      else
+        query |> where([q], q.organization_id == ^organization_id)
+      end
 
-  query =
-    if is_nil(organization_id) do
+    results =
       query
-    else
-      query |> where([q], q.organization_id == ^organization_id)
+      |> preload(^preloads)
+      # Temporarily switch to all to inspect the results
+      |> Repo.all()
+
+    case results do
+      [single_result] -> single_result
+      _ -> raise "Expected a single result, but got multiple"
     end
-
-  results =
-    query
-    |> preload(^preloads)
-    |> Repo.all() # Temporarily switch to all to inspect the results
-
-
-  case results do
-    [single_result] -> single_result
-    _ -> raise "Expected a single result, but got multiple"
   end
-end
-
 
   @doc """
   Updates a record if it belongs to the given organization ID.

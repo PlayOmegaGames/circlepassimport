@@ -16,7 +16,6 @@ defmodule QuestApiV21Web.Router do
     plug :fetch_current_account
     plug :fetch_current_superadmin
     plug Ueberauth
-
   end
 
   pipeline :api do
@@ -65,10 +64,6 @@ defmodule QuestApiV21Web.Router do
     post "/sign_up", AuthController, :sign_up
     post "/set_session", SessionController, :set_session
     live "/test_event", TestLive
-
-    # policy of boring
-    get "/privacy-policy", Web.PageController, :privacy
-    get "/auth_splash", Web.PageController, :auth_splash
   end
 
   # authentication for API
@@ -121,27 +116,12 @@ defmodule QuestApiV21Web.Router do
   scope "/", QuestApiV21Web do
     pipe_through [:browser, :require_authenticated_account]
 
-    live_session :require_authenticated_account, on_mount: [
-      {QuestApiV21Web.AccountAuth, :ensure_authenticated},
-      QuestApiV21Web.Nav
+    live_session :require_authenticated_account,
+      on_mount: [
+        {QuestApiV21Web.AccountAuth, :ensure_authenticated},
+        QuestApiV21Web.Nav
       ],
       layout: {QuestApiV21Web.Layouts, :authenticated} do
-
-
-      #Legeacy routes
-      get "/user-settings", Web.AccountController, :user_settings
-      post "/update_profile", Web.AccountController, :update_from_web
-      post "/update_email", Web.AccountController, :change_email
-      post "/change_password", Web.AccountController, :change_password
-
-      #get "/badges", Web.BadgeController, :show_badge
-      get "/badge/eb759dbc-a43b-4208-b157-103b95110831", Web.PageController, :redirect_to_badges
-      #get "/badge/:id", Web.CollectorController, :show_collector
-      get "/new", Web.PageController, :new_page
-      #get "/profile", Web.PageController, :profile
-
-      get "/camera", Web.PageController, :camera
-
       # Live views
       live "/home", MainLive, :home
       live "/home/badges", MainLive, :badges
@@ -151,15 +131,17 @@ defmodule QuestApiV21Web.Router do
       live "/profile", MainLive, :profile
       live "/badge/:id", CollectorLive
       live "/accounts/settings", Account.AccountSettingsLive, :edit
-      live "/accounts/settings/confirm_email/:token", Account.AccountSettingsLive, :confirm_emailauth_splash
+
+      live "/accounts/settings/confirm_email/:token",
+           Account.AccountSettingsLive,
+           :confirm_emailauth_splash
+
       live "/navbar", QuestApiV21Web.LiveComponents.Navbar, :index, as: :Navbar
       live "/questbar", QuestBarLive
       live "/single_page", SinglePageLive
       delete "/accounts/sign_out", AccountSessionController, :delete
     end
   end
-
-
 
   # for SSO Oauth
   scope "/auth", QuestApiV21Web do
@@ -199,7 +181,7 @@ defmodule QuestApiV21Web.Router do
 
     live_session :redirect_if_superadmin_is_authenticated,
       on_mount: [{QuestApiV21Web.SuperadminAuth, :redirect_if_superadmin_is_authenticated}] do
-      #live "/superadmin/register", Superadmin.SuperadminRegistrationLive, :new
+      # live "/superadmin/register", Superadmin.SuperadminRegistrationLive, :new
       live "/superadmin/log_in", Superadmin.SuperadminLoginLive, :new
       live "/superadmin/reset_password", Superadmin.SuperadminForgotPasswordLive, :new
       live "/superadmin/reset_password/:token", Superadmin.SuperadminResetPasswordLive, :edit
@@ -214,7 +196,10 @@ defmodule QuestApiV21Web.Router do
     live_session :require_authenticated_superadmin,
       on_mount: [{QuestApiV21Web.SuperadminAuth, :ensure_authenticated}] do
       live "/superadmin/settings", Superadmin.SuperadminSettingsLive, :edit
-      live "/superadmin/settings/confirm_email/:token", Superadmin.SuperadminSettingsLive, :confirm_email
+
+      live "/superadmin/settings/confirm_email/:token",
+           Superadmin.SuperadminSettingsLive,
+           :confirm_email
     end
   end
 
@@ -237,19 +222,15 @@ defmodule QuestApiV21Web.Router do
 
     live_session :redirect_if_account_is_authenticated,
       on_mount: [{QuestApiV21Web.AccountAuth, :redirect_if_account_is_authenticated}],
-        layout: {QuestApiV21Web.Layouts, :registration} do
-
+      layout: {QuestApiV21Web.Layouts, :registration} do
       live "/accounts/register", Account.AccountRegistrationLive, :new
       live "/accounts/log_in", Account.AccountLoginLive, :new
       live "/accounts/reset_password", Account.AccountForgotPasswordLive, :new
       live "/accounts/reset_password/:token", Account.AccountResetPasswordLive, :edit
-
     end
 
     post "/accounts/log_in", AccountSessionController, :create
   end
-
-
 
   scope "/", QuestApiV21Web do
     pipe_through [:browser]

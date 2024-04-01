@@ -33,5 +33,4 @@ defmodule QuestApiV21.Collectors.Collector do
       changeset
     end
   end
-
 end

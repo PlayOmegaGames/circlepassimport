@@ -37,7 +37,7 @@ defmodule QuestApiV21Web.Account.AccountConfirmationInstructionsLive do
       Accounts.deliver_account_confirmation_instructions(
         account,
         fn token -> "https://questapp.io/accounts/confirm/#{token}" end
-        )
+      )
     end
 
     info =

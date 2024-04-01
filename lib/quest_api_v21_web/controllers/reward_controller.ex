@@ -10,7 +10,8 @@ defmodule QuestApiV21Web.RewardController do
     case Rewards.redeem_reward_by_slug(organization_id, slug) do
       {:ok, _reward} ->
         conn
-        |> put_status(200) # This line is technically optional as 200 is the default
+        # This line is technically optional as 200 is the default
+        |> put_status(200)
         |> json(%{message: "Reward has been successfully redeemed!"})
 
       {:error, :not_found} ->
@@ -29,6 +30,4 @@ defmodule QuestApiV21Web.RewardController do
         |> json(%{error: "Unable to redeem the reward at this time."})
     end
   end
-
-
 end

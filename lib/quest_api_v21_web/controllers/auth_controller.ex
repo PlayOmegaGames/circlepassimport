@@ -212,7 +212,7 @@ defmodule QuestApiV21Web.AuthController do
   # Function to handle OAuth callback
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
     user_info = auth.info
-    
+
     email = user_info.email
     name = user_info.name
 

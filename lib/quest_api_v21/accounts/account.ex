@@ -20,8 +20,6 @@ defmodule QuestApiV21.Accounts.Account do
     belongs_to :selected_quest, QuestApiV21.Quests.Quest
     has_many :rewards, QuestApiV21.Rewards.Reward
 
-
-
     many_to_many :badges, QuestApiV21.Badges.Badge, join_through: "badges_accounts"
     many_to_many :quests, QuestApiV21.Quests.Quest, join_through: "quests_accounts"
 
@@ -57,7 +55,6 @@ defmodule QuestApiV21.Accounts.Account do
     |> cast(attrs, [:password, :email, :name])
     |> validate_email(opts)
     |> validate_password(opts)
-
   end
 
   defp validate_email(changeset, opts) do
@@ -140,7 +137,7 @@ defmodule QuestApiV21.Accounts.Account do
     |> validate_password(opts)
   end
 
-    @doc """
+  @doc """
   Confirms the account by setting `confirmed_at`.
   """
   def confirm_changeset(account) do
@@ -183,10 +180,19 @@ defmodule QuestApiV21.Accounts.Account do
   """
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:name, :role, :quests_stats, :badges_stats, :selected_quest_id, :email, :is_passwordless, :rewards_stats, :pfps])
+    |> cast(attrs, [
+      :name,
+      :role,
+      :quests_stats,
+      :badges_stats,
+      :selected_quest_id,
+      :email,
+      :is_passwordless,
+      :rewards_stats,
+      :pfps
+    ])
     |> validate_length(:name, max: 100)
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
     |> cast_assoc(:selected_quest, with: &QuestApiV21.Quests.Quest.changeset/2)
   end
-
 end

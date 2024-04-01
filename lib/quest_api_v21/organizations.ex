@@ -27,7 +27,8 @@ defmodule QuestApiV21.Organizations do
     preloads = [:hosts]
     OrganizationScopedQueries.org_scope_query(Organization, host_id, preloads)
   end
-    @doc """
+
+  @doc """
   Associates a host found by email with the provided organization ID.
 
   ## Parameters
@@ -77,7 +78,7 @@ defmodule QuestApiV21.Organizations do
     Repo.update(changeset)
   end
 
-  @doc"""
+  @doc """
 
     alias QuestApiV21.Organizations
     Organizations.list_organizations_by_organization_id("8cb1399f-e077-41ff-93cd-ce7bc3a21c98")
@@ -139,12 +140,10 @@ defmodule QuestApiV21.Organizations do
             {:error, :failed_to_update_host}
         end
 
-
       {:error, changeset} ->
         {:error, changeset}
     end
   end
-
 
   @doc """
   Updates a organization.

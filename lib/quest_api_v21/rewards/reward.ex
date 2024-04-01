@@ -30,5 +30,4 @@ defmodule QuestApiV21.Rewards.Reward do
     id = String.slice(account_id, -6..-1)
     put_change(changeset, :slug, "#{slug}-#{id}")
   end
-
 end

@@ -20,7 +20,7 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
     "https://staging.questapp.io",
     "https://questapp.io/",
     "https://gitpod.io.",
-    "https://client-dashboard-v2-zeta.vercel.app",
+    "https://client-dashboard-v2-zeta.vercel.app"
   ],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: System.get_env("SECRET_KEY_BASE")
@@ -34,7 +34,7 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Ensure the Swoosh API client is configured for your choice of HTTP client, if necessary
-#config :swoosh, :api_client, Swoosh.ApiClient.Finch
+# config :swoosh, :api_client, Swoosh.ApiClient.Finch
 
 # Disable Swoosh Local Memory Storage
 config :swoosh, local: false

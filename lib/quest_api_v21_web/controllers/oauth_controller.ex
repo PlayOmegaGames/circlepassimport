@@ -12,6 +12,7 @@ defmodule QuestApiV21Web.OauthController do
           name: auth.info.name,
           pfps: auth.info.image
         }
+
         IO.inspect(user_info)
         # Handle user authentication or account creation based on the extracted information
         handle_user_auth(conn, user_info)
@@ -23,7 +24,6 @@ defmodule QuestApiV21Web.OauthController do
         |> redirect(to: "/accounts/register")
     end
   end
-
 
   defp handle_user_auth(conn, %{email: email, name: name}) do
     case Accounts.handle_oauth_login(email, name) do
@@ -43,8 +43,6 @@ defmodule QuestApiV21Web.OauthController do
         |> redirect(to: "/accounts/register")
     end
   end
-
-
 
   def request(_conn, _params) do
     # This will be handled by Ueberauth to redirect to Google

@@ -26,18 +26,21 @@ defmodule QuestApiV21Web.Account.AccountLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Signing in..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">
+          <.button
+            phx-disable-with="Signing in..."
+            class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950"
+          >
             Sign in <span aria-hidden="true">→</span>
           </.button>
         </:actions>
       </.simple_form>
     </div>
     <p class="text-center text-black my-4">or</p>
-      <div class="mb-4 flex justify-center">
-        <a href="/auth/google">
-          <.google />
-        </a>
-      </div>
+    <div class="mb-4 flex justify-center">
+      <a href="/auth/google">
+        <.google />
+      </a>
+    </div>
     """
   end
 

@@ -17,7 +17,8 @@ defmodule QuestApiV21Web.SuperadminConfirmationLive do
 
       <p class="text-center mt-4">
         <!--<.link href={~p"/superadmin/register"}>Register</.link>-->
-        | <.link href={~p"/superadmin/log_in"}>Log in</.link>
+        |
+        <.link href={~p"/superadmin/log_in"}>Log in</.link>
       </p>
     </div>
     """

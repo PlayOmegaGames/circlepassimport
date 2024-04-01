@@ -73,13 +73,12 @@ defmodule QuestApiV21.Badges do
     |> Repo.preload(:quest)
   end
 
-
   def list_badges_by_organization_id(organization_id) do
     preloads = [:organization, :accounts]
     OrganizationScopedQueries.scope_query(Badge, organization_id, preloads)
   end
 
-    @doc """
+  @doc """
   Fetches all badges associated with a given account ID.
 
   ## Examples
@@ -94,12 +93,14 @@ defmodule QuestApiV21.Badges do
     case Repo.get(Account, account_id) do
       nil ->
         {:error, :not_found}
+
       account ->
         # Preload badges for the found account
         account_with_badges = Repo.preload(account, :badges)
         {:ok, account_with_badges.badges}
     end
   end
+
   @doc """
   Creates a badge.
 
@@ -208,7 +209,12 @@ defmodule QuestApiV21.Badges do
       # increase the points by the badge points of the badge
       new_score = score + points
       new_count = badge_count + 1
-      Quests.update_quest(quest, %{completion_score: new_score, badge_count: new_count}, organization_id)
+
+      Quests.update_quest(
+        quest,
+        %{completion_score: new_score, badge_count: new_count},
+        organization_id
+      )
     else
       :noop
     end
