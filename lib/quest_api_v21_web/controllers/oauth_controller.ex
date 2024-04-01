@@ -13,7 +13,6 @@ defmodule QuestApiV21Web.OauthController do
           pfps: auth.info.image
         }
 
-        IO.inspect(user_info)
         # Handle user authentication or account creation based on the extracted information
         handle_user_auth(conn, user_info)
 

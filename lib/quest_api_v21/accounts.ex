@@ -575,7 +575,7 @@ defmodule QuestApiV21.Accounts do
   end
 
   def authenticate_user_by_password(_email, id, current_password) do
-    IO.inspect("Authenticate User Function")
+    # IO.inspect("Authenticate User Function")
 
     case find_account_by_id(id) do
       nil ->
@@ -898,7 +898,7 @@ defmodule QuestApiV21.Accounts do
   end
 
   def authenticate_user_by_id(_email, id, password) do
-    IO.inspect("Authenticate User Function")
+    # IO.inspect("Authenticate User Function")
 
     case find_account_by_id(id) do
       nil ->

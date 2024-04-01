@@ -1,5 +1,6 @@
 defmodule QuestApiV21Web.MainLive do
   use Phoenix.LiveView
+  require Logger
   alias QuestApiV21.{Badges, Quests, Rewards}
   alias QuestApiV21Web.CoreComponents
 
@@ -60,8 +61,6 @@ defmodule QuestApiV21Web.MainLive do
         _ -> "false"
       end
 
-    IO.inspect(background_color)
-
     socket =
       socket
       |> assign(tab: tab)
@@ -95,7 +94,6 @@ defmodule QuestApiV21Web.MainLive do
   end
 
   def handle_event("show-content", %{"type" => type}, socket) do
-    IO.inspect(type, label: "Show Content Type")
     {:noreply, assign(socket, tab: type)}
   end
 

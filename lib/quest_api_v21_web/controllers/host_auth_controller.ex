@@ -1,6 +1,6 @@
 defmodule QuestApiV21Web.HostAuthController do
   use QuestApiV21Web, :controller
-
+  require Logger
   alias QuestApiV21.{HostGuardian, Repo, Hosts.Host}
   alias QuestApiV21.Hosts
 
@@ -50,7 +50,7 @@ defmodule QuestApiV21Web.HostAuthController do
         })
 
       {:error, reason} ->
-        IO.inspect(reason, label: "Error in JWT encoding")
+        Logger.error(reason <> "Error in JWT encoding")
 
         conn
         |> put_status(:internal_server_error)

@@ -4,7 +4,7 @@ defmodule QuestApiV21Web.ProfileLive do
 
   def mount(_params, _session, socket) do
     account = socket.assigns.current_account
-    IO.inspect(account)
+    # IO.inspect(account)
 
     {:ok, assign(socket, :account, account)}
   end

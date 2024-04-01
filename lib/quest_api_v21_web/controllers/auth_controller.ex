@@ -34,7 +34,7 @@ defmodule QuestApiV21Web.AuthController do
   # API `change_email` function for password authentication
   def change_email(conn, %{"account" => %{"email" => email, "password" => password}}) do
     account = conn.assigns[:current_user]
-    IO.inspect(account.id)
+    # IO.inspect(account.id)
 
     case Accounts.authenticate_user_by_id(email, account.id, password) do
       {:ok, account} ->
@@ -112,7 +112,7 @@ defmodule QuestApiV21Web.AuthController do
         })
 
       {:error, reason} ->
-        IO.inspect(reason, label: "Error in JWT encoding")
+        Logger.error(reason <> "Error in JWT encoding")
 
         conn
         |> put_status(:internal_server_error)
