@@ -24,7 +24,8 @@ defmodule QuestApiV21Web.NoQuest do
         <div class="my-auto mr-4 py-1 flex justify-between w-full">
           <span class="animate__flash animate__animated animate__slower my-auto ml-4">
             Scan a Quest QR code to start
-          </span> <span class="my-auto hero-arrow-long-right"></span>
+          </span>
+           <span class="my-auto hero-arrow-long-right"></span>
 
           <button
             phx-click="camera"
