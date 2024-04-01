@@ -25,7 +25,7 @@ defmodule QuestApiV21Web.NoQuest do
           <span class="animate__flash animate__animated animate__slower my-auto ml-4">
             Scan a Quest QR code to start
           </span>
-           <span class="my-auto hero-arrow-long-right"></span>
+          <span class="my-auto hero-arrow-long-right"></span>
 
           <button
             phx-click="camera"
