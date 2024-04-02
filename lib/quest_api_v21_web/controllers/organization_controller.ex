@@ -9,16 +9,14 @@ defmodule QuestApiV21Web.OrganizationController do
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-
     host_id = JWTUtility.get_host_id_from_jwt(conn)
 
     case Organizations.list_organizations_by_host_id(host_id) do
-
       organizations ->
         organizations
         |> Repo.preload([:hosts, :quests, :badges, :collectors])
 
-      render(conn, :index, organizations: organizations)
+        render(conn, :index, organizations: organizations)
     end
   end
 

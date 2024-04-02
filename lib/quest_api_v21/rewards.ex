@@ -75,11 +75,11 @@ defmodule QuestApiV21.Rewards do
         %Reward{}
         |> Reward.changeset(updated_attrs)
         |> Repo.insert()
+
       _ ->
         {:error, "Quest not found"}
     end
   end
-
 
   @doc """
   Lists all rewards associated with a specific account.
@@ -92,20 +92,23 @@ defmodule QuestApiV21.Rewards do
   def list_rewards_for_account(account_id) do
     Repo.all(
       from r in Reward,
-      where: r.account_id == ^account_id,
-      preload: [:organization, :quest]
+        where: r.account_id == ^account_id,
+        preload: [:organization, :quest]
     )
   end
 
   # Function for displaying rewards on home
   def get_rewards_for_account(account_id) do
-    account_query = from(a in Account,
-                         where: a.id == ^account_id,
-                         preload: [rewards: [:organization, :quest]])
+    account_query =
+      from(a in Account,
+        where: a.id == ^account_id,
+        preload: [rewards: [:organization, :quest]]
+      )
 
     case Repo.one(account_query) do
       nil ->
         {:error, :not_found}
+
       account ->
         {:ok, account.rewards}
     end
@@ -121,7 +124,7 @@ defmodule QuestApiV21.Rewards do
 
   """
   def redeem_reward_by_slug(organization_id, slug) do
-    case Repo.get_by(Reward, [organization_id: organization_id, slug: slug]) do
+    case Repo.get_by(Reward, organization_id: organization_id, slug: slug) do
       nil ->
         {:error, :not_found}
 

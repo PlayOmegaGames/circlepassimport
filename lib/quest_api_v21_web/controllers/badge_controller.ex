@@ -11,17 +11,14 @@ defmodule QuestApiV21Web.BadgeController do
   action_fallback QuestApiV21Web.FallbackController
 
   def index(conn, _params) do
-
     organization_id = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Badges.list_badges_by_organization_id(organization_id) do
-
       badges ->
         badges
-          |> Repo.preload([:organization, :accounts])
+        |> Repo.preload([:organization, :accounts])
 
         render(conn, :index, badges: badges)
-
     end
   end
 

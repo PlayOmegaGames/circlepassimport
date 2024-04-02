@@ -1,7 +1,7 @@
-defmodule QuestApiV21Web.SuperadminConfirmationInstructionsLive do
+defmodule QuestApiV21Web.Account.AccountConfirmationInstructionsLive do
   use QuestApiV21Web, :live_view
 
-  alias QuestApiV21.Admin
+  alias QuestApiV21.Accounts
 
   def render(assigns) do
     ~H"""
@@ -21,22 +21,22 @@ defmodule QuestApiV21Web.SuperadminConfirmationInstructionsLive do
       </.simple_form>
 
       <p class="text-center mt-4">
-        <.link href={~p"/superadmin/register"}>Register</.link>
-        | <.link href={~p"/superadmin/log_in"}>Log in</.link>
+        <.link href={~p"/accounts/register"}>Register</.link>
+        | <.link href={~p"/accounts/log_in"}>Log in</.link>
       </p>
     </div>
     """
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, form: to_form(%{}, as: "superadmin"))}
+    {:ok, assign(socket, form: to_form(%{}, as: "account"))}
   end
 
-  def handle_event("send_instructions", %{"superadmin" => %{"email" => email}}, socket) do
-    if superadmin = Admin.get_superadmin_by_email(email) do
-      Admin.deliver_superadmin_confirmation_instructions(
-        superadmin,
-        &url(~p"/superadmin/confirm/#{&1}")
+  def handle_event("send_instructions", %{"account" => %{"email" => email}}, socket) do
+    if account = Accounts.get_account_by_email(email) do
+      Accounts.deliver_account_confirmation_instructions(
+        account,
+        fn token -> "https://questapp.io/accounts/confirm/#{token}" end
       )
     end
 

@@ -22,7 +22,7 @@ defmodule QuestApiV21.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: QuestApiV21.PubSub},
       Supervisor.child_spec({Phoenix.PubSub, name: :my_pubsub}, id: :my_custom_pubsub),
-      
+
       # Start Finch
       {Finch, name: QuestApiV21.Finch},
       # Start the Endpoint (http/https)

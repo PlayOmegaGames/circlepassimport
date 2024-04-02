@@ -25,7 +25,7 @@ defmodule QuestApiV21Web.CollectorController do
     Logger.info("Extracted organization ID: #{organization_id}")
 
     with {:ok, collector} <-
-         Collectors.create_collector_with_organization(collector_params, organization_id),
+           Collectors.create_collector_with_organization(collector_params, organization_id),
          url = "questapp.io/badge/#{collector.id}",
          {:ok, qr_code_url} <- QuestApiV21Web.QrGenerator.create_and_upload_qr(url) do
       Logger.info("QR code created and uploaded successfully: #{qr_code_url}")
@@ -46,18 +46,19 @@ defmodule QuestApiV21Web.CollectorController do
     else
       {:error, changeset} ->
         Logger.error("Collector creation failed: #{inspect(changeset)}")
+
         conn
         |> put_status(:unprocessable_entity)
         |> render("error.json", %{message: "Collector creation failed", errors: changeset})
 
       error ->
         Logger.error("Unexpected error: #{inspect(error)}")
+
         conn
         |> put_status(:internal_server_error)
         |> render("error.json", %{message: "Failed to create QR code", error: error})
     end
   end
-
 
   def show(conn, %{"id" => id}) do
     organization_ids = JWTUtility.get_organization_id_from_jwt(conn)

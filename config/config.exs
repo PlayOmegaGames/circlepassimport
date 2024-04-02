@@ -55,8 +55,6 @@ config :quest_api_v21, QuestApiV21.Mailer,
   access_key: System.get_env("AWS_ACCESS_KEY_ID"),
   secret: System.get_env("AWS_SECRET_ACCESS_KEY")
 
-
-
 config :swoosh, :mailers, %{
   default: {Swoosh.Adapters.AmazonSES, []}
 }
@@ -101,3 +99,10 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
+
+if Mix.env() != :prod do
+  config :git_hooks,
+    verbose: true,
+    hooks: [
+    ]
+end

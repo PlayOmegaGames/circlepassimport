@@ -30,7 +30,7 @@ defmodule QuestApiV21Web.QrGenerator do
 
     headers = [
       {"Content-Type", "application/json"},
-      {"X-RapidAPI-Key",  System.get_env("QR_CODE_MONKEY")},
+      {"X-RapidAPI-Key", System.get_env("QR_CODE_MONKEY")},
       {"X-RapidAPI-Host", "qrcode-monkey.p.rapidapi.com"}
     ]
 
@@ -54,7 +54,7 @@ defmodule QuestApiV21Web.QrGenerator do
           "https://quest-optimized-images.s3.amazonaws.com/optimized-images/webapp-images/QuestLogo.png",
         logoMode: "clean"
       },
-      size: 300,
+      size: 400,
       download: false,
       file: "png"
     }

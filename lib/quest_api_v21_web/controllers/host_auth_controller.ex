@@ -1,6 +1,6 @@
 defmodule QuestApiV21Web.HostAuthController do
   use QuestApiV21Web, :controller
-
+  require Logger
   alias QuestApiV21.{HostGuardian, Repo, Hosts.Host}
   alias QuestApiV21.Hosts
 
@@ -37,7 +37,6 @@ defmodule QuestApiV21Web.HostAuthController do
   defp render_jwt_and_host(conn, host) do
     case HostGuardian.encode_and_sign(host) do
       {:ok, jwt, _full_claims} ->
-
         host = QuestApiV21.Repo.preload(host, [:current_org])
 
         org_name = if host.current_org, do: host.current_org.name, else: ""
@@ -51,7 +50,7 @@ defmodule QuestApiV21Web.HostAuthController do
         })
 
       {:error, reason} ->
-        IO.inspect(reason, label: "Error in JWT encoding")
+        Logger.error(reason <> "Error in JWT encoding")
 
         conn
         |> put_status(:internal_server_error)

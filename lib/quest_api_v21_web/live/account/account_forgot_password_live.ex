@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.AccountForgotPasswordLive do
+defmodule QuestApiV21Web.Account.AccountForgotPasswordLive do
   use QuestApiV21Web, :live_view
 
   alias QuestApiV21.Accounts
@@ -14,7 +14,10 @@ defmodule QuestApiV21Web.AccountForgotPasswordLive do
       <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
         <.input field={@form[:email]} type="email" placeholder="Email" required />
         <:actions>
-          <.button phx-disable-with="Sending..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">
+          <.button
+            phx-disable-with="Sending..."
+            class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950"
+          >
             Send password reset instructions
           </.button>
         </:actions>
@@ -37,7 +40,6 @@ defmodule QuestApiV21Web.AccountForgotPasswordLive do
       Accounts.deliver_account_reset_password_instructions(
         account,
         fn token -> "https://questapp.io/accounts/reset_password/#{token}" end
-
       )
     end
 

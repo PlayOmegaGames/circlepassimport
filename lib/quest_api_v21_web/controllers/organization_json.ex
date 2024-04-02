@@ -16,7 +16,6 @@ defmodule QuestApiV21Web.OrganizationJSON do
     %{data: data(organization), jwt: jwt}
   end
 
-
   # Adjusted data function to include only id, name, and hosts for an organization
   defp data(%Organization{hosts: hosts} = organization) do
     %{

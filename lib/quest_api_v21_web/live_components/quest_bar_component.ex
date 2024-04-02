@@ -23,12 +23,13 @@ defmodule QuestApiV21Web.QuestBarComponent do
     # Combine badges into a single list, with collected badges first
     all_marked_badges = marked_collected_badges ++ marked_uncollected_badges
 
-
     socket =
       socket
       |> assign(:quest, quest)
-      |> assign(:all_badges, all_marked_badges) # Combined list with marked badges
-      |> assign(:current_index, 0) # Initialize current index
+      # Combined list with marked badges
+      |> assign(:all_badges, all_marked_badges)
+      # Initialize current index
+      |> assign(:current_index, 0)
       |> assign(:socketid, socket.id)
 
     {:ok, socket |> update_current_badge()}
@@ -47,29 +48,23 @@ defmodule QuestApiV21Web.QuestBarComponent do
   def render(assigns) do
     ~H"""
     <div>
-    <div phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-1 border-2 border-gray-800">
-      <div class="flex row">
-      <div>
-        <%= if assigns.badge.collected do %>
-          <img class="w-12 h-auto rounded-full" src={assigns.badge.badge_image} />
-        <% else %>
-        <img class="grayscale w-12 h-auto rounded-full" src={assigns.badge.badge_image} />
-        <% end %>
-
+      <div phx-hook="UpdateIndex" id="UpdateIndex" class="fixed bottom-1 border-2 border-gray-800">
+        <div class="flex row">
+          <div>
+            <%= if assigns.badge.collected do %>
+              <img class="w-12 h-auto rounded-full" src={assigns.badge.badge_image} />
+            <% else %>
+              <img class="grayscale w-12 h-auto rounded-full" src={assigns.badge.badge_image} />
+            <% end %>
+          </div>
+          <div>
+            <p class="text-light"><%= assigns.quest.name %></p>
+            <p class="text-light"><%= assigns.badge.name %></p>
+          </div>
+        </div>
+        <button phx-click="previous" class="border-2 m-8">Previous</button>
+        <button phx-click="next" class="border-2 m-8">Next</button>
       </div>
-      <div>
-
-
-
-        <p class="text-light" ><%= assigns.quest.name %> </p>
-        <p class="text-light" ><%= assigns.badge.name %> </p>
-      </div>
-
-    </div>
-      <button phx-click="previous" class="border-2 m-8">Previous</button>
-      <button phx-click="next" class="border-2 m-8">Next</button>
-    </div>
-
     </div>
     """
   end
@@ -111,5 +106,4 @@ defmodule QuestApiV21Web.QuestBarComponent do
 
     {:noreply, socket}
   end
-
 end

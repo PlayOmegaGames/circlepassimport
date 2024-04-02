@@ -49,7 +49,7 @@ defmodule QuestApiV21.Accounts do
 
   """
   def get_account_by_email_and_password(email, password)
-    when is_binary(email) and is_binary(password) do
+      when is_binary(email) and is_binary(password) do
     account = Repo.get_by(Account, email: email)
     if Account.valid_password?(account, password), do: account
   end
@@ -121,7 +121,6 @@ defmodule QuestApiV21.Accounts do
     Account.email_changeset(account, attrs, validate_email: false)
   end
 
-
   @doc """
   Emulates that the email will change without actually changing
   it in the database.
@@ -168,10 +167,13 @@ defmodule QuestApiV21.Accounts do
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:account, changeset)
-    |> Ecto.Multi.delete_all(:tokens, AccountToken.by_account_and_contexts_query(account, [context]))
+    |> Ecto.Multi.delete_all(
+      :tokens,
+      AccountToken.by_account_and_contexts_query(account, [context])
+    )
   end
 
- @doc ~S"""
+  @doc ~S"""
   Delivers the update email instructions to the given account.
 
   ## Examples
@@ -180,12 +182,21 @@ defmodule QuestApiV21.Accounts do
       {:ok, %{to: ..., body: ...}}
 
   """
-  def deliver_account_update_email_instructions(%Account{} = account, current_email, update_email_url_fun)
-    when is_function(update_email_url_fun, 1) do
-    {encoded_token, account_token} = AccountToken.build_email_token(account, "change:#{current_email}")
+  def deliver_account_update_email_instructions(
+        %Account{} = account,
+        current_email,
+        update_email_url_fun
+      )
+      when is_function(update_email_url_fun, 1) do
+    {encoded_token, account_token} =
+      AccountToken.build_email_token(account, "change:#{current_email}")
 
     Repo.insert!(account_token)
-    AccountNotifier.deliver_update_email_instructions(account, update_email_url_fun.(encoded_token))
+
+    AccountNotifier.deliver_update_email_instructions(
+      account,
+      update_email_url_fun.(encoded_token)
+    )
   end
 
   @doc """
@@ -271,13 +282,17 @@ defmodule QuestApiV21.Accounts do
 
   """
   def deliver_account_confirmation_instructions(%Account{} = account, confirmation_url_fun)
-    when is_function(confirmation_url_fun, 1) do
+      when is_function(confirmation_url_fun, 1) do
     if account.confirmed_at do
       {:error, :already_confirmed}
     else
       {encoded_token, account_token} = AccountToken.build_email_token(account, "confirm")
       Repo.insert!(account_token)
-      AccountNotifier.deliver_confirmation_instructions(account, confirmation_url_fun.(encoded_token))
+
+      AccountNotifier.deliver_confirmation_instructions(
+        account,
+        confirmation_url_fun.(encoded_token)
+      )
     end
   end
 
@@ -300,7 +315,10 @@ defmodule QuestApiV21.Accounts do
   defp confirm_account_multi(account) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:account, Account.confirm_changeset(account))
-    |> Ecto.Multi.delete_all(:tokens, AccountToken.by_account_and_contexts_query(account, ["confirm"]))
+    |> Ecto.Multi.delete_all(
+      :tokens,
+      AccountToken.by_account_and_contexts_query(account, ["confirm"])
+    )
   end
 
   ## Reset password
@@ -315,10 +333,14 @@ defmodule QuestApiV21.Accounts do
 
   """
   def deliver_account_reset_password_instructions(%Account{} = account, reset_password_url_fun)
-    when is_function(reset_password_url_fun, 1) do
+      when is_function(reset_password_url_fun, 1) do
     {encoded_token, account_token} = AccountToken.build_email_token(account, "reset_password")
     Repo.insert!(account_token)
-    AccountNotifier.deliver_reset_password_instructions(account, reset_password_url_fun.(encoded_token))
+
+    AccountNotifier.deliver_reset_password_instructions(
+      account,
+      reset_password_url_fun.(encoded_token)
+    )
   end
 
   @doc """
@@ -365,8 +387,7 @@ defmodule QuestApiV21.Accounts do
     end
   end
 
-
-  #================= OLD CONTEXT ===============
+  # ================= OLD CONTEXT ===============
 
   @doc """
   Creates an account.
@@ -381,7 +402,8 @@ defmodule QuestApiV21.Accounts do
 
   """
   def create_account(attrs \\ %{}) do
-    email = Map.get(attrs, :email) # Use atom key directly
+    # Use atom key directly
+    email = Map.get(attrs, :email)
 
     Logger.debug("create_account called with attrs: #{inspect(attrs)}")
 
@@ -409,7 +431,6 @@ defmodule QuestApiV21.Accounts do
         {:error, :email_taken}
     end
   end
-
 
   defp put_password_hash(%{"password" => password} = attrs) do
     Map.put(attrs, "hashed_password", Bcrypt.hash_pwd_salt(password))
@@ -506,7 +527,8 @@ defmodule QuestApiV21.Accounts do
       email: email,
       name: name,
       is_passwordless: true,
-      verified: true # Assuming OAuth users are verified by the provider
+      # Assuming OAuth users are verified by the provider
+      verified: true
     }
 
     Logger.debug("Attributes for OAuth account creation: #{inspect(user_attrs)}")
@@ -516,7 +538,6 @@ defmodule QuestApiV21.Accounts do
       {:error, reason} -> {:error, reason}
     end
   end
-
 
   @doc """
   Deletes a account.
@@ -554,7 +575,7 @@ defmodule QuestApiV21.Accounts do
   end
 
   def authenticate_user_by_password(_email, id, current_password) do
-    IO.inspect("Authenticate User Function")
+    # IO.inspect("Authenticate User Function")
 
     case find_account_by_id(id) do
       nil ->
@@ -627,10 +648,12 @@ defmodule QuestApiV21.Accounts do
         Logger.info("Updated badges list for account")
 
         # Update the account with the new badges list and update the badges stats (count)
-        account = Ecto.Changeset.change(account)
-                  |> Ecto.Changeset.put_assoc(:badges, updated_badges)
-                  |> Ecto.Changeset.change(%{badges_stats: length(updated_badges)})
-                  |> Repo.update!()
+        account =
+          Ecto.Changeset.change(account)
+          |> Ecto.Changeset.put_assoc(:badges, updated_badges)
+          |> Ecto.Changeset.change(%{badges_stats: length(updated_badges)})
+          |> Repo.update!()
+
         Logger.info("Successfully added new badge to account")
 
         # After adding the badge, check if any quests are completed and update quest stats and potentially reward stats
@@ -669,11 +692,10 @@ defmodule QuestApiV21.Accounts do
     end
   end
 
-
-
   defp increment_rewards_stats(account) do
     # Query the count of rewards associated with the account
-    rewards_count = Repo.aggregate(from(r in Reward, where: r.account_id == ^account.id), :count, :id)
+    rewards_count =
+      Repo.aggregate(from(r in Reward, where: r.account_id == ^account.id), :count, :id)
 
     # Update the account's rewards_stats with the actual count of associated rewards
     account
@@ -693,7 +715,10 @@ defmodule QuestApiV21.Accounts do
     account = Repo.get!(Account, account_id) |> Repo.preload(:quests)
 
     unless Enum.any?(account.quests, &(&1.id == quest_id)) do
-      Logger.info("Quest #{quest_id} is not associated with account #{account_id}. Associating and updating selected quest.")
+      Logger.info(
+        "Quest #{quest_id} is not associated with account #{account_id}. Associating and updating selected quest."
+      )
+
       # Associate the quest with the account if it's not already associated
       result = add_quest_to_account(account_id, quest_id)
 
@@ -701,12 +726,16 @@ defmodule QuestApiV21.Accounts do
         {:ok, _message} ->
           # If the quest was successfully added, update the selected quest
           update_selected_quest_for_user(account_id, quest_id)
+
         {:error, _reason} ->
           # Handle error appropriately if needed
           Logger.error("Failed to associate quest #{quest_id} with account #{account_id}.")
       end
     else
-      Logger.info("Quest #{quest_id} is already associated with account #{account_id}. Updating selected quest.")
+      Logger.info(
+        "Quest #{quest_id} is already associated with account #{account_id}. Updating selected quest."
+      )
+
       # If the quest is already associated but not selected, update the selected quest
       update_selected_quest_for_user(account_id, quest_id)
     end
@@ -714,8 +743,9 @@ defmodule QuestApiV21.Accounts do
 
   def check_quest_completion_and_create_reward(account_id, quest_id) do
     # Ensure to preload the :badges association directly before checking quest completion
-    account = Repo.get!(Account, account_id)
-              |> Repo.preload(:badges)
+    account =
+      Repo.get!(Account, account_id)
+      |> Repo.preload(:badges)
 
     if quest_completed?(account, quest_id) do
       Logger.info("Quest #{quest_id} completed. Creating reward.")
@@ -747,45 +777,59 @@ defmodule QuestApiV21.Accounts do
 
     # Logging for debugging purposes
     Logger.info("Required number of badges for quest completion: #{number_of_required_badges}")
-    Logger.info("Number of badges collected by account #{account.id} for quest #{quest_id}: #{number_of_collected_badges}")
+
+    Logger.info(
+      "Number of badges collected by account #{account.id} for quest #{quest_id}: #{number_of_collected_badges}"
+    )
 
     # The quest is considered completed if the number of collected badges matches the required count
     number_of_collected_badges == number_of_required_badges
   end
-
-
 
   def add_quest_to_account(user_id, quest_id) do
     account = Repo.get!(Account, user_id) |> Repo.preload(:quests)
 
     # Check if the quest is already associated with the account
     if Enum.any?(account.quests, &(&1.id == quest_id)) do
-      Logger.info("Quest #{quest_id} is already associated with account #{user_id}. Updating selected quest.")
+      Logger.info(
+        "Quest #{quest_id} is already associated with account #{user_id}. Updating selected quest."
+      )
+
       update_selected_quest_for_user(account.id, quest_id)
       {:ok, :already_associated}
     else
-      Logger.info("Adding new quest #{quest_id} to account #{user_id} and updating selected quest.")
+      Logger.info(
+        "Adding new quest #{quest_id} to account #{user_id} and updating selected quest."
+      )
+
       quest = Repo.get!(Quest, quest_id)
 
       updated_quests = [quest | account.quests]
 
       case Repo.transaction(fn ->
-        # Update the account with the new list of quests
-        Repo.update!(
-          Ecto.Changeset.change(account)
-          |> Ecto.Changeset.put_assoc(:quests, updated_quests)
-        )
-        # Increment quest stats
-        increment_quests_stats(account.id)
-        # Now explicitly update the selected_quest_id
-        update_selected_quest_for_user(account.id, quest_id)
-      end) do
+             # Update the account with the new list of quests
+             Repo.update!(
+               Ecto.Changeset.change(account)
+               |> Ecto.Changeset.put_assoc(:quests, updated_quests)
+             )
+
+             # Increment quest stats
+             increment_quests_stats(account.id)
+             # Now explicitly update the selected_quest_id
+             update_selected_quest_for_user(account.id, quest_id)
+           end) do
         {:ok, _} ->
-          Logger.info("Successfully added quest #{quest_id} and updated selected quest for account #{user_id}. Quest stats incremented.")
+          Logger.info(
+            "Successfully added quest #{quest_id} and updated selected quest for account #{user_id}. Quest stats incremented."
+          )
+
           {:ok, "Quest added and selected quest updated, quest stats incremented"}
 
         {:error, reason} ->
-          Logger.error("Failed to add quest #{quest_id} or update selected quest for account #{user_id}: #{inspect(reason)}")
+          Logger.error(
+            "Failed to add quest #{quest_id} or update selected quest for account #{user_id}: #{inspect(reason)}"
+          )
+
           {:error, "Failed to add quest or update selected quest"}
       end
     end
@@ -829,6 +873,7 @@ defmodule QuestApiV21.Accounts do
             # Include any other details here as necessary
           }
         )
+
         Logger.info("Broadcasting quest update for account #{account_id}")
 
         {:ok, account}
@@ -837,7 +882,6 @@ defmodule QuestApiV21.Accounts do
         error
     end
   end
-
 
   def authenticate_user(email, password) do
     case find_account_by_email(email) do
@@ -854,7 +898,7 @@ defmodule QuestApiV21.Accounts do
   end
 
   def authenticate_user_by_id(_email, id, password) do
-    IO.inspect("Authenticate User Function")
+    # IO.inspect("Authenticate User Function")
 
     case find_account_by_id(id) do
       nil ->
@@ -872,16 +916,16 @@ defmodule QuestApiV21.Accounts do
   defp maybe_add_badges(changeset, attrs) do
     case Map.get(attrs, "badge_ids") do
       nil ->
-        #Logger.debug("No badge IDs provided in attributes")
+        # Logger.debug("No badge IDs provided in attributes")
         changeset
 
       badge_ids ->
-        #Logger.debug("Badge IDs provided: #{inspect(badge_ids)}")
+        # Logger.debug("Badge IDs provided: #{inspect(badge_ids)}")
         badges = Repo.all(from b in Badge, where: b.id in ^badge_ids)
-        #Logger.debug("Badges found: #{inspect(badges)}")
+        # Logger.debug("Badges found: #{inspect(badges)}")
 
         current_stats = changeset.data.badges_stats
-        #Logger.debug("Current badge stats: #{inspect(current_stats)}")
+        # Logger.debug("Current badge stats: #{inspect(current_stats)}")
         badges_count = length(badge_ids)
 
         updated_changeset = Ecto.Changeset.put_assoc(changeset, :badges, badges)
@@ -893,7 +937,7 @@ defmodule QuestApiV21.Accounts do
             current_stats + badges_count
           )
 
-        #Logger.debug("Updated changeset: #{inspect(updated_changeset_with_stats)}")
+        # Logger.debug("Updated changeset: #{inspect(updated_changeset_with_stats)}")
         updated_changeset_with_stats
     end
   end
@@ -910,9 +954,6 @@ defmodule QuestApiV21.Accounts do
         Ecto.Changeset.put_assoc(changeset, :quests, merged_quests)
     end
   end
-
-
-
 
   # for the show collector function
 
@@ -931,8 +972,6 @@ defmodule QuestApiV21.Accounts do
   {:ok, message, updated_account} = Accounts.add_badge_to_user("d26326d1-be5b-4a24-a82e-57d855f95b89", badge)
   """
 
-
-
   # This function determines if the given account has any active (i.e., incomplete) quests.
   def has_active_quests?(account_id) do
     # Fetch the account by its ID, raising an error if it's not found.
@@ -947,7 +986,4 @@ defmodule QuestApiV21.Accounts do
       not quest_completed?(user_with_badges_and_quests, quest.id)
     end)
   end
-
-
-
 end

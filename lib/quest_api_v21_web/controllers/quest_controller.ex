@@ -14,15 +14,13 @@ defmodule QuestApiV21Web.QuestController do
     organization_id = JWTUtility.get_organization_id_from_jwt(conn)
 
     case Quests.list_quests_by_organization_ids(organization_id) do
-
       quests ->
         quests
         |> Repo.preload([:organization, :badges, :collectors, :accounts])
 
-      render(conn, :index, quests: quests)
+        render(conn, :index, quests: quests)
     end
   end
-
 
   def create(conn, %{"quest" => quest_params}) do
     organization_id = JWTUtility.extract_organization_id_from_jwt(conn)

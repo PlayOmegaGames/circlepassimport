@@ -8,7 +8,7 @@ defmodule QuestApiV21Web.JWTUtility do
   def decode_jwt(conn) do
     claims = Plug.current_claims(conn)
     # Uncomment to see decoded JWT token
-    #IO.inspect(claims, label: "Decoded JWT Claims")
+    # IO.inspect(claims, label: "Decoded JWT Claims")
     claims
   end
 

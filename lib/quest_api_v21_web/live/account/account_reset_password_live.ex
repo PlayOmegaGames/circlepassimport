@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.AccountResetPasswordLive do
+defmodule QuestApiV21Web.Account.AccountResetPasswordLive do
   use QuestApiV21Web, :live_view
 
   alias QuestApiV21.Accounts
@@ -26,7 +26,12 @@ defmodule QuestApiV21Web.AccountResetPasswordLive do
           required
         />
         <:actions>
-          <.button phx-disable-with="Resetting..." class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950">Reset Password</.button>
+          <.button
+            phx-disable-with="Resetting..."
+            class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950"
+          >
+            Reset Password
+          </.button>
         </:actions>
       </.simple_form>
 

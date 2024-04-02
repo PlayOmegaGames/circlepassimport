@@ -78,7 +78,6 @@ defmodule QuestApiV21.Transactions do
     badge = Repo.get!(QuestApiV21.Badges.Badge, badge_id)
     organization_id = badge.organization_id
     badge_points = badge.badge_points
-    IO.inspect(badge_points)
 
     %QuestApiV21.Transactions.Transaction{}
     |> Transaction.changeset(%{

@@ -1,7 +1,6 @@
 defmodule QuestApiV21Web.TransactionJSON do
   alias QuestApiV21.Transactions.Transaction
 
-
   @doc """
   Renders a list of transactions.
   """
@@ -33,5 +32,4 @@ defmodule QuestApiV21Web.TransactionJSON do
       time: transaction.inserted_at
     }
   end
-
 end

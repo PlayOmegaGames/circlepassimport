@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.AccountRegistrationLive do
+defmodule QuestApiV21Web.Account.AccountRegistrationLive do
   use QuestApiV21Web, :live_view
 
   alias QuestApiV21.Accounts
@@ -31,7 +31,7 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <.input field={@form[:name]}  type="text" label="Name" required />
+        <.input field={@form[:name]} type="text" label="Name" required />
         <.input field={@form[:email]} type="email" label="Email" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
@@ -70,11 +70,11 @@ defmodule QuestApiV21Web.AccountRegistrationLive do
           Accounts.deliver_account_confirmation_instructions(
             account,
             fn token -> "https://questapp.io/accounts/confirm/#{token}" end
-            )
-
+          )
 
         # Prepare a new changeset for the registered account, typically for updating UI or redirecting.
         changeset = Accounts.change_account_registration(account)
+
         # Update the socket to trigger the form submission process and assign the updated form changeset.
         {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
 

@@ -33,20 +33,19 @@ defmodule QuestApiV21.Quests do
     )
   end
 
-    @doc """
+  @doc """
   Retrieves IDs of badges collected by an account for a specific quest.
   """
   def get_collected_badges_ids_for_quest(account_id, quest_id) do
     Repo.all(
       from b in Badge,
-      join: a in assoc(b, :accounts),
-      where: a.id == ^account_id and b.quest_id == ^quest_id,
-      select: b.id
+        join: a in assoc(b, :accounts),
+        where: a.id == ^account_id and b.quest_id == ^quest_id,
+        select: b.id
     )
   end
 
   # only returns the quests that are associated to that record
-
 
   @doc """
 
@@ -62,7 +61,6 @@ defmodule QuestApiV21.Quests do
     preloads = [:organization, :badges, :collectors, :accounts]
     OrganizationScopedQueries.scope_query(Quest, organization_ids, preloads)
   end
-
 
   def get_badges_for_quest(quest_id) do
     Quest
@@ -94,6 +92,7 @@ defmodule QuestApiV21.Quests do
     case Repo.get(Account, account_id) do
       nil ->
         {:error, :not_found}
+
       account ->
         # Preload quests and their associated badges
         account_with_quests_and_badges = Repo.preload(account, quests: [:badges])
@@ -107,7 +106,7 @@ defmodule QuestApiV21.Quests do
 
     # Handle the case where the quest is not found gracefully
     if quest == nil do
-      #IO.puts("Quest not found")
+      # IO.puts("Quest not found")
       {:error, "Quest not found"}
     end
 
@@ -116,7 +115,7 @@ defmodule QuestApiV21.Quests do
 
     # Handle the case where the account is not found gracefully
     if account == nil do
-      #IO.puts("Account not found")
+      # IO.puts("Account not found")
       {:error, "Account not found"}
     end
 
@@ -125,19 +124,18 @@ defmodule QuestApiV21.Quests do
     account = Repo.preload(account, :badges)
 
     # Find shared badges by comparing the preloaded badges lists
-    shared_badges = Enum.filter(quest.badges, fn badge ->
-      Enum.any?(account.badges, &(&1.id == badge.id))
-    end)
+    shared_badges =
+      Enum.filter(quest.badges, fn badge ->
+        Enum.any?(account.badges, &(&1.id == badge.id))
+      end)
 
     # Count the shared badges
     shared_badges_count = length(shared_badges)
 
-    #IO.inspect(shared_badges_count, label: "Shared Badges Count")
+    # IO.inspect(shared_badges_count, label: "Shared Badges Count")
 
     {:ok, shared_badges_count}
   end
-
-
 
   @doc """
   Fetches a single quest by its ID.
