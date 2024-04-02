@@ -263,11 +263,11 @@ defmodule QuestApiV21Web.QuestBarLive do
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
     # Parse the QR data as a URL
-    uri = URI.parse(qr_data)
-
+    uri = URI.parse("https://" <> qr_data)
+    IO.inspect(uri.host)
     # Check if the parsed URL's host is in the list of allowed domains
     cond do
-      uri.host in ["questapp.io", "staging.questapp.io"] ->
+      uri.host == "questapp.io" ->
         # Since the domain is valid, reconstruct the path for redirection
         full_path = uri.path
         Logger.info("Redirecting to: #{full_path}")
@@ -276,6 +276,7 @@ defmodule QuestApiV21Web.QuestBarLive do
         {:noreply, push_redirect(socket, to: full_path)}
 
       true ->
+        IO.inspect(uri)
         # Log and handle the case where the domain does not match the allowed list
         Logger.error("Invalid domain in scanned QR code: #{uri.host}")
         {:noreply, socket}

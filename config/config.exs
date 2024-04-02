@@ -32,6 +32,21 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   pubsub_server: QuestApiV21.PubSub,
   live_view: [signing_salt: "mWI7Ou9T"]
 
+# Git hooks
+
+if Mix.env() != :prod do
+  config :git_hooks,
+    verbose: true,
+    hooks: [
+      pre_commit: [
+        tasks: [
+          {:cmd, "mix format"}
+          # {:cmd, "mix credo"}
+        ]
+      ]
+    ]
+end
+
 # Google ID
 config :ueberauth, Ueberauth,
   providers: [
@@ -99,10 +114,3 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
-
-if Mix.env() != :prod do
-  config :git_hooks,
-    verbose: true,
-    hooks: [
-    ]
-end
