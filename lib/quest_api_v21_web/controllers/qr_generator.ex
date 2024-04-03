@@ -5,8 +5,14 @@ defmodule QuestApiV21Web.QrGenerator do
       {:ok, qr_code} ->
         bucket = "qr-codes-public"
         s3_path = "prod/#{unique_identifier(url)}.svg"
+        content_disposition = "inline; filename=\"#{Path.basename(s3_path)}\""
 
-        case ExAws.S3.put_object(bucket, s3_path, qr_code) |> ExAws.request() do
+        options = [
+          {:content_type, "image/svg+xml"},
+          {:content_disposition, content_disposition}
+        ]
+
+        case ExAws.S3.put_object(bucket, s3_path, qr_code, options) |> ExAws.request() do
           {:ok, _response} ->
             # Construct the public URL
             # Make sure your S3 bucket is configured for public access if you use this method
