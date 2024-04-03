@@ -51,7 +51,7 @@ defmodule QuestApiV21Web.NoQuest do
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
     # Parse the QR data as a URL
-    uri = URI.parse("https://" <> qr_data)
+    uri = URI.parse(qr_data)
     IO.inspect(uri.host)
     # Check if the parsed URL's host is in the list of allowed domains
     cond do
