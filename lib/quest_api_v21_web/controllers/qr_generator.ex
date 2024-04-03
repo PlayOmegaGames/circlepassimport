@@ -4,7 +4,7 @@ defmodule QuestApiV21Web.QrGenerator do
     case request_qrcode(url) do
       {:ok, qr_code} ->
         bucket = "qr-codes-public"
-        s3_path = "prod/#{unique_identifier(url)}.png"
+        s3_path = "prod/#{unique_identifier(url)}.svg"
 
         case ExAws.S3.put_object(bucket, s3_path, qr_code) |> ExAws.request() do
           {:ok, _response} ->
@@ -26,7 +26,7 @@ defmodule QuestApiV21Web.QrGenerator do
   defp unique_identifier(url), do: "#{url}-#{:erlang.unique_integer([:positive])}"
 
   def request_qrcode(url) do
-    api_url = "https://api.qrcode-monkey.com//qr/custom"
+    api_url = "https://qrcode-monkey.p.rapidapi.com/qr/custom"
 
     headers = [
       {"Content-Type", "application/json"},
@@ -35,7 +35,7 @@ defmodule QuestApiV21Web.QrGenerator do
     ]
 
     body = %{
-      data: url,
+      data: "https://" <> url,
       config: %{
         body: "circular",
         eye: "frame2",
@@ -54,9 +54,8 @@ defmodule QuestApiV21Web.QrGenerator do
           "https://quest-optimized-images.s3.amazonaws.com/optimized-images/webapp-images/QuestLogo.png",
         logoMode: "clean"
       },
-      size: 400,
-      download: false,
-      file: "png"
+      size: 900,
+      file: "svg"
     }
 
     # IO.inspect(body)
