@@ -11,13 +11,13 @@ phases:
     commands:
       - echo Building the Docker image...
       - docker build -t quest-api:staging .
-      - docker tag quest-api:staging 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2/quest-api:staging
+      - docker tag quest-api:staging 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2:staging
   post_build:
     commands:
       - echo Pushing the Docker image...
-      - docker push 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2/quest-api:staging
+      - docker push 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2:staging
       - echo Writing image definitions file...
-      - printf '[{"name":"quest-api","imageUri":"%s/quest-api:%s"}]' 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2 staging > imagedefinitions.json
+      - printf '[{"name":"quest-api","imageUri":"%s:%s"}]' 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2 staging > imagedefinitions.json
 artifacts:
   files:
     - imagedefinitions.json
