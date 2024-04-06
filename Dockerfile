@@ -3,7 +3,7 @@ ARG RELEASE_VERSION=0.1.1`
 ARG ELIXIR_VERSION=1.14.5
 ARG OTP_VERSION=25.3.2.5
 ARG DEBIAN_VERSION=bullseye-20230612-slim
-ARG BUILDER_IMAGE="692454124440.dkr.ecr.us-east-1.amazonaws.com/1.14.5-erlang-25.3.2.5-debian-bullseye-20230612-slim"
+ARG BUILDER_IMAGE="692454124440.dkr.ecr.us-east-1.amazonaws.com/elixir:1.14.5-erlang-25.3.2.5-debian-bullseye-20230612-slim"
 ARG RUNNER_IMAGE="692454124440.dkr.ecr.us-east-1.amazonaws.com/elixir:1.14.5-erlang-25.3.2.5-ubuntu-focal-20230126"
 
 FROM ${BUILDER_IMAGE} as builder
