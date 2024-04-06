@@ -3,21 +3,19 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo "ENVIRONMENT variable is set to staging"
-      - echo "REPOSITORY_URI variable is set to 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2"
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t quest-api:staging .
-      - docker tag quest-api:staging 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2:staging
+      - docker build -t quest-api:$ENVIRONMENT .
+      - docker tag quest-api:$ENVIRONMENT $REPOSITORY_URI:$ENVIRONMENT
   post_build:
     commands:
       - echo Pushing the Docker image...
-      - docker push 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2:staging
+      - docker push $REPOSITORY_URI:$ENVIRONMENT
       - echo Writing image definitions file...
-      - printf '[{"name":"quest-api","imageUri":"%s:%s"}]' 692454124440.dkr.ecr.us-east-1.amazonaws.com/staging-quest-api-v2 staging > imagedefinitions.json
+      - printf '[{"name":"quest-api","imageUri":"%s/quest-api:%s"}]' $REPOSITORY_URI $ENVIRONMENT > imagedefinitions.json
 artifacts:
   files:
     - imagedefinitions.json
