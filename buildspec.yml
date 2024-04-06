@@ -9,7 +9,7 @@ phases:
     commands:
       - echo Building the Docker image...
       - docker build -t quest-api:$ENVIRONMENT .
-      - docker tag quest-api:staging $REPOSITORY_URI:staging
+      - docker tag quest-api:$ENVIRONMENT $REPOSITORY_URI:$ENVIRONMENT
   post_build:
     commands:
       - echo Pushing the Docker image...
