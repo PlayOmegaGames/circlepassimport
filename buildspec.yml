@@ -3,6 +3,8 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - echo "ENVIRONMENT variable is set to $ENVIRONMENT"
+      - echo "REPOSITORY_URI variable is set to $REPOSITORY_URI"
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
   build:
