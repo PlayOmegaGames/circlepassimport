@@ -2,15 +2,16 @@
 
 cd /home/ubuntu/
 
-# Assuming imagedefinitions.json is in the current directory and contains the imageUri
+# Source the environment variables from the .env file
+source .env
 
-# Extract the imageUri using jq - make sure jq is installed
-IMAGE_URI=$(jq -r '.[0].imageUri' imagedefinitions.json)
+# Construct the image URI using REPOSITORY_URI and ENVIRONMENT variables
+IMAGE_URI="$REPOSITORY_URI/quest-api:$ENVIRONMENT"
 
 # Log in to ECR
-$(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${IMAGE_URI%:*})
+$(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${REPOSITORY_URI})
 
-# Pull the Docker image specified in imagedefinitions.json
+# Pull the Docker image using the constructed IMAGE_URI
 docker pull $IMAGE_URI
 
 # Running migration
