@@ -1,17 +1,40 @@
 #!/bin/bash
 
+# Assuming this script is executed with root privileges or with a user that has appropriate permissions
+
 cd /home/ubuntu/
 
-# Assuming imagedefinitions.json is in the current directory and contains the imageUri
+# Source the environment variables from the .env file
+if [ -f ".env" ]; then
+    source .env
+else
+    echo "The .env file does not exist. Exiting..."
+    exit 1
+fi
 
-# Extract the imageUri using jq - make sure jq is installed
-IMAGE_URI=$(jq -r '.[0].imageUri' imagedefinitions.json)
+# Construct the image URI using REPOSITORY_URI and ENVIRONMENT variables
+IMAGE_URI="${REPOSITORY_URI}:${ENVIRONMENT}"
 
 # Log in to ECR
-$(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${IMAGE_URI%:*})
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${REPOSITORY_URI%/*}
 
-# Pull the Docker image specified in imagedefinitions.json
+if [ $? -ne 0 ]; then
+    echo "Docker login failed. Exiting..."
+    exit 1
+fi
+
+# Pull the Docker image using the constructed IMAGE_URI
 docker pull $IMAGE_URI
+
+if [ $? -ne 0 ]; then
+    echo "Failed to pull the Docker image. Exiting..."
+    exit 1
+fi
 
 # Running migration
 docker run --env-file .env --rm $IMAGE_URI /app/bin/quest_api_v21 eval "QuestApiV21.Release.migrate"
+
+if [ $? -ne 0 ]; then
+    echo "Migration command failed. Exiting..."
+    exit 1
+fi
