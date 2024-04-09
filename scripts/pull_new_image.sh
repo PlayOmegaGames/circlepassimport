@@ -13,7 +13,7 @@ else
 fi
 
 # Construct the image URI using REPOSITORY_URI and ENVIRONMENT variables
-IMAGE_URI="${REPOSITORY_URI}/quest-api:${ENVIRONMENT}"
+IMAGE_URI="${REPOSITORY_URI}:${ENVIRONMENT}"
 
 # Log in to ECR
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${REPOSITORY_URI%/*}
