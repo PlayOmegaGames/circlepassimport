@@ -265,9 +265,13 @@ defmodule QuestApiV21Web.QuestBarLive do
     # Parse the QR data as a URL
     uri = URI.parse(qr_data)
     IO.inspect(uri.host)
+
+    # Define a list of allowed domains
+    allowed_domains = ["questapp.io", "staging.questapp.io"]
+
     # Check if the parsed URL's host is in the list of allowed domains
     cond do
-      uri.host == "questapp.io" ->
+      uri.host in allowed_domains ->
         # Since the domain is valid, reconstruct the path for redirection
         full_path = uri.path
         Logger.info("Redirecting to: #{full_path}")
@@ -281,5 +285,5 @@ defmodule QuestApiV21Web.QuestBarLive do
         Logger.error("Invalid domain in scanned QR code: #{uri.host}")
         {:noreply, socket}
     end
-  end
+  end 
 end
