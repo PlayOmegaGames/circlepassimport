@@ -74,5 +74,4 @@ defmodule QuestApiV21Web.NoQuest do
         {:noreply, socket}
     end
   end
-
 end
