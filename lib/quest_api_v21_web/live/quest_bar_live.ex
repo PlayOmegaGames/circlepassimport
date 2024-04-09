@@ -285,5 +285,5 @@ defmodule QuestApiV21Web.QuestBarLive do
         Logger.error("Invalid domain in scanned QR code: #{uri.host}")
         {:noreply, socket}
     end
-  end 
+  end
 end
