@@ -1,63 +1,63 @@
 defmodule QuestApiV21.GordianKnot do
-
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Rewards
   alias QuestApiV21.Rewards.Reward
   alias QuestApiV21.Accounts
+  alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Accounts.Account
-  alias QuestApiV21.Cache
+  alias QuestApiV21.Transactions
   alias Bcrypt
   require Logger
-  # In QuestApiV21.Accounts context
 
   def add_badge_to_account(account_id, badge_id) do
-    # Log the initiation of the badge addition process for an account
     Logger.info("Starting to add badge to account #{account_id}")
 
-    # Start a database transaction to ensure all or none of the operations are completed
     Repo.transaction(fn ->
-      # Fetch the account by ID and preload its badges and quests for later checks and updates
-      account = Cache.get_account(account_id)
-      Logger.info("Fetched account and preloaded badges and quests")
 
-      # Check if the badge is already associated with the account to prevent duplicates
+      account = Repo.get!(Account, account_id) |> Repo.preload([:badges, :quests])
+
       if Enum.any?(account.badges, &(&1.id == badge_id)) do
         Logger.info("Badge #{badge_id} already associated with account #{account_id}")
         {:error, :badge_already_associated}
       else
-        # If not already associated, fetch the badge to be added, including its associated quest
-        badge = Cache.get_badge(badge_id)
-        Logger.info("Fetched new badge to add")
-        # Extract the quest ID from the badge for later use
-        quest_id = badge.quest_id
+        Logger.info("Adding new badge to account")
+        badge = Repo.get!(Badge, badge_id, preload: [:quest])
 
-        # Add the new badge to the account's list of badges
+        quest_id = badge.quest_id
         updated_badges = [badge | account.badges]
         Logger.info("Updated badges list for account")
 
-        # Update the account with the new badges list and update the badges stats (count)
         account =
           Ecto.Changeset.change(account)
           |> Ecto.Changeset.put_assoc(:badges, updated_badges)
           |> Ecto.Changeset.change(%{badges_stats: length(updated_badges)})
           |> Repo.update!()
 
-        Cache.update_account(account)
         Logger.info("Successfully added new badge to account")
 
         # After adding the badge, check if any quests are completed and update quest stats and potentially reward stats
         # This operation is also part of the transaction, ensuring consistency
         update_quest_stats(account, quest_id)
+        Transactions.create_transaction_for_badge_account(badge_id, account_id)
 
-        # Return a success message indicating the badge was added and any related quest completion was checked
+
         {:ok, "Badge added and quest completion checked"}
       end
     end)
-    # Handle the result of the transaction, logging success or error accordingly
     |> handle_transaction_result()
   end
+
+  defp handle_transaction_result({:ok, _result}) do
+    {:ok, "Operation successfully completed"}
+  end
+
+  defp handle_transaction_result({:error, reason}) do
+    {:error, reason}
+  end
+
+
 
   # Private function to update quest stats and handle reward generation for an account and quest
   defp update_quest_stats(account, quest_id) do
@@ -92,14 +92,6 @@ defmodule QuestApiV21.GordianKnot do
     account
     |> Ecto.Changeset.change(rewards_stats: rewards_count)
     |> Repo.update!()
-  end
-
-  defp handle_transaction_result({:ok, _result}) do
-    {:ok, "Operation successfully completed"}
-  end
-
-  defp handle_transaction_result({:error, reason}) do
-    {:error, reason}
   end
 
   defp add_quest_to_account_if_needed(account_id, quest_id) do
@@ -198,17 +190,17 @@ defmodule QuestApiV21.GordianKnot do
       updated_quests = [quest | account.quests]
 
       case Repo.transaction(fn ->
-              # Update the account with the new list of quests
-              Repo.update!(
-                Ecto.Changeset.change(account)
-                |> Ecto.Changeset.put_assoc(:quests, updated_quests)
-              )
+             # Update the account with the new list of quests
+             Repo.update!(
+               Ecto.Changeset.change(account)
+               |> Ecto.Changeset.put_assoc(:quests, updated_quests)
+             )
 
-              # Increment quest stats
-              increment_quests_stats(account.id)
-              # Now explicitly update the selected_quest_id
-              update_selected_quest_for_user(account.id, quest_id)
-            end) do
+             # Increment quest stats
+             increment_quests_stats(account.id)
+             # Now explicitly update the selected_quest_id
+             update_selected_quest_for_user(account.id, quest_id)
+           end) do
         {:ok, _} ->
           Logger.info(
             "Successfully added quest #{quest_id} and updated selected quest for account #{user_id}. Quest stats incremented."

@@ -17,7 +17,7 @@ defmodule QuestApiV21Web.CollectorLive do
           quest_badges = Repo.preload(quest, :badges) |> Map.get(:badges)
           total_badges_in_quest = length(quest_badges)
 
-          case QuestApiV21.Accounts.add_badge_to_account(account.id, badge.id) do
+          case QuestApiV21.GordianKnot.add_badge_to_account(account.id, badge.id) do
             {:ok, "Badge already associated with the account"} ->
               Logger.info("Badge was already collected")
               # Refetch account to update badges list
