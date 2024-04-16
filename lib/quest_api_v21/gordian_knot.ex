@@ -15,7 +15,6 @@ defmodule QuestApiV21.GordianKnot do
     Logger.info("Starting to add badge to account #{account_id}")
 
     Repo.transaction(fn ->
-
       account = Repo.get!(Account, account_id) |> Repo.preload([:badges, :quests])
 
       if Enum.any?(account.badges, &(&1.id == badge_id)) do
@@ -42,7 +41,6 @@ defmodule QuestApiV21.GordianKnot do
         update_quest_stats(account, quest_id)
         Transactions.create_transaction_for_badge_account(badge_id, account_id)
 
-
         {:ok, "Badge added and quest completion checked"}
       end
     end)
@@ -56,8 +54,6 @@ defmodule QuestApiV21.GordianKnot do
   defp handle_transaction_result({:error, reason}) do
     {:error, reason}
   end
-
-
 
   # Private function to update quest stats and handle reward generation for an account and quest
   defp update_quest_stats(account, quest_id) do

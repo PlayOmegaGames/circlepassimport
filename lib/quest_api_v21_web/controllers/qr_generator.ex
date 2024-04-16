@@ -68,7 +68,7 @@ defmodule QuestApiV21Web.QrGenerator do
 
     case HTTPoison.post(api_url, Jason.encode!(body), headers) do
       {:ok, %{status_code: 200, body: response_body}} ->
-        #IO.inspect(response_body)
+        # IO.inspect(response_body)
         # Directly return the binary data of the QR code
         {:ok, response_body}
 
