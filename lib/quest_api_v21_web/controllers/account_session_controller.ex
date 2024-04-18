@@ -18,12 +18,11 @@ defmodule QuestApiV21Web.AccountSessionController do
     create(conn, params, "Welcome back!")
   end
 
-  defp create(conn, %{"account" => account_params}, info) do
+  defp create(conn, %{"account" => account_params}, _info) do
     %{"email" => email, "password" => password} = account_params
 
     if account = Accounts.get_account_by_email_and_password(email, password) do
       conn
-      |> put_flash(:info, info)
       |> AccountAuth.log_in_account(account, account_params)
     else
       # In order to prevent account enumeration attacks, don't disclose whether the email is registered.
@@ -36,7 +35,6 @@ defmodule QuestApiV21Web.AccountSessionController do
 
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
     |> AccountAuth.log_out_account()
   end
 end

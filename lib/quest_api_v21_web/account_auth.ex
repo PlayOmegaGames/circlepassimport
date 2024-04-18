@@ -157,7 +157,6 @@ defmodule QuestApiV21Web.AccountAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
         |> Phoenix.LiveView.redirect(to: ~p"/accounts/register")
 
       {:halt, socket}
@@ -206,7 +205,6 @@ defmodule QuestApiV21Web.AccountAuth do
       conn
     else
       conn
-      |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
       |> redirect(to: ~p"/accounts/register")
       |> halt()
