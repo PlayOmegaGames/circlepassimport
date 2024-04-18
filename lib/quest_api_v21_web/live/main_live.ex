@@ -12,7 +12,6 @@ defmodule QuestApiV21Web.MainLive do
     # Generate QR Code
     qr_code_svg = generate_qr_code("https://questapp.io/gunter/#{account_id}")
 
-
     {:ok, badges} = Badges.get_badges_for_account(account_id)
     {:ok, quests} = Quests.get_quests_for_account(account_id)
     {:ok, rewards} = Rewards.get_rewards_for_account(account_id)
@@ -322,11 +321,10 @@ defmodule QuestApiV21Web.MainLive do
       </div>
     </div>
 
-      <div class="w-72 mx-auto rounded-full shadow-md">
-        <h1 class="text-center my-4">Share this QR code to your profile</h1>
-        <%= raw(@qr_code_svg) %>
-      </div>
-
+    <div class="w-72 mx-auto rounded-full shadow-md">
+      <h1 class="text-center my-4">Share this QR code to your profile</h1>
+      <%= raw(@qr_code_svg) %>
+    </div>
     """
   end
 end
