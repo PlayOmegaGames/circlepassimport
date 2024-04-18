@@ -130,6 +130,7 @@ defmodule QuestApiV21Web.Router do
       live "/quests", MainLive, :quests
       live "/profile", MainLive, :profile
       live "/badge/:id", CollectorLive
+      live "/gunter/:id", PublicProfileLive
       live "/accounts/settings", Account.AccountSettingsLive, :edit
 
       live "/accounts/settings/confirm_email/:token",

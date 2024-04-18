@@ -1,6 +1,7 @@
 defmodule QuestApiV21Web.MainLive do
   use Phoenix.LiveView
   require Logger
+  import Phoenix.HTML
   alias QuestApiV21.{Badges, Quests, Rewards}
   alias QuestApiV21Web.CoreComponents
 
@@ -8,6 +9,9 @@ defmodule QuestApiV21Web.MainLive do
     # IO.inspect(socket.assigns.live_action, label: "mount live_action")
 
     account_id = socket.assigns.current_account.id
+    # Generate QR Code
+    qr_code_svg = generate_qr_code("https://questapp.io/gunter/#{account_id}")
+
 
     {:ok, badges} = Badges.get_badges_for_account(account_id)
     {:ok, quests} = Quests.get_quests_for_account(account_id)
@@ -46,7 +50,8 @@ defmodule QuestApiV21Web.MainLive do
         quests_with_completion: quests_with_completion,
         show_single_badge_details: false,
         show_quest_details: false,
-        show_reward_details: false
+        show_reward_details: false,
+        qr_code_svg: qr_code_svg
       )
 
     {:ok, socket}
@@ -146,6 +151,12 @@ defmodule QuestApiV21Web.MainLive do
 
   def handle_event("close-code-popup", _, socket) do
     {:noreply, assign(socket, show_reward_details: false)}
+  end
+
+  defp generate_qr_code(url) do
+    url
+    |> EQRCode.encode()
+    |> EQRCode.svg(color: "#000", shape: "square", background_color: "#FFF", width: 300)
   end
 
   def render(assigns) do
@@ -310,6 +321,12 @@ defmodule QuestApiV21Web.MainLive do
         <CoreComponents.stats_bubble number={@account.rewards_stats} color="amber" text="Rewards" />
       </div>
     </div>
+
+      <div class="w-72 mx-auto rounded-full shadow-md">
+        <h1 class="text-center my-4">Share this QR code to your profile</h1>
+        <%= raw(@qr_code_svg) %>
+      </div>
+
     """
   end
 end
