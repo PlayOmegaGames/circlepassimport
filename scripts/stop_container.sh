@@ -12,6 +12,7 @@ else
     exit 1
 fi
 
+echo $IMAGE_NAME
 
 # Stop the current container (if running)
 docker stop $IMAGE_NAME
