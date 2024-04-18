@@ -37,14 +37,15 @@ defmodule QuestApiV21Web.MainLive do
         quests: quests,
         rewards: rewards,
         account: account,
-        show_single_badge_details: false,
         current_view: "home",
         tab: "badges",
         available_quests: available_quests_with_badge_count,
         future_quests: future_quests_with_badge_count,
         badge_detail: nil,
+        quest_details: nil,
         quests_with_completion: quests_with_completion,
         show_single_badge_details: false,
+        show_quest_details: false,
         show_reward_details: false
       )
 
@@ -97,6 +98,7 @@ defmodule QuestApiV21Web.MainLive do
     {:noreply, assign(socket, tab: type)}
   end
 
+  #Handle badge details modal
   def handle_event("show_single_badge_details", %{"id" => badge_id}, socket) do
     # Fetch the badge details based on the ID
     badge_detail = Badges.get_badge_with_quest!(badge_id)
@@ -105,6 +107,16 @@ defmodule QuestApiV21Web.MainLive do
 
   def handle_event("cancel", _, socket) do
     {:noreply, assign(socket, show_single_badge_details: false)}
+  end
+
+  #Handle Quest details modal
+  def handle_event("show_quest_details", %{"id" => quest_id}, socket) do
+    quest_details = Quests.get_quest(quest_id)
+    {:noreply, assign(socket, quest_details: quest_details, show_quest_details: true)}
+  end
+
+  def handle_event("quest_details_cancel", _, socket) do
+    {:noreply, assign(socket, show_quest_details: false)}
   end
 
   def handle_event("select-quest", %{"id" => quest_id}, socket) do
@@ -245,17 +257,28 @@ defmodule QuestApiV21Web.MainLive do
         <h1 class="pt-4 m-auto text-2xl w-fit">Find A Quest</h1>
       </div>
 
-      <div class="flex flex-col px-2 space-y-4 mb-12 pt-8">
+      <div class="flex flex-col px-2 pt-8">
         <%= for quest <- @available_quests do %>
-          <.live_component
+        <div phx-click="show_quest_details" phx-value-id={quest.id} class=" mb-8">
+         <.live_component
             module={QuestApiV21Web.LiveComponents.QuestCard}
             id={"quests-card-#{quest.id}"}
             completion_bar={nil}
             class={nil}
             quest={quest}
           />
-        <% end %>
+          </div>
+            <%= if @quest_details do %>
+              <.live_component
+                module={QuestApiV21Web.LiveComponents.QuestDetails}
+                id={"quest-details-modal-#{quest.id}"}
+                show={@show_quest_details}
+                quest_details={@quest_details}
+              />
+            <% end %>
+         <% end %>
       </div>
+
     </div>
     """
   end
