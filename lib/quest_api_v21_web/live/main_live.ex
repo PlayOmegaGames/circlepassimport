@@ -98,7 +98,7 @@ defmodule QuestApiV21Web.MainLive do
     {:noreply, assign(socket, tab: type)}
   end
 
-  #Handle badge details modal
+  # Handle badge details modal
   def handle_event("show_single_badge_details", %{"id" => badge_id}, socket) do
     # Fetch the badge details based on the ID
     badge_detail = Badges.get_badge_with_quest!(badge_id)
@@ -109,7 +109,7 @@ defmodule QuestApiV21Web.MainLive do
     {:noreply, assign(socket, show_single_badge_details: false)}
   end
 
-  #Handle Quest details modal
+  # Handle Quest details modal
   def handle_event("show_quest_details", %{"id" => quest_id}, socket) do
     quest_details = Quests.get_quest(quest_id)
     {:noreply, assign(socket, quest_details: quest_details, show_quest_details: true)}
@@ -259,26 +259,25 @@ defmodule QuestApiV21Web.MainLive do
 
       <div class="flex flex-col px-2 pt-8">
         <%= for quest <- @available_quests do %>
-        <div phx-click="show_quest_details" phx-value-id={quest.id} class=" mb-8">
-         <.live_component
-            module={QuestApiV21Web.LiveComponents.QuestCard}
-            id={"quests-card-#{quest.id}"}
-            completion_bar={nil}
-            class={nil}
-            quest={quest}
-          />
+          <div phx-click="show_quest_details" phx-value-id={quest.id} class=" mb-8">
+            <.live_component
+              module={QuestApiV21Web.LiveComponents.QuestCard}
+              id={"quests-card-#{quest.id}"}
+              completion_bar={nil}
+              class={nil}
+              quest={quest}
+            />
           </div>
-            <%= if @quest_details do %>
-              <.live_component
-                module={QuestApiV21Web.LiveComponents.QuestDetails}
-                id={"quest-details-modal-#{quest.id}"}
-                show={@show_quest_details}
-                quest_details={@quest_details}
-              />
-            <% end %>
-         <% end %>
+          <%= if @quest_details do %>
+            <.live_component
+              module={QuestApiV21Web.LiveComponents.QuestDetails}
+              id={"quest-details-modal-#{quest.id}"}
+              show={@show_quest_details}
+              quest_details={@quest_details}
+            />
+          <% end %>
+        <% end %>
       </div>
-
     </div>
     """
   end
