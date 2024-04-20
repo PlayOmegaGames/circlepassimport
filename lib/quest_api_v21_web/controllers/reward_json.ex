@@ -3,7 +3,6 @@ defmodule QuestApiV21Web.RewardJSON do
   alias QuestApiV21.Quests.Quest
   alias QuestApiV21.Rewards.Reward
 
-
   def render("index.json", %{rewards: rewards}) do
     %{data: for(rewards <- rewards, do: data(rewards))}
   end
@@ -13,7 +12,6 @@ defmodule QuestApiV21Web.RewardJSON do
       id: rewards.id,
       account: account_data(account),
       quest: quest_data(quest)
-
     }
   end
 
@@ -28,7 +26,7 @@ defmodule QuestApiV21Web.RewardJSON do
   defp quest_data(%Quest{id: id, name: name}) do
     %{
       id: id,
-      name: name,
+      name: name
     }
   end
 end
