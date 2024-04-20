@@ -4,6 +4,7 @@ defmodule QuestApiV21.Rewards do
   """
 
   import Ecto.Query, warn: false
+  alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Repo
   alias QuestApiV21.Quests
   alias QuestApiV21.Accounts.Account
@@ -21,6 +22,11 @@ defmodule QuestApiV21.Rewards do
   """
   def list_reward do
     Repo.all(Reward)
+  end
+
+  def list_rewards_by_organization_id(organization_id) do
+    preloads = [:organization, :account, :quest]
+    OrganizationScopedQueries.scope_query(Reward, organization_id, preloads)
   end
 
   @doc """
