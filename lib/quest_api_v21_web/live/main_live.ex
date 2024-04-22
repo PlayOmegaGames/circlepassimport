@@ -320,7 +320,6 @@ defmodule QuestApiV21Web.MainLive do
         <CoreComponents.stats_bubble number={@account.rewards_stats} color="amber" text="Rewards" />
       </div>
     </div>
-
     <!--<div class="w-72 mx-auto rounded-full shadow-md">
       <h1 class="text-center my-4">Share this QR code to your profile</h1>
       <%= raw(@qr_code_svg) %>
