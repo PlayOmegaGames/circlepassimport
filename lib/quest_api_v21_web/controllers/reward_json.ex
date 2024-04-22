@@ -12,14 +12,16 @@ defmodule QuestApiV21Web.RewardJSON do
     %{
       id: rewards.id,
       redeemed: rewards.redeemed,
+      created: rewards.inserted_at,
       account: account_data(account),
       quest: quest_data(quest)
     }
   end
 
-  defp account_data(%Account{id: id, name: name, email: email}) do
+  defp account_data(%Account{id: id, name: name, email: email, pfps: pfps}) do
     %{
       id: id,
+      profile_picture: pfps,
       name: name,
       email: email
     }
