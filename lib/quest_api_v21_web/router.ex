@@ -105,6 +105,7 @@ defmodule QuestApiV21Web.Router do
     resources "/badges", BadgeController
     resources "/collectors", CollectorController
     post "/redeem", RewardController, :redeem
+    get "/redeem", RewardController, :index
     resources "/accounts", AccountController, except: [:index]
     get "/*path", ErrorController, :not_found
   end
@@ -130,6 +131,7 @@ defmodule QuestApiV21Web.Router do
       live "/quests", MainLive, :quests
       live "/profile", MainLive, :profile
       live "/badge/:id", CollectorLive
+      live "/gunter/:id", PublicProfileLive
       live "/accounts/settings", Account.AccountSettingsLive, :edit
 
       live "/accounts/settings/confirm_email/:token",

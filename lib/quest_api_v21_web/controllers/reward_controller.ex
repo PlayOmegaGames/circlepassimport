@@ -1,6 +1,6 @@
 defmodule QuestApiV21Web.RewardController do
   use QuestApiV21Web, :controller
-  alias QuestApiV21.Rewards
+  alias QuestApiV21.Repo
   alias QuestApiV21.Rewards
   alias QuestApiV21Web.JWTUtility
 
@@ -28,6 +28,18 @@ defmodule QuestApiV21Web.RewardController do
         conn
         |> put_status(500)
         |> json(%{error: "Unable to redeem the reward at this time."})
+    end
+  end
+
+  def index(conn, _params) do
+    organization_id = JWTUtility.extract_organization_id_from_jwt(conn)
+
+    case Rewards.list_rewards_by_organization_id(organization_id) do
+      rewards ->
+        rewards
+        |> Repo.preload([:quest, :account])
+
+        render(conn, :index, rewards: rewards)
     end
   end
 end
