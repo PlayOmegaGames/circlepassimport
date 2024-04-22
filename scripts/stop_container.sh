@@ -15,10 +15,10 @@ fi
 echo $IMAGE_NAME
 
 # Stop the current container (if running)
-docker stop $IMAGE_NAME
+docker stop quest-api-v2
 
 # Remove the stopped container
-docker rm $IMAGE_NAME
+docker rm quest-api-v2
 
 # Prune unused Docker images
 docker image prune -a -f

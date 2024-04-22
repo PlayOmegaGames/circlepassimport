@@ -4,12 +4,14 @@ defmodule QuestApiV21Web.RewardJSON do
   alias QuestApiV21.Rewards.Reward
 
   def render("index.json", %{rewards: rewards}) do
-    %{data: for(rewards <- rewards, do: data(rewards))}
+    quests = Enum.group_by(rewards, fn %{quest: quest} -> quest.name end, &data/1)
+    %{data: quests}
   end
 
   defp data(%Reward{quest: quest, account: account} = rewards) do
     %{
       id: rewards.id,
+      redeemed: rewards.redeemed,
       account: account_data(account),
       quest: quest_data(quest)
     }
