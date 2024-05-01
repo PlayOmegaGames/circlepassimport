@@ -81,7 +81,7 @@ defmodule QuestApiV21.GordianKnot do
       _ -> :noop
     end
 
-    #Ignore if loyalty quest existss
+    # Ignore if loyalty quest existss
     if is_nil(quest.quest_loyalty) do
       # Check if the addition of a badge has completed the quest and, if so, create a reward.
       check_quest_completion_and_create_reward(account.id, quest_id)
@@ -141,7 +141,6 @@ defmodule QuestApiV21.GordianKnot do
     account =
       Repo.get!(Account, account_id)
       |> Repo.preload(:badges)
-
 
     if quest_completed?(account, quest_id) do
       Logger.info("Quest #{quest_id} completed. Creating reward.")
@@ -359,13 +358,14 @@ defmodule QuestApiV21.GordianKnot do
 
     # Get the total of the `lp_badge` field for all transactions that share the same account and badge ID
     total_lp_badge =
-      case Repo.all(from t in Transaction,
-                    where: t.account_id == ^account.id and t.badge_id == ^badge.id,
-                    select: coalesce(sum(t.lp_badge), 0)) do
+      case Repo.all(
+             from t in Transaction,
+               where: t.account_id == ^account.id and t.badge_id == ^badge.id,
+               select: coalesce(sum(t.lp_badge), 0)
+           ) do
         [sum] -> sum
         _ -> 0
       end
-
 
     # Get the current time
     current_time = DateTime.utc_now()
@@ -373,7 +373,9 @@ defmodule QuestApiV21.GordianKnot do
     # converts the naive date format from the DB to unix format so we can compare the times
     transaction_inserted_utc =
       case latest_transaction do
-        nil -> nil
+        nil ->
+          nil
+
         %Transaction{} = transaction ->
           case transaction.inserted_at do
             nil -> nil
@@ -381,14 +383,14 @@ defmodule QuestApiV21.GordianKnot do
           end
       end
 
-
-
-
-    #IO.inspect("current time: #{current_time} vs new time #{DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600)}")
+    # IO.inspect("current time: #{current_time} vs new time #{DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600)}")
 
     # Check if the latest transaction exists and compare times
     if is_nil(latest_transaction) or
-      DateTime.compare(DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600), current_time) == :lt do
+         DateTime.compare(
+           DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600),
+           current_time
+         ) == :lt do
       Logger.info(
         "Creating a new transaction for badge #{badge.id} due to badge loyalty requirements"
       )
@@ -400,6 +402,7 @@ defmodule QuestApiV21.GordianKnot do
       # Check if the quest has a non-empty loyalty string
       if quest != nil and quest.quest_loyalty not in [nil, ""] do
         IO.inspect("quest loyalty: #{quest.quest_loyalty}")
+
         case Jason.decode(quest.quest_loyalty) do
           {:ok, reward_map} ->
             # Log the numbers and rewards in the map
@@ -409,7 +412,7 @@ defmodule QuestApiV21.GordianKnot do
               IO.inspect("Num: #{num}")
               IO.inspect("total loyalty: #{total_lp_badge}")
               # Check if the total points are in the specified range
-              if total_lp_badge <= num and total_lp_badge + badge.badge_points  >= num do
+              if total_lp_badge <= num and total_lp_badge + badge.badge_points >= num do
                 Logger.info(
                   "Success: Account #{account.id} meets the conditions for quest #{quest.name}: #{num}"
                 )
