@@ -266,7 +266,6 @@ defmodule QuestApiV21Web.MainLive do
       <div class="w-full h-20 bg-gradient-to-b rounded-bl-3xl border-b-2 border-l-2 border-gold-300 from-highlight to-accent">
         <h1 class="pt-4 m-auto text-2xl w-fit">Find A Quest</h1>
       </div>
-
       <div class="flex flex-col px-2 pt-8">
         <%= for quest <- @available_quests do %>
           <div phx-click="show_quest_details" phx-value-id={quest.id} class=" mb-8">
