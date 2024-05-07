@@ -18,10 +18,12 @@ defmodule QuestApiV21Web.AccountController do
   def index(conn, _params) do
     # passes org id onto context file for filtering
     organization_id = JWTUtility.get_organization_id_from_jwt(conn)
+
     case Accounts.list_accounts_by_organization_ids(organization_id) do
       accounts ->
         accounts
         |> Repo.preload([:badges, :quests, :rewards])
+
         render(conn, :index, accounts: accounts)
     end
   end
