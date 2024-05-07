@@ -7,11 +7,24 @@ defmodule QuestApiV21Web.AccountController do
   alias QuestApiV21.Accounts
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Guardian
+  alias QuestApiV21.Repo
+  alias QuestApiV21Web.JWTUtility
 
   require Logger
 
   # Specifies a fallback controller to handle errors.
   action_fallback QuestApiV21Web.FallbackController
+
+  def index(conn, _params) do
+    # passes org id onto context file for filtering
+    organization_id = JWTUtility.get_organization_id_from_jwt(conn)
+    case Accounts.list_accounts_by_organization_ids(organization_id) do
+      accounts ->
+        accounts
+        |> Repo.preload([:badges, :quests, :rewards])
+        render(conn, :index, accounts: accounts)
+    end
+  end
 
   # Defines the create action to create a new account.
   def create(conn, %{"account" => account_params}) do

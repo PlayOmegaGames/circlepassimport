@@ -13,6 +13,7 @@ defmodule QuestApiV21.Accounts do
   alias Bcrypt
   require Logger
 
+
   ## Database getters
 
   @doc """
@@ -35,6 +36,17 @@ defmodule QuestApiV21.Accounts do
   def list_accounts(id) do
     Repo.get(Account, id)
   end
+
+
+  def list_accounts_by_organization_ids(organization_ids) do
+    Account
+    |> join(:inner, [a], q in assoc(a, :quests))
+    |> where([a, q], q.organization_id == ^organization_ids)
+    |> preload([:badges, :quests, :rewards])
+    |> Repo.all()
+  end
+
+
 
   @doc """
   Gets a account by email and password.
