@@ -49,6 +49,7 @@ defmodule QuestApiV21Web.QuestJSON do
       description: quest.description,
       discount_code: quest.discount_code,
       public: quest.public,
+      quest_loyalty: quest.quest_loyalty,
       quest_time: quest.quest_time,
       completion_score: quest.completion_score,
       event_name: quest.event_name,

@@ -39,6 +39,7 @@ defmodule QuestApiV21Web.BadgeJSON do
       hint: badges.hint,
       collector_id: badges.collector_id,
       badge_redirect: badges.badge_redirect,
+      badge_loyalty: badges.loyalty_badge,
       account_ids: accounts_data(accounts)
     }
   end
