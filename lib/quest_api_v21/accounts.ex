@@ -36,13 +36,33 @@ defmodule QuestApiV21.Accounts do
     Repo.get(Account, id)
   end
 
-  def list_accounts_by_organization_ids(organization_ids) do
-    Account
-    |> join(:inner, [a], q in assoc(a, :quests))
-    |> where([a, q], q.organization_id == ^organization_ids)
-    |> preload([:badges, :quests, :rewards])
+  def list_accounts_by_organization_ids(organization_id) do
+    from(a in Account,
+      join: q in assoc(a, :quests),
+      where: q.organization_id == ^organization_id,
+      distinct: true,
+      preload: [
+        badges: ^badges_by_organization_id(organization_id),
+        quests: ^quests_by_organization_id(organization_id),
+        rewards: ^rewards_by_organization_id(organization_id)
+      ]
+    )
     |> Repo.all()
   end
+
+  defp badges_by_organization_id(organization_id) do
+    from(b in Badge, where: b.organization_id == ^organization_id)
+  end
+
+  defp quests_by_organization_id(organization_id) do
+    from(q in Quest, where: q.organization_id == ^organization_id)
+  end
+
+  defp rewards_by_organization_id(organization_id) do
+    from(r in Reward, where: r.organization_id == ^organization_id)
+  end
+
+
 
   @doc """
   Gets a account by email and password.
