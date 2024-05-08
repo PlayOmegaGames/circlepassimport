@@ -2,12 +2,14 @@ defmodule QuestApiV21.GordianKnot do
   import Ecto.Query, warn: false
   alias QuestApiV21.Repo
   alias QuestApiV21.Quests.Quest
+  alias QuestApiV21.Quests
   alias QuestApiV21.Rewards
   alias QuestApiV21.Rewards.Reward
   alias QuestApiV21.Accounts
-  alias QuestApiV21.Badges.Badge
+  alias QuestApiV21.Badges
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Transactions
+  alias QuestApiV21.Transactions.Transaction
   alias Bcrypt
   require Logger
 
@@ -15,33 +17,43 @@ defmodule QuestApiV21.GordianKnot do
     Logger.info("Starting to add badge to account #{account_id}")
 
     Repo.transaction(fn ->
-      account = Repo.get!(Account, account_id) |> Repo.preload([:badges, :quests])
+      account = Repo.get!(Account, account_id) |> Repo.preload([:badges])
+      badge = Badges.get_badge!(badge_id)
 
-      if Enum.any?(account.badges, &(&1.id == badge_id)) do
-        Logger.info("Badge #{badge_id} already associated with account #{account_id}")
-        {:error, :badge_already_associated}
-      else
-        Logger.info("Adding new badge to account")
-        badge = Repo.get!(Badge, badge_id, preload: [:quest])
-
-        quest_id = badge.quest_id
+      if badge.loyalty_badge do
+        Logger.info("Executing loyalty_badge function for badge #{badge_id}")
         updated_badges = [badge | account.badges]
-        Logger.info("Updated badges list for account")
 
         account =
           Ecto.Changeset.change(account)
           |> Ecto.Changeset.put_assoc(:badges, updated_badges)
-          |> Ecto.Changeset.change(%{badges_stats: length(updated_badges)})
           |> Repo.update!()
 
-        Logger.info("Successfully added new badge to account")
+        Logger.info("Successfully added new loyalty badge to account")
+        update_quest_stats(account, badge.quest_id)
 
-        # After adding the badge, check if any quests are completed and update quest stats and potentially reward stats
-        # This operation is also part of the transaction, ensuring consistency
-        update_quest_stats(account, quest_id)
-        Transactions.create_transaction_for_badge_account(badge_id, account_id)
+        add_loyalty_badge(badge, account)
+      else
+        if Enum.any?(account.badges, &(&1.id == badge_id)) do
+          Logger.info("Badge #{badge_id} already associated with account #{account_id}")
 
-        {:ok, "Badge added and quest completion checked"}
+          {:error, :badge_already_associated}
+        else
+          Logger.info("Adding new badge to account")
+
+          updated_badges = [badge | account.badges]
+
+          account =
+            Ecto.Changeset.change(account)
+            |> Ecto.Changeset.put_assoc(:badges, updated_badges)
+            |> Repo.update!()
+
+          Logger.info("Successfully added new badge to account")
+          update_quest_stats(account, badge.quest_id)
+          Transactions.create_transaction_for_badge_account(badge_id, account_id)
+
+          {:ok, "Badge added and quest completion checked"}
+        end
       end
     end)
     |> handle_transaction_result()
@@ -57,6 +69,7 @@ defmodule QuestApiV21.GordianKnot do
 
   # Private function to update quest stats and handle reward generation for an account and quest
   defp update_quest_stats(account, quest_id) do
+    quest = Quests.get_quest(quest_id)
     # Attempt to add the quest to the account if it's not already associated.
     # This could be part of ensuring that the quest is tracked once a related badge is added.
     add_quest_to_account_if_needed(account.id, quest_id)
@@ -68,14 +81,17 @@ defmodule QuestApiV21.GordianKnot do
       _ -> :noop
     end
 
-    # Check if the addition of a badge has completed the quest and, if so, create a reward.
-    check_quest_completion_and_create_reward(account.id, quest_id)
-    |> case do
-      # If a reward was successfully created (indicating the quest was completed), increment the rewards stats.
-      # This adjusts a counter indicating how many rewards the account has received.
-      {:ok, _reward} -> increment_rewards_stats(account)
-      # If no reward was created (quest not completed or other failure), do nothing (:noop).
-      _ -> :noop
+    # Ignore if loyalty quest existss
+    if is_nil(quest.quest_loyalty) do
+      # Check if the addition of a badge has completed the quest and, if so, create a reward.
+      check_quest_completion_and_create_reward(account.id, quest_id)
+      |> case do
+        # If a reward was successfully created (indicating the quest was completed), increment the rewards stats.
+        # This adjusts a counter indicating how many rewards the account has received.
+        {:ok, _reward} -> increment_rewards_stats(account)
+        # If no reward was created (quest not completed or other failure), do nothing (:noop).
+        _ -> :noop
+      end
     end
   end
 
@@ -322,5 +338,109 @@ defmodule QuestApiV21.GordianKnot do
       # If any quest is found to be incomplete (by calling `quest_completed?`), return true.
       not quest_completed?(user_with_badges_and_quests, quest.id)
     end)
+  end
+
+  # ===== Loyalty Badge System =====
+
+  def add_loyalty_badge(badge, account) do
+    Logger.info(
+      "Checking for loyalty transactions for badge #{badge.id} and account #{account.id}"
+    )
+
+    # Get the latest transaction for this badge and account
+    latest_transaction =
+      Repo.one(
+        from t in Transaction,
+          where: t.account_id == ^account.id and t.badge_id == ^badge.id,
+          order_by: [desc: t.inserted_at],
+          limit: 1
+      )
+
+    # Get the total of the `lp_badge` field for all transactions that share the same account and badge ID
+    total_lp_badge =
+      case Repo.all(
+             from t in Transaction,
+               where: t.account_id == ^account.id and t.badge_id == ^badge.id,
+               select: coalesce(sum(t.lp_badge), 0)
+           ) do
+        [sum] -> sum
+        _ -> 0
+      end
+
+    # Get the current time
+    current_time = DateTime.utc_now()
+
+    # converts the naive date format from the DB to unix format so we can compare the times
+    transaction_inserted_utc =
+      case latest_transaction do
+        nil ->
+          nil
+
+        %Transaction{} = transaction ->
+          case transaction.inserted_at do
+            nil -> nil
+            inserted_at -> DateTime.from_naive!(inserted_at, "Etc/UTC")
+          end
+      end
+
+    # IO.inspect("current time: #{current_time} vs new time #{DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600)}")
+
+    # Check if the latest transaction exists and compare times
+    if is_nil(latest_transaction) or
+         DateTime.compare(
+           DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600),
+           current_time
+         ) == :lt do
+      Logger.info(
+        "Creating a new transaction for badge #{badge.id} due to badge loyalty requirements"
+      )
+
+      Transactions.create_transaction_for_badge_account(badge.id, account.id)
+
+      quest = Quests.get_quest(badge.quest_id)
+
+      # Check if the quest has a non-empty loyalty string
+      if quest != nil and quest.quest_loyalty not in [nil, ""] do
+        IO.inspect("quest loyalty: #{quest.quest_loyalty}")
+
+        case Jason.decode(quest.quest_loyalty) do
+          {:ok, reward_map} ->
+            # Log the numbers and rewards in the map
+            Enum.each(reward_map, fn {num, reward} ->
+              num = String.to_integer(num)
+              IO.inspect("Reward: #{reward}")
+              IO.inspect("Num: #{num}")
+              IO.inspect("total loyalty: #{total_lp_badge}")
+              # Check if the total points are in the specified range
+              if total_lp_badge <= num and total_lp_badge + badge.badge_points >= num do
+                Logger.info(
+                  "Success: Account #{account.id} meets the conditions for quest #{quest.name}: #{num}"
+                )
+
+                # Call create_reward function with the provided reward string
+                Rewards.create_reward(%{
+                  quest_id: badge.quest_id,
+                  account_id: account.id,
+                  reward_name: reward,
+                  organization_id: quest.organization_id
+                })
+              else
+                Logger.info(
+                  "Failure: Account #{account.id} does not meet the conditions for quest #{quest.name}"
+                )
+              end
+            end)
+
+          {:error, _error} ->
+            Logger.error("Error decoding quest loyalty data for quest #{badge.quest_id}")
+        end
+      end
+
+      Logger.info("New transaction created for badge #{badge.id} and account #{account.id}")
+    else
+      Logger.info(
+        "No new transaction needed or insufficient time has passed since the last transaction #{latest_transaction.inserted_at}"
+      )
+    end
   end
 end

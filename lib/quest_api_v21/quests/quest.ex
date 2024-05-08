@@ -21,12 +21,11 @@ defmodule QuestApiV21.Quests.Quest do
     field :completion_score, :integer
     field :event_name, :string
     field :badge_count, :integer
-
+    field :quest_loyalty, :string
     belongs_to :organization, QuestApiV21.Organizations.Organization
     has_many :badges, QuestApiV21.Badges.Badge
     many_to_many :collectors, QuestApiV21.Collectors.Collector, join_through: "quests_collectors"
     many_to_many :accounts, QuestApiV21.Accounts.Account, join_through: "quests_accounts"
-
     timestamps()
   end
 
@@ -50,11 +49,24 @@ defmodule QuestApiV21.Quests.Quest do
       :organization_id,
       :completion_score,
       :event_name,
+      :quest_loyalty,
       :badge_count
     ])
     |> validate_required([:name, :organization_id])
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
     |> cast_assoc(:collectors, with: &QuestApiV21.Collectors.Collector.changeset/2)
     |> assoc_constraint(:organization)
+    |> serialize_quest_loyalty()
+  end
+
+  defp serialize_quest_loyalty(changeset) do
+    case fetch_field(changeset, :quest_loyalty) do
+      {:ok, loyalty_map} when is_map(loyalty_map) ->
+        serialized = Jason.encode!(loyalty_map)
+        put_change(changeset, :quest_loyalty, serialized)
+
+      _ ->
+        changeset
+    end
   end
 end

@@ -13,6 +13,7 @@ defmodule QuestApiV21.Badges.Badge do
     field :badge_redirect, :string
     field :badge_points, :integer, default: 10
     field :cool_down_reset, :integer, default: 24
+    field :loyalty_badge, :boolean, default: false
     field :share_location, :boolean, default: false
     field :hint, :string
     belongs_to :organization, QuestApiV21.Organizations.Organization
@@ -39,6 +40,7 @@ defmodule QuestApiV21.Badges.Badge do
       :share_location,
       :hint,
       :organization_id,
+      :loyalty_badge,
       :quest_id,
       :collector_id
     ])
