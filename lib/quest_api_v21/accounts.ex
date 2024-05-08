@@ -62,8 +62,6 @@ defmodule QuestApiV21.Accounts do
     from(r in Reward, where: r.organization_id == ^organization_id)
   end
 
-
-
   @doc """
   Gets a account by email and password.
 
