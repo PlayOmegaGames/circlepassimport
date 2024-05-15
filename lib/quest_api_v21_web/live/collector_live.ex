@@ -111,11 +111,14 @@ defmodule QuestApiV21Web.CollectorLive do
       |> assign(:badges_left, badges_left)
       |> assign(:total_badges_in_quest, total_badges_in_quest)
 
+    # If its a loyalty badge
     if badge.loyalty_badge do
       total_transactions =
         QuestApiV21.GordianKnot.count_transactions_for_badge(account_id, badge.id)
 
       total_points = QuestApiV21.GordianKnot.count_points_for_badge(account_id, badge.id)
+      # Fetch the next scan date
+      next_scan_date = QuestApiV21.GordianKnot.get_next_scan_date(account_id, badge)
 
       case QuestApiV21.GordianKnot.get_next_reward(account_id, badge.id, quest) do
         {:ok, nil} ->
@@ -125,7 +128,8 @@ defmodule QuestApiV21Web.CollectorLive do
            |> assign(:total_transactions, total_transactions)
            |> assign(:total_points, total_points)
            |> assign(:next_reward_points, nil)
-           |> assign(:next_reward, nil)}
+           |> assign(:next_reward, nil)
+           |> assign(:next_scan_date, next_scan_date)}
 
         {:ok, {next_reward_points, next_reward}} ->
           {:noreply,
@@ -134,7 +138,8 @@ defmodule QuestApiV21Web.CollectorLive do
            |> assign(:total_transactions, total_transactions)
            |> assign(:total_points, total_points)
            |> assign(:next_reward_points, next_reward_points)
-           |> assign(:next_reward, next_reward)}
+           |> assign(:next_reward, next_reward)
+           |> assign(:next_scan_date, next_scan_date)}
       end
     else
       {:noreply, socket |> assign(:is_loyalty_badge, false)}
@@ -206,6 +211,7 @@ defmodule QuestApiV21Web.CollectorLive do
           total_transactions={@total_transactions}
           next_reward_points={@next_reward_points}
           next_reward={@next_reward}
+          next_scan_date={@next_scan_date}
         />
         <p class="text-gold-100 mt-2 text-center ml-1">
           <%= if @next_reward do %>

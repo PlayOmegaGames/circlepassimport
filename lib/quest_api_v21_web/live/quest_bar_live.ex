@@ -40,6 +40,7 @@ defmodule QuestApiV21Web.QuestBarLive do
       |> assign(:comp_percent, comp_percent)
       |> assign(:qr_loading, false)
       |> assign(:show_qr_success, false)
+      |> assign(:account_id, account.id)
 
     {:ok, update_current_badge(socket)}
   end
@@ -58,18 +59,33 @@ defmodule QuestApiV21Web.QuestBarLive do
   def render(assigns) do
     ~H"""
     <div>
-      <.live_component
-        module={QuestApiV21Web.LiveComponents.BadgeDetails}
-        id="example-modal"
-        show={@show_badge_details}
-        on_confirm={:confirm_action}
-        on_cancel={:cancel_action}
-        confirm="Proceed"
-        badge={@badge}
-        quest={@quest}
-        comp_percent={@comp_percent}
-        cancel="Cancel"
-      />
+      <%= if @badge.loyalty_badge do %>
+        <.live_component
+          module={QuestApiV21Web.LiveComponents.LoyaltyBadgeDetails}
+          id="loyalty-badge-details"
+          show={@show_badge_details}
+          on_confirm={:confirm_action}
+          on_cancel={:cancel_action}
+          confirm="Proceed"
+          badge={@badge}
+          quest={@quest}
+          account_id={@account_id}
+          cancel="Cancel"
+        />
+      <% else %>
+        <.live_component
+          module={QuestApiV21Web.LiveComponents.BadgeDetails}
+          id="badge-details"
+          show={@show_badge_details}
+          on_confirm={:confirm_action}
+          on_cancel={:cancel_action}
+          confirm="Proceed"
+          badge={@badge}
+          quest={@quest}
+          comp_percent={@comp_percent}
+          cancel="Cancel"
+        />
+      <% end %>
 
       <.live_component
         module={QuestApiV21Web.LiveComponents.Camera}

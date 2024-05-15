@@ -45,6 +45,19 @@ defmodule QuestApiV21Web.LoyaltyBadgeDisplay do
             </div>
           <% end %>
         </div>
+        <div class="flex justify-center">
+          <div class="h-4 w-fit">
+            <span class="hero-clock h-4 w-4"></span>
+            <span
+              id="countdown-timer"
+              data-next-scan-date={@next_scan_date}
+              phx-hook="CountdownTimer"
+              class="text-center mt-4 text-xs text-gray-300"
+            >
+            </span>
+            <!-- Countdown Timer Placeholder -->
+          </div>
+        </div>
 
         <%= if !@collector and @badge.badge_redirect do %>
           <div class="w-full flex mt-4 justify-center">

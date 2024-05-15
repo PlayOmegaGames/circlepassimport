@@ -450,58 +450,69 @@ defmodule QuestApiV21.GordianKnot do
     end
   end
 
-  # Count the total transactions for the live view
   def count_transactions_for_badge(account_id, badge_id) do
     Repo.aggregate(
       from(t in Transaction,
-        where: t.account_id == ^account_id and t.badge_id == ^badge_id
+        where: t.account_id == ^account_id and not is_nil(t.badge_id) and t.badge_id == ^badge_id,
+        select: count(t.id)
       ),
       :count,
       :id
-    )
+    ) || 0
   end
 
-  # Sum the total lp_badge points for the badge
   def count_points_for_badge(account_id, badge_id) do
     Repo.one(
       from(t in Transaction,
-        where: t.account_id == ^account_id and t.badge_id == ^badge_id,
+        where: t.account_id == ^account_id and not is_nil(t.badge_id) and t.badge_id == ^badge_id,
         select: coalesce(sum(t.lp_badge), 0)
       )
-    )
+    ) || 0
   end
 
-  # returns the next reward and the points until that reward. It will return nil if no rewards are next
   def get_next_reward(account_id, badge_id, quest) do
-    # Fetch the account using the provided account_id
     account = Repo.get!(Account, account_id)
 
-    # Calculate the total loyalty points for the account and quest by summing lp_badge values
     total_loyalty_points =
       Repo.one(
         from t in Transaction,
-          where: t.account_id == ^account.id and t.badge_id == ^badge_id,
+          where:
+            t.account_id == ^account.id and not is_nil(t.badge_id) and t.badge_id == ^badge_id,
           select: coalesce(sum(t.lp_badge), 0)
       ) || 0
 
-    # Logger.info("total points: #{total_loyalty_points}")
-    # Logger.info("quest loyalty: #{quest.quest_loyalty}")
-
-    # Decode the quest_loyalty field from the quest
     with {:ok, reward_map} <- Jason.decode(quest.quest_loyalty) do
       reward_map
       |> Enum.map(fn {num, reward} -> {String.to_integer(num), reward} end)
       |> Enum.filter(fn {num, _reward} -> num > total_loyalty_points end)
       |> Enum.min_by(fn {num, _reward} -> num end, fn -> nil end)
       |> case do
-        nil ->
-          {:ok, nil}
-
-        {next_reward_points, next_reward} ->
-          {:ok, {next_reward_points, next_reward}}
+        nil -> {:ok, nil}
+        {next_reward_points, next_reward} -> {:ok, {next_reward_points, next_reward}}
       end
     else
       _ -> {:error, "Failed to decode quest loyalty data"}
     end
+  end
+
+  def get_next_scan_date(account_id, badge) do
+    latest_transaction =
+      Repo.one(
+        from t in Transaction,
+          where:
+            t.account_id == ^account_id and not is_nil(t.badge_id) and t.badge_id == ^badge.id,
+          order_by: [desc: t.inserted_at],
+          limit: 1
+      )
+
+    transaction_inserted_utc =
+      if latest_transaction do
+        DateTime.from_naive!(latest_transaction.inserted_at, "Etc/UTC")
+      else
+        DateTime.utc_now()
+      end
+
+    next_scan_date = DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600)
+    next_scan_date
   end
 end

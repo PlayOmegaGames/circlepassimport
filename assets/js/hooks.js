@@ -227,10 +227,49 @@ Hooks.FormSubmit = function(csrfToken) {
         }
       });
     }
-    
-    
   };
   
+  Hooks.CountdownTimer = {
+    mounted() {
+      const startCountdown = (endTime) => {
+        const updateCountdown = () => {
+          const now = new Date().getTime();
+          const distance = endTime - now;
   
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  
+          let display = "";
+          if (days > 0) {
+            display += days + "d ";
+          }
+          if (hours > 0 || days > 0) {
+            display += hours + "h ";
+          }
+          if (minutes > 0 || hours > 0 || days > 0) {
+            display += minutes + "m ";
+          }
+          if (seconds > 0 || minutes > 0 || hours > 0 || days > 0) {
+            display += seconds + "s ";
+          }
+  
+          this.el.innerHTML = display;
+  
+          if (distance < 0) {
+            clearInterval(countdownInterval);
+            this.el.innerHTML = "Ready to scan!";
+          }
+        };
+  
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
+      };
+  
+      const nextScanDate = new Date(this.el.dataset.nextScanDate);
+      startCountdown(nextScanDate.getTime());
+    }
+  };
   
 export default Hooks;
