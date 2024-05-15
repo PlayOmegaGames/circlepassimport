@@ -343,11 +343,18 @@ defmodule QuestApiV21.GordianKnot do
   # ===== Loyalty Badge System =====
 
   def add_loyalty_badge(badge, account) do
+    # Log the start of the loyalty transaction check process
     Logger.info(
       "Checking for loyalty transactions for badge #{badge.id} and account #{account.id}"
     )
 
-    # Get the latest transaction for this badge and account
+    # Preload necessary associations for the account
+    account = Repo.preload(account, [:badges, :quests])
+
+    # Retrieve the quest associated with the badge
+    quest = Quests.get_quest(badge.quest_id)
+
+    # Fetch the latest transaction for the given account and badge, ordered by the insertion timestamp in descending order
     latest_transaction =
       Repo.one(
         from t in Transaction,
@@ -356,91 +363,145 @@ defmodule QuestApiV21.GordianKnot do
           limit: 1
       )
 
-    # Get the total of the `lp_badge` field for all transactions that share the same account and badge ID
+    # Calculate the total loyalty points for the account by summing the lp_badge field of all transactions for the account and badge
     total_lp_badge =
-      case Repo.all(
-             from t in Transaction,
-               where: t.account_id == ^account.id and t.badge_id == ^badge.id,
-               select: coalesce(sum(t.lp_badge), 0)
-           ) do
-        [sum] -> sum
-        _ -> 0
-      end
+      Repo.one(
+        from t in Transaction,
+          where: t.account_id == ^account.id and t.badge_id == ^badge.id,
+          select: coalesce(sum(t.lp_badge), 0)
+      ) || 0
 
-    # Get the current time
+    new_total_lp_badge = total_lp_badge + badge.badge_points
+    # Get the current time in UTC
     current_time = DateTime.utc_now()
 
-    # converts the naive date format from the DB to unix format so we can compare the times
+    # Convert the inserted_at timestamp of the latest transaction to UTC
     transaction_inserted_utc =
-      case latest_transaction do
-        nil ->
-          nil
+      latest_transaction && DateTime.from_naive!(latest_transaction.inserted_at, "Etc/UTC")
 
-        %Transaction{} = transaction ->
-          case transaction.inserted_at do
-            nil -> nil
-            inserted_at -> DateTime.from_naive!(inserted_at, "Etc/UTC")
-          end
-      end
+    # Log the timestamp of the latest transaction for debugging purposes
+    Logger.info("Latest transaction timestamp: #{transaction_inserted_utc}")
 
-    # IO.inspect("current time: #{current_time} vs new time #{DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600)}")
-
-    # Check if the latest transaction exists and compare times
+    # Check if no transactions exist or if the cooldown period has passed since the last transaction
     if is_nil(latest_transaction) or
          DateTime.compare(
            DateTime.add(transaction_inserted_utc, badge.cool_down_reset * 3600),
            current_time
          ) == :lt do
-      Logger.info(
-        "Creating a new transaction for badge #{badge.id} due to badge loyalty requirements"
-      )
+      # Start a transaction to ensure atomicity
+      Repo.transaction(fn ->
+        # If the quest has loyalty conditions, decode the quest loyalty JSON and check the conditions
+        if quest && quest.quest_loyalty not in [nil, ""] do
+          case Jason.decode(quest.quest_loyalty) do
+            {:ok, reward_map} ->
+              # Iterate over the reward map and check if the total loyalty points meet the conditions to create rewards
+              Enum.find(reward_map, fn {num, reward} ->
+                num = String.to_integer(num)
+                # Logger.info("total points: #{total_lp_badge}")
+                # Logger.info("badge points: #{badge.badge_points}")
+                if total_lp_badge < num and new_total_lp_badge >= num do
+                  # Log success if the account meets the conditions for the quest and create the reward
+                  Logger.info(
+                    "Success: Account #{account.id} meets the conditions for quest #{quest.name}: #{num}"
+                  )
 
-      Transactions.create_transaction_for_badge_account(badge.id, account.id)
+                  Rewards.create_reward(%{
+                    quest_id: badge.quest_id,
+                    account_id: account.id,
+                    reward_name: reward,
+                    organization_id: quest.organization_id
+                  })
 
-      quest = Quests.get_quest(badge.quest_id)
+                  # Return true to stop further iteration
+                  true
+                else
+                  # Log failure if the account does not meet the conditions for the quest
+                  Logger.info(
+                    "Failure: Account #{account.id} does not meet the conditions for quest #{quest.name}"
+                  )
 
-      # Check if the quest has a non-empty loyalty string
-      if quest != nil and quest.quest_loyalty not in [nil, ""] do
-        IO.inspect("quest loyalty: #{quest.quest_loyalty}")
+                  # Continue iteration
+                  false
+                end
+              end)
 
-        case Jason.decode(quest.quest_loyalty) do
-          {:ok, reward_map} ->
-            # Log the numbers and rewards in the map
-            Enum.each(reward_map, fn {num, reward} ->
-              num = String.to_integer(num)
-              IO.inspect("Reward: #{reward}")
-              IO.inspect("Num: #{num}")
-              IO.inspect("total loyalty: #{total_lp_badge}")
-              # Check if the total points are in the specified range
-              if total_lp_badge <= num and total_lp_badge + badge.badge_points >= num do
-                Logger.info(
-                  "Success: Account #{account.id} meets the conditions for quest #{quest.name}: #{num}"
-                )
-
-                # Call create_reward function with the provided reward string
-                Rewards.create_reward(%{
-                  quest_id: badge.quest_id,
-                  account_id: account.id,
-                  reward_name: reward,
-                  organization_id: quest.organization_id
-                })
-              else
-                Logger.info(
-                  "Failure: Account #{account.id} does not meet the conditions for quest #{quest.name}"
-                )
-              end
-            end)
-
-          {:error, _error} ->
-            Logger.error("Error decoding quest loyalty data for quest #{badge.quest_id}")
+            {:error, _error} ->
+              # Log an error if there is an issue decoding the quest loyalty data
+              Logger.error("Error decoding quest loyalty data for quest #{badge.quest_id}")
+          end
         end
-      end
 
-      Logger.info("New transaction created for badge #{badge.id} and account #{account.id}")
+        # Log the creation of a new transaction due to badge loyalty requirements
+        Logger.info(
+          "Creating a new transaction for badge #{badge.id} due to badge loyalty requirements"
+        )
+
+        # Create a new transaction for the badge and account
+        Transactions.create_transaction_for_badge_account(badge.id, account.id)
+
+        # Log the successful creation of a new transaction for the badge and account
+        Logger.info("New transaction created for badge #{badge.id} and account #{account.id}")
+      end)
     else
+      # Log that no new transaction is needed or that insufficient time has passed since the last transaction
       Logger.info(
-        "No new transaction needed or insufficient time has passed since the last transaction #{latest_transaction.inserted_at}"
+        "No new transaction needed or insufficient time has passed since the last transaction #{transaction_inserted_utc}"
       )
+    end
+  end
+
+  # Count the total transactions for the live view
+  def count_transactions_for_badge(account_id, badge_id) do
+    Repo.aggregate(
+      from(t in Transaction,
+        where: t.account_id == ^account_id and t.badge_id == ^badge_id
+      ),
+      :count,
+      :id
+    )
+  end
+
+  # Sum the total lp_badge points for the badge
+  def count_points_for_badge(account_id, badge_id) do
+    Repo.one(
+      from(t in Transaction,
+        where: t.account_id == ^account_id and t.badge_id == ^badge_id,
+        select: coalesce(sum(t.lp_badge), 0)
+      )
+    )
+  end
+
+  # returns the next reward and the points until that reward. It will return nil if no rewards are next
+  def get_next_reward(account_id, badge_id, quest) do
+    # Fetch the account using the provided account_id
+    account = Repo.get!(Account, account_id)
+
+    # Calculate the total loyalty points for the account and quest by summing lp_badge values
+    total_loyalty_points =
+      Repo.one(
+        from t in Transaction,
+          where: t.account_id == ^account.id and t.badge_id == ^badge_id,
+          select: coalesce(sum(t.lp_badge), 0)
+      ) || 0
+
+    # Logger.info("total points: #{total_loyalty_points}")
+    # Logger.info("quest loyalty: #{quest.quest_loyalty}")
+
+    # Decode the quest_loyalty field from the quest
+    with {:ok, reward_map} <- Jason.decode(quest.quest_loyalty) do
+      reward_map
+      |> Enum.map(fn {num, reward} -> {String.to_integer(num), reward} end)
+      |> Enum.filter(fn {num, _reward} -> num > total_loyalty_points end)
+      |> Enum.min_by(fn {num, _reward} -> num end, fn -> nil end)
+      |> case do
+        nil ->
+          {:ok, nil}
+
+        {next_reward_points, next_reward} ->
+          {:ok, {next_reward_points, next_reward}}
+      end
+    else
+      _ -> {:error, "Failed to decode quest loyalty data"}
     end
   end
 end
