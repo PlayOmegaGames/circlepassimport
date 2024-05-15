@@ -214,7 +214,7 @@ defmodule QuestApiV21Web.CollectorLive do
             You have <%= @total_points %> points!
           <% end %>
         </p>
-          <.live_component
+        <.live_component
           module={QuestApiV21Web.LiveComponents.CollectorBar}
           badge={@badge}
           badges_left={@badges_left}

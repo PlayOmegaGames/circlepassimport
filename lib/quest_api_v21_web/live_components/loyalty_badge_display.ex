@@ -36,8 +36,8 @@ defmodule QuestApiV21Web.LoyaltyBadgeDisplay do
             <div class="text-sm my-auto">
               <p><span class="font-thin truncate mr-2">Quest:</span><%= @badge.quest.name %></p>
               <p>
-              <%= if @next_reward do %>
-                <span class="font-thin truncate mr-2">Next Reward:</span> <%= @next_reward %>
+                <%= if @next_reward do %>
+                  <span class="font-thin truncate mr-2">Next Reward:</span> <%= @next_reward %>
                 <% else %>
                   Completed
                 <% end %>
