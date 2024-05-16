@@ -7,6 +7,7 @@ defmodule QuestApiV21.GordianKnot do
   alias QuestApiV21.Rewards.Reward
   alias QuestApiV21.Accounts
   alias QuestApiV21.Badges
+  alias QuestApiV21.Badges.Badge
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Transactions
   alias QuestApiV21.Transactions.Transaction
@@ -162,23 +163,28 @@ defmodule QuestApiV21.GordianKnot do
   end
 
   def quest_completed?(account, quest_id) do
-    quest = Repo.get!(Quest, quest_id)
-    number_of_required_badges = quest.badge_count
+    # Fetch all badges for the quest
+    total_badges_for_quest =
+      Repo.aggregate(
+        from(b in Badge, where: b.quest_id == ^quest_id),
+        :count,
+        :id
+      )
 
-    # Fetching the count of unique badges collected by the account for this specific quest
+    # Fetch the count of unique badges collected by the account for this specific quest
     number_of_collected_badges =
       Enum.filter(account.badges, fn badge -> badge.quest_id == quest_id end)
       |> Enum.count()
 
     # Logging for debugging purposes
-    Logger.info("Required number of badges for quest completion: #{number_of_required_badges}")
+    Logger.info("Total badges for quest: #{total_badges_for_quest}")
 
     Logger.info(
       "Number of badges collected by account #{account.id} for quest #{quest_id}: #{number_of_collected_badges}"
     )
 
-    # The quest is considered completed if the number of collected badges matches the required count
-    number_of_collected_badges == number_of_required_badges
+    # The quest is considered completed if the number of collected badges matches the total badges for the quest
+    number_of_collected_badges == total_badges_for_quest
   end
 
   def add_quest_to_account(user_id, quest_id) do
