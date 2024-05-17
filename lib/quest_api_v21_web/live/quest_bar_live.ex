@@ -14,14 +14,17 @@ defmodule QuestApiV21Web.QuestBarLive do
     quest = selected_quest.selected_quest
     all_badges = quest.badges
 
-    collected_badges_ids = QuestApiV21.Quests.get_collected_badges_ids_for_quest(account.id, quest.id)
+    collected_badges_ids =
+      QuestApiV21.Quests.get_collected_badges_ids_for_quest(account.id, quest.id)
 
-    marked_badges = Enum.map(all_badges, fn badge ->
-      collected = badge.id in collected_badges_ids
-      Map.put(badge, :collected, collected)
-    end)
+    marked_badges =
+      Enum.map(all_badges, fn badge ->
+        collected = badge.id in collected_badges_ids
+        Map.put(badge, :collected, collected)
+      end)
 
-    comp_percent = trunc(Enum.count(marked_badges, & &1.collected) / Enum.count(marked_badges) * 100)
+    comp_percent =
+      trunc(Enum.count(marked_badges, & &1.collected) / Enum.count(marked_badges) * 100)
 
     socket =
       socket
@@ -49,9 +52,11 @@ defmodule QuestApiV21Web.QuestBarLive do
 
     socket =
       if current_badge.loyalty_badge do
-        #Logger.info("Loyalty badge detected")
-        loyalty_data = LoyaltyBadgeData.fetch_loyalty_data(socket.assigns.account_id, current_badge)
-        #Logger.info("Loyalty Data: #{inspect(loyalty_data)}")
+        # Logger.info("Loyalty badge detected")
+        loyalty_data =
+          LoyaltyBadgeData.fetch_loyalty_data(socket.assigns.account_id, current_badge)
+
+        # Logger.info("Loyalty Data: #{inspect(loyalty_data)}")
         socket
         |> assign(:loyalty_data, loyalty_data)
         |> assign(:badge, current_badge)
@@ -66,14 +71,14 @@ defmodule QuestApiV21Web.QuestBarLive do
         |> assign(:badge, current_badge)
       end
 
-    #Logger.info("Updated current badge: #{inspect(socket.assigns.badge)}")
+    # Logger.info("Updated current badge: #{inspect(socket.assigns.badge)}")
     socket
   end
 
   def render(assigns) do
     ~H"""
     <div>
-        <.live_component
+      <.live_component
         module={QuestApiV21Web.LiveComponents.BadgeDetails}
         id="badge-details"
         show={@show_badge_details}
@@ -201,7 +206,7 @@ defmodule QuestApiV21Web.QuestBarLive do
   end
 
   def handle_info({:start_in_animation, _quest_id}, socket) do
-    #Logger.info("Starting in-animation for quest #{quest_id}")
+    # Logger.info("Starting in-animation for quest #{quest_id}")
     new_socket = assign(socket, animate_out: false)
     {:noreply, new_socket}
   end
@@ -214,13 +219,23 @@ defmodule QuestApiV21Web.QuestBarLive do
   def handle_event("next", _params, socket) do
     count = Enum.count(socket.assigns.all_badges)
     new_index = rem(socket.assigns.current_index + 1, count)
-    {:noreply, socket |> assign(:current_index, new_index) |> update_current_badge() |> push_event("update-local-storage", %{index: new_index})}
+
+    {:noreply,
+     socket
+     |> assign(:current_index, new_index)
+     |> update_current_badge()
+     |> push_event("update-local-storage", %{index: new_index})}
   end
 
   def handle_event("previous", _params, socket) do
     count = Enum.count(socket.assigns.all_badges)
     new_index = rem(socket.assigns.current_index - 1 + count, count)
-    {:noreply, socket |> assign(:current_index, new_index) |> update_current_badge() |> push_event("update-local-storage", %{index: new_index})}
+
+    {:noreply,
+     socket
+     |> assign(:current_index, new_index)
+     |> update_current_badge()
+     |> push_event("update-local-storage", %{index: new_index})}
   end
 
   def handle_event("toggle_badge_details_modal", _params, socket) do

@@ -23,7 +23,10 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
               <button type="button" class="" phx-click="cancel">
                 <span class="w-6 h-6 hero-chevron-down"></span>
               </button>
-              <h3 class="overflow-hidden mr-8 w-full text-lg font-medium text-center uppercase truncate" id="modal-title">
+              <h3
+                class="overflow-hidden mr-8 w-full text-lg font-medium text-center uppercase truncate"
+                id="modal-title"
+              >
                 <%= @badge.name %>
               </h3>
             </div>
@@ -72,11 +75,14 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
             <div class="flex justify-center mb-4">
               <div class="h-4 w-fit">
                 <span class="hero-clock h-4 w-4"></span>
-                <span id="badge-ready" class="text-center mt-4 text-xs text-gray-300">Badge is ready to collect!</span>
+                <span id="badge-ready" class="text-center mt-4 text-xs text-gray-300">
+                  Badge is ready to collect!
+                </span>
                 <span
                   id="countdown-timer"
                   data-next-scan-date={@next_scan_date}
-                  class="text-center mt-4 text-xs text-gray-300">
+                  class="text-center mt-4 text-xs text-gray-300"
+                >
                 </span>
               </div>
             </div>
@@ -115,7 +121,8 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
             </div>
 
             <div class="rounded-full mb-2 bg-indigo-300/[0.30]">
-              <div style={"width: #{@comp_percent}%;"} class="z-10 h-1 rounded-full bg-gold-300"></div>
+              <div style={"width: #{@comp_percent}%;"} class="z-10 h-1 rounded-full bg-gold-300">
+              </div>
             </div>
 
             <h1 class="mb-2 text-center"><%= @quest.name %></h1>
