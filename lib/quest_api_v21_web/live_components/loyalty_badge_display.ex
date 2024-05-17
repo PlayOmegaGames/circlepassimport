@@ -47,6 +47,9 @@ defmodule QuestApiV21Web.LoyaltyBadgeDisplay do
         </div>
         <div class="flex justify-center">
           <div class="h-4 w-fit">
+            <!-- Countdown Timer Placeholder -->
+
+          <%= if @next_scan_date > 0 do %>
             <span class="hero-clock h-4 w-4"></span>
             <span
               id="countdown-timer"
@@ -55,7 +58,14 @@ defmodule QuestApiV21Web.LoyaltyBadgeDisplay do
               class="text-center mt-4 text-xs text-gray-300"
             >
             </span>
-            <!-- Countdown Timer Placeholder -->
+
+              <% else %>
+
+              <span class="text-center mt-4 text-xs text-gray-300">
+                Badge is ready to collect!
+              </span>
+            <%  end %>
+
           </div>
         </div>
 

@@ -16,6 +16,7 @@ defmodule QuestApiV21Web.CollectorLive do
           quest = badge.quest
           quest_badges = Repo.preload(quest, :badges) |> Map.get(:badges)
           total_badges_in_quest = length(quest_badges)
+          live = quest.live
 
           handle_add_badge_result(
             QuestApiV21.GordianKnot.add_badge_to_account(account.id, badge.id),
@@ -24,6 +25,7 @@ defmodule QuestApiV21Web.CollectorLive do
             quest,
             quest_badges,
             total_badges_in_quest,
+            live,
             socket
           )
         else
@@ -45,6 +47,7 @@ defmodule QuestApiV21Web.CollectorLive do
          quest,
          quest_badges,
          total_badges_in_quest,
+         live,
          socket
        ) do
     Logger.info("Badge was already collected")
@@ -55,6 +58,7 @@ defmodule QuestApiV21Web.CollectorLive do
       quest,
       quest_badges,
       total_badges_in_quest,
+      live,
       socket
     )
   end
@@ -66,6 +70,7 @@ defmodule QuestApiV21Web.CollectorLive do
          quest,
          quest_badges,
          total_badges_in_quest,
+         live,
          socket
        ) do
     Logger.info("Badge added to account successfully.")
@@ -76,6 +81,7 @@ defmodule QuestApiV21Web.CollectorLive do
       quest,
       quest_badges,
       total_badges_in_quest,
+      live,
       socket
     )
   end
@@ -87,6 +93,7 @@ defmodule QuestApiV21Web.CollectorLive do
          _quest,
          _quest_badges,
          _total_badges_in_quest,
+         _live,
          socket
        ) do
     log_error("Failed to add badge to account: #{reason}")
@@ -99,6 +106,7 @@ defmodule QuestApiV21Web.CollectorLive do
          quest,
          quest_badges,
          total_badges_in_quest,
+         live,
          socket
        ) do
     {:ok, updated_account} = fetch_account(account_id)
@@ -110,6 +118,7 @@ defmodule QuestApiV21Web.CollectorLive do
       |> assign(:quest, quest)
       |> assign(:badges_left, badges_left)
       |> assign(:total_badges_in_quest, total_badges_in_quest)
+      |> assign(:live, live)
 
     # If its a loyalty badge
     if badge.loyalty_badge do
@@ -250,6 +259,9 @@ defmodule QuestApiV21Web.CollectorLive do
           badges_left={@badges_left}
           id="collector-bar"
         />
+      <% end %>
+      <%= unless @live do %>
+        <p class="text-red-600 mt-2 text-center">This quest is no longer live</p>
       <% end %>
     </div>
     """
