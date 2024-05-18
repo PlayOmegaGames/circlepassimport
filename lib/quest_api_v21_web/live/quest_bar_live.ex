@@ -159,7 +159,7 @@ defmodule QuestApiV21Web.QuestBarLive do
                 phx-click="camera"
                 class="ring-1 p-1 ring-gray-400 z-30 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg"
               >
-                <span class="hero-qr-code w-8 h-8"></span>
+                <img class="w-8 h-8 opacity-70" src="/images/qr-code.png" />
               </button>
             </div>
           </div>

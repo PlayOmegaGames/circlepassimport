@@ -257,6 +257,7 @@ defmodule QuestApiV21Web.CollectorLive do
           module={QuestApiV21Web.LiveComponents.CollectorBar}
           badge={@badge}
           badges_left={@badges_left}
+          live={@live}
           id="collector-bar"
         />
       <% end %>
