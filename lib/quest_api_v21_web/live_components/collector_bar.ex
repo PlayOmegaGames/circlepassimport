@@ -11,11 +11,10 @@ defmodule QuestApiV21Web.LiveComponents.CollectorBar do
             replace={true}
             class="focus:outline-double text-gray-500  my-auto p-1 h-fit ring-1 p-2 ring-gray-300 z-30 shadow-md shadow-highlight/[0.50] bg-gray-100 rounded-lg"
           >
-
-            <%= if @live do%>
-            <span class="hero-check-circle w-5 h-5"></span> Collect Badge
+            <%= if @live do %>
+              <span class="hero-check-circle w-5 h-5"></span> Collect Badge
             <% else %>
-            Back to Home
+              Back to Home
             <% end %>
           </.link>
 
