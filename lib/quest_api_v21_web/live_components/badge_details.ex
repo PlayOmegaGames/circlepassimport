@@ -46,7 +46,8 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
                     class="w-full h-full"
                     data-latitude={@coordinates.latitude}
                     data-longitude={@coordinates.longitude}
-                  ></div>
+                  >
+                  </div>
                 <% else %>
                   <div class="flex justify-center h-96 bg-black">
                     <h1 class="my-auto text-lg text-white"><%= @badge.hint %></h1>
@@ -84,7 +85,6 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
                 <span class="w-12 h-12 hero-chevron-right" />
               </button>
             </div>
-
             <!-- Display Next Reward, Total Transactions, and Next Scan Date -->
             <div class="mt-4 text-center text-sm">
               <h1 class="">You have collected this badge <%= @total_transactions %> times</h1>
@@ -137,7 +137,8 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
                     phx-hook="LeafletMap"
                     data-latitude={@coordinates.latitude}
                     data-longitude={@coordinates.longitude}
-                  ></div>
+                  >
+                  </div>
                 <% else %>
                   <div class="flex justify-center h-96 bg-black">
                     <h1 class="my-auto text-lg text-white"><%= @badge.hint %></h1>
@@ -178,7 +179,6 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
       </div>
 
       <script>
-
         document.addEventListener("DOMContentLoaded", function() {
           const startCountdown = (endTime, countdownElement, badgeReadyElement) => {
             let countdownInterval;

@@ -79,12 +79,15 @@ defmodule QuestApiV21Web.QuestBarLive do
 
   defp get_collector_coordinates(badge) do
     case badge.collector do
-      nil -> %{latitude: nil, longitude: nil}
+      nil ->
+        %{latitude: nil, longitude: nil}
+
       collector ->
         coordinates = collector.coordinates
 
         if is_binary(coordinates) and String.contains?(coordinates, ",") do
           [latitude, longitude] = String.split(coordinates, ",")
+
           %{
             latitude: String.to_float(String.trim(latitude)),
             longitude: String.to_float(String.trim(longitude))
@@ -94,7 +97,6 @@ defmodule QuestApiV21Web.QuestBarLive do
         end
     end
   end
-
 
   def render(assigns) do
     ~H"""
