@@ -39,9 +39,19 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
                   class="object-cover w-full h-full"
                 />
               <% else %>
-                <div class="flex justify-center h-96 bg-black">
-                  <h1 class="my-auto text-lg text-white"><%= @badge.hint %></h1>
-                </div>
+                <%= if @coordinates.latitude && @coordinates.longitude do %>
+                  <div
+                    id="map"
+                    phx-hook="LeafletMap"
+                    class="w-full h-full"
+                    data-latitude={@coordinates.latitude}
+                    data-longitude={@coordinates.longitude}
+                  ></div>
+                <% else %>
+                  <div class="flex justify-center h-96 bg-black">
+                    <h1 class="my-auto text-lg text-white"><%= @badge.hint %></h1>
+                  </div>
+                <% end %>
               <% end %>
             </div>
 
@@ -57,13 +67,24 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
               </div>
             </div>
 
-            <div class="flex justify-center mx-auto w-8/12">
-              <.live_component
-                module={QuestApiV21Web.LiveComponents.CameraButton}
-                id="camera-button"
-                size="12"
-              />
+            <div class="flex justify-between mx-auto w-8/12">
+              <button phx-click="previous" class="my-auto">
+                <span class="w-12 h-12 hero-chevron-left" />
+              </button>
+
+              <div class="flex justify-center mx-auto w-8/12">
+                <.live_component
+                  module={QuestApiV21Web.LiveComponents.CameraButton}
+                  id="camera-button"
+                  size="12"
+                />
+              </div>
+
+              <button phx-click="next" class="my-auto">
+                <span class="w-12 h-12 hero-chevron-right" />
+              </button>
             </div>
+
             <!-- Display Next Reward, Total Transactions, and Next Scan Date -->
             <div class="mt-4 text-center text-sm">
               <h1 class="">You have collected this badge <%= @total_transactions %> times</h1>
@@ -101,7 +122,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
               </h3>
             </div>
 
-            <div class="overflow-hidden relative mx-auto w-80 h-96 rounded-lg ring-1 ring-gold-200 object-fit">
+            <div class="overflow-hidden relative mx-auto w-72 h-80 rounded-lg ring-1 ring-gold-200 object-fit">
               <%= if @badge.collected do %>
                 <img
                   src={@badge.badge_details_image}
@@ -109,9 +130,19 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
                   class="object-cover w-full h-full"
                 />
               <% else %>
-                <div class="flex justify-center h-96 bg-black">
-                  <h1 class="my-auto text-lg text-white"><%= @badge.hint %></h1>
-                </div>
+                <%= if @coordinates.latitude && @coordinates.longitude do %>
+                  <div
+                    id="map"
+                    class="w-full h-full"
+                    phx-hook="LeafletMap"
+                    data-latitude={@coordinates.latitude}
+                    data-longitude={@coordinates.longitude}
+                  ></div>
+                <% else %>
+                  <div class="flex justify-center h-96 bg-black">
+                    <h1 class="my-auto text-lg text-white"><%= @badge.hint %></h1>
+                  </div>
+                <% end %>
               <% end %>
             </div>
 
@@ -147,6 +178,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
       </div>
 
       <script>
+
         document.addEventListener("DOMContentLoaded", function() {
           const startCountdown = (endTime, countdownElement, badgeReadyElement) => {
             let countdownInterval;
@@ -185,6 +217,28 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
           if (countdownElement && badgeReadyElement) {
             const nextScanDate = new Date(countdownElement.dataset.nextScanDate);
             startCountdown(nextScanDate.getTime(), countdownElement, badgeReadyElement);
+          }
+
+          const mapElement = document.getElementById("map");
+          if (mapElement) {
+            const latitude = parseFloat(mapElement.dataset.latitude) || 0;
+            const longitude = parseFloat(mapElement.dataset.longitude) || 0;
+
+            console.log("Initializing map with coordinates:", latitude, longitude); // Debugging line
+
+            const map = L.map(mapElement).setView([latitude, longitude], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const purpleIcon = L.divIcon({
+              className: 'custom-div-icon',
+              html: "<div style='background-color: purple; width: 12px; height: 12px; border-radius: 50%;'></div>",
+              iconSize: [12, 12],
+              iconAnchor: [6, 6]
+            });
+
+            L.marker([latitude, longitude], { icon: purpleIcon }).addTo(map);
           }
         });
       </script>

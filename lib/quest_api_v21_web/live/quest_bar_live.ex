@@ -10,7 +10,7 @@ defmodule QuestApiV21Web.QuestBarLive do
     account = socket.assigns.current_account
     Phoenix.PubSub.subscribe(QuestApiV21.PubSub, "accounts:#{account.id}")
 
-    selected_quest = Repo.preload(account, selected_quest: [:badges])
+    selected_quest = Repo.preload(account, selected_quest: [badges: :collector])
     quest = selected_quest.selected_quest
     all_badges = quest.badges
 
@@ -39,6 +39,7 @@ defmodule QuestApiV21Web.QuestBarLive do
       |> assign(:qr_loading, false)
       |> assign(:show_qr_success, false)
       |> assign(:account_id, account.id)
+      |> assign(:coordinates, nil)
 
     {:ok, update_current_badge(socket)}
   end
@@ -48,18 +49,19 @@ defmodule QuestApiV21Web.QuestBarLive do
     current_index = socket.assigns.current_index
 
     current_badge = Enum.at(all_badges, current_index, %{:collected => false})
-    current_badge = Repo.preload(current_badge, :quest)
+    current_badge = Repo.preload(current_badge, [:quest, :collector])
+
+    collector_coordinates = get_collector_coordinates(current_badge)
 
     socket =
       if current_badge.loyalty_badge do
-        # Logger.info("Loyalty badge detected")
         loyalty_data =
           LoyaltyBadgeData.fetch_loyalty_data(socket.assigns.account_id, current_badge)
 
-        # Logger.info("Loyalty Data: #{inspect(loyalty_data)}")
         socket
         |> assign(:loyalty_data, loyalty_data)
         |> assign(:badge, current_badge)
+        |> assign(:coordinates, collector_coordinates)
       else
         socket
         |> assign(:loyalty_data, %{
@@ -69,11 +71,30 @@ defmodule QuestApiV21Web.QuestBarLive do
           next_scan_date: nil
         })
         |> assign(:badge, current_badge)
+        |> assign(:coordinates, collector_coordinates)
       end
 
-    # Logger.info("Updated current badge: #{inspect(socket.assigns.badge)}")
     socket
   end
+
+  defp get_collector_coordinates(badge) do
+    case badge.collector do
+      nil -> %{latitude: nil, longitude: nil}
+      collector ->
+        coordinates = collector.coordinates
+
+        if is_binary(coordinates) and String.contains?(coordinates, ",") do
+          [latitude, longitude] = String.split(coordinates, ",")
+          %{
+            latitude: String.to_float(String.trim(latitude)),
+            longitude: String.to_float(String.trim(longitude))
+          }
+        else
+          %{latitude: nil, longitude: nil}
+        end
+    end
+  end
+
 
   def render(assigns) do
     ~H"""
@@ -94,6 +115,7 @@ defmodule QuestApiV21Web.QuestBarLive do
         next_scan_date={@loyalty_data.next_scan_date}
         cancel="Cancel"
         comp_percent={@comp_percent}
+        coordinates={@coordinates}
       />
 
       <.live_component
