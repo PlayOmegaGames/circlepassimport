@@ -22,6 +22,7 @@ defmodule QuestApiV21.Quests.Quest do
     field :event_name, :string
     field :badge_count, :integer
     field :quest_loyalty, :string
+    field :live, :boolean, default: true
     belongs_to :organization, QuestApiV21.Organizations.Organization
     has_many :badges, QuestApiV21.Badges.Badge
     many_to_many :collectors, QuestApiV21.Collectors.Collector, join_through: "quests_collectors"
@@ -31,6 +32,16 @@ defmodule QuestApiV21.Quests.Quest do
 
   @doc false
   def changeset(quest, attrs) do
+    # Preprocess the quest_loyalty field
+    attrs =
+      case Map.fetch(attrs, "quest_loyalty") do
+        {:ok, loyalty_map} when is_map(loyalty_map) ->
+          Map.put(attrs, "quest_loyalty", Jason.encode!(loyalty_map))
+
+        _ ->
+          attrs
+      end
+
     quest
     |> cast(attrs, [
       :address,
@@ -50,20 +61,20 @@ defmodule QuestApiV21.Quests.Quest do
       :completion_score,
       :event_name,
       :quest_loyalty,
+      :live,
       :badge_count
     ])
     |> validate_required([:name, :organization_id])
     |> cast_assoc(:badges, with: &QuestApiV21.Badges.Badge.changeset/2)
     |> cast_assoc(:collectors, with: &QuestApiV21.Collectors.Collector.changeset/2)
     |> assoc_constraint(:organization)
-    |> serialize_quest_loyalty()
+    |> update_quest_type()
   end
 
-  defp serialize_quest_loyalty(changeset) do
-    case fetch_field(changeset, :quest_loyalty) do
-      {:ok, loyalty_map} when is_map(loyalty_map) ->
-        serialized = Jason.encode!(loyalty_map)
-        put_change(changeset, :quest_loyalty, serialized)
+  defp update_quest_type(changeset) do
+    case fetch_change(changeset, :quest_loyalty) do
+      {:ok, _} ->
+        put_change(changeset, :quest_type, "loyalty")
 
       _ ->
         changeset

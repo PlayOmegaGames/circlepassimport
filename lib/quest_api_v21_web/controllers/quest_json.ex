@@ -54,6 +54,7 @@ defmodule QuestApiV21Web.QuestJSON do
       completion_score: quest.completion_score,
       event_name: quest.event_name,
       badge_count: quest.badge_count,
+      live: quest.live,
       badges: badges_data(badges),
       collectors: collectors_data(collectors)
     }

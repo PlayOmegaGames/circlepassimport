@@ -164,12 +164,15 @@ defmodule QuestApiV21.Quests do
       {:error, %Ecto.Changeset{}}
 
   """
-
   def create_quest_with_organization(quest_params, organization_id) do
-    %Quest{}
-    |> Quest.changeset(Map.put(quest_params, "organization_id", organization_id))
-    |> maybe_add_accounts(quest_params)
-    |> Repo.insert()
+    changeset =
+      %Quest{}
+      |> Quest.changeset(Map.put(quest_params, "organization_id", organization_id))
+      |> maybe_add_accounts(quest_params)
+
+    IO.inspect(changeset, label: "Quest Changeset")
+
+    Repo.insert(changeset)
   end
 
   @doc """

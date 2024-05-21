@@ -15,6 +15,32 @@ Hooks.PasswordStrength = {
   }
 };
 
+
+Hooks.LeafletMap = {
+  mounted() {
+    console.log("")
+    const latitude = parseFloat(this.el.dataset.latitude) || 0;
+    const longitude = parseFloat(this.el.dataset.longitude) || 0;
+
+    console.log("Initializing map with coordinates:", latitude, longitude); // Debugging line
+
+    const map = L.map(this.el).setView([latitude, longitude], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const purpleIcon = L.divIcon({
+      className: 'custom-div-icon',
+      html: "<div style='background-color: rgba(121, 0, 253, 0.5); width: 50px; height: 50px; border: 5px solid purple; border-radius: 50%;'></div>",
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+
+    L.marker([latitude, longitude], { icon: purpleIcon }).addTo(map);
+  }
+};
+
+
 Hooks.FormSubmit = function(csrfToken) {
     return {
       mounted() {
@@ -227,10 +253,49 @@ Hooks.FormSubmit = function(csrfToken) {
         }
       });
     }
-    
-    
   };
   
+  Hooks.CountdownTimer = {
+    mounted() {
+      const startCountdown = (endTime) => {
+        const updateCountdown = () => {
+          const now = new Date().getTime();
+          const distance = endTime - now;
   
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  
+          let display = "";
+          if (days > 0) {
+            display += days + "d ";
+          }
+          if (hours > 0 || days > 0) {
+            display += hours + "h ";
+          }
+          if (minutes > 0 || hours > 0 || days > 0) {
+            display += minutes + "m ";
+          }
+          if (seconds > 0 || minutes > 0 || hours > 0 || days > 0) {
+            display += seconds + "s ";
+          }
+  
+          this.el.innerHTML = display;
+  
+          if (distance < 0) {
+            clearInterval(countdownInterval);
+            this.el.innerHTML = "Ready to scan!";
+          }
+        };
+  
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
+      };
+  
+      const nextScanDate = new Date(this.el.dataset.nextScanDate);
+      startCountdown(nextScanDate.getTime());
+    }
+  };
   
 export default Hooks;
