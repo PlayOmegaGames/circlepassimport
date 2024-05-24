@@ -281,25 +281,28 @@ defmodule QuestApiV21Web.QuestBarLive do
   end
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
+    # Ensure the QR data has a scheme, defaulting to https if not provided
+    qr_data = if String.starts_with?(qr_data, ["http://", "https://"]) do
+      qr_data
+    else
+      "https://" <> qr_data
+    end
+
     uri = URI.parse(qr_data)
-
-    # Ensure the URI has a scheme, defaulting to https if not provided
-    uri = if uri.scheme == nil, do: %URI{uri | scheme: "https"}, else: uri
-
-    # Ensure the URI host matches allowed domains
     allowed_domains = ["questapp.io", "staging.questapp.io"]
 
     cond do
       uri.host in allowed_domains ->
-        # Construct the full path including the scheme and host
-        full_path = "#{uri.scheme}://#{uri.host}#{uri.path}"
-        Logger.info("Redirecting to: #{full_path}")
+        # Construct the relative path only
+        relative_path = uri.path <> (uri.query != nil && "?#{uri.query}" || "")
+        Logger.info("Redirecting to: #{relative_path}")
         socket = assign(socket, :show_qr_success, true)
-        {:noreply, push_redirect(socket, to: full_path)}
+        {:noreply, push_redirect(socket, to: relative_path)}
 
       true ->
         Logger.error("Invalid domain in scanned QR code: #{uri.host}")
         {:noreply, socket}
     end
   end
+
 end
