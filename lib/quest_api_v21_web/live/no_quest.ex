@@ -50,26 +50,26 @@ defmodule QuestApiV21Web.NoQuest do
   end
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
-    # Parse the QR data as a URL
-    uri = URI.parse(qr_data)
-    IO.inspect(uri.host)
+    # Ensure the QR data has a scheme, defaulting to https if not provided
+    qr_data =
+      if String.starts_with?(qr_data, ["http://", "https://"]) do
+        qr_data
+      else
+        "https://" <> qr_data
+      end
 
-    # Define a list of allowed domains
+    uri = URI.parse(qr_data)
     allowed_domains = ["questapp.io", "staging.questapp.io"]
 
-    # Check if the parsed URL's host is in the list of allowed domains
     cond do
       uri.host in allowed_domains ->
-        # Since the domain is valid, reconstruct the path for redirection
-        full_path = uri.path
-        Logger.info("Redirecting to: #{full_path}")
+        # Construct the relative path only
+        relative_path = uri.path <> ((uri.query != nil && "?#{uri.query}") || "")
+        Logger.info("Redirecting to: #{relative_path}")
         socket = assign(socket, :show_qr_success, true)
-
-        {:noreply, push_redirect(socket, to: full_path)}
+        {:noreply, push_redirect(socket, to: relative_path)}
 
       true ->
-        IO.inspect(uri)
-        # Log and handle the case where the domain does not match the allowed list
         Logger.error("Invalid domain in scanned QR code: #{uri.host}")
         {:noreply, socket}
     end
