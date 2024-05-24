@@ -282,11 +282,17 @@ defmodule QuestApiV21Web.QuestBarLive do
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
     uri = URI.parse(qr_data)
+
+    # Ensure the URI has a scheme, defaulting to https if not provided
+    uri = if uri.scheme == nil, do: %URI{uri | scheme: "https"}, else: uri
+
+    # Ensure the URI host matches allowed domains
     allowed_domains = ["questapp.io", "staging.questapp.io"]
 
     cond do
       uri.host in allowed_domains ->
-        full_path = uri.path
+        # Construct the full path including the scheme and host
+        full_path = "#{uri.scheme}://#{uri.host}#{uri.path}"
         Logger.info("Redirecting to: #{full_path}")
         socket = assign(socket, :show_qr_success, true)
         {:noreply, push_redirect(socket, to: full_path)}
@@ -296,4 +302,5 @@ defmodule QuestApiV21Web.QuestBarLive do
         {:noreply, socket}
     end
   end
+
 end
