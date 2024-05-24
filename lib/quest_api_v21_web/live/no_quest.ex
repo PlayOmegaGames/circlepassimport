@@ -51,11 +51,12 @@ defmodule QuestApiV21Web.NoQuest do
 
   def handle_event("qr-code-scanned", %{"data" => qr_data}, socket) do
     # Ensure the QR data has a scheme, defaulting to https if not provided
-    qr_data = if String.starts_with?(qr_data, ["http://", "https://"]) do
-      qr_data
-    else
-      "https://" <> qr_data
-    end
+    qr_data =
+      if String.starts_with?(qr_data, ["http://", "https://"]) do
+        qr_data
+      else
+        "https://" <> qr_data
+      end
 
     uri = URI.parse(qr_data)
     allowed_domains = ["questapp.io", "staging.questapp.io"]
@@ -63,7 +64,7 @@ defmodule QuestApiV21Web.NoQuest do
     cond do
       uri.host in allowed_domains ->
         # Construct the relative path only
-        relative_path = uri.path <> (uri.query != nil && "?#{uri.query}" || "")
+        relative_path = uri.path <> ((uri.query != nil && "?#{uri.query}") || "")
         Logger.info("Redirecting to: #{relative_path}")
         socket = assign(socket, :show_qr_success, true)
         {:noreply, push_redirect(socket, to: relative_path)}
@@ -73,6 +74,4 @@ defmodule QuestApiV21Web.NoQuest do
         {:noreply, socket}
     end
   end
-
-
 end
