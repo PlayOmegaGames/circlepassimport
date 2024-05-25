@@ -139,7 +139,7 @@ defmodule QuestApiV21Web.QuestBarLive do
       <div
         phx-click="toggle_badge_details_modal"
         id="quest-bar-container"
-        class="z-10 w-full bg-gradient-to-r from-gray-300 to-violet-100 border-t-2 border-contrast"
+        class="z-10 w-full bg-gradient-to-r from-gray-100 to-blue-100 border-t-2 border-contrast"
       >
         <div class="flex py-1">
           <div class="flex row transition-all ease-in-out quest-bar-content grow z-20">

@@ -62,7 +62,6 @@ defmodule QuestApiV21Web.MainLive do
 
     background_color =
       case socket.assigns.live_action do
-        :quests -> "bg-background-800"
         _ -> "false"
       end
 
