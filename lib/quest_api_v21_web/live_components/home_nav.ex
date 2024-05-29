@@ -9,7 +9,7 @@ defmodule QuestApiV21Web.LiveComponents.HomeNav do
         phx-click="show-content"
         phx-value-type="badges"
       >
-        Badges
+        My Badges
       </button>
 
       <button
@@ -25,7 +25,7 @@ defmodule QuestApiV21Web.LiveComponents.HomeNav do
         phx-click="show-content"
         phx-value-type="rewards"
       >
-        Rewards
+        My Rewards
       </button>
     </nav>
     """

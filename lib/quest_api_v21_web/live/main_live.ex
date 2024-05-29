@@ -188,12 +188,11 @@ defmodule QuestApiV21Web.MainLive do
             show_single_badge_details={@show_single_badge_details}
           />
         <% "myquests" -> %>
-          <div class="px-2 space-y-4 mb-12">
+          <div class="px-2 space mb-12">
             <%= for quest <- @quests_with_completion do %>
               <button
-                phx-click="select-quest"
-                phx-value-id={quest.id}
-                class="focus:outline-4 focus:outline-double focus:shadow-lg focus:shadow-white transition-all ease-in-out duration-400 rounded-xl w-full"
+                phx-click="show_quest_details" phx-value-id={quest.id}
+                class="focus:outline-4 my-4 focus:outline-double focus:shadow-lg focus:shadow-white transition-all ease-in-out duration-400 rounded-xl w-full"
               >
                 <.live_component
                   class="shadow-xl h-fit"
@@ -204,6 +203,15 @@ defmodule QuestApiV21Web.MainLive do
                   percentage={quest.completion_percentage}
                 />
               </button>
+
+              <%= if @quest_details do %>
+              <.live_component
+                module={QuestApiV21Web.LiveComponents.QuestDetails}
+                id={"quest-details-modal-#{quest.id}"}
+                show={@show_quest_details}
+                quest_details={@quest_details}
+              />
+            <% end %>
             <% end %>
           </div>
         <% "rewards" -> %>
