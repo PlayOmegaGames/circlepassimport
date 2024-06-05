@@ -171,6 +171,7 @@ defmodule QuestApiV21Web.MainLive do
   def handle_event("close-code-popup", _, socket) do
     {:noreply, assign(socket, show_reward_details: false)}
   end
+  
 
   # Handle custom event to close the reward modal
   def handle_info(:close_modal, socket) do

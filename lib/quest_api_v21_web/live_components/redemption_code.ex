@@ -8,8 +8,18 @@ defmodule QuestApiV21Web.LiveComponents.RedemptionCode do
       <div
         id="redemption-code-popup"
         class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+        phx-click="close-popup"
       >
-        <div class="relative top-40 mx-auto pb-12 p-2 pt-8 border w-3/4 shadow-lg rounded-md bg-white ring-1 ring-slate-600">
+        <div
+          class="relative top-40 mx-auto pb-12 p-2 pt-8 w-3/4 shadow-lg rounded-md bg-white ring-1 ring-slate-200"
+          phx-click-away="close-popup"
+        >
+          <button
+            class="absolute top-0 right-2 text-2xl text-gray-500 hover:text-gray-700"
+            phx-click="close-popup"
+          >
+            &times;
+          </button>
           <h2 class="text-xl text-center font-thin text-gray-700">Claim Your Reward:</h2>
           <p class="font-medium text-lg pt-4 pb-8 text-center">
             <%= @reward.reward_name %>
