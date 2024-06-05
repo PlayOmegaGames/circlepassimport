@@ -144,20 +144,21 @@ defmodule QuestApiV21Web.MainLive do
     {:noreply, assign(socket, reward_detail: reward, show_reward_details: true)}
   end
 
-
   def handle_event("redeem_reward", %{"id" => reward_id}, socket) do
     reward = Rewards.get_reward!(reward_id)
 
     case Rewards.redeem_reward_by_slug(reward.organization_id, reward.slug) do
       {:ok, updated_reward} ->
-        updated_rewards = Enum.map(socket.assigns.rewards, fn reward ->
-          if reward.id == updated_reward.id, do: updated_reward, else: reward
-        end)
+        updated_rewards =
+          Enum.map(socket.assigns.rewards, fn reward ->
+            if reward.id == updated_reward.id, do: updated_reward, else: reward
+          end)
 
         {:noreply,
          socket
          |> assign(:rewards, updated_rewards)
          |> assign(:show_reward_details, false)}
+
       {:error, _reason} ->
         {:noreply, socket |> put_flash(:error, "Failed to redeem reward")}
     end
@@ -292,8 +293,6 @@ defmodule QuestApiV21Web.MainLive do
     </div>
     """
   end
-
-
 
   def quests(assigns) do
     ~H"""

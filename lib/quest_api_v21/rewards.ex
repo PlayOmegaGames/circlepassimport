@@ -47,6 +47,7 @@ defmodule QuestApiV21.Rewards do
     Repo.get!(Reward, id)
     |> Repo.preload([:organization, :account, :quest])
   end
+
   @doc """
   Creates a reward.
 

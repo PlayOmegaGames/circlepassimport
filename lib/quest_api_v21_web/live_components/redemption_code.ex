@@ -22,8 +22,15 @@ defmodule QuestApiV21Web.LiveComponents.RedemptionCode do
               phx-click="redeem_reward"
               phx-value-id={@reward.id}
             >
-              <img id="check-image" class="z-50 opacity-90 top-2 left-2 absolute rounded-full w-12 h-12" src="/images/check.png" />
-              <img class="absolute rounded-full top-2 opacity-90 left-2 w-12 h-12" src="/images/check.gif" />
+              <img
+                id="check-image"
+                class="z-50 opacity-90 top-2 left-2 absolute rounded-full w-12 h-12"
+                src="/images/check.png"
+              />
+              <img
+                class="absolute rounded-full top-2 opacity-90 left-2 w-12 h-12"
+                src="/images/check.gif"
+              />
             </button>
           </div>
         </div>
