@@ -26,7 +26,6 @@ defmodule QuestApiV21Web.NoQuest do
             Scan a Quest QR code to start
           </span>
           <span class="my-auto hero-arrow-long-right"></span>
-
           <!--<button
             phx-click="camera"
             class="ring-1 p-1 mr-2 ring-gray-300 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg"
