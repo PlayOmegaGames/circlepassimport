@@ -179,12 +179,12 @@ defmodule QuestApiV21Web.QuestBarLive do
 
           <div class="flex justify-between">
             <div class="my-auto mr-4 z-20">
-              <button
+              <!--<button
                 phx-click="camera"
                 class="ring-1 p-1 ring-gray-400 z-30 shadow-sm shadow-highlight/[0.60] bg-gray-100 rounded-lg"
               >
                 <img class="w-8 h-8 opacity-70" src="/images/qr-code.png" />
-              </button>
+              </button>-->
             </div>
           </div>
         </div>
