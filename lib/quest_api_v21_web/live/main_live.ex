@@ -202,98 +202,102 @@ defmodule QuestApiV21Web.MainLive do
     ~H"""
     <div class="relative">
       <div class="fixed w-full left-0 z-50">
-        <.live_component module={QuestApiV21Web.LiveComponents.HomeNav} active_tab={@tab} id="home-nav" />
+        <.live_component
+          module={QuestApiV21Web.LiveComponents.HomeNav}
+          active_tab={@tab}
+          id="home-nav"
+        />
       </div>
       <div class="h-20"></div>
 
       <div class="px-2">
-      <%= case assigns.tab do %>
-        <% "badges" -> %>
-          <.live_component
-            module={QuestApiV21Web.LiveComponents.BadgesLive}
-            id="badges"
-            badge_detail={@badge_detail}
-            badges={@badges}
-            show_single_badge_details={@show_single_badge_details}
-          />
-        <% "myquests" -> %>
-          <div class="px-2 space mb-12">
-            <%= for quest <- @quests_with_completion do %>
-              <button
-                phx-click="show_quest_details"
-                phx-value-id={quest.id}
-                class="focus:outline-4 my-4 focus:outline-double focus:shadow-lg focus:shadow-white transition-all ease-in-out duration-400 rounded-xl w-full"
-              >
-                <.live_component
-                  class="shadow-xl h-fit"
-                  module={QuestApiV21Web.LiveComponents.QuestCard}
-                  id={"quests-card-#{quest.id}"}
-                  completion_bar={true}
-                  quest={quest}
-                  percentage={quest.completion_percentage}
-                />
-              </button>
+        <%= case assigns.tab do %>
+          <% "badges" -> %>
+            <.live_component
+              module={QuestApiV21Web.LiveComponents.BadgesLive}
+              id="badges"
+              badge_detail={@badge_detail}
+              badges={@badges}
+              show_single_badge_details={@show_single_badge_details}
+            />
+          <% "myquests" -> %>
+            <div class="px-2 space mb-12">
+              <%= for quest <- @quests_with_completion do %>
+                <button
+                  phx-click="show_quest_details"
+                  phx-value-id={quest.id}
+                  class="focus:outline-4 my-4 focus:outline-double focus:shadow-lg focus:shadow-white transition-all ease-in-out duration-400 rounded-xl w-full"
+                >
+                  <.live_component
+                    class="shadow-xl h-fit"
+                    module={QuestApiV21Web.LiveComponents.QuestCard}
+                    id={"quests-card-#{quest.id}"}
+                    completion_bar={true}
+                    quest={quest}
+                    percentage={quest.completion_percentage}
+                  />
+                </button>
 
-              <%= if @quest_details do %>
-                <.live_component
-                  module={QuestApiV21Web.LiveComponents.QuestDetails}
-                  id={"quest-details-modal-#{quest.id}"}
-                  show={@show_quest_details}
-                  quest_details={@quest_details}
-                />
+                <%= if @quest_details do %>
+                  <.live_component
+                    module={QuestApiV21Web.LiveComponents.QuestDetails}
+                    id={"quest-details-modal-#{quest.id}"}
+                    show={@show_quest_details}
+                    quest_details={@quest_details}
+                  />
+                <% end %>
+              <% end %>
+            </div>
+          <% "rewards" -> %>
+            <%= if @show_reward_details do %>
+              <.live_component
+                module={QuestApiV21Web.LiveComponents.RedemptionCode}
+                id={@reward_detail.id}
+                reward={@reward_detail}
+              />
+            <% end %>
+
+            <%= for reward <- @rewards do %>
+              <%= if reward.redeemed do %>
+                <div
+                  phx-value-id={reward.id}
+                  class="m-8 mx-auto w-10/12 rounded-md bg-gray-700 text-white ring-2 ring-gray-500 opacity-80"
+                >
+                  <div class="flex p-2">
+                    <img src="/images/present.png" class="grayscale w-12 h-12 flex-shrink mr-2" />
+                    <div>
+                      <h1 class="font-regular text-white text-center text-sm flex truncate">
+                        <%= reward.reward_name %>
+                      </h1>
+                      <!--<p class="text-xs font-light truncate"></p>-->
+                    </div>
+                  </div>
+                  <div class="w-full bg-gray-600 text-sm rounded-b-lg text-center py-1">Claimed</div>
+                </div>
+              <% else %>
+                <p class="text-xs font-light ml-8 mb-1 truncate"><%= reward.quest.name %></p>
+
+                <div
+                  phx-click="show-reward-details"
+                  phx-value-id={reward.id}
+                  class="mx-8 mb-8 mx-auto w-10/12 rounded-md bg-accent text-white ring-2 ring-gold-300 shadow-xl shadow-white"
+                >
+                  <div class="flex p-2">
+                    <img src="/images/present.png" class="w-12 h-12 flex-shrink mr-2" />
+                    <div>
+                      <h1 class="font-regular text-white text-center text-sm flex truncate">
+                        <%= reward.reward_name %>
+                      </h1>
+                      <!--<p class="text-xs font-light truncate"></p>-->
+                    </div>
+                  </div>
+                  <div class="w-full bg-highlight text-sm rounded-b-lg text-center py-1">
+                    Claim Reward
+                  </div>
+                </div>
               <% end %>
             <% end %>
-          </div>
-        <% "rewards" -> %>
-          <%= if @show_reward_details do %>
-            <.live_component
-              module={QuestApiV21Web.LiveComponents.RedemptionCode}
-              id={@reward_detail.id}
-              reward={@reward_detail}
-            />
-          <% end %>
-
-          <%= for reward <- @rewards do %>
-            <%= if reward.redeemed do %>
-              <div
-                phx-value-id={reward.id}
-                class="m-8 mx-auto w-10/12 rounded-md bg-gray-700 text-white ring-2 ring-gray-500 opacity-80"
-              >
-                <div class="flex p-2">
-                  <img src="/images/present.png" class="grayscale w-12 h-12 flex-shrink mr-2" />
-                  <div>
-                    <h1 class="font-regular text-white text-center text-sm flex truncate">
-                      <%= reward.reward_name %>
-                    </h1>
-                    <!--<p class="text-xs font-light truncate"></p>-->
-                  </div>
-                </div>
-                <div class="w-full bg-gray-600 text-sm rounded-b-lg text-center py-1">Claimed</div>
-              </div>
-            <% else %>
-              <p class="text-xs font-light ml-8 mb-1 truncate"><%= reward.quest.name %></p>
-
-              <div
-                phx-click="show-reward-details"
-                phx-value-id={reward.id}
-                class="mx-8 mb-8 mx-auto w-10/12 rounded-md bg-accent text-white ring-2 ring-gold-300 shadow-xl shadow-white"
-              >
-                <div class="flex p-2">
-                  <img src="/images/present.png" class="w-12 h-12 flex-shrink mr-2" />
-                  <div>
-                    <h1 class="font-regular text-white text-center text-sm flex truncate">
-                      <%= reward.reward_name %>
-                    </h1>
-                    <!--<p class="text-xs font-light truncate"></p>-->
-                  </div>
-                </div>
-                <div class="w-full bg-highlight text-sm rounded-b-lg text-center py-1">
-                  Claim Reward
-                </div>
-              </div>
-            <% end %>
-          <% end %>
-      <% end %>
+        <% end %>
       </div>
     </div>
     """
@@ -359,12 +363,12 @@ defmodule QuestApiV21Web.MainLive do
       </div>
     </div>
     <div class="flex justify-center">
-    <a
-      href="/accounts/settings"
-      class="phx-submit-loading:opacity-75 rounded-full ring-1 ring-gold-100 shadow-xl bg-contrast hover:bg-contrast/[0.70] py-3 px-6 text-sm font-medium uppercase leading-6 text-accent active:text-white/80"
-    >
+      <a
+        href="/accounts/settings"
+        class="phx-submit-loading:opacity-75 rounded-full ring-1 ring-gold-100 shadow-xl bg-contrast hover:bg-contrast/[0.70] py-3 px-6 text-sm font-medium uppercase leading-6 text-accent active:text-white/80"
+      >
         Account Settings
-    </a>
+      </a>
     </div>
     <!--<div class="w-72 mx-auto rounded-full shadow-md">
       <h1 class="text-center my-4">Share this QR code to your profile</h1>

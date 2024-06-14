@@ -23,7 +23,6 @@ defmodule QuestApiV21Web.LiveComponents.BadgesLive do
               src={badge.badge_image}
               alt="Badge image"
             />
-
           </div>
         <% end %>
       </div>
