@@ -200,9 +200,13 @@ defmodule QuestApiV21Web.MainLive do
 
   def home(assigns) do
     ~H"""
-    <div class="px-2">
-      <.live_component module={QuestApiV21Web.LiveComponents.HomeNav} active_tab={@tab} id="home-nav" />
+    <div class="relative">
+      <div class="fixed w-full left-0 z-50">
+        <.live_component module={QuestApiV21Web.LiveComponents.HomeNav} active_tab={@tab} id="home-nav" />
+      </div>
+      <div class="h-20"></div>
 
+      <div class="px-2">
       <%= case assigns.tab do %>
         <% "badges" -> %>
           <.live_component
@@ -290,6 +294,7 @@ defmodule QuestApiV21Web.MainLive do
             <% end %>
           <% end %>
       <% end %>
+      </div>
     </div>
     """
   end
@@ -352,6 +357,14 @@ defmodule QuestApiV21Web.MainLive do
 
         <CoreComponents.stats_bubble number={@account.rewards_stats} color="amber" text="Rewards" />
       </div>
+    </div>
+    <div class="flex justify-center">
+    <a
+      href="/accounts/settings"
+      class="phx-submit-loading:opacity-75 rounded-full ring-1 ring-gold-100 shadow-xl bg-contrast hover:bg-contrast/[0.70] py-3 px-6 text-sm font-medium uppercase leading-6 text-accent active:text-white/80"
+    >
+        Account Settings
+    </a>
     </div>
     <!--<div class="w-72 mx-auto rounded-full shadow-md">
       <h1 class="text-center my-4">Share this QR code to your profile</h1>
