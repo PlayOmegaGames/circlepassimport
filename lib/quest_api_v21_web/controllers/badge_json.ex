@@ -37,6 +37,7 @@ defmodule QuestApiV21Web.BadgeJSON do
       cool_down_reset: badges.cool_down_reset,
       share_location: badges.share_location,
       hint: badges.hint,
+      inserted_at: badges.inserted_at,
       collector_id: badges.collector_id,
       badge_redirect: badges.badge_redirect,
       badge_loyalty: badges.loyalty_badge,

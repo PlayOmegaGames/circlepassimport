@@ -15,6 +15,7 @@ defmodule QuestApiV21Web.RewardJSON do
       slug: rewards.slug,
       created: rewards.inserted_at,
       account: account_data(account),
+      inserted_at: rewards.inserted_at,
       quest: quest_data(quest)
     }
   end
