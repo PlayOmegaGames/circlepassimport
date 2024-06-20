@@ -34,6 +34,7 @@ defmodule QuestApiV21Web.CollectorJSON do
       quest_start: collector.quest_start,
       badges: badges_data(badges),
       quest_ids: quests_data(quests),
+      inserted_at: collector.inserted_at,
       qr_code_url: collector.qr_code_url
     }
   end
