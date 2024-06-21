@@ -3,17 +3,17 @@ defmodule QuestApiV21Web.LiveComponents.HomeNav do
 
   def render(assigns) do
     ~H"""
-    <nav class="grid grid-cols-3 gap-1.5 pt-8 pb-4 mb-4 w-11/12 mx-auto text-gray-600 shadow-xs border-b-2 border-gray-300/[0.50]">
+    <nav class="grid grid-cols-3 gap-1.5 pt-8 bg-violet-100 pb-4  px-2 w-full mx-auto text-gray-700 shadow-xs border-b-2 border-gray-300/[0.50]">
       <button
-        class={"rounded-full ring-1 transition-all ease-in-out ring-slate-300 bg-gradient-to-r to-white  from-contrast #{if @active_tab == "badges", do: "outline outline-1 text-gray-800", else: ""}"}
+        class={"rounded-full ring-1 transition-all ease-in-out ring-slate-400 bg-gradient-to-r to-white  from-contrast #{if @active_tab == "badges", do: "outline outline-2 text-gray-900 font-bold", else: ""}"}
         phx-click="show-content"
         phx-value-type="badges"
       >
-        Badges
+        My Badges
       </button>
 
       <button
-        class={" rounded-full ring-1 transition-all ease-in-out via-contrast ring-slate-300 bg-white	 #{if @active_tab == "myquests", do: "outline outline-1 text-gray-800", else: ""}"}
+        class={" rounded-full ring-1 transition-all ease-in-out via-contrast ring-slate-500 bg-white	 #{if @active_tab == "myquests", do: "outline outline-2 text-gray-900 font-bold", else: ""}"}
         phx-click="show-content"
         phx-value-type="myquests"
       >
@@ -21,11 +21,11 @@ defmodule QuestApiV21Web.LiveComponents.HomeNav do
       </button>
 
       <button
-        class={"rounded-full ring-1 transition-all ease-in-out ring-slate-300 bg-gradient-to-l to-white from-contrast #{if @active_tab == "rewards", do: "outline outline-1 text-gray-800", else: ""}"}
+        class={"rounded-full ring-1 transition-all ease-in-out ring-slate-500 bg-gradient-to-l to-white from-contrast #{if @active_tab == "rewards", do: "outline outline-2 text-gray-900 font-bold", else: ""}"}
         phx-click="show-content"
         phx-value-type="rewards"
       >
-        Rewards
+        My Rewards
       </button>
     </nav>
     """

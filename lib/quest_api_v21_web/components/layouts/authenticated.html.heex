@@ -1,12 +1,4 @@
 <div class="fixed bottom-0 z-50 w-full min-h-fit">
-  <%= if @current_account.selected_quest_id != nil and @collector == false do %>
-    <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar") %>
-  <% else %>
-    <%= if @collector == true do %>
-    <% else %>
-      <%= live_render(@socket, QuestApiV21Web.NoQuest, id: "no-quest") %>
-    <% end %>
-  <% end %>
   <!-- Bottom Nav -->
   <!-- Live action: <%= @live_action %> -->
   <div class="w-full bg-gradient-to-b from-indigo-100 border-t-2 border-gray-300 to-white">
