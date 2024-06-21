@@ -1,11 +1,12 @@
-defmodule QuestApiV21Web.Account.AccountResetPasswordLive do
+defmodule QuestApiV21Web.Account.HostResetPasswordLive do
   use QuestApiV21Web, :live_view
 
-  alias QuestApiV21.Accounts
+  alias QuestApiV21.Hosts
 
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
+      <div phx-hook="ExternalRedirect" id="external-redirect"></div>
       <.header class="text-center">Reset Password</.header>
 
       <.simple_form
@@ -34,23 +35,17 @@ defmodule QuestApiV21Web.Account.AccountResetPasswordLive do
           </.button>
         </:actions>
       </.simple_form>
-
-      <p class="text-center text-sm mt-4">
-        <.link href={~p"/accounts/register"}>Register</.link>
-        | <.link href={~p"/accounts/log_in"}>Log in</.link>
-      </p>
     </div>
-    <!--<img class="fixed bottom-0 left-0 w-full" src="/images/squiggle-cropped.svg" alt="Footer" />-->
     """
   end
 
   def mount(params, _session, socket) do
-    socket = assign_account_and_token(socket, params)
+    socket = assign_host_and_token(socket, params)
 
     form_source =
       case socket.assigns do
-        %{account: account} ->
-          Accounts.change_account_password(account)
+        %{host: host} ->
+          Hosts.change_host_password(host)
 
         _ ->
           %{}
@@ -59,37 +54,39 @@ defmodule QuestApiV21Web.Account.AccountResetPasswordLive do
     {:ok, assign_form(socket, form_source), temporary_assigns: [form: nil]}
   end
 
-  # Do not log in the account after reset password to avoid a
-  # leaked token giving the account access to the account.
-  def handle_event("reset_password", %{"account" => account_params}, socket) do
-    case Accounts.reset_account_password(socket.assigns.account, account_params) do
+  def handle_event("reset_password", %{"host" => host_params}, socket) do
+    host_params = Map.put(host_params, "token", socket.assigns.token)
+
+    case Hosts.reset_password(socket.assigns.token, host_params["password"]) do
       {:ok, _} ->
         {:noreply,
          socket
          |> put_flash(:info, "Password reset successfully.")
-         |> redirect(to: ~p"/accounts/log_in")}
+         |> push_event("external_redirect", %{
+           url: "https://client-dashboard-v2-seven.vercel.app/registration"
+         })}
 
       {:error, changeset} ->
         {:noreply, assign_form(socket, Map.put(changeset, :action, :insert))}
     end
   end
 
-  def handle_event("validate", %{"account" => account_params}, socket) do
-    changeset = Accounts.change_account_password(socket.assigns.account, account_params)
+  def handle_event("validate", %{"host" => host_params}, socket) do
+    changeset = Hosts.change_host_password(socket.assigns.host, host_params)
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 
-  defp assign_account_and_token(socket, %{"token" => token}) do
-    if account = Accounts.get_account_by_reset_password_token(token) do
-      assign(socket, account: account, token: token)
+  defp assign_host_and_token(socket, %{"token" => token}) do
+    if host = Hosts.get_host_by_reset_password_token(token) do
+      assign(socket, host: host, token: token)
     else
       socket
       |> put_flash(:error, "Reset password link is invalid or it has expired.")
-      |> redirect(to: ~p"/")
+      |> redirect(to: "/")
     end
   end
 
   defp assign_form(socket, %{} = source) do
-    assign(socket, :form, to_form(source, as: "account"))
+    assign(socket, :form, to_form(source, as: "host"))
   end
 end

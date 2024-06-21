@@ -80,6 +80,8 @@ defmodule QuestApiV21Web.Router do
     post "/host/sign_up", HostAuthController, :sign_up_host
     post "/host/sign_in", HostAuthController, :sign_in_host
     get "/host/:id", HostController, :show
+    post "/password/reset/request", HostController, :request_password_reset
+    put "/password/reset", HostController, :reset_password
 
     # token exchange for partner
     post "/token_exchange", AuthController, :token_exchange
@@ -229,6 +231,7 @@ defmodule QuestApiV21Web.Router do
       live "/accounts/log_in", Account.AccountLoginLive, :new
       live "/accounts/reset_password", Account.AccountForgotPasswordLive, :new
       live "/accounts/reset_password/:token", Account.AccountResetPasswordLive, :edit
+      live "/hosts/reset_password/", Account.HostResetPasswordLive, :edit
     end
 
     post "/accounts/log_in", AccountSessionController, :create

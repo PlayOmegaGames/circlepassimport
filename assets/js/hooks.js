@@ -297,5 +297,16 @@ Hooks.FormSubmit = function(csrfToken) {
       startCountdown(nextScanDate.getTime());
     }
   };
+
+
+  Hooks.ExternalRedirect = {
+    mounted() {
+      console.log("ExternalRedirect hook mounted");
+      this.handleEvent("external_redirect", ({url}) => {
+        console.log("Redirecting to:", url);
+        window.location = url;
+      })
+    }
+  }
   
 export default Hooks;
