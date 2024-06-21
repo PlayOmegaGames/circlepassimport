@@ -60,7 +60,6 @@ defmodule QuestApiV21Web.QuestJSON do
     }
   end
 
-
   defp collectors_data(collectors) do
     Enum.map(collectors, fn %Collector{id: id} ->
       %{
