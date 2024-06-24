@@ -138,66 +138,67 @@ defmodule QuestApiV21Web.QuestBarLive do
         show={@show_qr_success}
       />
       <div class="px-0.5 bg-white rounded-t-xl">
-      <div
-        phx-click="toggle_badge_details_modal"
-        id="quest-bar-container"
-        class="relative rounded-xl z-10 w-full bg-gradient-to-r from-gray-100 to-gray-100 ring-transparent border border-gray-400"
-      >
-        <div class="flex py-1">
-          <div class="flex justify-between row transition-all ease-in-out quest-bar-content grow z-20">
-            <span
-              phx-click="previous"
-              class="hero-chevron-double-left text-gray-400/50 ml-2 my-auto w-6 h-6"
-            >
-            </span>
-
-            <div class="flex">
-              <div class="mr-4 ml-1 mt-2">
-                <%= if assigns.badge.collected do %>
-                  <span class="inline-block">
-                  <img
-                    class="object-cover w-12 h-12 ring-1 ring-gold-100 rounded-full"
-                    src={assigns.badge.badge_image}
-                  />
-                  </span>
-                <% else %>
-
-                <span class="relative inline-block my-auto">
-                  <span class="bg-brand/90 ring-gray-400 ring-1 absolute top-0 -right-1 rounded-full h-3 w-3 z-30 "></span>
-                  <span class="bg-brand/90 absolute top-0 -right-1 rounded-full h-3 w-3 z-30 animate animate-ping"></span>
-                  <img
-                    class="object-cover w-12 h-12 rounded-full ring-1 ring-slate-600 grayscale"
-                    src={assigns.badge.badge_image}
-                  />
-                  </span>
-                <% end %>
-              </div>
-              <div class="my-auto">
-                <p class="truncate text-sm font-medium"><%= assigns.badge.name %></p>
-                <p class="truncate text-xs font-light"><%= assigns.quest.name %></p>
-              </div>
-            </div>
-            <div class="my-auto text-gray-400 z-10 mr-4">
+        <div
+          phx-click="toggle_badge_details_modal"
+          id="quest-bar-container"
+          class="relative rounded-xl z-10 w-full bg-gradient-to-r from-gray-100 to-gray-100 ring-transparent border border-gray-400"
+        >
+          <div class="flex py-1">
+            <div class="flex justify-between row transition-all ease-in-out quest-bar-content grow z-20">
               <span
-                phx-click="next"
-                class="hero-chevron-double-right text-gray-400/50 ml-3 my-auto w-6 h-6"
+                phx-click="previous"
+                class="hero-chevron-double-left text-gray-400/50 ml-2 my-auto w-6 h-6"
               >
               </span>
-            </div>
-          </div>
 
-          <div class="flex justify-between border-l-2 border-gray-200">
-            <div class="my-auto  px-5 z-20">
-              <button
-                phx-click="camera"
-                class="ring-1 p-1 ring-gray-400 z-30 shadow-md shadow-brand/60 bg-gray-100 rounded-lg"
-              >
-                <img class="w-8 h-8 opacity-70" src="/images/qr-code.png" />
-              </button>
+              <div class="flex">
+                <div class="mr-4 ml-1 mt-2">
+                  <%= if assigns.badge.collected do %>
+                    <span class="inline-block">
+                      <img
+                        class="object-cover w-12 h-12 ring-1 ring-gold-100 rounded-full"
+                        src={assigns.badge.badge_image}
+                      />
+                    </span>
+                  <% else %>
+                    <span class="relative inline-block my-auto">
+                      <span class="bg-brand/90 ring-gray-400 ring-1 absolute top-0 -right-1 rounded-full h-3 w-3 z-30 ">
+                      </span>
+                      <span class="bg-brand/90 absolute top-0 -right-1 rounded-full h-3 w-3 z-30 animate animate-ping">
+                      </span>
+                      <img
+                        class="object-cover w-12 h-12 rounded-full ring-1 ring-slate-600 grayscale"
+                        src={assigns.badge.badge_image}
+                      />
+                    </span>
+                  <% end %>
+                </div>
+                <div class="my-auto">
+                  <p class="truncate text-sm font-medium"><%= assigns.badge.name %></p>
+                  <p class="truncate text-xs font-light"><%= assigns.quest.name %></p>
+                </div>
+              </div>
+              <div class="my-auto text-gray-400 z-10 mr-4">
+                <span
+                  phx-click="next"
+                  class="hero-chevron-double-right text-gray-400/50 ml-3 my-auto w-6 h-6"
+                >
+                </span>
+              </div>
+            </div>
+
+            <div class="flex justify-between border-l-2 border-gray-200">
+              <div class="my-auto  px-5 z-20">
+                <button
+                  phx-click="camera"
+                  class="ring-1 p-1 ring-gray-400 z-30 shadow-md shadow-brand/60 bg-gray-100 rounded-lg"
+                >
+                  <img class="w-8 h-8 opacity-70" src="/images/qr-code.png" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
     """
@@ -283,7 +284,7 @@ defmodule QuestApiV21Web.QuestBarLive do
   def handle_event("camera-error", %{"message" => msg}, socket) do
     {:noreply, assign(socket, :camera_error, msg)}
   end
-  
+
   def handle_event("cancel", _params, socket) do
     {:noreply, assign(socket, :show_badge_details, false)}
   end

@@ -6,7 +6,6 @@ defmodule QuestApiV21Web.MainLive do
   alias QuestApiV21Web.CoreComponents
   alias QuestApiV21.Repo
 
-
   def mount(_params, _session, socket) do
     # IO.inspect(socket.assigns.live_action, label: "mount live_action")
 
@@ -103,7 +102,6 @@ defmodule QuestApiV21Web.MainLive do
     end)
   end
 
-
   # Handle badge details modal
   def handle_event("show_single_badge_details", %{"id" => badge_id}, socket) do
     # Fetch the badge details based on the ID
@@ -122,11 +120,12 @@ defmodule QuestApiV21Web.MainLive do
   # Handle Quest details modal
   def handle_event("show_quest_details", %{"id" => quest_id}, socket) do
     account_id = socket.assigns.current_account.id
-    quest_details = Quests.get_quest(quest_id)
-                 |> Repo.preload([:badges])
 
-    collected_badges_ids =
-      Quests.get_collected_badges_ids_for_quest(account_id, quest_id)
+    quest_details =
+      Quests.get_quest(quest_id)
+      |> Repo.preload([:badges])
+
+    collected_badges_ids = Quests.get_collected_badges_ids_for_quest(account_id, quest_id)
 
     marked_badges =
       Enum.map(quest_details.badges, fn badge ->
@@ -138,7 +137,6 @@ defmodule QuestApiV21Web.MainLive do
 
     {:noreply, assign(socket, quest_details: quest_details, show_quest_details: true)}
   end
-
 
   def handle_event("quest_details_cancel", _, socket) do
     {:noreply, assign(socket, show_quest_details: false)}
@@ -370,9 +368,7 @@ defmodule QuestApiV21Web.MainLive do
       <h1 class="text-center text-3xl font-medium my-4 mb-6">
         <%= @account.name || "Nameless" %>
       </h1>
-      <div
-        class="grid grid-cols-3 place-content-center mx-auto h-24 w-72 p-2 rounded-xl ring-2 ring-gray-200"
-      >
+      <div class="grid grid-cols-3 place-content-center mx-auto h-24 w-72 p-2 rounded-xl ring-2 ring-gray-200">
         <CoreComponents.stats_bubble number={@account.quests_stats} color="violet" text="Quests" />
 
         <div class="border-x-2 border-gray-300">
@@ -383,13 +379,9 @@ defmodule QuestApiV21Web.MainLive do
       </div>
     </div>
     <div class="mx-auto w-72">
-    <CoreComponents.button
-      phx-click="navigate"
-      phx-window-location="/accounts/settings"
-      class="">
-      Account Settings
-    </CoreComponents.button>
-
+      <CoreComponents.button phx-click="navigate" phx-window-location="/accounts/settings" class="">
+        Account Settings
+      </CoreComponents.button>
     </div>
     <!--<div class="w-72 mx-auto rounded-full shadow-md">
       <h1 class="text-center my-4">Share this QR code to your profile</h1>

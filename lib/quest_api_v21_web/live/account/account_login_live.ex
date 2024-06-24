@@ -26,8 +26,7 @@ defmodule QuestApiV21Web.Account.AccountLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button
-            phx-disable-with="Signing in..."          >
+          <.button phx-disable-with="Signing in...">
             Sign in
           </.button>
         </:actions>

@@ -17,7 +17,8 @@ defmodule QuestApiV21Web.LiveComponents.Camera do
       id={@id}
       class={"animate__animated inset-0 z-50 fixed w-full h-full overflow-hidden
       #{if @show, do: "animate__slideInDown animate__faster", else: "hidden"}
-      bg-black"}>
+      bg-black"}
+    >
       <video
         id="videoElement"
         autoplay="true"
@@ -36,7 +37,11 @@ defmodule QuestApiV21Web.LiveComponents.Camera do
       </h1>
 
       <div class="flex justify-center w-full absolute bottom-16">
-        <button type="button" class="text-white text-lg bg-brand font-semibold py-2 px-4 rounded" phx-click="close-camera">
+        <button
+          type="button"
+          class="text-white text-lg bg-brand font-semibold py-2 px-4 rounded"
+          phx-click="close-camera"
+        >
           Close Camera
         </button>
       </div>

@@ -9,11 +9,13 @@ defmodule QuestApiV21Web.LiveComponents.BadgeTabDetails do
       class={"animate__animated inset-0 h-screen fixed w-full overflow-y-auto z-50
       #{if @show, do: "animate__slideInUp animate__faster", else: "animate__slideOutDown"}"}
     >
-    <button type="button"
-            class={"absolute rounded-full bg-black/40 p-1 z-50 top-2 left-2 #{if @show, do: "fade-in-scale", else: "hidden"}"}
-            phx-click="cancel">
-      <span class="w-6 h-6 text-white hero-x-mark"></span>
-    </button>
+      <button
+        type="button"
+        class={"absolute rounded-full bg-black/40 p-1 z-50 top-2 left-2 #{if @show, do: "fade-in-scale", else: "hidden"}"}
+        phx-click="cancel"
+      >
+        <span class="w-6 h-6 text-white hero-x-mark"></span>
+      </button>
       <%= if @badge do %>
         <div
           class={"#{if @show, do: "fade-in-scale", else: "hidden animate__slideOutDown"}
@@ -23,19 +25,21 @@ defmodule QuestApiV21Web.LiveComponents.BadgeTabDetails do
           role="dialog"
           aria-modal="true"
           tabindex="-1"
-          phx-click={JS.toggle_class("hidden", to: "#ui-overlay-#{@id}")}>
-
-          <div class=" bg-gradient-to-b from-black/30 via-black/30 to-black/90 h-screen" id={"ui-overlay-#{@id}"}>
-            <div class="flex h-12 bg-gradient-to-b from-black/30">
-
-            </div>
+          phx-click={JS.toggle_class("hidden", to: "#ui-overlay-#{@id}")}
+        >
+          <div
+            class=" bg-gradient-to-b from-black/30 via-black/30 to-black/90 h-screen"
+            id={"ui-overlay-#{@id}"}
+          >
+            <div class="flex h-12 bg-gradient-to-b from-black/30"></div>
 
             <div class="absolute bottom-0 bg-gradient-to-t from-black/70 w-full">
               <div class="ml-6 text-white">
-
                 <div class="flex mb-4">
                   <img class="rounded-full w-12 h-12 ring-1 ring-gray-300" src={@badge.badge_image} />
-                  <p class="font-light font-medium font-2xl truncate w-full ml-4 my-auto"><%= @badge.name %></p>
+                  <p class="font-light font-medium font-2xl truncate w-full ml-4 my-auto">
+                    <%= @badge.name %>
+                  </p>
                 </div>
 
                 <p class="font-light truncate text-sm my-4"><%= @badge.quest.name %></p>
@@ -56,7 +60,6 @@ defmodule QuestApiV21Web.LiveComponents.BadgeTabDetails do
                     <span class="hero-link w-4 h-4"></span> Visit Link
                   </a>
                 <% end %>
-
               </div>
               <div class="h-8 w-full"></div>
             </div>
