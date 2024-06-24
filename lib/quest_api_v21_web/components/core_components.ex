@@ -170,8 +170,8 @@ defmodule QuestApiV21Web.CoreComponents do
   def stats_bubble(assigns) do
     ~H"""
     <div class="">
-      <div class="mx-auto bg-gold-300 shadow-inner flex justify-center items-center rounded-full h-10 w-10">
-        <p class="font-semibold text-lg text-white">
+      <div class="mx-auto flex justify-center items-center rounded-full">
+        <p class="font-semibold text-xl font-light">
           <%= @number %>
         </p>
       </div>
@@ -536,8 +536,7 @@ defmodule QuestApiV21Web.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-full ring-1 ring-gold-100 shadow-xl bg-contrast hover:bg-contrast/[0.70] py-3 px-3",
-        "text-sm font-medium uppercase leading-6 text-accent active:text-white/80",
+        "flex w-full justify-center rounded-md bg-brand px-3 py-2.5 text-md font-semibold leading-6 text-white shadow-lg shadow-brand3 hover:bg-brand hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
         @class
       ]}
       {@rest}
@@ -612,7 +611,7 @@ defmodule QuestApiV21Web.CoreComponents do
 
     ~H"""
     <div phx-feedback-for={@name}>
-      <label class="flex gap-4 items-center text-sm leading-6 text-zinc-600">
+      <label class="block text-sm mb-2 font-medium leading-6 text-gray-900">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -680,7 +679,7 @@ defmodule QuestApiV21Web.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "block w-full rounded-lg shadow-inner-xl text-zinc-900 ring-1 ring-gold-100 focus:ring-0 sm:text-sm sm:leading-6",
+          "block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
@@ -1012,7 +1011,7 @@ defmodule QuestApiV21Web.CoreComponents do
     assigns = assign(assigns, :initialsList, initialsList)
 
     ~H"""
-    <div class="inline-flex justify-center w-48 h-48 font-sans text-5xl text-gray-800 rounded-full ring-2 shadow-600 bg-background-100 ring-gold-300">
+    <div class="inline-flex justify-center w-48 h-48 font-sans text-5xl text-gray-800 rounded-full ring-2 shadow-lg shadow-brand/40 ring-gray-300">
       <div class="my-auto">
         <%= for name <- @initialsList do %>
           <%= String.first(name) %>

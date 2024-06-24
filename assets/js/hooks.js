@@ -122,7 +122,7 @@ Hooks.FormSubmit = function(csrfToken) {
   };
   Hooks.QrScanner = {
     mounted() {
-      console.log("test")
+      console.log("Camera component mounted");
       this.handleUserMedia();
     },
   
@@ -133,13 +133,25 @@ Hooks.FormSubmit = function(csrfToken) {
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
           .then(stream => {
             video.srcObject = stream;
+            video.play();
+  
+            // Add a timeout to check if the video is playing
+            setTimeout(() => {
+              if (video.readyState < 3) { // readyState 3 means 'HAVE_FUTURE_DATA' or higher
+                this.pushEvent("camera-error", { message: "Camera is not accessible or is blocked" });
+              }
+            }, 5000); // 5 seconds timeout
+  
             video.addEventListener("loadeddata", () => {
               this.scanQRCode(video);
             });
           })
           .catch(error => {
             console.error("Something went wrong with accessing the camera", error);
+            this.pushEvent("camera-error", { message: "Camera access denied or not available. Use your app camera instead" });
           });
+      } else {
+        this.pushEvent("camera-error", { message: "Camera not supported by this browser. Use your app camera instead" });
       }
     },
   
@@ -152,17 +164,15 @@ Hooks.FormSubmit = function(csrfToken) {
       setInterval(() => {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  
-        // Assuming you have the jsQR library available
         var code = jsQR(imageData.data, canvas.width, canvas.height);
         if (code) {
           console.log("QR Code detected:", code.data);
-          // Here, you'd use `this.pushEvent` to communicate with the server
-          this.pushEvent("qr-code-scanned", {data: code.data});
+          this.pushEvent("qr-code-scanned", { data: code.data });
         }
       }, 100);
     }
   };
+  
   
   Hooks.UpdateTab = {
     mounted() {
@@ -308,5 +318,24 @@ Hooks.FormSubmit = function(csrfToken) {
       })
     }
   }
+
+  Hooks.ToggleModal = {
+    mounted() {
+      this.handleEvent("toggle-modal", () => {
+        const modal = this.el.querySelector(`#ui-overlay-${this.el.id}`);
+        if (modal.classList.contains("hidden")) {
+          modal.classList.remove("hidden");
+          modal.classList.add("fade-in");
+        } else {
+          modal.classList.remove("fade-in");
+          modal.classList.add("fade-out");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("fade-out");
+          }, 300); // Duration of the fade-out animation
+        }
+      });
+    }
+  };
   
 export default Hooks;

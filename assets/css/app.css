@@ -181,12 +181,6 @@ main {
 /* Neomorphism sandbox */
 .frosted-glass {
 
-
-  background: linear-gradient(
-    to top, 
-    rgb(255, 255, 255) 10%,  /* More solid white at the bottom */
-    rgba(255, 255, 255, 0.63) 100%   /* More transparent white at the top */
-  );
   /* Apply the frosted glass effect */
   backdrop-filter: blur(6px); /* Adjust the blur value as needed */
 }
@@ -396,4 +390,9 @@ main {
   
 
 
+  
+
+  .bg-dashboard {
+    background-color: #f8f8f8 !important;
+  }
   

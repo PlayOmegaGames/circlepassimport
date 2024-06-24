@@ -20,17 +20,15 @@ defmodule QuestApiV21Web.Account.AccountLoginLive do
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
+          <.input field={@form[:remember_me]} type="checkbox" label="Remember me" />
           <.link href={~p"/accounts/reset_password"} class="text-sm font-semibold">
             Forgot your password?
           </.link>
         </:actions>
         <:actions>
           <.button
-            phx-disable-with="Signing in..."
-            class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950"
-          >
-            Sign in <span aria-hidden="true">→</span>
+            phx-disable-with="Signing in..."          >
+            Sign in
           </.button>
         </:actions>
       </.simple_form>

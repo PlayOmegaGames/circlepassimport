@@ -4,6 +4,8 @@ defmodule QuestApiV21Web.MainLive do
   import Phoenix.HTML
   alias QuestApiV21.{Badges, Quests, Rewards}
   alias QuestApiV21Web.CoreComponents
+  alias QuestApiV21.Repo
+
 
   def mount(_params, _session, socket) do
     # IO.inspect(socket.assigns.live_action, label: "mount live_action")
@@ -90,6 +92,10 @@ defmodule QuestApiV21Web.MainLive do
     end)
   end
 
+  def handle_event("navigate", _params, socket) do
+    {:noreply, push_redirect(socket, to: "/accounts/settings")}
+  end
+
   defp calculate_badge_count(quests) do
     Enum.map(quests, fn quest ->
       badge_count = if Enum.empty?(quest.badges), do: "?", else: Enum.count(quest.badges)
@@ -97,9 +103,6 @@ defmodule QuestApiV21Web.MainLive do
     end)
   end
 
-  def handle_event("show-content", %{"type" => type}, socket) do
-    {:noreply, assign(socket, tab: type)}
-  end
 
   # Handle badge details modal
   def handle_event("show_single_badge_details", %{"id" => badge_id}, socket) do
@@ -112,11 +115,30 @@ defmodule QuestApiV21Web.MainLive do
     {:noreply, assign(socket, show_single_badge_details: false)}
   end
 
+  def handle_event("show-content", %{"type" => type}, socket) do
+    {:noreply, assign(socket, tab: type)}
+  end
+
   # Handle Quest details modal
   def handle_event("show_quest_details", %{"id" => quest_id}, socket) do
+    account_id = socket.assigns.current_account.id
     quest_details = Quests.get_quest(quest_id)
+                 |> Repo.preload([:badges])
+
+    collected_badges_ids =
+      Quests.get_collected_badges_ids_for_quest(account_id, quest_id)
+
+    marked_badges =
+      Enum.map(quest_details.badges, fn badge ->
+        collected = badge.id in collected_badges_ids
+        Map.put(badge, :collected, collected)
+      end)
+
+    quest_details = Map.put(quest_details, :badges, marked_badges)
+
     {:noreply, assign(socket, quest_details: quest_details, show_quest_details: true)}
   end
+
 
   def handle_event("quest_details_cancel", _, socket) do
     {:noreply, assign(socket, show_quest_details: false)}
@@ -200,7 +222,7 @@ defmodule QuestApiV21Web.MainLive do
   def home(assigns) do
     ~H"""
     <div class="relative">
-      <div class="fixed w-full left-0 z-50">
+      <div class="fixed w-full left-0 z-40">
         <.live_component
           module={QuestApiV21Web.LiveComponents.HomeNav}
           active_tab={@tab}
@@ -225,11 +247,11 @@ defmodule QuestApiV21Web.MainLive do
                 <button
                   phx-click="show_quest_details"
                   phx-value-id={quest.id}
-                  class="focus:outline-4 my-4 focus:outline-double focus:shadow-lg focus:shadow-white transition-all ease-in-out duration-400 rounded-xl w-full"
+                  class="focus:shadow-inner my-4  transition-all ease-in-out duration-400 rounded-xl w-full"
                 >
                   <.live_component
                     class="shadow-xl h-fit"
-                    module={QuestApiV21Web.LiveComponents.QuestCard}
+                    module={QuestApiV21Web.LiveComponents.MyQuestCard}
                     id={"quests-card-#{quest.id}"}
                     completion_bar={true}
                     quest={quest}
@@ -305,10 +327,10 @@ defmodule QuestApiV21Web.MainLive do
   def quests(assigns) do
     ~H"""
     <div class="pb-12 pb-8 text-white">
-      <div class="w-full h-20 bg-gradient-to-b rounded-bl-3xl border-b-2 border-l-2 border-gold-300 from-highlight to-accent">
-        <h1 class="pt-4 m-auto text-2xl w-fit">Find A Quest</h1>
+      <div class="ring-1 ring-gray-400 rounded-b-2xl pb-4 shadow-lg fixed w-full z-30 bg-white">
+        <h1 class="pt-4 m-auto text-2xl text-gray-700 w-fit">Find A Quest</h1>
       </div>
-      <div class="flex flex-col px-2 pt-8">
+      <div class="flex flex-col px-2 pt-20">
         <%= for quest <- @available_quests do %>
           <div phx-click="show_quest_details" phx-value-id={quest.id} class=" mb-8">
             <.live_component
@@ -345,29 +367,29 @@ defmodule QuestApiV21Web.MainLive do
         <CoreComponents.avatar name={@account.name || "Nameless"} />
       </div>
 
-      <h1 class="text-center text-3xl font-medium my-4">
+      <h1 class="text-center text-3xl font-medium my-4 mb-6">
         <%= @account.name || "Nameless" %>
       </h1>
       <div
-        class="grid grid-cols-3 place-content-center mx-auto h-32 w-72 p-2 bg-cover"
-        style="background-image: url(/images/profilegold.png)"
+        class="grid grid-cols-3 place-content-center mx-auto h-24 w-72 p-2 rounded-xl ring-2 ring-gray-200"
       >
         <CoreComponents.stats_bubble number={@account.quests_stats} color="violet" text="Quests" />
 
-        <div class="border-x-2 border-gold-300">
+        <div class="border-x-2 border-gray-300">
           <CoreComponents.stats_bubble number={@account.badges_stats} color="lime" text="Badges" />
         </div>
 
         <CoreComponents.stats_bubble number={@account.rewards_stats} color="amber" text="Rewards" />
       </div>
     </div>
-    <div class="flex justify-center">
-      <a
-        href="/accounts/settings"
-        class="phx-submit-loading:opacity-75 rounded-full ring-1 ring-gold-100 shadow-xl bg-contrast hover:bg-contrast/[0.70] py-3 px-6 text-sm font-medium uppercase leading-6 text-accent active:text-white/80"
-      >
-        Account Settings
-      </a>
+    <div class="mx-auto w-72">
+    <CoreComponents.button
+      phx-click="navigate"
+      phx-window-location="/accounts/settings"
+      class="">
+      Account Settings
+    </CoreComponents.button>
+
     </div>
     <!--<div class="w-72 mx-auto rounded-full shadow-md">
       <h1 class="text-center my-4">Share this QR code to your profile</h1>

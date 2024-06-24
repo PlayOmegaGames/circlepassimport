@@ -16,20 +16,29 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: "#063771",
+        brand: "#6a43b8",
         background: {
           100: "#0700", 
           800: "#0E0327"
         },
-        accent: "#063771",
-        highlight: "#1877F7",
-        contrast: "#1877f733",
+
+        //awesome theme
+        accent: "#6a43b8",
+        highlight: "#6a43b8",
+        contrast: "#6a43b8",    
+
+        //patchwrq theme
+        //accent: "#063771",
+        //highlight: "#1877F7",
+        //contrast: "#1877f733",
+
+        //purple theme
         //accent: "#063771",
         //highlight: "#1877F7",
         //contrast: "#1877f733",
         gold: {
           100: '#bf9936',
-          200: '#f7ef8a',
+          200: '#ecd900',
           300: '#d0aa45',
           400: '#ebc766',
         },
