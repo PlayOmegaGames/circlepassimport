@@ -13,19 +13,19 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
       class={"animate__animated inset-0 h-screen fixed w-full overflow-y-auto z-40
             #{if @show, do: "animate__slideInUp animate__faster", else: "animate__slideOutDown"}"}
     >
-        <button
-          type="button"
-          class={"absolute rounded-full bg-black/40 p-1 z-50 top-2 left-2 #{if @show, do: "fade-in-scale", else: "hidden"}"}
-          phx-click="cancel">
-          <span class="w-6 h-6 text-white hero-x-mark"></span>
-        </button>
+      <button
+        type="button"
+        class={"absolute rounded-full bg-black/40 p-1 z-50 top-2 left-2 #{if @show, do: "fade-in-scale", else: "hidden"}"}
+        phx-click="cancel"
+      >
+        <span class="w-6 h-6 text-white hero-x-mark"></span>
+      </button>
 
       <div
         class={"#{if @show, do: "fade-in-scale", else: "hidden animate__slideOutDown"}
                   bg-center bg-cover
                 animate__animated w-full h-screen text-left overflow-hidden shadow-xl bg-black transform transition-all"}
         role="dialog"
-
         style={"#{if @badge.collected, do: "background-image: url('#{@badge.badge_details_image}')"}"}
         aria-modal="true"
         tabindex="-1"
@@ -122,18 +122,12 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
               </div>
             </div>
           </div>
-
-        <!-- Handle Regular Badges -->
-          <% else %>
-
+          <!-- Handle Regular Badges -->
+        <% else %>
           <!-- Hint and map -->
-
-
-            <%= if !@badge.collected do %>
-
-
-              <%= if @coordinates.longitude do %>
-                <div
+          <%= if !@badge.collected do %>
+            <%= if @coordinates.longitude do %>
+              <div
                 id="map"
                 phx-hook="LeafletMap"
                 class="w-screen h-screen -z-20 absolute"
@@ -141,88 +135,83 @@ defmodule QuestApiV21Web.LiveComponents.BadgeDetails do
                 data-longitude={@coordinates.longitude}
               >
               </div>
-
-              <% else %>
+            <% else %>
               <div class="h-screen w-screen flex items-center justify-center">
-              <div class="border-b-2 border-gray-500 pb-2">
-                <h1 class="my-auto text-xl text-center text-white">
-                <%= @badge.hint %>
-                </h1>
+                <div class="border-b-2 border-gray-500 pb-2">
+                  <h1 class="my-auto text-xl text-center text-white">
+                    <%= @badge.hint %>
+                  </h1>
+                </div>
               </div>
-            </div>
-
             <% end %>
-
           <% end %>
 
           <div
             class=" bg-gradient-to-b from-black/40 via-black/40 to-black/90 h-screen"
             id={"ui-overlay-#{@id}"}
           >
+            <div class="flex h-12 bg-gradient-to-b from-black/30"></div>
 
-          <div class="flex h-12 bg-gradient-to-b from-black/30"></div>
+            <div class="absolute bottom-0 bg-gradient-to-t from-black/70 w-full">
+              <div class="px-6 text-white">
+                <!-- Control bar -->
+                <%= if !@badge.collected do %>
+                  <h1 class="text-center">Uncollected</h1>
+                <% end %>
+                <div class="flex justify-between bg-black/60 ring-1 ring-white/70 rounded-full p-2 shadow-lg shadow-white/30">
+                  <button phx-click="previous" class="my-auto">
+                    <img class="h-12" src="/images/chevron-left.png" />
+                  </button>
 
+                  <div class="flex">
+                    <img
+                      class={"rounded-full w-12 h-12 ring-1 ring-gray-300 #{if !@badge.collected, do: "opacity-70 grayscale"}"}
+                      src={@badge.badge_image}
+                    />
+                    <p class="font-light font-medium truncate w-full ml-4 my-auto">
+                      <%= @badge.name %>
+                    </p>
+                  </div>
 
-          <div class="absolute bottom-0 bg-gradient-to-t from-black/70 w-full">
-            <div class="px-6 text-white">
-
-
-            <!-- Control bar -->
-              <%= if !@badge.collected do %>
-                <h1 class="text-center">Uncollected</h1>
-              <% end %>
-            <div class="flex justify-between bg-black/60 ring-1 ring-white/70 rounded-full p-2 shadow-lg shadow-white/30">
-
-              <button phx-click="previous" class="my-auto">
-                <img class="h-12" src="/images/chevron-left.png" />
-              </button>
-
-                <div class="flex">
-                  <img class={"rounded-full w-12 h-12 ring-1 ring-gray-300 #{if !@badge.collected, do: "opacity-70 grayscale"}"}
-                      src={@badge.badge_image} />
-                  <p class="font-light font-medium truncate w-full ml-4 my-auto">
-                    <%= @badge.name %>
-                  </p>
+                  <button phx-click="next" class="my-auto h-12">
+                    <img class="h-12" src="/images/chevron-right.png" />
+                  </button>
                 </div>
 
-              <button phx-click="next" class="my-auto h-12">
-                <img class="h-12" src="/images/chevron-right.png" />
-              </button>
-            </div>
+                <p class="font-light truncate text-sm mt-8 mb-4"><%= @badge.quest.name %></p>
 
-              <p class="font-light truncate text-sm mt-8 mb-4"><%= @badge.quest.name %></p>
+                <%= if @badge.quest.reward do %>
+                  <p class="font-medium truncate text-sm mb-6">
+                    <span class="hero-trophy-solid w-4 h-4"></span>
+                    <%= @badge.quest.reward %>
+                  </p>
+                <% end %>
 
-              <%= if @badge.quest.reward do %>
-                <p class="font-medium truncate text-sm mb-6">
-                  <span class="hero-trophy-solid w-4 h-4"></span>
-                  <%= @badge.quest.reward %>
-                </p>
-              <% end %>
+                <%= if @badge.badge_redirect do %>
+                  <a
+                    href={@badge.badge_redirect}
+                    replace={true}
+                    class="text-gray-800 font-light p-1 h-fit ring-1 p-2 ring-gray-300 z-30 bg-white shadow-md rounded-lg"
+                  >
+                    <span class="hero-link w-4 h-4"></span> Visit Link
+                  </a>
+                <% end %>
 
-              <%= if @badge.badge_redirect do %>
-                <a
-                  href={@badge.badge_redirect}
-                  replace={true}
-                  class="text-gray-800 font-light p-1 h-fit ring-1 p-2 ring-gray-300 z-30 bg-white shadow-md rounded-lg"
-                >
-                  <span class="hero-link w-4 h-4"></span> Visit Link
-                </a>
-              <% end %>
+                <div class="h-4 w-full"></div>
 
-              <div class="h-4 w-full"></div>
-
-
-              <span class="text-xs text-center">Quest is <%= @comp_percent %>% complete</span>
-              <div class="rounded-full mb-2 flex">
-                <div style={"width: #{@comp_percent}%;"} class="z-10 h-1 rounded-full bg-gradient-to-r from-brand via-brand to-violet-400 relative">
-                  <div class="w-3 h-3 rounded-full bg-violet-400 absolute right-0 -top-1"></div>
+                <span class="text-xs text-center">Quest is <%= @comp_percent %>% complete</span>
+                <div class="rounded-full mb-2 flex">
+                  <div
+                    style={"width: #{@comp_percent}%;"}
+                    class="z-10 h-1 rounded-full bg-gradient-to-r from-brand via-brand to-violet-400 relative"
+                  >
+                    <div class="w-3 h-3 rounded-full bg-violet-400 absolute right-0 -top-1"></div>
+                  </div>
                 </div>
               </div>
-
+              <div class="h-8 w-full"></div>
             </div>
-            <div class="h-8 w-full"></div>
           </div>
-        </div>
         <% end %>
       </div>
 

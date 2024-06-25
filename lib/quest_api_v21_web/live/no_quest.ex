@@ -10,7 +10,6 @@ defmodule QuestApiV21Web.NoQuest do
     {:noreply, assign(socket, :camera_error, msg)}
   end
 
-
   def render(assigns) do
     ~H"""
     <div>
@@ -32,16 +31,13 @@ defmodule QuestApiV21Web.NoQuest do
           class="relative rounded-xl z-10 w-full bg-gradient-to-r from-gray-100 to-gray-100 ring-transparent border border-gray-400"
         >
           <div class="flex py-1 h-16">
-          <div class="my-auto grow">
-            <span class="animate__flash animate__animated animate__slower my-auto ml-4">
+            <div class="my-auto grow">
+              <span class="animate__flash animate__animated animate__slower my-auto ml-4">
+                Scan a Quest QR code to start
+              </span>
 
-            Scan a Quest QR code to start
-
-            </span>
-
-            <span class="my-auto hero-arrow-long-right"></span>
+              <span class="my-auto hero-arrow-long-right"></span>
             </div>
-
             <!-- Camera -->
             <div class="flex justify-between border-l-2 border-gray-200">
               <div class="my-auto  px-5 z-20">
