@@ -276,46 +276,40 @@ defmodule QuestApiV21Web.MainLive do
               />
             <% end %>
 
-            <%= for reward <- @rewards do %>
-              <%= if reward.redeemed do %>
+            <div class="pt-8 px-4">
+              <%= for reward <- @rewards do %>
                 <div
+                  phx-click={if reward.redeemed, do: nil, else: "show-reward-details"}
                   phx-value-id={reward.id}
-                  class="m-8 mx-auto w-10/12 rounded-md bg-gray-700 text-white ring-2 ring-gray-500 opacity-80"
+                  class="mx-8 mb-12 mx-auto relative rounded-lg bg-white text-gray-700 ring-1 ring-gray-300 shadow-xl shadow-brand/20"
                 >
-                  <div class="flex p-2">
-                    <img src="/images/present.png" class="grayscale w-12 h-12 flex-shrink mr-2" />
-                    <div>
-                      <h1 class="font-regular text-white text-center text-sm flex truncate">
-                        <%= reward.reward_name %>
-                      </h1>
-                      <!--<p class="text-xs font-light truncate"></p>-->
+                  <%= if reward.redeemed do %>
+                    <div class="h-full w-full text-xl flex items-center my-auto bg-white/50 rounded-lg absolute uppercase text-center">
+                      <p class="w-full bg-brand/90 ring-1 text-white ring-white">redeemed</p>
                     </div>
-                  </div>
-                  <div class="w-full bg-gray-600 text-sm rounded-b-lg text-center py-1">Claimed</div>
-                </div>
-              <% else %>
-                <p class="text-xs font-light ml-8 mb-1 truncate"><%= reward.quest.name %></p>
+                  <% end %>
+                  <div class="grid grid-cols-12 p-2">
+                    <img
+                      class="col-span-3 w-20 h-20 flex-shrink rounded-lg ring-1 ring-gray-200 object-cover mr-2"
+                      src={reward.quest.quest_image || "/images/questdefault.webp"}
+                    />
 
-                <div
-                  phx-click="show-reward-details"
-                  phx-value-id={reward.id}
-                  class="mx-8 mb-8 mx-auto w-10/12 rounded-md bg-accent text-white ring-2 ring-gold-300 shadow-xl shadow-white"
-                >
-                  <div class="flex p-2">
-                    <img src="/images/present.png" class="w-12 h-12 flex-shrink mr-2" />
-                    <div>
-                      <h1 class="font-regular text-white text-center text-sm flex truncate">
+                    <div class="my-auto col-span-7 ml-1">
+                      <h1 class="text-lg truncate">
                         <%= reward.reward_name %>
                       </h1>
+                      <p class="text-xs mb-1 text-gray-500 truncate"><%= reward.quest.name %></p>
                       <!--<p class="text-xs font-light truncate"></p>-->
                     </div>
-                  </div>
-                  <div class="w-full bg-highlight text-sm rounded-b-lg text-center py-1">
-                    Claim Reward
+                    <div class="col-span-2 flex items-center">
+                      <div class="w-full text-xs rounded-full bg-green-500 ring-1 ring-gray-300 p-1 text-white uppercase text-center">
+                        Redeem
+                      </div>
+                    </div>
                   </div>
                 </div>
               <% end %>
-            <% end %>
+            </div>
         <% end %>
       </div>
     </div>
