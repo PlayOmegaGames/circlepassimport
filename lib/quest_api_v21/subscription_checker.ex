@@ -12,7 +12,8 @@ defmodule QuestApiV21.SubscriptionChecker do
   """
   def can_create_record?(organization_id, schema_module, tier_limits) do
     with {:ok, org} <- get_organization(organization_id),
-         {:ok, subscription_tier} when not is_nil(subscription_tier) <- get_subscription_tier(org),
+         {:ok, subscription_tier} when not is_nil(subscription_tier) <-
+           get_subscription_tier(org),
          count <- count_records_by_organization(organization_id, schema_module),
          :ok <- check_subscription_limit(subscription_tier, count, tier_limits) do
       :ok
@@ -36,7 +37,11 @@ defmodule QuestApiV21.SubscriptionChecker do
   end
 
   defp count_records_by_organization(organization_id, schema_module) do
-    Repo.aggregate(from(q in schema_module, where: q.organization_id == ^organization_id), :count, :id)
+    Repo.aggregate(
+      from(q in schema_module, where: q.organization_id == ^organization_id),
+      :count,
+      :id
+    )
   end
 
   defp check_subscription_limit(subscription_tier, count, tier_limits) do

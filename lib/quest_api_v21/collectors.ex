@@ -140,7 +140,11 @@ defmodule QuestApiV21.Collectors do
   }
 
   def create_collector_with_organization(collector_params, organization_id) do
-    case SubscriptionChecker.can_create_record?(organization_id, Collector, @collector_tier_limits) do
+    case SubscriptionChecker.can_create_record?(
+           organization_id,
+           Collector,
+           @collector_tier_limits
+         ) do
       :ok ->
         changeset =
           %Collector{}
@@ -165,6 +169,7 @@ defmodule QuestApiV21.Collectors do
       :upgrade_subscription -> {:error, :upgrade_subscription}
     end
   end
+
   @doc """
   Updates a collector.
 

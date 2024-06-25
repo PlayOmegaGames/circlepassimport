@@ -120,7 +120,6 @@ defmodule QuestApiV21.Badges do
     "tier_2" => 100
   }
 
-
   def create_badge_with_organization(badge_params, organization_id) do
     case SubscriptionChecker.can_create_record?(organization_id, Badge, @badge_tier_limits) do
       :ok ->

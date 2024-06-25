@@ -53,9 +53,9 @@ defmodule QuestApiV21Web.QuestController do
         conn
         |> put_status(:unprocessable_entity)
         |> render("error.json", %{message: "Quest creation failed", errors: changeset})
-
     end
   end
+
   def show(conn, %{"id" => id}) do
     organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 

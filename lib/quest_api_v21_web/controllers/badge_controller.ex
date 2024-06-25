@@ -70,6 +70,7 @@ defmodule QuestApiV21Web.BadgeController do
         |> render("error.json", %{message: "Unexpected error occurred", error: error})
     end
   end
+
   def show(conn, %{"id" => id}) do
     badge =
       Badges.get_badge!(id)

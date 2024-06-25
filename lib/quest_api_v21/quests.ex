@@ -12,7 +12,6 @@ defmodule QuestApiV21.Quests do
   alias QuestApiV21.SubscriptionChecker
   require Logger
 
-
   alias QuestApiV21.Repo
 
   @doc """
