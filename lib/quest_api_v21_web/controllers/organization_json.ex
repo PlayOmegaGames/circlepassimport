@@ -21,6 +21,7 @@ defmodule QuestApiV21Web.OrganizationJSON do
     %{
       id: organization.id,
       name: organization.name,
+      subscription_tier: organization.subscription_tier,
       hosts: hosts_data(hosts)
     }
   end
