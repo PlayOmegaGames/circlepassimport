@@ -137,10 +137,17 @@ Hooks.FormSubmit = function(csrfToken) {
     },
   
     handleUserMedia() {
-      var video = document.getElementById("videoElement");
+      const video = document.getElementById("videoElement");
+  
+      const videoConstraints = {
+        video: {
+          facingMode: 'environment',
+          focusMode: 'continuous' // This might not be supported by all browsers
+        }
+      };
   
       if (navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        navigator.mediaDevices.getUserMedia(videoConstraints)
           .then(stream => {
             video.srcObject = stream;
             video.play();
@@ -166,18 +173,21 @@ Hooks.FormSubmit = function(csrfToken) {
     },
   
     scanQRCode(video) {
-      var canvas = document.createElement('canvas');
-      var context = canvas.getContext('2d');
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
   
-      setInterval(() => {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        var code = jsQR(imageData.data, canvas.width, canvas.height);
-        if (code) {
-          console.log("QR Code detected:", code.data);
-          this.pushEvent("qr-code-scanned", { data: code.data });
+      const scanInterval = setInterval(() => {
+        if (video.readyState >= 2) { // Ensure video is ready
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, canvas.width, canvas.height);
+          if (code) {
+            console.log("QR Code detected:", code.data);
+            clearInterval(scanInterval); // Stop scanning once a code is found
+            this.pushEvent("qr-code-scanned", { data: code.data });
+          }
         }
       }, 100);
     }
