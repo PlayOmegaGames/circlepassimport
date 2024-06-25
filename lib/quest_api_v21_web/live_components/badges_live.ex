@@ -19,7 +19,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgesLive do
 
           <div class="" phx-click="show_single_badge_details" phx-value-id={badge.id}>
             <img
-              class="object-cover w-full h-auto rounded-full ring-2 shadow-lg ring-gray-300"
+              class="object-cover h-24 w-24 rounded-full ring-2 shadow-lg ring-gray-300"
               src={badge.badge_image}
               alt="Badge image"
             />

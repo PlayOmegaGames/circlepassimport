@@ -20,8 +20,8 @@ defmodule QuestApiV21Web.LiveComponents.BadgeTabDetails do
         <div
           class={"#{if @show, do: "fade-in-scale", else: "hidden animate__slideOutDown"}
                   bg-center bg-cover
-                  animate__animated w-full h-screen text-left overflow-hidden shadow-xl transform transition-all"}
-          style={"background-image: url(#{@badge.badge_details_image})"}
+                  animate__animated bg-black w-full h-screen text-left overflow-hidden shadow-xl transform transition-all"}
+          style={"background-image: url('#{@badge.badge_details_image}')"}
           role="dialog"
           aria-modal="true"
           tabindex="-1"

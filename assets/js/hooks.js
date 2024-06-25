@@ -18,27 +18,37 @@ Hooks.PasswordStrength = {
 
 Hooks.LeafletMap = {
   mounted() {
-    console.log("")
-    const latitude = parseFloat(this.el.dataset.latitude) || 0;
-    const longitude = parseFloat(this.el.dataset.longitude) || 0;
+    console.log("LeafletMap hook mounted");
 
-    console.log("Initializing map with coordinates:", latitude, longitude); // Debugging line
+    try {
+      const latitude = parseFloat(this.el.dataset.latitude);
+      const longitude = parseFloat(this.el.dataset.longitude);
 
-    const map = L.map(this.el).setView([latitude, longitude], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+      if (isNaN(latitude) || isNaN(longitude)) {
+        console.error("Invalid coordinates:", { latitude, longitude });
+        return;
+      }
 
-    const purpleIcon = L.divIcon({
-      className: 'custom-div-icon',
-      html: "<div style='background-color: rgba(121, 0, 253, 0.5); width: 50px; height: 50px; border: 5px solid purple; border-radius: 50%;'></div>",
-      iconSize: [12, 12],
-      iconAnchor: [6, 6]
-    });
 
-    L.marker([latitude, longitude], { icon: purpleIcon }).addTo(map);
+      const map = L.map(this.el).setView([latitude, longitude], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      const purpleIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: "<div style='background-color: rgba(121, 0, 253, 0.5); width: 50px; height: 50px; border: 5px solid purple; border-radius: 50%;'></div>",
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
+      });
+
+      L.marker([latitude, longitude], { icon: purpleIcon }).addTo(map);
+    } catch (error) {
+      console.error("Error initializing map:", error);
+    }
   }
 };
+
 
 
 Hooks.FormSubmit = function(csrfToken) {

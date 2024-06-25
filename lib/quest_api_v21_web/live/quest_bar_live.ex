@@ -187,6 +187,7 @@ defmodule QuestApiV21Web.QuestBarLive do
               </div>
             </div>
 
+            <!-- Camera -->
             <div class="flex justify-between border-l-2 border-gray-200">
               <div class="my-auto  px-5 z-20">
                 <button
