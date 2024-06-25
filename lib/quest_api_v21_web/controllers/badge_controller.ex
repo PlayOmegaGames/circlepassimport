@@ -34,15 +34,42 @@ defmodule QuestApiV21Web.BadgeController do
         |> put_resp_header("location", ~p"/api/badge/#{badge}")
         |> render(:show, badge: badge)
 
-      {:error, changeset} ->
+      {:error, :organization_not_found} ->
+        Logger.error("Organization not found")
+
+        conn
+        |> put_status(:not_found)
+        |> render("error.json", %{message: "Organization not found"})
+
+      {:error, :no_subscription_tier} ->
+        Logger.error("No subscription tier found")
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "No subscription tier found"})
+
+      {:error, :upgrade_subscription} ->
+        Logger.error("Upgrade your subscription to create more badges")
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "Upgrade your subscription to create more badges"})
+
+      {:error, changeset} when is_map(changeset) ->
         Logger.error("Changeset error: #{inspect(changeset.errors)}")
 
         conn
         |> put_status(:unprocessable_entity)
         |> render("error.json", %{message: "Badge creation failed", errors: changeset})
+
+      error ->
+        Logger.error("Unexpected error: #{inspect(error)}")
+
+        conn
+        |> put_status(:internal_server_error)
+        |> render("error.json", %{message: "Unexpected error occurred", error: error})
     end
   end
-
   def show(conn, %{"id" => id}) do
     badge =
       Badges.get_badge!(id)

@@ -24,7 +24,6 @@ defmodule QuestApiV21Web.QuestController do
 
   def create(conn, %{"quest" => quest_params}) do
     organization_id = JWTUtility.extract_organization_id_from_jwt(conn)
-    # IO.inspect(organization_id, label: "Extracted Organization ID")
 
     case Quests.create_quest_with_organization(quest_params, organization_id) do
       {:ok, quest} ->
@@ -35,13 +34,28 @@ defmodule QuestApiV21Web.QuestController do
         |> put_resp_header("location", ~p"/api/quests/#{quest}")
         |> render("show.json", quest: quest)
 
+      {:error, :organization_not_found} ->
+        conn
+        |> put_status(:not_found)
+        |> render("error.json", %{message: "Organization not found"})
+
+      {:error, :no_subscription_tier} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "No subscription tier found"})
+
+      {:error, :upgrade_subscription} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "Upgrade your subscription to create more quests"})
+
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
         |> render("error.json", %{message: "Quest creation failed", errors: changeset})
+
     end
   end
-
   def show(conn, %{"id" => id}) do
     organization_ids = JWTUtility.get_organization_id_from_jwt(conn)
 

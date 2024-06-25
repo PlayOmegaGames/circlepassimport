@@ -9,6 +9,7 @@ defmodule QuestApiV21.Hosts do
   alias QuestApiV21.Hosts.Host
   alias QuestApiV21.Hosts.HostNotifier
   alias QuestApiV21.Organizations.Organization
+  require Logger
 
   @doc """
   Returns the list of hosts.
