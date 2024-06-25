@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.SuperadminLoginLive do
+defmodule QuestApiV21Web.Superadmin.SuperadminLoginLive do
   use QuestApiV21Web, :live_view
 
   def render(assigns) do

@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.SuperadminResetPasswordLive do
+defmodule QuestApiV21Web.Superadmin.SuperadminResetPasswordLive do
   use QuestApiV21Web, :live_view
 
   alias QuestApiV21.Admin
