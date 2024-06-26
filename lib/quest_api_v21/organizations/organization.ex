@@ -24,5 +24,3 @@ defmodule QuestApiV21.Organizations.Organization do
     |> validate_required([:name])
   end
 end
-
-

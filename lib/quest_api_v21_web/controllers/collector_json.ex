@@ -22,6 +22,7 @@ defmodule QuestApiV21Web.CollectorJSON do
       error: message
     }
   end
+
   @doc """
   Renders an error response.
   """
