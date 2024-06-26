@@ -3,7 +3,7 @@ defmodule QuestApiV21.Repo.Migrations.AddSubscriptionsToOrganizations do
 
   def change do
     alter table(:organizations) do
-      add :subscription_tier, :string
+      add :subscription_tier, :string, default: "tier_free"
       add :subscription_date, :utc_datetime
     end
   end

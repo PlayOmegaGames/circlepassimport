@@ -6,7 +6,7 @@ defmodule QuestApiV21.Organizations.Organization do
   @foreign_key_type :binary_id
   schema "organizations" do
     field :name, :string
-    field :subscription_tier, :string
+    field :subscription_tier, :string, default: "tier_free"
     field :subscription_date, :utc_datetime
     many_to_many :hosts, QuestApiV21.Hosts.Host, join_through: "hosts_organizations"
     has_many :quests, QuestApiV21.Quests.Quest

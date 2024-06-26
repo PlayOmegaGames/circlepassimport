@@ -116,8 +116,9 @@ defmodule QuestApiV21.Badges do
 
   """
   @badge_tier_limits %{
+    "tier_free" => 2,
     "tier_1" => 50,
-    "tier_2" => 100
+    "tier_2" => 100,
   }
 
   def create_badge_with_organization(badge_params, organization_id) do

@@ -135,6 +135,7 @@ defmodule QuestApiV21.Collectors do
   end
 
   @collector_tier_limits %{
+    "tier_free" => 2,
     "tier_1" => 50,
     "tier_2" => 100
   }

@@ -167,6 +167,7 @@ defmodule QuestApiV21.Quests do
 
   """
   @quest_tier_limits %{
+    "tier_free" => 1,
     "tier_1" => 40,
     "tier_2" => 100
   }
