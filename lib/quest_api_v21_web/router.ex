@@ -83,14 +83,11 @@ defmodule QuestApiV21Web.Router do
     post "/password/reset/request", HostController, :request_password_reset
     put "/password/reset", HostController, :reset_password
 
-
     # token exchange for partner
     post "/token_exchange", AuthController, :token_exchange
 
-    #Stripe response webhook
+    # Stripe response webhook
     post "/webhook", WebhookController, :handle
-
-
   end
 
   scope "/api", QuestApiV21Web do
@@ -113,7 +110,7 @@ defmodule QuestApiV21Web.Router do
     get "/redeem", RewardController, :index
     resources "/accounts", AccountController
     get "/*path", ErrorController, :not_found
-    #Stripe create checkout
+    # Stripe create checkout
     post "/create-checkout-session", CheckoutController, :create_checkout_session
   end
 

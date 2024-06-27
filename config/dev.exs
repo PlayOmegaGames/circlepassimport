@@ -29,9 +29,7 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
-config :quest_api_v21, QuestApiV21Web.WebhookController,
-  verify_stripe_signature: false
-
+config :quest_api_v21, QuestApiV21Web.WebhookController, verify_stripe_signature: false
 
 # ## SSL Support
 #

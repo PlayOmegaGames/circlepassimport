@@ -32,10 +32,9 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   pubsub_server: QuestApiV21.PubSub,
   live_view: [signing_salt: "mWI7Ou9T"]
 
-#stripe
+# stripe
 config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET_KEY")
-config :quest_api_v21, QuestApiV21Web.WebhookController,
-  verify_stripe_signature: true
+config :quest_api_v21, QuestApiV21Web.WebhookController, verify_stripe_signature: true
 
 # Git hooks
 

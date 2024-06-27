@@ -12,7 +12,8 @@ defmodule QuestApiV21Web.CheckoutController do
       payment_method_types: ["card"],
       line_items: [
         %{
-          price: "price_1PWM6WJ36pwPxvTOMqo9GZoW",  # Replace with your actual price ID
+          # Replace with your actual price ID
+          price: "price_1PWM6WJ36pwPxvTOMqo9GZoW",
           quantity: 1
         }
       ],
@@ -26,9 +27,10 @@ defmodule QuestApiV21Web.CheckoutController do
         # Retrieve the session to verify customer ID
         case Stripe.Checkout.Session.retrieve(session.id) do
           {:ok, retrieved_session} ->
-            json(conn, %{url: retrieved_session.url,
-            #For testing if the stripe customer id is correct
-            #customer: retrieved_session.customer
+            json(conn, %{
+              url: retrieved_session.url
+              # For testing if the stripe customer id is correct
+              # customer: retrieved_session.customer
             })
 
           {:error, error} ->
