@@ -33,7 +33,8 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
 config :quest_api_v21, QuestApiV21Web.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
-config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET")
+config :quest_api_v21, QuestApiV21Web.WebhookController,
+  verify_stripe_signature: true
 # Ensure the Swoosh API client is configured for your choice of HTTP client, if necessary
 # config :swoosh, :api_client, Swoosh.ApiClient.Finch
 

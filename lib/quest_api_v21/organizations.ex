@@ -165,6 +165,36 @@ defmodule QuestApiV21.Organizations do
   end
 
   @doc """
+  Updates the subscription tier of an organization.
+
+  ## Examples
+
+      iex> update_subscription_tier("organization_id", "tier_1")
+      {:ok, %Organization{}}
+
+  """
+  def update_subscription_tier(organization_id, new_tier) do
+    organization = Repo.get!(Organization, organization_id)
+    changeset = Ecto.Changeset.change(organization, subscription_tier: new_tier)
+    Repo.update(changeset)
+  end
+
+  @doc """
+  Updates the subscription date of an organization.
+
+  ## Examples
+
+      iex> update_subscription_date("organization_id", ~U[2024-06-26 12:34:56Z])
+      {:ok, %Organization{}}
+
+  """
+  def update_subscription_date(organization_id, date) do
+    organization = Repo.get!(Organization, organization_id)
+    changeset = Ecto.Changeset.change(organization, subscription_date: date)
+    Repo.update(changeset)
+  end
+
+  @doc """
   Deletes a organization.
 
   ## Examples
@@ -191,6 +221,22 @@ defmodule QuestApiV21.Organizations do
   """
   def change_organization(%Organization{} = organization, attrs \\ %{}) do
     Organization.changeset(organization, attrs)
+  end
+
+  @doc """
+  Retrieves an organization by its Stripe customer ID.
+
+  ## Examples
+
+      iex> get_organization_by_stripe_customer_id("cus_12345")
+      %Organization{}
+
+      iex> get_organization_by_stripe_customer_id("invalid_id")
+      nil
+
+  """
+  def get_organization_by_stripe_customer_id(stripe_customer_id) do
+    Repo.get_by(Organization, stripe_customer_id: stripe_customer_id)
   end
 
   defp maybe_add_hosts(changeset, attrs) do
