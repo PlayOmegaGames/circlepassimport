@@ -160,7 +160,7 @@ defmodule QuestApiV21.Rewards do
         {:error, :not_found}
 
       %Reward{redeemed: true} ->
-        Logger.warn("Reward already redeemed")
+        Logger.warning("Reward already redeemed")
         {:error, :already_redeemed}
 
       %Reward{} = unredeemed_reward ->
