@@ -14,7 +14,6 @@ defmodule QuestApiV21.Application do
     stripe_secret = System.get_env("STRIPE_SECRET_KEY")
     Logger.info("Stripe ID: #{stripe_secret}")
 
-
     configure_ueberauth()
 
     children = [
