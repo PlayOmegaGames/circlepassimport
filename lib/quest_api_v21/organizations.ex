@@ -9,6 +9,7 @@ defmodule QuestApiV21.Organizations do
 
   alias QuestApiV21.Organizations.Organization
   alias QuestApiV21.Hosts.Host
+  alias Stripe.Customer
 
   @doc """
   Returns the list of organizations.
@@ -79,18 +80,6 @@ defmodule QuestApiV21.Organizations do
   end
 
   @doc """
-
-    alias QuestApiV21.Organizations
-    Organizations.list_organizations_by_organization_id("8cb1399f-e077-41ff-93cd-ce7bc3a21c98")
-
-  nowork
-  """
-  def list_organizations_by_organization_id(organization_id) do
-    preloads = [:hosts]
-    OrganizationScopedQueries.scope_query(Organization, organization_id, preloads)
-  end
-
-  @doc """
   Gets a single organization.
 
   Raises `Ecto.NoResultsError` if the Organization does not exist.
@@ -118,7 +107,7 @@ defmodule QuestApiV21.Organizations do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_organization(attrs \\ %{}, host_id) do
+  def create_organization(attrs \\ %{}, host_id, host_email) do
     host = Repo.get!(Host, host_id)
 
     organization_changeset =
@@ -128,21 +117,49 @@ defmodule QuestApiV21.Organizations do
 
     case Repo.insert(organization_changeset) do
       {:ok, organization} ->
-        # Now, update the host's current_org_id
-        case QuestApiV21.Hosts.update_current_org(host, organization.id) do
-          {:ok, updated_host} ->
-            # Fetch the updated host record to ensure it includes the new current_org_id
-            refreshed_host = Repo.get!(Host, updated_host.id)
-            new_jwt = generate_new_jwt_for_host(refreshed_host)
-            {:ok, organization, new_jwt}
+        case create_stripe_customer(host_email) do
+          {:ok, customer_id} ->
+            update_stripe_customer_id(organization.id, customer_id)
+            # Now, update the host's current_org_id
+            case QuestApiV21.Hosts.update_current_org(host, organization.id) do
+              {:ok, updated_host} ->
+                refreshed_host = Repo.get!(Host, updated_host.id)
+                new_jwt = generate_new_jwt_for_host(refreshed_host)
+                {:ok, organization, new_jwt}
 
-          {:error, _reason} ->
-            {:error, :failed_to_update_host}
+              {:error, _reason} ->
+                {:error, :failed_to_update_host}
+            end
+
+          {:error, error} ->
+            {:error, error}
         end
 
       {:error, changeset} ->
         {:error, changeset}
     end
+  end
+
+  defp create_stripe_customer(email) do
+    case Customer.create(%{email: email}) do
+      {:ok, customer} -> {:ok, customer.id}
+      {:error, error} -> {:error, error.message}
+    end
+  end
+
+  @doc """
+  Updates the stripe_customer_id of an organization.
+
+  ## Examples
+
+      iex> update_stripe_customer_id("organization_id", "cus_12345")
+      {:ok, %Organization{}}
+
+  """
+  def update_stripe_customer_id(organization_id, stripe_customer_id) do
+    organization = Repo.get!(Organization, organization_id)
+    changeset = Ecto.Changeset.change(organization, stripe_customer_id: stripe_customer_id)
+    Repo.update(changeset)
   end
 
   @doc """
@@ -251,25 +268,8 @@ defmodule QuestApiV21.Organizations do
   end
 
   defp generate_new_jwt_for_host(%Host{} = host) do
-    # Assuming HostGuardian.encode_and_sign can accept additional claims
-    # Directly use the host's current_org_id for the claim
     claims = %{"organization_id" => host.current_org_id}
     {:ok, jwt, _full_claims} = QuestApiV21.HostGuardian.encode_and_sign(host, claims)
     jwt
-  end
-
-  @doc """
-  Updates the stripe_customer_id of an organization.
-
-  ## Examples
-
-      iex> update_stripe_customer_id("organization_id", "cus_12345")
-      {:ok, %Organization{}}
-
-  """
-  def update_stripe_customer_id(organization_id, stripe_customer_id) do
-    organization = Repo.get!(Organization, organization_id)
-    changeset = Ecto.Changeset.change(organization, stripe_customer_id: stripe_customer_id)
-    Repo.update(changeset)
   end
 end
