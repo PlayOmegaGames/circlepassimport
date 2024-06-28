@@ -9,10 +9,9 @@ defmodule QuestApiV21.Application do
   @impl true
   def start(_type, _args) do
     # For debugging secrets
-    google_client_id = System.get_env("GOOGLE_CLIENT_ID")
-    Logger.info("Google Client ID: #{google_client_id}")
-    stripe_secret = System.get_env("STRIPE_SECRET_KEY")
-    Logger.info("Stripe ID: #{stripe_secret}")
+    #google_client_id = System.get_env("GOOGLE_CLIENT_ID")
+    #Logger.info("Google Client ID: #{google_client_id}")
+
 
     configure_ueberauth()
 
