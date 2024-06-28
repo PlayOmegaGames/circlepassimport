@@ -73,7 +73,6 @@ defmodule QuestApiV21Web.OrganizationController do
             conn
             |> put_status(:unprocessable_entity)
             |> render("error.json", %{changeset: changeset})
-
         end
     end
   end
