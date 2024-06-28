@@ -3,15 +3,18 @@ defmodule QuestApiV21Web.CheckoutController do
   alias QuestApiV21.Organizations
   alias QuestApiV21Web.JWTUtility
   alias Stripe.Customer
+  alias QuestApiV21.Hosts
 
   def create_checkout_session(conn, _params) do
     organization_id = JWTUtility.get_organization_id_from_jwt(conn)
+    host_id = JWTUtility.get_host_id_from_jwt(conn)
+    host = Hosts.get_host!(host_id)
     organization = Organizations.get_organization!(organization_id)
 
     stripe_customer_id =
       case organization.stripe_customer_id do
         nil ->
-          create_stripe_customer(organization)
+          create_stripe_customer(host.email, organization.id)
 
         id ->
           id
@@ -48,10 +51,10 @@ defmodule QuestApiV21Web.CheckoutController do
     end
   end
 
-  defp create_stripe_customer(organization) do
-    case Customer.create(%{email: organization.email}) do
+  defp create_stripe_customer(email, organization_id) do
+    case Customer.create(%{email: email}) do
       {:ok, customer} ->
-        case Organizations.update_stripe_customer_id(organization.id, customer.id) do
+        case Organizations.update_stripe_customer_id(organization_id, customer.id) do
           {:ok, _organization} ->
             customer.id
 
