@@ -257,4 +257,19 @@ defmodule QuestApiV21.Organizations do
     {:ok, jwt, _full_claims} = QuestApiV21.HostGuardian.encode_and_sign(host, claims)
     jwt
   end
+
+  @doc """
+  Updates the stripe_customer_id of an organization.
+
+  ## Examples
+
+      iex> update_stripe_customer_id("organization_id", "cus_12345")
+      {:ok, %Organization{}}
+
+  """
+  def update_stripe_customer_id(organization_id, stripe_customer_id) do
+    organization = Repo.get!(Organization, organization_id)
+    changeset = Ecto.Changeset.change(organization, stripe_customer_id: stripe_customer_id)
+    Repo.update(changeset)
+  end
 end
