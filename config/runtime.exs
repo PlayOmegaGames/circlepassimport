@@ -66,10 +66,9 @@ if config_env() == :prod do
   # Configure Swoosh with Amazon SES for production
   access_key = System.get_env("AWS_ACCESS_KEY_ID") || raise "AWS_ACCESS_KEY_ID is missing."
 
-  secret_key =
-    System.get_env("AWS_SECRET_ACCESS_KEY") || raise "AWS_SECRET_ACCESS_KEY is missing."
+  secret_key = System.get_env("AWS_SECRET_ACCESS_KEY") || raise "AWS_SECRET_ACCESS_KEY is missing."
 
-  config :stripity_stripe, :api_key, System.fetch_env!("STRIPE_SECRET_KEY")
+
 
   config :quest_api_v21, QuestApiV21.Mailer,
     adapter: Swoosh.Adapters.AmazonSES,

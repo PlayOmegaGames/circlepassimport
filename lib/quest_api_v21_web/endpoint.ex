@@ -1,6 +1,8 @@
 defmodule QuestApiV21Web.Endpoint do
   use Phoenix.Endpoint, otp_app: :quest_api_v21
 
+  #plug Stripe.WebhookPlug, at: "/api/webhook", secret: System.get_env("STRIPE_WEBHOOK_SECRET")
+
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
@@ -40,6 +42,13 @@ defmodule QuestApiV21Web.Endpoint do
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+
+
+  plug Stripe.WebhookPlug,
+    at: "api/webhook",
+    handler: QuestApiV21Web.WebhookController,
+    secret: {Application, :get_env, [:quest_api_v21, :webhook_secret]}
+
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],

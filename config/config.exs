@@ -10,7 +10,9 @@ require Logger
 
 config :quest_api_v21,
   ecto_repos: [QuestApiV21.Repo],
-  generators: [binary_id: true]
+  generators: [binary_id: true],
+  webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET"),
+  api_key: System.get_env("STRIPE_SECRET_KEY")
 
 # guardian setup
 config :quest_api_v21, QuestApiV21.Guardian,
@@ -32,9 +34,6 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   pubsub_server: QuestApiV21.PubSub,
   live_view: [signing_salt: "mWI7Ou9T"]
 
-# stripe
-config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET_KEY")
-config :quest_api_v21, QuestApiV21Web.WebhookController, verify_stripe_signature: true
 
 # Git hooks
 
@@ -50,6 +49,8 @@ if Mix.env() != :prod do
       ]
     ]
 end
+
+
 
 # Google ID
 config :ueberauth, Ueberauth,
