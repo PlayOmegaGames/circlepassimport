@@ -66,7 +66,6 @@ defmodule QuestApiV21Web.Router do
     live "/test_event", TestLive
   end
 
-
   # authentication for API
   scope "/api", QuestApiV21Web do
     pipe_through :api
@@ -86,7 +85,6 @@ defmodule QuestApiV21Web.Router do
 
     # token exchange for partner
     post "/token_exchange", AuthController, :token_exchange
-
   end
 
   scope "/api", QuestApiV21Web do

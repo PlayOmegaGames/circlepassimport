@@ -34,7 +34,6 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
   pubsub_server: QuestApiV21.PubSub,
   live_view: [signing_salt: "mWI7Ou9T"]
 
-
 # Git hooks
 
 if Mix.env() != :prod do
@@ -49,8 +48,6 @@ if Mix.env() != :prod do
       ]
     ]
 end
-
-
 
 # Google ID
 config :ueberauth, Ueberauth,

@@ -3,12 +3,23 @@ defmodule QuestApiV21Web.WebhookController do
   alias QuestApiV21.Organizations
 
   @impl true
-  def handle_event(%Stripe.Event{type: type, data: %{object: %Stripe.Subscription{customer: stripe_customer_id}}} = _event) when type in ["customer.subscription.updated", "invoice.payment_succeeded"] do
+  def handle_event(
+        %Stripe.Event{
+          type: type,
+          data: %{object: %Stripe.Subscription{customer: stripe_customer_id}}
+        } = _event
+      )
+      when type in ["customer.subscription.updated", "invoice.payment_succeeded"] do
     update_subscription_tier(stripe_customer_id, "tier_1")
   end
 
   @impl true
-  def handle_event(%Stripe.Event{type: "customer.subscription.deleted", data: %{object: %Stripe.Subscription{customer: stripe_customer_id}}} = _event) do
+  def handle_event(
+        %Stripe.Event{
+          type: "customer.subscription.deleted",
+          data: %{object: %Stripe.Subscription{customer: stripe_customer_id}}
+        } = _event
+      ) do
     update_subscription_tier(stripe_customer_id, "tier_free")
   end
 
@@ -31,7 +42,10 @@ defmodule QuestApiV21Web.WebhookController do
       %QuestApiV21.Organizations.Organization{} = organization ->
         case Organizations.update_subscription_tier(organization.id, tier) do
           {:ok, _updated_organization} ->
-            IO.inspect("Subscription tier updated to #{tier} for organization: #{organization.id}")
+            IO.inspect(
+              "Subscription tier updated to #{tier} for organization: #{organization.id}"
+            )
+
             :ok
 
           {:error, reason} ->
