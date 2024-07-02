@@ -75,6 +75,7 @@ if config_env() == :prod do
     access_key: access_key,
     secret: secret_key
 
+  config :stripity_stripe, :api_key, System.fetch_env!("STRIPE_SECRET_KEY")
   # Ensure the Swoosh API client is configured for your choice of HTTP client, if necessary
   # config :swoosh, :api_client, Swoosh.ApiClient.Finch
 

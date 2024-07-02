@@ -8,11 +8,13 @@
 import Config
 require Logger
 
+
+config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET_KEY")
+
 config :quest_api_v21,
   ecto_repos: [QuestApiV21.Repo],
   generators: [binary_id: true],
-  webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET"),
-  api_key: System.get_env("STRIPE_SECRET_KEY")
+  webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
 
 # guardian setup
 config :quest_api_v21, QuestApiV21.Guardian,
