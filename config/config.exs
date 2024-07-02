@@ -9,6 +9,7 @@ import Config
 require Logger
 
 config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET_KEY")
+config :stripity_stripe, webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
 
 config :quest_api_v21,
   ecto_repos: [QuestApiV21.Repo],
