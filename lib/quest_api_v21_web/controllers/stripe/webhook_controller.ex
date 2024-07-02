@@ -114,7 +114,7 @@ defmodule QuestApiV21Web.WebhookController do
   defp webhook_secret_exists? do
     secret =
       System.get_env("STRIPE_WEBHOOK_SECRET") ||
-        Application.get_env(:quest_api_v21, :stripe_webhook_secret)
+        Application.get_env(:quest_api_v21, :webhook_secret)
 
     if secret do
       true
@@ -127,9 +127,14 @@ defmodule QuestApiV21Web.WebhookController do
   defp verify_signature(%{headers: headers, payload: payload}) do
     secret =
       System.get_env("STRIPE_WEBHOOK_SECRET") ||
-        Application.get_env(:quest_api_v21, :stripe_webhook_secret)
+        Application.get_env(:quest_api_v21, :webhook_secret)
+
+    Logger.info("Verifying signature with secret: #{inspect(secret)}")
+    Logger.info("Payload: #{inspect(payload)}")
+    Logger.info("Headers: #{inspect(headers)}")
 
     signature_header = List.keyfind(headers, "stripe-signature", 0)
+    Logger.info("Signature header: #{inspect(signature_header)}")
 
     if payload && signature_header do
       case Stripe.Webhook.construct_event(payload, signature_header, secret) do

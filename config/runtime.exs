@@ -30,6 +30,11 @@ if config_env() == :prod do
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
+  config :stripity_stripe, webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
+
+  config :quest_api_v21,
+    webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
+
   config :quest_api_v21, QuestApiV21.Repo,
     # ssl: true,
     url: database_url,
