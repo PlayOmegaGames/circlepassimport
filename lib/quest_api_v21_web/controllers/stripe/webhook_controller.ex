@@ -11,7 +11,7 @@ defmodule QuestApiV21Web.WebhookController do
         } = event
       )
       when type in ["customer.subscription.updated", "invoice.payment_succeeded"] do
-    handle_event_with_secret_check(fn ->
+    handle_event_with_secret_check(event, fn ->
       Logger.info("Handling event type: #{type} for customer: #{stripe_customer_id}")
       handle_update_subscription_tier(stripe_customer_id, "tier_1", event)
     end)
@@ -24,7 +24,7 @@ defmodule QuestApiV21Web.WebhookController do
           data: %{object: %Stripe.Subscription{customer: stripe_customer_id}}
         } = event
       ) do
-    handle_event_with_secret_check(fn ->
+    handle_event_with_secret_check(event, fn ->
       Logger.info(
         "Handling event type: customer.subscription.deleted for customer: #{stripe_customer_id}"
       )
@@ -34,8 +34,8 @@ defmodule QuestApiV21Web.WebhookController do
   end
 
   @impl true
-  def handle_event(%Stripe.Event{type: "invoice.payment_failed"} = _event) do
-    handle_event_with_secret_check(fn ->
+  def handle_event(%Stripe.Event{type: "invoice.payment_failed"} = event) do
+    handle_event_with_secret_check(event, fn ->
       Logger.info("Invoice payment failed")
       :ok
     end)
@@ -43,7 +43,7 @@ defmodule QuestApiV21Web.WebhookController do
 
   # Return HTTP 200 for unhandled events
   @impl true
-  def handle_event(_event), do: :ok
+  def handle_event(event), do: :ok
 
   defp handle_update_subscription_tier(stripe_customer_id, tier, event) do
     if stripe_customer_id && tier do
@@ -90,10 +90,17 @@ defmodule QuestApiV21Web.WebhookController do
     end
   end
 
-  defp handle_event_with_secret_check(callback) do
+  defp handle_event_with_secret_check(event, callback) do
     if webhook_secret_exists?() do
       try do
-        callback.()
+        case verify_signature(event) do
+          :ok ->
+            callback.()
+
+          {:error, reason} ->
+            Logger.error("Signature verification failed: #{inspect(reason)}")
+            {:error, "Signature verification failed"}
+        end
       rescue
         exception ->
           Logger.error("An error occurred while processing the webhook: #{inspect(exception)}")
@@ -114,6 +121,23 @@ defmodule QuestApiV21Web.WebhookController do
     else
       Logger.error("Webhook secret not detected")
       false
+    end
+  end
+
+  defp verify_signature(%{headers: headers, payload: payload}) do
+    secret =
+      System.get_env("STRIPE_WEBHOOK_SECRET") ||
+        Application.get_env(:quest_api_v21, :stripe_webhook_secret)
+
+    signature_header = List.keyfind(headers, "stripe-signature", 0)
+
+    if payload && signature_header do
+      case Stripe.Webhook.construct_event(payload, signature_header, secret) do
+        {:ok, _event} -> :ok
+        {:error, reason} -> {:error, reason}
+      end
+    else
+      {:error, "Missing payload or signature header"}
     end
   end
 end
