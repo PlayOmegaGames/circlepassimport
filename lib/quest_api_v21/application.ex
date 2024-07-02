@@ -39,7 +39,9 @@ defmodule QuestApiV21.Application do
   end
 
   defp check_webhook_secret do
-    secret = System.get_env("STRIPE_WEBHOOK_SECRET") || Application.get_env(:quest_api_v21, :webhook_secret)
+    secret =
+      System.get_env("STRIPE_WEBHOOK_SECRET") ||
+        Application.get_env(:quest_api_v21, :webhook_secret)
 
     if secret do
       Logger.info("Webhook secret detected")
