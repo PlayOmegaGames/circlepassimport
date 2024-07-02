@@ -22,7 +22,10 @@ defmodule QuestApiV21Web.WebhookController do
           data: %{object: %Stripe.Subscription{customer: stripe_customer_id}}
         } = _event
       ) do
-    Logger.info("Handling event type: customer.subscription.deleted for customer: #{stripe_customer_id}")
+    Logger.info(
+      "Handling event type: customer.subscription.deleted for customer: #{stripe_customer_id}"
+    )
+
     update_subscription_tier(stripe_customer_id, "tier_free")
   end
 
@@ -47,11 +50,17 @@ defmodule QuestApiV21Web.WebhookController do
       %QuestApiV21.Organizations.Organization{} = organization ->
         case Organizations.update_subscription_tier(organization.id, tier) do
           {:ok, _updated_organization} ->
-            Logger.info("Subscription tier updated to #{tier} for organization: #{organization.id}")
+            Logger.info(
+              "Subscription tier updated to #{tier} for organization: #{organization.id}"
+            )
+
             :ok
 
           {:error, reason} ->
-            Logger.error("Failed to update subscription tier to #{tier} for organization: #{organization.id} - Reason: #{inspect(reason)}")
+            Logger.error(
+              "Failed to update subscription tier to #{tier} for organization: #{organization.id} - Reason: #{inspect(reason)}"
+            )
+
             {:error, reason}
         end
     end
