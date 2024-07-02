@@ -8,7 +8,6 @@
 import Config
 require Logger
 
-
 config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET_KEY")
 
 config :quest_api_v21,
