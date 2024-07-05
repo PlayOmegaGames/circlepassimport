@@ -17,6 +17,12 @@ defmodule QuestApiV21Web.CollectorJSON do
     %{data: data(collector)}
   end
 
+  def error(%{message: message}) do
+    %{
+      error: message
+    }
+  end
+
   @doc """
   Renders an error response.
   """

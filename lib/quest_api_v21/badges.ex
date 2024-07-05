@@ -10,6 +10,8 @@ defmodule QuestApiV21.Badges do
   alias QuestApiV21.Collector
   alias QuestApiV21.Quests
   alias QuestApiV21.Badges.Badge
+  require Logger
+  alias QuestApiV21.SubscriptionChecker
 
   @doc """
   Returns the list of badge.
@@ -113,20 +115,40 @@ defmodule QuestApiV21.Badges do
       {:error, %Ecto.Changeset{}}
 
   """
+  @badge_tier_limits %{
+    "tier_free" => 2,
+    "tier_1" => 50,
+    "tier_2" => 100
+  }
 
   def create_badge_with_organization(badge_params, organization_id) do
-    %Badge{}
-    |> Badge.changeset(Map.put(badge_params, "organization_id", organization_id))
-    |> maybe_add_accounts(badge_params)
-    |> Repo.insert()
-    # Only updates the completion score if the record is successfully updated
-    |> case do
-      {:ok, badge} ->
-        badge |> update_quest_numbers()
-        {:ok, badge}
+    case SubscriptionChecker.can_create_record?(organization_id, Badge, @badge_tier_limits) do
+      :ok ->
+        changeset =
+          %Badge{}
+          |> Badge.changeset(Map.put(badge_params, "organization_id", organization_id))
+          |> maybe_add_accounts(badge_params)
 
-      error ->
-        error
+        case Repo.insert(changeset) do
+          {:ok, badge} ->
+            badge |> update_quest_numbers()
+            {:ok, badge}
+
+          {:error, changeset} ->
+            {:error, changeset}
+        end
+
+      {:error, reason} ->
+        Logger.error("Badge creation failed due to: #{inspect(reason)}")
+        handle_error(reason)
+    end
+  end
+
+  defp handle_error(reason) do
+    case reason do
+      :organization_not_found -> {:error, :organization_not_found}
+      :no_subscription_tier -> {:error, :no_subscription_tier}
+      :upgrade_subscription -> {:error, :upgrade_subscription}
     end
   end
 

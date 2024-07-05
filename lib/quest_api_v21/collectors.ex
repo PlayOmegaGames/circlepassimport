@@ -8,6 +8,8 @@ defmodule QuestApiV21.Collectors do
   alias QuestApiV21.Collectors.Collector
   alias QuestApiV21.OrganizationScopedQueries
   alias QuestApiV21.Quests.Quest
+  alias QuestApiV21.SubscriptionChecker
+  require Logger
 
   @doc """
   Returns the list of collectors.
@@ -132,11 +134,41 @@ defmodule QuestApiV21.Collectors do
     |> Repo.insert()
   end
 
+  @collector_tier_limits %{
+    "tier_free" => 2,
+    "tier_1" => 50,
+    "tier_2" => 100
+  }
+
   def create_collector_with_organization(collector_params, organization_id) do
-    %Collector{}
-    |> Collector.changeset(Map.put(collector_params, "organization_id", organization_id))
-    |> maybe_add_quests(collector_params)
-    |> Repo.insert()
+    case SubscriptionChecker.can_create_record?(
+           organization_id,
+           Collector,
+           @collector_tier_limits
+         ) do
+      :ok ->
+        changeset =
+          %Collector{}
+          |> Collector.changeset(Map.put(collector_params, "organization_id", organization_id))
+          |> maybe_add_quests(collector_params)
+
+        case Repo.insert(changeset) do
+          {:ok, collector} -> {:ok, collector}
+          {:error, changeset} -> {:error, changeset}
+        end
+
+      {:error, reason} ->
+        Logger.error("Collector creation failed due to: #{inspect(reason)}")
+        handle_error(reason)
+    end
+  end
+
+  defp handle_error(reason) do
+    case reason do
+      :organization_not_found -> {:error, :organization_not_found}
+      :no_subscription_tier -> {:error, :no_subscription_tier}
+      :upgrade_subscription -> {:error, :upgrade_subscription}
+    end
   end
 
   @doc """

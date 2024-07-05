@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.SuperadminSettingsLive do
+defmodule QuestApiV21Web.Superadmin.SuperadminSettingsLive do
   use QuestApiV21Web, :live_view
 
   alias QuestApiV21.Admin

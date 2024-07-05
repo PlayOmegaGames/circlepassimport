@@ -1,4 +1,4 @@
-defmodule QuestApiV21Web.SuperadminConfirmationInstructionsLive do
+defmodule QuestApiV21Web.Superadmin.SuperadminConfirmationInstructionsLive do
   use QuestApiV21Web, :live_view
 
   alias QuestApiV21.Admin

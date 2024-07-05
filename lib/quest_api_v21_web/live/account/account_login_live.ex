@@ -4,6 +4,13 @@ defmodule QuestApiV21Web.Account.AccountLoginLive do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
+      <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-8 pb-4">
+        <img
+          class="mx-auto h-20 w-auto shadow-lg shadow-brand ring-offset-4 ring-2 ring-slate-100 rounded-full"
+          src="/images/purplecirclequestlogo.svg"
+          alt="Quest Logo"
+        />
+      </div>
       <.header class="text-center">
         Sign In
         <:subtitle>
@@ -20,17 +27,14 @@ defmodule QuestApiV21Web.Account.AccountLoginLive do
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
+          <.input field={@form[:remember_me]} type="checkbox" label="Remember me" />
           <.link href={~p"/accounts/reset_password"} class="text-sm font-semibold">
             Forgot your password?
           </.link>
         </:actions>
         <:actions>
-          <.button
-            phx-disable-with="Signing in..."
-            class="shadow-xl border-2 border-gold-100 w-full bg-contrast text-zinc-950"
-          >
-            Sign in <span aria-hidden="true">→</span>
+          <.button phx-disable-with="Signing in...">
+            Sign in
           </.button>
         </:actions>
       </.simple_form>

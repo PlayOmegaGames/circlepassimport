@@ -22,6 +22,7 @@ defmodule QuestApiV21.Quests.Quest do
     field :event_name, :string
     field :badge_count, :integer
     field :quest_loyalty, :string
+    field :quest_image, :string
     field :live, :boolean, default: true
     belongs_to :organization, QuestApiV21.Organizations.Organization
     has_many :badges, QuestApiV21.Badges.Badge

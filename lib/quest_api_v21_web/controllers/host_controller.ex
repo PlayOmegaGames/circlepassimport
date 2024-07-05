@@ -100,4 +100,32 @@ defmodule QuestApiV21Web.HostController do
         end
     end
   end
+
+  # Password Reset
+
+  # Request password reset
+  def request_password_reset(conn, %{"host" => %{"email" => email}}) do
+    case Hosts.generate_reset_password_token(email) do
+      {:ok, _} ->
+        json(conn, %{message: "Reset password instructions sent"})
+
+      {:error, :host_not_found} ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Host not found"})
+    end
+  end
+
+  # Reset password
+  def reset_password(conn, %{"token" => token, "password" => password}) do
+    case Hosts.reset_password(token, password) do
+      {:ok, _host} ->
+        json(conn, %{message: "Password has been reset"})
+
+      {:error, :invalid_token} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: "Invalid or expired token"})
+    end
+  end
 end

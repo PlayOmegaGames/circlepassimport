@@ -30,6 +30,11 @@ if config_env() == :prod do
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
+  config :stripity_stripe, webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
+
+  config :quest_api_v21,
+    webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
+
   config :quest_api_v21, QuestApiV21.Repo,
     # ssl: true,
     url: database_url,
@@ -75,6 +80,7 @@ if config_env() == :prod do
     access_key: access_key,
     secret: secret_key
 
+  config :stripity_stripe, :api_key, System.fetch_env!("STRIPE_SECRET_KEY")
   # Ensure the Swoosh API client is configured for your choice of HTTP client, if necessary
   # config :swoosh, :api_client, Swoosh.ApiClient.Finch
 

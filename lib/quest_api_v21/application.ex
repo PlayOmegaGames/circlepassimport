@@ -9,8 +9,9 @@ defmodule QuestApiV21.Application do
   @impl true
   def start(_type, _args) do
     # For debugging secrets
-    google_client_id = System.get_env("GOOGLE_CLIENT_ID")
-    Logger.info("Google Client ID: #{google_client_id}")
+    # google_client_id = System.get_env("GOOGLE_CLIENT_ID")
+    # Logger.info("Google Client ID: #{google_client_id}")
+    check_webhook_secret()
 
     configure_ueberauth()
 
@@ -35,6 +36,18 @@ defmodule QuestApiV21.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: QuestApiV21.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  defp check_webhook_secret do
+    secret =
+      System.get_env("STRIPE_WEBHOOK_SECRET") ||
+        Application.get_env(:quest_api_v21, :webhook_secret)
+
+    if secret do
+      Logger.info("Webhook secret detected")
+    else
+      Logger.error("Webhook secret not detected")
+    end
   end
 
   defp configure_ueberauth do

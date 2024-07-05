@@ -8,7 +8,7 @@ defmodule QuestApiV21Web.LiveComponents.BadgesLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="grid grid-cols-2 gap-8 px-3">
+      <div class="grid grid-cols-3 gap-x-4 gap-y-8 px-6 pt-6">
         <%= for badge <- @badges do %>
           <.live_component
             module={QuestApiV21Web.LiveComponents.BadgeTabDetails}
@@ -19,10 +19,13 @@ defmodule QuestApiV21Web.LiveComponents.BadgesLive do
 
           <div class="" phx-click="show_single_badge_details" phx-value-id={badge.id}>
             <img
-              class="object-cover w-full h-auto rounded-full ring-2 shadow-lg ring-gold-100"
+              class="object-cover h-24 w-24 rounded-full ring-2 shadow-lg ring-gray-300"
               src={badge.badge_image}
               alt="Badge image"
             />
+            <p class="mt-2 w-24 text-xs text-center text-gray-700 truncate">
+              <%= badge.name %>
+            </p>
           </div>
         <% end %>
       </div>

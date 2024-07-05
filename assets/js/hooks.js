@@ -18,27 +18,37 @@ Hooks.PasswordStrength = {
 
 Hooks.LeafletMap = {
   mounted() {
-    console.log("")
-    const latitude = parseFloat(this.el.dataset.latitude) || 0;
-    const longitude = parseFloat(this.el.dataset.longitude) || 0;
+    console.log("LeafletMap hook mounted");
 
-    console.log("Initializing map with coordinates:", latitude, longitude); // Debugging line
+    try {
+      const latitude = parseFloat(this.el.dataset.latitude);
+      const longitude = parseFloat(this.el.dataset.longitude);
 
-    const map = L.map(this.el).setView([latitude, longitude], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+      if (isNaN(latitude) || isNaN(longitude)) {
+        console.error("Invalid coordinates:", { latitude, longitude });
+        return;
+      }
 
-    const purpleIcon = L.divIcon({
-      className: 'custom-div-icon',
-      html: "<div style='background-color: rgba(121, 0, 253, 0.5); width: 50px; height: 50px; border: 5px solid purple; border-radius: 50%;'></div>",
-      iconSize: [12, 12],
-      iconAnchor: [6, 6]
-    });
 
-    L.marker([latitude, longitude], { icon: purpleIcon }).addTo(map);
+      const map = L.map(this.el).setView([latitude, longitude], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      const purpleIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: "<div style='background-color: rgba(121, 0, 253, 0.5); width: 50px; height: 50px; border: 5px solid purple; border-radius: 50%;'></div>",
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
+      });
+
+      L.marker([latitude, longitude], { icon: purpleIcon }).addTo(map);
+    } catch (error) {
+      console.error("Error initializing map:", error);
+    }
   }
 };
+
 
 
 Hooks.FormSubmit = function(csrfToken) {
@@ -122,47 +132,67 @@ Hooks.FormSubmit = function(csrfToken) {
   };
   Hooks.QrScanner = {
     mounted() {
-      console.log("test")
+      console.log("Camera component mounted");
       this.handleUserMedia();
     },
   
     handleUserMedia() {
-      var video = document.getElementById("videoElement");
+      const video = document.getElementById("videoElement");
+  
+      const videoConstraints = {
+        video: {
+          facingMode: 'environment',
+          focusMode: 'continuous' // This might not be supported by all browsers
+        }
+      };
   
       if (navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        navigator.mediaDevices.getUserMedia(videoConstraints)
           .then(stream => {
             video.srcObject = stream;
+            video.play();
+  
+            // Add a timeout to check if the video is playing
+            setTimeout(() => {
+              if (video.readyState < 3) { // readyState 3 means 'HAVE_FUTURE_DATA' or higher
+                this.pushEvent("camera-error", { message: "Camera is not accessible or is blocked" });
+              }
+            }, 5000); // 5 seconds timeout
+  
             video.addEventListener("loadeddata", () => {
               this.scanQRCode(video);
             });
           })
           .catch(error => {
             console.error("Something went wrong with accessing the camera", error);
+            this.pushEvent("camera-error", { message: "Camera access denied or not available. Use your app camera instead" });
           });
+      } else {
+        this.pushEvent("camera-error", { message: "Camera not supported by this browser. Use your app camera instead" });
       }
     },
   
     scanQRCode(video) {
-      var canvas = document.createElement('canvas');
-      var context = canvas.getContext('2d');
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
   
-      setInterval(() => {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  
-        // Assuming you have the jsQR library available
-        var code = jsQR(imageData.data, canvas.width, canvas.height);
-        if (code) {
-          console.log("QR Code detected:", code.data);
-          // Here, you'd use `this.pushEvent` to communicate with the server
-          this.pushEvent("qr-code-scanned", {data: code.data});
+      const scanInterval = setInterval(() => {
+        if (video.readyState >= 2) { // Ensure video is ready
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, canvas.width, canvas.height);
+          if (code) {
+            console.log("QR Code detected:", code.data);
+            clearInterval(scanInterval); // Stop scanning once a code is found
+            this.pushEvent("qr-code-scanned", { data: code.data });
+          }
         }
       }, 100);
     }
   };
+  
   
   Hooks.UpdateTab = {
     mounted() {
@@ -295,6 +325,36 @@ Hooks.FormSubmit = function(csrfToken) {
   
       const nextScanDate = new Date(this.el.dataset.nextScanDate);
       startCountdown(nextScanDate.getTime());
+    }
+  };
+
+
+  Hooks.ExternalRedirect = {
+    mounted() {
+      console.log("ExternalRedirect hook mounted");
+      this.handleEvent("external_redirect", ({url}) => {
+        console.log("Redirecting to:", url);
+        window.location = url;
+      })
+    }
+  }
+
+  Hooks.ToggleModal = {
+    mounted() {
+      this.handleEvent("toggle-modal", () => {
+        const modal = this.el.querySelector(`#ui-overlay-${this.el.id}`);
+        if (modal.classList.contains("hidden")) {
+          modal.classList.remove("hidden");
+          modal.classList.add("fade-in");
+        } else {
+          modal.classList.remove("fade-in");
+          modal.classList.add("fade-out");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("fade-out");
+          }, 300); // Duration of the fade-out animation
+        }
+      });
     }
   };
   

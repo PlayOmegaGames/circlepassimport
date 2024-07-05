@@ -68,6 +68,7 @@ defmodule QuestApiV21.MixProject do
       {:hackney, "~> 1.15"},
       {:mail, ">= 0.0.0"},
       {:httpoison, "~> 2.0"},
+      {:stripity_stripe, "~> 3.2"},
       {:heroicons_liveview, "~> 0.3.0"},
       {:gen_smtp, "~> 1.0"},
       {:slugy, "~> 4.1"}

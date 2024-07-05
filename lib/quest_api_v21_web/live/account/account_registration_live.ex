@@ -7,6 +7,14 @@ defmodule QuestApiV21Web.Account.AccountRegistrationLive do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm bg-transparent">
+      <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-8 pb-4">
+        <img
+          class="mx-auto h-20 w-auto shadow-lg shadow-brand ring-offset-4 ring-2 ring-slate-100 rounded-full"
+          src="/images/purplecirclequestlogo.svg"
+          alt="Quest Logo"
+        />
+      </div>
+
       <.header class="text-center">
         Sign Up
         <:subtitle>

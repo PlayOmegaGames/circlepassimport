@@ -8,8 +8,8 @@ defmodule QuestApiV21.Rewards do
   alias QuestApiV21.Repo
   alias QuestApiV21.Quests
   alias QuestApiV21.Accounts.Account
-
   alias QuestApiV21.Rewards.Reward
+  require Logger
 
   @doc """
   Returns the list of reward.
@@ -150,17 +150,33 @@ defmodule QuestApiV21.Rewards do
 
   """
   def redeem_reward_by_slug(organization_id, slug) do
+    Logger.info(
+      "Attempting to redeem reward with organization_id: #{organization_id} and slug: #{slug}"
+    )
+
     case Repo.get_by(Reward, organization_id: organization_id, slug: slug) do
       nil ->
+        Logger.error("Reward not found")
         {:error, :not_found}
 
       %Reward{redeemed: true} ->
+        Logger.warning("Reward already redeemed")
         {:error, :already_redeemed}
 
       %Reward{} = unredeemed_reward ->
-        unredeemed_reward
-        |> Reward.changeset(%{redeemed: true})
-        |> Repo.update()
+        Logger.info("Found reward, proceeding to redeem")
+        changeset = Reward.changeset(unredeemed_reward, %{redeemed: true})
+
+        case Repo.update(changeset) do
+          {:ok, updated_reward} ->
+            Logger.info("Reward redeemed successfully")
+            # Preload the quest association here
+            {:ok, Repo.preload(updated_reward, [:quest])}
+
+          {:error, changeset} ->
+            Logger.error("Failed to redeem reward: #{inspect(changeset)}")
+            {:error, changeset}
+        end
     end
   end
 

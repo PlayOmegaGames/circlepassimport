@@ -7,7 +7,9 @@ defmodule QuestApiV21.Hosts do
   alias QuestApiV21.Repo
 
   alias QuestApiV21.Hosts.Host
+  alias QuestApiV21.Hosts.HostNotifier
   alias QuestApiV21.Organizations.Organization
+  require Logger
 
   @doc """
   Returns the list of hosts.
@@ -40,6 +42,10 @@ defmodule QuestApiV21.Hosts do
 
   def get_host_by_email(email) do
     Repo.get_by(Host, email: email)
+  end
+
+  def get_host_by_reset_password_token(token) do
+    Repo.get_by(Host, reset_password_token: token)
   end
 
   @doc """
@@ -142,6 +148,10 @@ defmodule QuestApiV21.Hosts do
     Host.changeset(host, attrs)
   end
 
+  def change_host_password(%Host{} = host, attrs \\ %{}) do
+    Host.password_changeset(host, attrs)
+  end
+
   defp maybe_add_organizations(changeset, attrs) do
     case Map.get(attrs, "organization_ids") do
       nil ->
@@ -151,5 +161,57 @@ defmodule QuestApiV21.Hosts do
         organizations = Repo.all(from b in Organization, where: b.id in ^organization_ids)
         Ecto.Changeset.put_assoc(changeset, :organizations, organizations)
     end
+  end
+
+  # Generate pwd reset token
+
+  def generate_reset_password_token(email) do
+    host = Repo.get_by(Host, email: email)
+
+    if host do
+      token = :crypto.strong_rand_bytes(32) |> Base.url_encode64() |> binary_part(0, 32)
+
+      changeset =
+        Host.changeset(host, %{
+          reset_password_token: token,
+          reset_password_sent_at: NaiveDateTime.utc_now()
+        })
+
+      Repo.update!(changeset)
+
+      url = "https://questapp.io/hosts/reset_password?token=#{token}"
+      HostNotifier.deliver_reset_password_instructions(host, url)
+      {:ok, token}
+    else
+      {:error, :host_not_found}
+    end
+  end
+
+  def reset_password(token, new_password) do
+    host = Repo.get_by(Host, reset_password_token: token)
+
+    if host && token_valid?(host.reset_password_sent_at) do
+      changeset =
+        Host.changeset(host, %{
+          hashed_password: hash_password(new_password),
+          reset_password_token: nil,
+          reset_password_sent_at: nil
+        })
+
+      Repo.update!(changeset)
+      {:ok, host}
+    else
+      {:error, :invalid_token}
+    end
+  end
+
+  defp token_valid?(sent_at) do
+    # Check if the token is still valid (e.g., within 24 hours)
+    NaiveDateTime.diff(NaiveDateTime.utc_now(), sent_at) <= 86400
+  end
+
+  defp hash_password(password) do
+    # Hash the password
+    Bcrypt.hash_pwd_salt(password)
   end
 end

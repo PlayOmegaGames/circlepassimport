@@ -1,41 +1,55 @@
 defmodule QuestApiV21Web.LiveComponents.Camera do
   use Phoenix.LiveComponent
 
-  def mount(assigns) do
-    {:ok, assigns}
+  def mount(_params, _session, socket) do
+    if connected?(socket) do
+      # Assign default values including camera_error
+      socket = assign(socket, :camera_error, nil)
+      {:ok, socket}
+    else
+      {:ok, socket}
+    end
   end
 
   def render(assigns) do
     ~H"""
     <div
       id={@id}
-      class={"animate__animated  inset-0 z-40 h-screen fixed w-full overflow-y-auto
-      #{if @show, do: "animate__slideInDown animate__faster", else: "animate__slideOutDown" }"}
+      class={"animate__animated inset-0 z-50 fixed w-full h-full overflow-hidden
+      #{if @show, do: "animate__slideInDown animate__faster", else: "hidden"}
+      bg-black"}
     >
-      <div
-        id="camera"
-        class={"#{if @show, do: "fade-in-scale", else: "hidden animate__slideOutDown"}  animate__animated w-full h-screen bg-gradient-to-b from-white to-indigo-100 text-left overflow-hidden shadow-xl transform transition-all"}
+      <video
+        id="videoElement"
+        autoplay="true"
+        playsInline="true"
+        muted="true"
+        phx-hook="QrScanner"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
       >
-        <video
-          class="mx-auto w-10/12 rounded-lg mt-12 ring-2 h-10/12 max-w- ring-gold-200"
-          id="videoElement"
-          autoplay="true"
-          playsInline="true"
-          muted="true"
-          phx-hook="QrScanner"
+      </video>
+      <h1 class="text-white text-center absolute w-full bottom-32">
+        <%= if @camera_error do %>
+          <%= @camera_error %>
+        <% else %>
+          [ Scanning for a Quest QR code... ]
+        <% end %>
+      </h1>
+
+      <div class="flex justify-center w-full absolute bottom-16">
+        <button
+          type="button"
+          class="text-white text-lg bg-brand font-semibold py-2 px-4 rounded"
+          phx-click="close-camera"
         >
-        </video>
-        <h1 class="mt-6 text-center">[ Scanning for a Quest QR code... ]</h1>
-
-        <div class="flex justify-center w-full">
-          <span class="mx-auto mt-2 w-6 h-6 text-gray-600 animate-spin hero-arrow-path"></span>
-        </div>
-
-        <button type="button" class="absolute bottom-16 w-full" phx-click="close-camera">
-          <span class="w-12 h-12 text-center text-gray-500 hero-chevron-down"></span>
+          Close Camera
         </button>
       </div>
     </div>
     """
+  end
+
+  def handle_event("camera-error", %{"message" => msg}, socket) do
+    {:noreply, assign(socket, :camera_error, msg)}
   end
 end

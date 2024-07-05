@@ -44,7 +44,28 @@ defmodule QuestApiV21Web.CollectorController do
       |> put_resp_header("location", ~p"/api/collector/#{updated_collector.id}")
       |> render("show.json", collector: updated_collector)
     else
-      {:error, changeset} ->
+      {:error, :organization_not_found} ->
+        Logger.error("Organization not found")
+
+        conn
+        |> put_status(:not_found)
+        |> render("error.json", %{message: "Organization not found"})
+
+      {:error, :no_subscription_tier} ->
+        Logger.error("No subscription tier found")
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "No subscription tier found"})
+
+      {:error, :upgrade_subscription} ->
+        Logger.error("Upgrade your subscription to create more collectors")
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{message: "Upgrade your subscription to create more collectors"})
+
+      {:error, changeset} when is_map(changeset) ->
         Logger.error("Collector creation failed: #{inspect(changeset)}")
 
         conn

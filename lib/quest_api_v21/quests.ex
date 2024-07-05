@@ -9,6 +9,8 @@ defmodule QuestApiV21.Quests do
   alias QuestApiV21.Collectors.Collector
   alias QuestApiV21.Accounts.Account
   alias QuestApiV21.Badges.Badge
+  alias QuestApiV21.SubscriptionChecker
+  require Logger
 
   alias QuestApiV21.Repo
 
@@ -164,15 +166,37 @@ defmodule QuestApiV21.Quests do
       {:error, %Ecto.Changeset{}}
 
   """
+  @quest_tier_limits %{
+    "tier_free" => 1,
+    "tier_1" => 40,
+    "tier_2" => 100
+  }
+
   def create_quest_with_organization(quest_params, organization_id) do
-    changeset =
-      %Quest{}
-      |> Quest.changeset(Map.put(quest_params, "organization_id", organization_id))
-      |> maybe_add_accounts(quest_params)
+    case SubscriptionChecker.can_create_record?(organization_id, Quest, @quest_tier_limits) do
+      :ok ->
+        changeset =
+          %Quest{}
+          |> Quest.changeset(Map.put(quest_params, "organization_id", organization_id))
+          |> maybe_add_accounts(quest_params)
 
-    IO.inspect(changeset, label: "Quest Changeset")
+        case Repo.insert(changeset) do
+          {:ok, quest} -> {:ok, quest}
+          {:error, changeset} -> {:error, changeset}
+        end
 
-    Repo.insert(changeset)
+      {:error, reason} ->
+        Logger.error("Quest creation failed due to: #{inspect(reason)}")
+        handle_error(reason)
+    end
+  end
+
+  defp handle_error(reason) do
+    case reason do
+      :organization_not_found -> {:error, :organization_not_found}
+      :no_subscription_tier -> {:error, :no_subscription_tier}
+      :upgrade_subscription -> {:error, :upgrade_subscription}
+    end
   end
 
   @doc """

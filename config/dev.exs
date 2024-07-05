@@ -29,6 +29,8 @@ config :quest_api_v21, QuestApiV21Web.Endpoint,
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
+config :quest_api_v21, QuestApiV21Web.WebhookController, verify_stripe_signature: true
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

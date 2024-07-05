@@ -9,6 +9,22 @@ defmodule QuestApiV21Web.OrganizationJSON do
     %{data: for(organization <- organizations, do: data(organization))}
   end
 
+  def error(%{message: message}) do
+    %{
+      error: message
+    }
+  end
+
+  @doc """
+  Renders a changeset error.
+  """
+  def error(%{changeset: changeset}) do
+    %{
+      error: "Invalid data",
+      details: changeset.errors |> Enum.map(fn {field, {message, _opts}} -> {field, message} end)
+    }
+  end
+
   @doc """
   Renders a single organization.
   """
@@ -21,6 +37,7 @@ defmodule QuestApiV21Web.OrganizationJSON do
     %{
       id: organization.id,
       name: organization.name,
+      subscription_tier: organization.subscription_tier,
       hosts: hosts_data(hosts)
     }
   end

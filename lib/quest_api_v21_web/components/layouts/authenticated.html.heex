@@ -1,7 +1,16 @@
+<img class="fixed bottom-12 -z-50" src="/images/BackgroundShadowBoxes-cropped.png" />
+
 <div class="fixed bottom-0 z-50 w-full min-h-fit">
   <!-- Bottom Nav -->
+  <%= if @current_account.selected_quest_id != nil and @collector == false do %>
+    <%= live_render(@socket, QuestApiV21Web.QuestBarLive, id: "quest-bar") %>
+  <% else %>
+    <%= if !@collector == true do %>
+      <%= live_render(@socket, QuestApiV21Web.NoQuest, id: "no-quest") %>
+    <% end %>
+  <% end %>
   <!-- Live action: <%= @live_action %> -->
-  <div class="w-full bg-gradient-to-b from-indigo-100 border-t-2 border-gray-300 to-contrast">
+  <div class="w-full bg-gradient-to-b from-white to-white/70 frosted-glass py-1">
     <!-- Home -->
     <div class="grid grid-cols-3 justify-items-center">
       <.link
@@ -62,7 +71,7 @@
     </div>
   </div>
 </div>
-<main class={"min-h-screen #{ if @background_color == "false", do: "bg-gradient-to-t from-violet-300 to-violet-100", else: @background_color} md:px-8 sm:px-6 lg:px-8"}>
+<main class={"min-h-screen #{ if @background_color == "false", do: "white", else: @background_color} md:px-8 sm:px-6 lg:px-8"}>
   <div class="mx-auto pb-40 max-w-2xl">
     <.flash_group flash={@flash} />
     <%= @inner_content %>

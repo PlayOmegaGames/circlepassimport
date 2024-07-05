@@ -54,7 +54,12 @@ defmodule QuestApiV21Web.OrganizationController do
         |> json(%{error: "Host not found"})
 
       host_id ->
-        case Organizations.create_organization(organization_params, host_id) do
+        host = QuestApiV21.Hosts.get_host!(host_id)
+        host_email = host.email
+
+        IO.inspect(host_email, label: "Host Email")
+
+        case Organizations.create_organization(organization_params, host_id, host_email) do
           {:ok, organization, new_jwt} ->
             organization =
               QuestApiV21.Repo.preload(organization, [:hosts, :quests, :badges, :collectors])
@@ -67,7 +72,7 @@ defmodule QuestApiV21Web.OrganizationController do
           {:error, changeset} ->
             conn
             |> put_status(:unprocessable_entity)
-            |> render("error.json", changeset: changeset)
+            |> render("error.json", %{changeset: changeset})
         end
     end
   end
