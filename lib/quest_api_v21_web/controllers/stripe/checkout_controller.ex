@@ -20,12 +20,15 @@ defmodule QuestApiV21Web.CheckoutController do
           id
       end
 
+    stripe_price_id =
+      Application.fetch_env!(:quest_api_v21, QuestApiV21Web.CheckoutController)[:stripe_price_id]
+
     session_params = %{
       customer: stripe_customer_id,
       payment_method_types: ["card"],
       line_items: [
         %{
-          price: "price_1PWM6WJ36pwPxvTOMqo9GZoW",
+          price: stripe_price_id,
           quantity: 1
         }
       ],
