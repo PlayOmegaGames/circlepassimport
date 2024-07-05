@@ -32,6 +32,9 @@ if config_env() == :prod do
 
   config :stripity_stripe, webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
 
+  config :quest_api_v21, QuestApiV21Web.CheckoutController,
+    stripe_price_id: System.get_env("STRIPE_PRICE_ID")
+
   config :quest_api_v21,
     webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
 
