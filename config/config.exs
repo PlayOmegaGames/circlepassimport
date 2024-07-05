@@ -16,6 +16,9 @@ config :quest_api_v21,
   generators: [binary_id: true],
   webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET")
 
+config :quest_api_v21, QuestApiV21Web.CheckoutController,
+  stripe_price_id: System.get_env("STRIPE_PRICE_ID")
+
 # guardian setup
 config :quest_api_v21, QuestApiV21.Guardian,
   issuer: "quest_api_v21",
